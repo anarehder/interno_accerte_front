@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import HomePage from "./pages/HomePage";
 import UserPortalPage from "./pages/EquipmentsPage";
 import EquipmentsPage from "./pages/EquipmentsPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
 
@@ -11,9 +12,9 @@ function App() {
       <BrowserRouter>
               <Routes>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/portal" element={<UserPortalPage />} />
                 <Route path="/equipamentos" element={<EquipmentsPage/>} />
-                {/* <Route path="/login" element={<LoginPage />} /> */}
               </Routes>
       </BrowserRouter >
     </AppContainer >
