@@ -112,7 +112,7 @@ const Card = styled.div`
     overflow: hidden;
     transition: all 0.3s ease-in-out;
     background-image: 
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 15%, rgba(251, 251, 251, 0) 40%), 
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 15%, rgba(0, 0, 0, 0.5) 40%), 
         url(${backgroundCard});
     background-size: cover;
     background-position: center;
