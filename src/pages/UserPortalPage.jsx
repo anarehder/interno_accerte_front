@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import backgroundImage from "/home/accerte/interno_accerte_front/src/assets/FUNDO_1.jpg"; // Importação da imagem
+import backgroundCard from "../assets/FUNDO_ESCADA.jpg"
 import { TbCertificate } from "react-icons/tb";
 import { PiAirplaneTiltBold, PiSignature } from "react-icons/pi";
 import { FaComputer } from "react-icons/fa6";
@@ -96,12 +97,11 @@ const CardsContainer = styled.div`
 
 const Card = styled.div`
     width: 15%;
-    height: 30vh;
+    height: 300px;
     color: white;
     border-radius: 15px;
-    background: linear-gradient(25deg,rgb(37, 48, 57),rgb(9, 18, 32));
     box-shadow: 
-        10px 10px 20px rgba(0, 0, 0, 0.5),
+        10px 10px 20px rgba(0, 0, 0, 0.6),
         -10px -10px 20px rgba(50, 47, 47, 0.1);
     display: flex;
     flex-direction: column;
@@ -111,6 +111,13 @@ const Card = styled.div`
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease-in-out;
+    background-image: 
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.3) 15%, rgba(251, 251, 251, 0) 40%), 
+        url(${backgroundCard});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    align-items: center;
 
     &:hover {
         box-shadow: 
@@ -124,15 +131,18 @@ const Card = styled.div`
         font-size: 24px;
         word-break: break-word;
         font-weight: 600;
-        width: 95%;
+        height: 50px;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
+        align-items: center;
         text-align: center;
+        border-radius: 15px;
+        gap: 10px;
     }
 
     button {
         font-family: "Lato", serif;
         fof-size:15px;
-        background-color:rgb(8, 15, 27);
+        background-color: #000002;
     }
 `;
