@@ -3,6 +3,7 @@ import { toPng } from "html-to-image";
 import download from "downloadjs";
 import styled from 'styled-components';
 import backgroundSignature from "/home/accerte/interno_accerte_front/src/assets/FUNDO_SIGNATURE.png"; 
+import { Link } from 'react-router-dom';
 
 function SignatureEmailPage() {
     const [form, setForm] = useState({
@@ -16,7 +17,6 @@ function SignatureEmailPage() {
     const [errors, setErrors] = useState({});
     const [displayImage, setDisplayImage] = useState(false);
     const imageRef = useRef(null);
-    console.log(form);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,12 +27,15 @@ function SignatureEmailPage() {
           setForm((prev) => ({ ...prev, [name]: formattedDDD }));
           return;
         }
-    
+
         // Máscara para o WhatsApp (apenas números e máximo de 9 dígitos)
         if (name === "whatsapp") {
-          const formattedWhatsApp = value.replace(/\D/g, "").slice(0, 9);
-          setForm((prev) => ({ ...prev, [name]: formattedWhatsApp }));
-          return;
+            const formattedWhatsApp = value
+                .replace(/\D/g, "") // Remove tudo que não for número
+                .slice(0, 9) // Limita a 9 dígitos
+                .replace(/(\d{5})(\d{0,4})/, "$1-$2"); // Aplica a máscara 99999-9999
+            setForm((prev) => ({ ...prev, [name]: formattedWhatsApp }));
+            return;
         }
     
         setForm((prev) => ({ ...prev, [name]: value }));
@@ -55,7 +58,7 @@ function SignatureEmailPage() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-          alert("Formulário enviado com sucesso! ✅");
+          alert("Assinatura gerada com sucesso! ✅");
           setDisplayImage(true);
           setErrors({});
         }
@@ -88,6 +91,9 @@ function SignatureEmailPage() {
 
     return (
         <PageContainer>
+            <Link to="/">
+                <Button> Voltar </Button>
+            </Link>
             <FormContainer>
                 <h2>Preencha o Formulário</h2>
                 <form onSubmit={handleSubmit}>
@@ -167,6 +173,11 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 30px;
+    a {
+        position: absolute;
+        left: 2%;
+        top: 3%;
+    }
 `
 
 const FormContainer = styled.div`
@@ -174,6 +185,7 @@ const FormContainer = styled.div`
     gap: 25px;
     flex-direction: column;
     padding: 20px;
+    margin-top: 3%;
     border: 1px solid #ddd;
     border-radius: 10px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
@@ -314,21 +326,6 @@ const Phone = styled.div`
     font-size: 19px;
     gap: 7px;
 ` 
-
-const DownloadButton = styled.button`
-  padding: 10px 20px;
-  background-color: #005CBC;
-  color: white;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
 
 const ErrorMessage = styled.p`
   color: red;
