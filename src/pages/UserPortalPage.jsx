@@ -4,6 +4,7 @@ import backgroundCard from "../assets/FUNDO_ESCADA.jpg"
 import { TbCertificate } from "react-icons/tb";
 import { PiAirplaneTiltBold, PiSignature } from "react-icons/pi";
 import { FaComputer } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
 
 function UserPortalPage() {
 
@@ -29,7 +30,7 @@ function UserPortalPage() {
                 <Card>
                     <FaComputer size={60} />
                     <div>EQUIPAMENTOS</div>
-                    <button>SABER MAIS</button>
+                    <Link to="/equipamentos"><button> SABER MAIS</button></Link>
                 </Card>
                 <Card>
                     <PiSignature size={60} />
@@ -41,7 +42,7 @@ function UserPortalPage() {
                             DE E-MAIL
                         </div>
                     </div>
-                    <button>SABER MAIS</button>
+                    <Link to="/assinatura"><button>SABER MAIS</button></Link>
                 </Card>
             </CardsContainer>
         </PageContainer>
