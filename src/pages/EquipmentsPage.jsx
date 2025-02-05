@@ -139,11 +139,11 @@ const Button = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  background-color:#008AFF;
+  background-color:#007bff;
   color: white;
 
   &:hover {
-    background-color: #345B68;
+    background-color: #0056b3;
   }
 `;
 
