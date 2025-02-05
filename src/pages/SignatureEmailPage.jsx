@@ -3,6 +3,7 @@ import { toPng } from "html-to-image";
 import download from "downloadjs";
 import styled from 'styled-components';
 import backgroundSignature from "/home/accerte/interno_accerte_front/src/assets/FUNDO_SIGNATURE.png"; 
+import logo from "../assets/LOGO_PNG.png"
 import { Link } from 'react-router-dom';
 
 function SignatureEmailPage() {
@@ -32,9 +33,15 @@ function SignatureEmailPage() {
         if (name === "whatsapp") {
             const formattedWhatsApp = value
                 .replace(/\D/g, "") // Remove tudo que não for número
-                .slice(0, 9) // Limita a 9 dígitos
+                .slice(0, 10) // Limita a 9 dígitos
                 .replace(/(\d{5})(\d{0,4})/, "$1-$2"); // Aplica a máscara 99999-9999
             setForm((prev) => ({ ...prev, [name]: formattedWhatsApp }));
+            return;
+        }
+
+        if (name === "email"){
+            const formattedText = value.toLowerCase()
+            setForm((prev) => ({ ...prev, [name]: formattedText }));
             return;
         }
     
@@ -81,7 +88,7 @@ function SignatureEmailPage() {
         if (imageRef.current) {
             toPng(imageRef.current, { quality: 1 })
                 .then((dataUrl) => {
-                    download(dataUrl, "mail_signature.png", "image/png");
+                    download(dataUrl, `mail_signature_${form.nome}.png`, "image/png");
                 })
                 .catch((error) => {
                     console.error("Erro ao gerar a imagem:", error);
@@ -91,9 +98,17 @@ function SignatureEmailPage() {
 
     return (
         <PageContainer>
-            <Link to="/">
+            <Link to="/portal">
                 <Button> Voltar </Button>
             </Link>
+            <TitleContainer>
+                <img src={logo} alt="Logo"/>
+                <div>
+                <p>PORTAL ACCERTE</p>
+                ASSINATURA DE E-MAIL
+                </div>
+                
+            </TitleContainer>
             <FormContainer>
                 <h2>Preencha o Formulário</h2>
                 <form onSubmit={handleSubmit}>
@@ -124,7 +139,7 @@ function SignatureEmailPage() {
                     </div>
                     <div>
                         <label>WhatsApp:</label>
-                        <Input type="text" name="whatsapp" value={form.whatsapp} onChange={handleChange} maxLength="9" />
+                        <Input type="text" name="whatsapp" value={form.whatsapp} onChange={handleChange} maxLength="10" />
                         {errors.whatsapp && <ErrorMessage>{errors.whatsapp}</ErrorMessage>}
                     </div>
                     <Button type="submit">Enviar</Button>
@@ -133,26 +148,26 @@ function SignatureEmailPage() {
             {displayImage &&
             <SignatureContainer>
                 <div>
-                    <Button type="button" clear onClick={handleClear}>Limpar Formulário</Button>
+                    <Button type="button" color={"clear"} onClick={handleClear}>Limpar Formulário</Button>
                     <Button onClick={handleDownload}>
                         Baixar como PNG
                     </Button>
                 </div>
                 <ImageContainer ref={imageRef}>
                     <Name>
-                        <p>Matheus <strong>Vilarino</strong></p>
+                        <p>{form.nome} <strong>{form.sobrenome}</strong></p>
                     </Name>
                     <Position>
-                        <p>  <strong>Analista de Licitação</strong></p>
+                        <p>  <strong>{form.cargo}</strong></p>
                     </Position>
                     <WhatsApp>
-                        <strong>(62)</strong> 99222-9999
+                        <strong>({form.ddd})</strong> {form.whatsapp}
                     </WhatsApp>
                     <Site>
                         www.accerte.com.br
                     </Site>
                     <Mail>
-                        colaborador@accerte.com.br
+                        {form.email}
                     </Mail>
                     <Phone>
                         <strong>(62)</strong> 3945-9510
@@ -169,7 +184,7 @@ export default SignatureEmailPage;
 
 const PageContainer = styled.div`
     width: 100%;
-    height: 100vh;
+    height: 100%;
     flex-direction: column;
     align-items: center;
     gap: 30px;
@@ -180,12 +195,39 @@ const PageContainer = styled.div`
     }
 `
 
+const TitleContainer = styled.div`
+    width: 80%;
+    gap: 15px;
+    justify-content: center;
+    margin: 10px 0;
+    align-items: center;
+    font-family: "Lato", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 30px;
+    div{
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    p {
+        font-size: 50px;
+        font-family: "Dosis", serif;
+        word-spacing: 10px;
+    }
+    img {
+        width: 100px;
+        position: absolute;
+        left: 10%;
+    }
+}
+`
+
 const FormContainer = styled.div`
     max-width: 80%;
     gap: 25px;
     flex-direction: column;
     padding: 20px;
-    margin-top: 3%;
     border: 1px solid #ddd;
     border-radius: 10px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
@@ -212,7 +254,6 @@ const FormContainer = styled.div`
     }
 `;
 
-// Estilização dos inputs
 const Input = styled.input`
   width: 60%;
   padding: 10px;
@@ -222,7 +263,6 @@ const Input = styled.input`
   font-size: 16px;
 `;
 
-// Estilização do botão
 const Button = styled.button`
   width: 100%;
   font-size: 16px;
@@ -230,11 +270,11 @@ const Button = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  background-color: ${(props) => (props.clear ? "#ba1d2a" : "#007bff")};
+  background-color: ${(props) => (props.color === "clear" ? "#ba1d2a" : "#007bff")};
   color: white;
 
   &:hover {
-    background-color: ${(props) => (props.clear ? "#962831" : "#0056b3")};
+    background-color: ${(props) => (props.color === "clear"  ? "#962831" : "#0056b3")};
   }
 `;
 
