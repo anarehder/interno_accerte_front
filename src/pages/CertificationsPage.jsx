@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import logo from "../assets/LOGO_PNG.png";
+import CertificationsValueComponent from '../components/CertificationsValuesComponent';
 
 function CertificationsPage() {
     
@@ -16,6 +17,7 @@ function CertificationsPage() {
                 CERTIFICAÇÕES
                 </div>
             </TitleContainer>
+            <CertificationsValueComponent />
         </PageContainer>
     )
 }
