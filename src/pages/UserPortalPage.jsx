@@ -20,7 +20,7 @@ function UserPortalPage() {
                 <Card>
                     <TbCertificate size={60} />
                     <div>CERTIFICAÇÕES</div>
-                    <button>SABER MAIS</button>
+                    <Link to="/certificacoes"><button>SABER MAIS</button></Link>
                 </Card>
                 <Card>
                     <PiAirplaneTiltBold size={60} />

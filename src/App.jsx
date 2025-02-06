@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import EquipmentsPage from "./pages/EquipmentsPage";
 import UserPortalPage from "./pages/UserPortalPage";
 import SignatureEmailPage from "./pages/SignatureEmailPage";
+import CertificationsPage from "./pages/CertificationsPage";
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
                 <Route path="/portal" element={<UserPortalPage />} />
                 <Route path="/equipamentos" element={<EquipmentsPage/>} />
                 <Route path="/assinatura" element={<SignatureEmailPage/>} />
+                <Route path="/certificacoes" element={<CertificationsPage/>} />
               </Routes>
       </BrowserRouter >
     </AppContainer >
