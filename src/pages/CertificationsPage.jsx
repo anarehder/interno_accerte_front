@@ -17,6 +17,17 @@ function CertificationsPage() {
                 CERTIFICAÇÕES
                 </div>
             </TitleContainer>
+            <ButtonsContainer>
+                <Button>VALORES</Button>
+                <Button>MICROSOFT</Button>
+                <Button>ORACLE</Button>
+                <Button>DENODO</Button>
+                <Button>FORTINET</Button>
+                <Button>SEGURANÇA</Button>
+                <Button>LPIC</Button>
+                <Button>ZABBIX</Button>
+            </ButtonsContainer>
+            
             <CertificationsValueComponent />
         </PageContainer>
     )
@@ -30,7 +41,7 @@ const PageContainer = styled.div`
     min-height: 100vh;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
+    gap: 20px;
     a {
         position: absolute;
         left: 2%;
@@ -80,3 +91,12 @@ const Button = styled.button`
     background-color: ${(props) => (props.color === "clear"  ? "#962831" : "#0056b3")};
   }
 `;
+
+const ButtonsContainer = styled.div`
+    width: 80%;
+    gap: 15px;
+    margin-top: 15px;
+    button {
+        background-color: #345B68;
+    }
+`
