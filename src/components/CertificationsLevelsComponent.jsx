@@ -1,34 +1,33 @@
 import styled from 'styled-components';
-import prices from "../assets/LevelsPrices";
+import prices from '../assets/LevelsPrices';
 
-function CertificationsValueComponent() {
-    const pricesArray = Object.keys(prices);
-    console.log(prices[pricesArray[0]]);
+function CertificationsLevelsComponent({list}) {
+
     return (
         <PageContainer>
             <LevelTitle>
                 <LevelRows>
+                        <div><strong>Certificação</strong></div>
                         <div><strong>Nível</strong></div>
-                        <div><strong>Premiação</strong></div>
-                        <div><strong>Frequência</strong></div>
-                        <div><strong>Plataforma</strong></div>
+                        <div><strong>Valor</strong></div>
                     </LevelRows>
             </LevelTitle>
-            {pricesArray?.map((i, index) => (
-                 <LevelContainer key={index}>
-                 <LevelRows>
-                     <div>{i}</div>
-                     <div>{prices[i].price}</div>
-                     <div>{prices[i].frequency}</div>
-                     <div>{prices[i].paymentMethod}</div>
-                 </LevelRows>
-                 </LevelContainer> ))
+            {list?.certificacoes?.map((c) => (
+                <LevelContainer key={c.nome}>
+                    <LevelRows>
+                        <div>{c.nome}</div>
+                        <div>{c.nivel}</div>
+                        <div>{prices[c.nivel].price}</div>
+                    </LevelRows>
+                </LevelContainer>
+            ))
             }
+
         </PageContainer>
     )
 }
 
-export default CertificationsValueComponent;
+export default CertificationsLevelsComponent;
 
 const PageContainer = styled.div`
     width: 80%;
@@ -63,8 +62,11 @@ const LevelRows = styled.div`
     div {
         justify-content: center;
         padding: 10px 20px;
+        width: 20%;
+        align-items: center;
     }
     div:first-child {
-        width: 40%;
+        justify-content: flex-start;
+        width:80%;
     }
 `

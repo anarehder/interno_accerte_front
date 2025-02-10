@@ -2,11 +2,13 @@ import styled from 'styled-components';
 import CertificationsValueComponent from '../components/CertificationsValuesComponent';
 import { useState } from 'react';
 import TitleComponent from '../components/TitleComponent';
+import CertificationsLevelsComponent from '../components/CertificationsLevelsComponent';
+import CertificationsList from "../assets/CertificationsList";
 
 function CertificationsPage() {
-    const partnersList = ["VALORES", "MICROSOFT", "ORACLE", "DENODO", "FORTINET", "SEGURANÇA", "LPIC", "ZABBIX"];
+    const partnersList = Object.keys(CertificationsList);
     const [activeButton, setActiveButton] = useState(null);
-    console.log(activeButton);
+
     const handleClick = (label) => {
       setActiveButton(label);
     };
@@ -18,7 +20,7 @@ function CertificationsPage() {
                 {partnersList.map((label) => (
                     <Button
                         key={label}
-                        active={activeButton === label}
+                        active={activeButton === label ? true : undefined}
                         onClick={() => handleClick(label)}
                     >
                         {label}
@@ -26,9 +28,14 @@ function CertificationsPage() {
                     </Button>
                 ))}
             </ButtonsContainer>
-            {partnersList.map((label) => (
-                activeButton === label && <h1>{label}</h1>))}
+            {activeButton && <a href={CertificationsList[activeButton]?.site_treinamentos} target="_blank" rel="noopener noreferrer">
+                <h1>{activeButton}</h1>
+            </a>
+            }
             { activeButton === partnersList[0] && <CertificationsValueComponent /> }
+            { (activeButton && activeButton !== partnersList[0]) && 
+                <CertificationsLevelsComponent list = {CertificationsList[activeButton]} />
+            }
         </PageContainer>
     )
 }
@@ -60,5 +67,5 @@ const Button = styled.button`
 const ButtonsContainer = styled.div`
     width: 80%;
     gap: 15px;
-    margin-top: 40px;
+    margin: 40px 0 20px 0;
 `
