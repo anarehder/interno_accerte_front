@@ -1,34 +1,34 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import logo from "../assets/LOGO_PNG.png";
 import CertificationsValueComponent from '../components/CertificationsValuesComponent';
+import { useState } from 'react';
+import TitleComponent from '../components/TitleComponent';
 
 function CertificationsPage() {
-    
+    const partnersList = ["VALORES", "MICROSOFT", "ORACLE", "DENODO", "FORTINET", "SEGURANÇA", "LPIC", "ZABBIX"];
+    const [activeButton, setActiveButton] = useState(null);
+    console.log(activeButton);
+    const handleClick = (label) => {
+      setActiveButton(label);
+    };
+
     return (
         <PageContainer>
-            <Link to="/portal">
-                <Button> Voltar </Button>
-            </Link>
-            <TitleContainer>
-                <img src={logo} alt="Logo"/>
-                <div>
-                <p>PORTAL ACCERTE</p>
-                CERTIFICAÇÕES
-                </div>
-            </TitleContainer>
+            <TitleComponent pageTitle={"CERTIFICAÇÕES"} />
             <ButtonsContainer>
-                <Button>VALORES</Button>
-                <Button>MICROSOFT</Button>
-                <Button>ORACLE</Button>
-                <Button>DENODO</Button>
-                <Button>FORTINET</Button>
-                <Button>SEGURANÇA</Button>
-                <Button>LPIC</Button>
-                <Button>ZABBIX</Button>
+                {partnersList.map((label) => (
+                    <Button
+                        key={label}
+                        active={activeButton === label}
+                        onClick={() => handleClick(label)}
+                    >
+                        {label}
+                        {/* {label} - {activeButton === label && <p>T</p>} */}
+                    </Button>
+                ))}
             </ButtonsContainer>
-            
-            <CertificationsValueComponent />
+            {partnersList.map((label) => (
+                activeButton === label && <h1>{label}</h1>))}
+            { activeButton === partnersList[0] && <CertificationsValueComponent /> }
         </PageContainer>
     )
 }
@@ -42,61 +42,23 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    a {
-        position: absolute;
-        left: 2%;
-        top: 3%;
-    }
-`
-
-const TitleContainer = styled.div`
-    width: 80%;
-    gap: 15px;
-    justify-content: center;
-    margin: 10px 0;
-    align-items: center;
-    font-family: "Lato", serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 30px;
-    div{
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-    p {
-        font-size: 50px;
-        font-family: "Dosis", serif;
-        word-spacing: 10px;
-    }
-    img {
-        width: 100px;
-        position: absolute;
-        left: 10%;
-    }
-}
 `
 
 const Button = styled.button`
-  width: 100%;
-  font-size: 16px;
-  justify-content: center;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: ${(props) => (props.color === "clear" ? "#ba1d2a" : "#007bff")};
-  color: white;
-
-  &:hover {
-    background-color: ${(props) => (props.color === "clear"  ? "#962831" : "#0056b3")};
-  }
+    width: 100%;
+    font-size: 16px;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    background-color: ${({ active }) => (active ? "black" : "#345B68")};
+    &:hover {
+        background-color: ${({ active }) => (active ? "rgb(141, 171, 181)" : "black")};
 `;
 
 const ButtonsContainer = styled.div`
     width: 80%;
     gap: 15px;
-    margin-top: 15px;
-    button {
-        background-color: #345B68;
-    }
+    margin-top: 40px;
 `

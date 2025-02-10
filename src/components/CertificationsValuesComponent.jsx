@@ -74,7 +74,7 @@ const LevelTitle = styled.div`
     border-radius: 50px;
     color: white;
     width: 80%;
-    margin-top: 20px;
+    margin-top: 10px;
 `
 
 const LevelRows = styled.div`
