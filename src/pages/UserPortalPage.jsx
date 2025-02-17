@@ -25,7 +25,7 @@ function UserPortalPage() {
                 <Card>
                     <PiAirplaneTiltBold size={60} />
                     <div>FÉRIAS</div>
-                    <button>SABER MAIS</button>
+                    <Link to="/ferias"><button> SABER MAIS</button></Link>
                 </Card>
                 <Card>
                     <FaComputer size={60} />
