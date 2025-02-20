@@ -21,7 +21,7 @@ function HomePage() {
 
     return (
         <PageContainer>
-            <Link to={'/portal'} >
+            <Link to={'/login'} >
                 <button>
                     <p>Acessar</p>
                     <GoArrowRight size={24} />
