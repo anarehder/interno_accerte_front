@@ -22,11 +22,11 @@ function UserPortalPage() {
                     <div>CERTIFICAÇÕES</div>
                     <Link to="/certificacoes"><button>SABER MAIS</button></Link>
                 </Card>
-                <Card>
+                {/* <Card>
                     <PiAirplaneTiltBold size={60} />
                     <div>FÉRIAS</div>
                     <Link to="/ferias"><button> SABER MAIS</button></Link>
-                </Card>
+                </Card> */}
                 <Card>
                     <FaComputer size={60} />
                     <div>EQUIPAMENTOS</div>
