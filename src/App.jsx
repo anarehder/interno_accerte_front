@@ -7,6 +7,8 @@ import UserPortalPage from "./pages/UserPortalPage";
 import SignatureEmailPage from "./pages/SignatureEmailPage";
 import CertificationsPage from "./pages/CertificationsPage";
 import VacationsPage from "./pages/VacationsPage";
+import ChatReportsPage from "./pages/ChatReportsPage";
+import HomeIntranetPage from "./pages/HomeIntranetPage";
 
 function App() {
 
@@ -21,6 +23,8 @@ function App() {
                 <Route path="/assinatura" element={<SignatureEmailPage/>} />
                 <Route path="/certificacoes" element={<CertificationsPage/>} />
                 <Route path="/ferias" element={<VacationsPage/>} />
+                <Route path="/chat/relatorios" element={<ChatReportsPage />} />
+                <Route path="/intranet" element={<HomeIntranetPage />} />
               </Routes>
       </BrowserRouter >
     </AppContainer >
