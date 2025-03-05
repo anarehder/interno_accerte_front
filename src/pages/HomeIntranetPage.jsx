@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { FaGoogle, FaMicrosoft } from "react-icons/fa";
+import { FaMicrosoft } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import Logo from "../assets/LOGO-INTRANET.png";
 
 const HomeIntranetPage = () => {
@@ -13,9 +14,11 @@ const HomeIntranetPage = () => {
       <LoginBox>
         <Title>FAÇA SEU LOGIN</Title>
         <Title>PARA ACESSAR</Title>
-        <OAuthButton microsoft>
-          <FaMicrosoft /> Entrar com Microsoft
-        </OAuthButton>
+        <Link to={'/intranet/portal'} >
+          <OAuthButton>
+            <FaMicrosoft /> Entrar com Microsoft
+          </OAuthButton>
+        </Link>
       </LoginBox>
     </Container>
   );
@@ -83,14 +86,9 @@ const OAuthButton = styled.button`
   font-weight: bold;
   gap: 8px;
   font-family: 'Conthrax', sans-serif;
-
-  ${({ microsoft }) =>
-    microsoft &&
-    `
-    background: #2f2f2f;
-    color: white;
-    &:hover {
-      background: #1a1a1a;
-    }
-  `}
+  background: #2f2f2f;
+      color: white;
+      &:hover {
+        background: #1a1a1a;
+  }
 `;
