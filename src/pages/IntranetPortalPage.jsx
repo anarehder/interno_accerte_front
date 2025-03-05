@@ -93,6 +93,7 @@ const IntranetPortalPage = () => {
                             <button>Lista Chamados JIRA</button>
                         </a>
                         <button>Lista Atividades/Período</button>
+                        <button>Outros Recursos</button>
                     </div>
                 </div>
                 <div className="ChartsContainer">
@@ -297,12 +298,11 @@ const InstagramContainer = styled.div`
   }
 `;
 
-
 const ActivitiesContainer = styled.div`
     width: 90%;
     flex-direction: column;
     margin-bottom: 20px;
-    gap: 20px;
+    gap: 40px;
     h2 {
         display: flex;
         align-items: center;
@@ -311,20 +311,20 @@ const ActivitiesContainer = styled.div`
             margin-right: 10px;
         }
     }
-
     .UpContainer {
+        align-items: center;
+        justify-content: center;
+        gap: 50px;
         img {
-            width: 75%; 
-        }
+                width: 65%; 
+            }
     }
     .ButtonsContainer {
         flex-direction: column;
         gap: 25px;
-        align-items: center;
-        justify-content: center;
+        width: 200px;
         button{
             height: 100px;
-            width: 200px;
         }
     }
 
