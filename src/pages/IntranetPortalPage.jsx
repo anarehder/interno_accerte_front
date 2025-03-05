@@ -1,8 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import Logo from "../assets/LOGO-INTRANET-BRANCO.png";
 import Fundo from "../assets/FUNDO-INTRANET.png"
-import { FaInstagram } from "react-icons/fa";
+import { FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { FaLinkedin } from "react-icons/fa6";
+import { FcGoogle } from "react-icons/fc";
 import { IoIosArrowDropright } from "react-icons/io";
 import Insta1 from "../assets/INSTA1.png";
 import Insta2 from "../assets/INSTA2.png";
@@ -23,8 +26,11 @@ const IntranetPortalPage = () => {
                 <RightContainer>
                 <MenuContainer>
                     <h1>On-boarding</h1>
-                    <h1>Políticas</h1>
-                    <h1>Certificações</h1>
+                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN">
+                    <h1>Políticas</h1></a>
+                    <Link to={"/intranet/certificacoes"}>
+                        <h1>Certificações</h1>
+                    </Link>
                     <h1>RH</h1>
                 </MenuContainer>
                 <img src={Fundo} alt="OFFICE" />
@@ -42,8 +48,11 @@ const IntranetPortalPage = () => {
                     Documentos
                 </div>
                 <div>
+                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/Eh2piwnGCA5OiYOVQcqm10MBgmBgSkf4PoPn1d-YVttfgg?e=klSNyR">
                     Escala Semanal
+                    </a>
                 </div>
+                
             </ButtonsContainer>
             <InstagramContainer>
                 <h2>
@@ -80,8 +89,10 @@ const IntranetPortalPage = () => {
                 <div className="UpContainer">
                     <img src={Plantoes} alt="Plantoes" />
                     <div className="ButtonsContainer">
+                        <a href="https://accertetecnologia.atlassian.net/jira/servicedesk/projects/SUPORTE/summary">
+                            <button>Lista Chamados JIRA</button>
+                        </a>
                         <button>Lista Atividades/Período</button>
-                        <button>Lista Chamados JIRA</button>
                     </div>
                 </div>
                 <div className="ChartsContainer">
@@ -90,6 +101,35 @@ const IntranetPortalPage = () => {
                     <img src={PieChart} alt="Graficos" />
                 </div>
             </ActivitiesContainer>
+            <FooterContainer>
+                <div className="left">
+                    Accerte Tecnologia
+                    www.accerte.com.br
+                    <div className="icons">
+                        <a href="https://www.instagram.com/accertetecnologia/">
+                            <FaInstagram size={30} color="#E4405F"/>
+                        </a>
+                        <a href="https://www.linkedin.com/company/accerte-tecnologia/posts/?feedView=all">
+                            <FaLinkedin  size={30} color="#0077B5"/>
+                        </a>
+                        <a href="https://wa.me/556239459510?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os%20de%20..." target="_blank">
+                            <FaWhatsapp  size={30} color="#25D366"/>
+                        </a>
+                        <a href="mailto:comercial@accerte.com.br?subject=Gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os&body=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os%20de%20...">
+                            <FcGoogle size={30} />
+                        </a>
+                    </div>
+                    
+                </div>
+                <div className="middle">
+                    <img src={Logo} alt="ACCERTE" />
+                </div>
+                <div className="right">
+                R. 128-A, Qd Nº 34 Qd 11
+                St. Sul, Goiânia - GO
+                74093-110
+                </div>
+            </FooterContainer>
         </Container>
     );
 };
@@ -169,6 +209,12 @@ const ButtonsContainer = styled.div`
         justify-content: center;
         text-align: center;
         padding: 20px;
+        a {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
     }
 `
 
@@ -291,5 +337,40 @@ const ActivitiesContainer = styled.div`
         img{
             width: 300px;
         }
+    }
+`
+
+const FooterContainer = styled.div`
+    background-color: #a8a8a8;
+    gap: 50px;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0;
+    line-height: 20px;
+    color: white;
+    .left{
+        width: 500px;
+        padding-left: 5%;
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        
+        .icons{
+            justify-content: center;
+            gap: 15px;
+        }
+    }
+    .middle{
+        align-items: center;
+        justify-content: center;
+        img{
+            width: 40%;
+        }
+    }
+
+    .right{
+        width: 500px;
+        text-align: center;
+        padding-right: 5%;
     }
 `

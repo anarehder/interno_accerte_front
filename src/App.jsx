@@ -10,6 +10,7 @@ import VacationsPage from "./pages/VacationsPage";
 import ChatReportsPage from "./pages/ChatReportsPage";
 import HomeIntranetPage from "./pages/HomeIntranetPage";
 import IntranetPortalPage from "./pages/IntranetPortalPage";
+import IntranetCertificationsPage from "./pages/IntranetCertificationsPage";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/chat/relatorios" element={<ChatReportsPage />} />
                 <Route path="/intranet" element={<HomeIntranetPage />} />
                 <Route path="/intranet/portal" element={<IntranetPortalPage />} />
+                <Route path="/intranet/certificacoes" element={<IntranetCertificationsPage />} />
               </Routes>
       </BrowserRouter >
     </AppContainer >
