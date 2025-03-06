@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import backgroundImage from "/home/accerte/interno_accerte_front/src/assets/FUNDO_1.jpg"; // Importação da imagem
+import backgroundImage from "../assets/FUNDO_1.jpg"; // Importação da imagem
 import backgroundCard from "../assets/FUNDO_ESCADA.jpg"
 import { TbCertificate } from "react-icons/tb";
 import { PiAirplaneTiltBold, PiSignature } from "react-icons/pi";

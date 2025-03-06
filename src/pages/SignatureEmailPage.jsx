@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import styled from 'styled-components';
-import backgroundSignature from "/home/accerte/interno_accerte_front/src/assets/FUNDO_SIGNATURE.png"; 
+import backgroundSignature from "../assets/FUNDO_SIGNATURE.png"; 
 import logo from "../assets/LOGO_PNG.png"
 import { Link } from 'react-router-dom';
 
