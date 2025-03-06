@@ -3,29 +3,8 @@ import styled from "styled-components";
 import { FaMicrosoft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Logo from "../assets/LOGO-INTRANET.png";
-import { useMsal } from "@azure/msal-react";
-import { loginRequest } from "../services/authConfig";
 
 const HomeIntranetPage = () => {
-
-  const { instance } = useMsal();
-  const handleLogin = () => {
-    instance.loginPopup(loginRequest).then((response) => {
-      console.log("Usuário autenticado:", response.account);
-      fetchUserData(response.account);
-    }).catch((error) => console.error(error));
-  };
-
-  const fetchUserData = async (account) => {
-    const response = await fetch("http://localhost:5000/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: account.username }),
-    });
-    const data = await response.json();
-    console.log("Usuário no banco:", data);
-  };
-
   return (
     <Container>
       <LogoContainer>
@@ -36,13 +15,10 @@ const HomeIntranetPage = () => {
         <Title>FAÇA SEU LOGIN</Title>
         <Title>PARA ACESSAR</Title>
         <Link to={'/intranet/portal'} >
-          <OAuthButton onClick={handleLogin}>
+          <OAuthButton>
             <FaMicrosoft /> Entrar com Microsoft
           </OAuthButton>
         </Link>
-        <OAuthButton onClick={handleLogin}>
-            <FaMicrosoft /> Entrar AQUI com Microsoft
-          </OAuthButton>
       </LoginBox>
     </Container>
   );
