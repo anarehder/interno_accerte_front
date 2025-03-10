@@ -39,7 +39,9 @@ const IntranetPortalPage = () => {
             </HeaderContainer>
             <ButtonsContainer>
                 <div>
-                    Projetos Futuros
+                    <Link to="/intranet/ferias">
+                        Férias
+                    </Link>
                 </div>
                 <div>
                     Planilhas
@@ -51,6 +53,18 @@ const IntranetPortalPage = () => {
                     <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/Eh2piwnGCA5OiYOVQcqm10MBgmBgSkf4PoPn1d-YVttfgg?e=klSNyR">
                     Escala Semanal
                     </a>
+                </div>
+                <div>
+                    Planilhas
+                </div>
+                <div>
+                    Documentos
+                </div>
+                <div>
+                    Planilhas
+                </div>
+                <div>
+                    Documentos
                 </div>
                 
             </ButtonsContainer>
@@ -74,6 +88,12 @@ const IntranetPortalPage = () => {
                             <h3>Operação em Nuvem (CloudOps)</h3>
                             <p>Infraestrutura ágil e escalável para seu negócio.</p>
                         </div> */}
+                    </div>
+                    <div className="card">
+                        <img src={Insta5} alt="Custos" />
+                    </div>
+                    <div className="card">
+                        <img src={Insta5} alt="Custos" />
                     </div>
                     <div className="card">
                         <img src={Insta5} alt="Custos" />
@@ -198,23 +218,27 @@ const MenuContainer = styled.div`
 
 const ButtonsContainer = styled.div`
     width: 90%;
-    height: 25vh;
+    height: 30vh;
     font-size: 28px;
     color: white;
+    flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     gap: 5%;
     div{
         background-color: #20273E;
+        width: 20%;
+        height: 45%;
         border-radius: 30px;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 20px;
         a {
             height: 100%;
             width: 100%;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
     }
 `
