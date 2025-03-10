@@ -248,7 +248,6 @@ const VacationButtons = styled.div`
     align-items: center;
     button {
         text-align: center;
-        background-color: blue;
         word-break: break-word;
     }
 `
