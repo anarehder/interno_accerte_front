@@ -10,9 +10,10 @@ export default defineConfig({
   },
   server: {
     https: {
-      key: fs.readFileSync('./certs/server-key.pem'),
-      cert: fs.readFileSync('./certs/server-cert.pem')
+      key: fs.readFileSync('/etc/ssl/private/yourdomain.key'),
+      cert: fs.readFileSync('/etc/ssl/certs/yourdomain.crt')
     },
     port: 5176,
+    host: '0.0.0.0',
   }
 })

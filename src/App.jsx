@@ -11,6 +11,7 @@ import ChatReportsPage from "./pages/ChatReportsPage";
 import HomeIntranetPage from "./pages/HomeIntranetPage";
 import IntranetPortalPage from "./pages/IntranetPortalPage";
 import IntranetCertificationsPage from "./pages/IntranetCertificationsPage";
+import VacationsAdminPage from "./pages/VacationsAdminPage";
 // import { PublicClientApplication } from "@azure/msal-browser";
 // import { MsalProvider } from "@azure/msal-react";
 // import { msalConfig } from "./services/authConfig";
@@ -36,6 +37,7 @@ function App() {
             <Route path="/intranet/portal" element={<IntranetPortalPage />} />
             <Route path="/intranet/certificacoes" element={<IntranetCertificationsPage />} />
             <Route path="/intranet/ferias" element={<VacationsPage />} />
+            <Route path="/intranet/ferias/admin" element={<VacationsAdminPage />} />
           </Routes>
         {/* </MsalProvider> */}
       </BrowserRouter >
