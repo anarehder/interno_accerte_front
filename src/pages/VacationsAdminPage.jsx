@@ -163,10 +163,11 @@ function VacationsAdminPage() {
             DIAS: 30,
             FERIAS_DATA_INICIO: "13/10/2025",
             FERIAS_DATA_TERMINO: "21/10/2025",
-            DIAS_FERIAS: 6
+            DIAS_FERIAS: 8
         }
     ];
     const [employee, setEmployee] = useState({name: ""});
+    const [selectedEmployee, setSelectecEmployee] = useState({name: "", vacations:[]});
     const [interval, setInterval] = useState({start:"", end:""});
     const [contractType, setContractType] = useState({contract:""});
     const [type, setType] = useState(null);
@@ -184,12 +185,14 @@ function VacationsAdminPage() {
         setContractType((prevForm) => ({ ...prevForm, [e.target.id]: e.target.value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmitEmployee = async (e) => {
         e.preventDefault();
-        if (form.hostid === "") {
-            alert ("Selecione um host.");
+        if (employee.name === "") {
+            alert ("Selecione um funcionário.");
             return;
         } else {
+            const filteredVacations = ferias.filter(f => f.NOME === employee.name);
+            setSelectecEmployee({name: employee.name, vacations: filteredVacations });
             // try {
             //     const body = {hostid: form.hostid};
             //     const response = await apiService.getObjectIds(body);
@@ -199,12 +202,11 @@ function VacationsAdminPage() {
             // } catch (error) {
             //     alert("Ocorreu um erro, tente novamente");
             // }
-            alert("Você selecionou!");
         }
     };
 
     return (
-        <PageContainer onSubmit={handleSubmit}>
+        <PageContainer>
             <IntranetHeaderComponent pageTitle={"FÉRIAS / ADMIN"} />
             <ButtonContainer>
                 <button onClick={()=>setType("employee")}>Por Funcionário</button>
@@ -212,7 +214,7 @@ function VacationsAdminPage() {
                 <button onClick={()=>setType("contract")}>Por Contrato</button>
             </ButtonContainer>
             {type === "employee" ?
-                <FormContainer>
+                <FormContainer onSubmit={handleSubmitEmployee}>
                     <InputArea>
                         <h1>Selecione o nome do funcionário:</h1>
                         <select onChange={handleFormName} id="name" value={employee.name}>
@@ -223,7 +225,7 @@ function VacationsAdminPage() {
                                 </option>
                             ))}
                         </select>
-                        <button> Filtrar </button>
+                        <button type="submit"> Filtrar </button>
                     </InputArea>
                 </FormContainer>
                 : type === "period" ?
@@ -246,23 +248,66 @@ function VacationsAdminPage() {
                         />
                         <button> Filtrar </button>
                     </InputArea>
-                </FormContainer>
-                : type === "contract" &&
-                <FormContainer>
-                    <InputArea>
-                        <h1>Selecione o nome do funcionário:</h1>
-                        <select onChange={handleFormContract} id="contract" value={contractType.contract}>
-                            <option value="">Tipo de Contrato</option>
-                            {types.map(t => (
-                                <option key={t} value={t}>
-                                    {t}
-                                </option>
+                    </FormContainer>
+                    : type === "contract" &&
+                    <FormContainer>
+                        <InputArea>
+                            <h1>Selecione o nome do funcionário:</h1>
+                            <select onChange={handleFormContract} id="contract" value={contractType.contract}>
+                                <option value="">Tipo de Contrato</option>
+                                {types.map(t => (
+                                    <option key={t} value={t}>
+                                        {t}
+                                    </option>
+                                ))}
+                            </select>
+                            <button> Filtrar </button>
+                        </InputArea>
+                    </FormContainer>
+            }
+            {(type === "employee" && selectedEmployee.name !== "") &&
+                <>
+                    <EmployeeInfo>
+                        <h2>
+                            Admissão: {info.admissao}
+                        </h2>
+                        <h2>
+                            Tipo Contrato: {info.tipo}
+                        </h2>
+                        <h2>
+                            Total Anual: {info.annualVacation}
+                        </h2>
+                    </EmployeeInfo>
+                    <VacationPeriod>
+                        <VacationTable>
+                            <div>
+                                {/* INICIO_PERIODO_AQUISITIVO: "09/12/2024",
+          FIM_PERIODO_AQUISITIVO: "05/12/2025",
+          LIMITE_PARA_GOZO: "06/11/2026", */}
+                                <h2>Nome</h2>
+                                <h2>Admissão</h2>
+                                <h2>Início</h2>
+                                <h2>Término</h2>
+                                <h2>Dias Totais</h2>
+                                <h2>Status</h2>
+                                <h2>Ação</h2>
+                            </div>
+                            {selectedEmployee.vacations.map((v, i) => (
+                                <div key={i}>
+                                    <h2>{v.NOME}</h2>
+                                    <h2>{v.DATA_ADMISSAO}</h2>
+                                    <h2>{v.FERIAS_DATA_INICIO}</h2>
+                                    <h2>{v.FERIAS_DATA_TERMINO}</h2>
+                                    <h2>{v.DIAS_FERIAS}</h2>
+                                    <h2>solicitado</h2>
+                                    <h2><button>aprovar</button></h2>
+                                </div>
                             ))}
-                        </select>
-                        <button> Filtrar </button>
-                    </InputArea>
-                </FormContainer>
-                }
+                        </VacationTable>
+                    </VacationPeriod>
+                </>
+            }
+            {( type === "period" || type === "contract" )&&
             <VacationPeriod>
                 <VacationTable>
                     <div>
@@ -275,6 +320,7 @@ function VacationsAdminPage() {
                         <h2>Término</h2>
                         <h2>Dias Totais</h2>
                         <h2>Status</h2>
+                        <h2>Ação</h2>
                     </div>
                     {ferias.map((v, i) => (
                         <div key={i}>
@@ -284,10 +330,12 @@ function VacationsAdminPage() {
                             <h2>{v.FERIAS_DATA_TERMINO}</h2>
                             <h2>{v.DIAS_FERIAS}</h2>
                             <h2>solicitado</h2>
+                            <h2><button>aprovar</button></h2>
                         </div>
                     ))}
                 </VacationTable>
             </VacationPeriod>
+            }
         </PageContainer>
     )
 }
@@ -321,6 +369,17 @@ const InputArea = styled.div`
 `
 
 
+const EmployeeInfo = styled.div`
+    max-width: 30%;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border: 3px solid #343434;
+    border-radius: 30px;
+    gap:10px;
+    padding: 10px 0;
+`
+
 
 const VacationContiner = styled.div`
     width: 65%;
@@ -339,7 +398,6 @@ const VacationContiner = styled.div`
 
 const VacationPeriod = styled.div`
     margin-bottom: 20px;
-    
     justify-content: center;
 `
 
@@ -360,6 +418,8 @@ const VacationTable = styled.div`
     h2{
         text-align: center;
         width: 20%;
+        display: flex;
+        justify-content: center;
     }
 `
 

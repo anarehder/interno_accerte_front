@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import TitleComponent from '../components/TitleComponent';
 import { useState } from 'react';
+import IntranetHeaderComponent from '../components/IntranetHeaderComponent';
 
 function VacationsPage() {
     const info = { "admissao": "15/01/2023", "tipo": "CLT", "annualVacation": "30 dias" };
@@ -91,7 +91,7 @@ function VacationsPage() {
     const feriasDisponiveis = gerarFerias(info.admissao);
     return (
         <PageContainer>
-            <TitleComponent pageTitle={"FÉRIAS"} />
+            <IntranetHeaderComponent pageTitle={"FÉRIAS"} />
             <HeaderContainer>
                 <LogoContainer>
                     {/* <img src={Logo} alt="ACCERTE" /> */}
@@ -168,6 +168,7 @@ const PageContainer = styled.div`
 
 const HeaderContainer = styled.div`
     width: 90%;
+    margin-top: 20px;
     min-height: 20vh;
     gap: 5%;
     justify-content: center;
