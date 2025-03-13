@@ -1,22 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FaMicrosoft } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import Logo from "../assets/LOGO-INTRANET.png";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 function IntranetLoginPage() {
-    const navigate = useNavigate();
-    const { user, login } = useAuth();
-
-    useEffect(() => {
-        // Se o usuário já estiver logado, redireciona para a homepage
-        if (user) {
-            navigate("/intranet/homepage");
-        }
-    }, [user]);
-
+    const { login } = useAuth();
 
     return (
         <Container>
