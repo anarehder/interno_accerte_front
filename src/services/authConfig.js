@@ -1,7 +1,7 @@
 import { PublicClientApplication } from "@azure/msal-browser";
 
 const redirectUri = window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000/' // URI para desenvolvimento
+    ? 'http://localhost:5177/' // URI para desenvolvimento
     : 'https://green-island-0683d5710.6.azurestaticapps.net/'; // URI para produção
     
 export const msalConfig = {

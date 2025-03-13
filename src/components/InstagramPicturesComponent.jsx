@@ -11,7 +11,7 @@ function InstagramPicturesComponent() {
     const [loading, setLoading] = useState(true); 
     const token =  import.meta.env.VITE_API_FACEBOOK_ACCESS_TOKEN;
     const pageId = import.meta.env.VITE_API_FACEBOOK_PAGE_ID;
-    console.log(posts);
+    // console.log(posts);
     useEffect(() => {
         // Função para buscar posts
         const fetchPosts = async () => {
@@ -20,12 +20,14 @@ function InstagramPicturesComponent() {
                     `https://graph.facebook.com/v22.0/${pageId}/posts?fields=message,full_picture,permalink_url&access_token=${token}`
                 );
 
-                const postsData = response.data.data.map((post) => ({
-                    message: post.message,
-                    link: post.permalink_url,
-                    created_time: post.created_time,
-                    full_picture: post.full_picture,
-                }));
+                const postsData = response.data.data
+                    .filter((post) => post.full_picture) // Filtra os posts com foto
+                    .map((post) => ({
+                        message: post.message,
+                        link: post.permalink_url,
+                        created_time: post.created_time,
+                        full_picture: post.full_picture,
+                    }));
 
                 setPosts(postsData);
                 setLoading(false);

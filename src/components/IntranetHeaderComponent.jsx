@@ -6,7 +6,7 @@ function IntranetHeaderComponent({pageTitle}) {
     
     return (
         <PageContainer>
-            <Link to="/">
+            <Link to="/intranet/homepage">
                 <Button> Voltar </Button>
             </Link>
             <TitleContainer>

@@ -6,7 +6,7 @@ function TitleComponent({pageTitle}) {
     
     return (
         <PageContainer>
-            <Link to="/intranet/portal">
+            <Link to="/intranet/homepage">
                 <Button> Voltar </Button>
             </Link>
             <TitleContainer>

@@ -49,8 +49,7 @@ const certifications = {
             { nome: "Oracle Cloud Infrastructure 2024 DevOps Professional", nivel: "IV" },
             { nome: "Oracle Cloud Infrastructure 2023/24 Architect Professional", nivel: "IV" },
             { nome: "Oracle Database Administration 2019 Certified Professional", nivel: "V" },
-            { nome: "Oracle Database Administration I", nivel: "V" },
-            { nome: "Oracle Database Administration II", nivel: "V" },
+            { nome: "Oracle Database Administration I & Oracle Database Administration II", nivel: "V" },
             { nome: "Oracle Exadata Database Machine X9M Implementation Essentials", nivel: "V" }
         ],
         site_treinamentos: "https://education.oracle.com/"

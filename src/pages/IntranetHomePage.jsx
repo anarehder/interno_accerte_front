@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Logo from "../assets/LOGO-INTRANET.png";
@@ -7,13 +7,25 @@ import { FiSearch } from "react-icons/fi";
 import InstagramPicturesComponent from "../components/InstagramPicturesComponent";
 import FooterComponent from "../components/FooterComponent";
 import BannerSlideComponent from "../components/BannerSlideComponent";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate  } from "react-router-dom";
 
 const IntranetHomePage = () => {
+    const { user, logout } = useAuth();
     const [searchBar, setSearchBar] = useState("");
+    const navigate = useNavigate(); 
+    console.log(user);
     const handleSearch = (e) => {
         setSearchBar(e.target.value);
     };
 
+    useEffect(() => {
+        if (!user) {
+          // Se não estiver logado, redireciona para o login
+            navigate("/");
+        }
+      }, [user]);
+    
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         alert(`Buscando por: ${searchBar}`);
@@ -53,7 +65,7 @@ const IntranetHomePage = () => {
             </MenuContainer>
             <BannerContainer>
                 <BannerSlideComponent />
-                <h1> Saiba mais ...  </h1>
+                <h1> Saiba mais ... </h1>
             </BannerContainer>
             <ButtonsContainer>
                 <div>
