@@ -30,36 +30,42 @@ export const AuthProvider = ({ children }) => {
   }, [instance,navigate]);
 
   const login = async () => {
-    try {
-      const loginResponse = await instance.loginPopup({
-                    scopes: ["User.Read"], // Permissão para ler o perfil do usuário
-                });
-      if (loginResponse) {
-        const accessToken = loginResponse.accessToken; // Obtém o token
-        console.log(loginResponse.account);
-        const user_to_save = {
+    const account = instance.getAllAccounts();
+    if (account.length === 0) {
+      try {
+        const loginResponse = await instance.loginPopup({
+          scopes: ["User.Read"], // Permissão para ler o perfil do usuário
+        });
+        if (loginResponse) {
+          const accessToken = loginResponse.accessToken; // Obtém o token
+          console.log(loginResponse.account);
+          const user_to_save = {
             name: loginResponse.account.name,
             email: loginResponse.account.username,
             token: accessToken,
-        };
-        setUser(user_to_save);
-        // Salva os dados do usuário e o token no localStorage
-        localStorage.setItem("user", JSON.stringify(user_to_save));
-        sessionStorage.setItem("user", JSON.stringify(user_to_save));
-        // Redireciona para a página após o login
-        navigate("/intranet/homepage"); // Redireciona para a homepage após login
-      }      
-    } catch (error) {
-      console.error(error);
+          };
+          setUser(user_to_save);
+          // Salva os dados do usuário e o token no localStorage
+          localStorage.setItem("user", JSON.stringify(user_to_save));
+          sessionStorage.setItem("user", JSON.stringify(user_to_save));
+          // Redireciona para a página após o login
+          navigate("/intranet/homepage"); // Redireciona para a homepage após login
+        }
+      } catch (error) {
+        console.error("Erro no login:", error);
+      }
     }
   };
 
   const logout = () => {
-    // msalInstance.logout();
-    setUser(null);
-    sessionStorage.removeItem("user");
-    localStorage.removeItem("user");
-    navigate("/"); // Redireciona para a página de login
+    instance.logoutPopup() // Alternativamente, use logoutRedirect()
+      .then(() => {
+        setUser(null);
+        sessionStorage.removeItem("user");
+        localStorage.removeItem("user");
+        navigate("/"); // Redireciona para a página de login após logout
+      })
+      .catch((error) => console.error("Erro no logout:", error));
   };
 
   return (

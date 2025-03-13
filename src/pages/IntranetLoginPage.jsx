@@ -27,11 +27,6 @@ function IntranetLoginPage() {
             <LoginBox>
                 <Title>FAÇA SEU LOGIN</Title>
                 <Title>PARA ACESSAR</Title>
-                <Link to={'/'} >
-                    <OAuthButton>
-                        <FaMicrosoft /> Entrar com Microsoft sem login
-                    </OAuthButton>
-                </Link>
                 <OAuthButton onClick={login}>
                     <FaMicrosoft /> Entrar com Microsoft
                 </OAuthButton>

@@ -9,6 +9,7 @@ import FooterComponent from "../components/FooterComponent";
 import BannerSlideComponent from "../components/BannerSlideComponent";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate  } from "react-router-dom";
+import { FiLogOut } from "react-icons/fi"; 
 
 const IntranetHomePage = () => {
     const { user, logout } = useAuth();
@@ -34,6 +35,9 @@ const IntranetHomePage = () => {
     
     return (
         <Container>
+            <LogoutButton onClick={logout}>
+                <FiLogOut size={20}/>
+            </LogoutButton>
             <HeaderContainer>
                 <MenuContainer>
                     <div>Fale <br /> Conosco</div>
@@ -105,11 +109,18 @@ const Container = styled.div`
   min-height: 100vh;
   background: #D9D9D9;
   gap: 20px;
+  position: relative;
   font-family: 'Conthrax', sans-serif;
   h1 {
     font-family: 'Conthrax', sans-serif;
   }
 `;
+const LogoutButton = styled.button`
+    position: absolute;
+    top: 25px;
+    left: 15px;
+    font-size: 10px;
+`
 
 const HeaderContainer = styled.div`
     height: 10 0px;
