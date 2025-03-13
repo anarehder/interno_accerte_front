@@ -14,35 +14,35 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate(); 
   const { instance, inProgress } = useMsal();
 
-  // useEffect(() => {
-  //   // Verifica se o usuário está logado na inicialização
-  //   if (user) {
-  //     return
-  //   }
-  //   const account = instance.getAllAccounts()[0];
-  //   if (account) {
-  //     const user_to_save = {
-  //       name: account.name,
-  //       email: account.username,
-  //       token: account.idToken,
-  //     };
-  //     setUser(user_to_save);
-  //     navigate("/intranet/homepage");
-  //   } else {
-  //     navigate("/"); // Redireciona para a página de login se não estiver logado
-  //   }
-  // }, [instance]);
+  useEffect(() => {
+    const account = instance.getAllAccounts()[0];
+    console.log(account);
+    if (account) {
+      const user_to_save = {
+        name: account.name,
+        email: account.username,
+        token: account.idToken, // Pode ser undefined, então talvez precise do acquireTokenSilent()
+      };
+      setUser(user_to_save);
+      localStorage.setItem("user", JSON.stringify(user_to_save));
+      sessionStorage.setItem("user", JSON.stringify(user_to_save));
+      navigate("/intranet/homepage");
+    }
+  }, [instance]);
 
   const login = async () => {
     const account = instance.getAllAccounts();
     if (account.length === 0 && inProgress === "none") {
       try {
-        const loginResponse = await instance.loginPopup({
-          scopes: ["User.Read"], // Permissão para ler o perfil do usuário
-        });
+        const request = { scopes: ["User.Read", "openid", "profile"] };
+        const loginResponse = await msalInstance.loginPopup();
+        await msalInstance.acquireTokenPopup(request);
+        // const loginResponse = await instance.loginRedirect({
+        //   scopes: ["User.Read"], // Permissão para ler o perfil do usuário
+        // });
         if (loginResponse) {
           const accessToken = loginResponse.accessToken; // Obtém o token
-          console.log(loginResponse.account.name);
+          console.log(loginResponse);
           const user_to_save = {
             name: loginResponse.account.name,
             email: loginResponse.account.username,
