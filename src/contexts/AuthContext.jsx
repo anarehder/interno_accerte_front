@@ -14,24 +14,24 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate(); 
   const { instance, inProgress } = useMsal();
 
-  useEffect(() => {
-    // Verifica se o usuário está logado na inicialização
-    if (user) {
-      return
-    }
-    const account = instance.getAllAccounts()[0];
-    if (account) {
-      const user_to_save = {
-        name: account.name,
-        email: account.username,
-        token: account.idToken,
-      };
-      setUser(user_to_save);
-      navigate("/intranet/homepage");
-    } else {
-      navigate("/"); // Redireciona para a página de login se não estiver logado
-    }
-  }, [instance]);
+  // useEffect(() => {
+  //   // Verifica se o usuário está logado na inicialização
+  //   if (user) {
+  //     return
+  //   }
+  //   const account = instance.getAllAccounts()[0];
+  //   if (account) {
+  //     const user_to_save = {
+  //       name: account.name,
+  //       email: account.username,
+  //       token: account.idToken,
+  //     };
+  //     setUser(user_to_save);
+  //     navigate("/intranet/homepage");
+  //   } else {
+  //     navigate("/"); // Redireciona para a página de login se não estiver logado
+  //   }
+  // }, [instance]);
 
   const login = async () => {
     const account = instance.getAllAccounts();
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
         });
         if (loginResponse) {
           const accessToken = loginResponse.accessToken; // Obtém o token
-          console.log(loginResponse.account);
+          console.log(loginResponse.account.name);
           const user_to_save = {
             name: loginResponse.account.name,
             email: loginResponse.account.username,

@@ -15,7 +15,7 @@ const IntranetHomePage = () => {
     const { user, logout } = useAuth();
     const [searchBar, setSearchBar] = useState("");
     const navigate = useNavigate(); 
-    console.log(user);
+
     const handleSearch = (e) => {
         setSearchBar(e.target.value);
     };
@@ -126,7 +126,7 @@ const HeaderContainer = styled.div`
     height: 10 0px;
     background-color: #434343;
     color: white;
-    padding: 15px 10px 5px 10px;
+    padding: 15px 0 5px 0;
     justify-content: center;
 `
 
