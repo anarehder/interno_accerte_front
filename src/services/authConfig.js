@@ -12,6 +12,11 @@ export const msalConfig = {
       cacheLocation: "sessionStorage",
       storeAuthStateInCookie: false,
     },
+    system: {
+        windowHashTimeout: 9000, // Applies just to popup calls - In milliseconds
+        iframeHashTimeout: 9000, // Applies just to silent calls - In milliseconds
+        loadFrameTimeout: 9000, // Applies to both silent and popup calls - In milliseconds
+    },
   };
   
 export const msalInstance = new PublicClientApplication(msalConfig);
