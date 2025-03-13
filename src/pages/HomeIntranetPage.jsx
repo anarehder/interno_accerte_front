@@ -1,31 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FaMicrosoft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Logo from "../assets/LOGO-INTRANET.png";
-// import { useMsal } from "@azure/msal-react";
-import { loginRequest } from "../services/authConfig";
+import { useNavigate } from "react-router-dom";
+import { useMsal } from "@azure/msal-react";
 
 const HomeIntranetPage = () => {
+  const navigate = useNavigate();
+  const { instance, accounts } = useMsal();
+  const [user, setUser] = useState(null);
+  console.log(user);
 
-  // const { instance } = useMsal();
-  const handleLogin = () => {
-    // instance.loginPopup(loginRequest).then((response) => {
-    //   console.log("Usuário autenticado:", response.account);
-    //   fetchUserData(response.account);
-    // }).catch((error) => console.error(error));
-    alert("Entrar com Microsoft");
+  const handleLogin = async () => {
+    try {
+      const loginResponse = await instance.loginPopup({
+        scopes: ["User.Read"], // Permissão para ler o perfil do usuário
+      });
+
+      if (loginResponse) {
+        const accessToken = loginResponse.accessToken; // Obtém o token
+        console.log(loginResponse.account);
+        const user = {
+          name: loginResponse.account.name,
+          email: loginResponse.account.username,
+          token: accessToken,
+        };
+        setUser(user);
+        // Salva os dados do usuário e o token no localStorage
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Redireciona para a página após o login
+        navigate("/intranet/portal");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
-
-  // const fetchUserData = async (account) => {
-  //   const response = await fetch("http://localhost:5000/auth", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ email: account.username }),
-  //   });
-  //   const data = await response.json();
-  //   console.log("Usuário no banco:", data);
-  // };
 
   return (
     <Container>
@@ -41,9 +52,9 @@ const HomeIntranetPage = () => {
             <FaMicrosoft /> Entrar com Microsoft
           </OAuthButton>
         </Link>
-        {/* <OAuthButton onClick={handleLogin}>
-            <FaMicrosoft /> Entrar AQUI com Microsoft
-          </OAuthButton> */}
+        <OAuthButton onClick={handleLogin}>
+          <FaMicrosoft /> Entrar AQUI com Microsoft
+        </OAuthButton>
       </LoginBox>
     </Container>
   );

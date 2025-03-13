@@ -12,8 +12,10 @@ import HomeIntranetPage from "./pages/HomeIntranetPage";
 import IntranetPortalPage from "./pages/IntranetPortalPage";
 import IntranetCertificationsPage from "./pages/IntranetCertificationsPage";
 import VacationsAdminPage from "./pages/VacationsAdminPage";
+import { msalInstance } from "./services/authConfig";
 // import { PublicClientApplication } from "@azure/msal-browser";
-// import { MsalProvider } from "@azure/msal-react";
+import { MsalProvider } from "@azure/msal-react";
+import IntranetHomePage from "./pages/IntranetHomePage";
 // import { msalConfig } from "./services/authConfig";
 
 // const pca = new PublicClientApplication(msalConfig);
@@ -21,11 +23,10 @@ import VacationsAdminPage from "./pages/VacationsAdminPage";
 function App() {
 
   return (
-    <AppContainer>
-      <BrowserRouter>
-        {/* <MsalProvider instance={pca}> */}
+    <MsalProvider instance={msalInstance}>
+      <AppContainer>
+        <BrowserRouter>
           <Routes>
-            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/portal" element={<UserPortalPage />} />
             <Route path="/equipamentos" element={<EquipmentsPage />} />
@@ -37,11 +38,12 @@ function App() {
             <Route path="/intranet/portal" element={<IntranetPortalPage />} />
             <Route path="/intranet/certificacoes" element={<IntranetCertificationsPage />} />
             <Route path="/intranet/ferias" element={<VacationsPage />} />
-            <Route path="/intranet/ferias/admin" element={<VacationsAdminPage />} />
+            <Route path="/intranet/admin" element={<VacationsAdminPage />} />
+            <Route path="/" element={<IntranetHomePage />} />
           </Routes>
-        {/* </MsalProvider> */}
-      </BrowserRouter >
-    </AppContainer >
+        </BrowserRouter >
+      </AppContainer >
+    </MsalProvider>
   )
 }
 

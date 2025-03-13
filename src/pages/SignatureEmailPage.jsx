@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import backgroundSignature from "../assets/FUNDO_SIGNATURE.png"; 
 import logo from "../assets/LOGO_PNG.png"
 import { Link } from 'react-router-dom';
+import IntranetHeaderComponent from '../components/IntranetHeaderComponent';
 
 function SignatureEmailPage() {
     const [form, setForm] = useState({
@@ -98,17 +99,7 @@ function SignatureEmailPage() {
 
     return (
         <PageContainer>
-            <Link to="/portal">
-                <Button> Voltar </Button>
-            </Link>
-            <TitleContainer>
-                <img src={logo} alt="Logo"/>
-                <div>
-                <p>PORTAL ACCERTE</p>
-                ASSINATURA DE E-MAIL
-                </div>
-                
-            </TitleContainer>
+            <IntranetHeaderComponent pageTitle={"ASSINATURA"}/>
             <FormContainer>
                 <h2>Preencha o Formulário</h2>
                 <form onSubmit={handleSubmit}>
@@ -189,11 +180,6 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 30px;
-    a {
-        position: absolute;
-        left: 2%;
-        top: 3%;
-    }
 `
 
 const TitleContainer = styled.div`

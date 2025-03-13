@@ -10,7 +10,7 @@ import { IoIosArrowDropright } from "react-icons/io";
 
 import PieChart from "../assets/PIE_CHART.png";
 import InstagramPicturesComponent from "../components/InstagramPicturesComponent";
-const IntranetPortalPage = () => {
+const IntranetHomePage = () => {
     return (
         <Container>
             <HeaderContainer>
@@ -118,7 +118,7 @@ const IntranetPortalPage = () => {
     );
 };
 
-export default IntranetPortalPage;
+export default IntranetHomePage;
 
 const Container = styled.div`
   display: flex;
