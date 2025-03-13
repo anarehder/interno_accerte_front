@@ -31,7 +31,7 @@ const HomeIntranetPage = () => {
         localStorage.setItem("user", JSON.stringify(user));
 
         // Redireciona para a página após o login
-        navigate("/intranet/portal");
+        navigate("/");
       }
     } catch (error) {
       console.error(error);
@@ -47,7 +47,7 @@ const HomeIntranetPage = () => {
       <LoginBox>
         <Title>FAÇA SEU LOGIN</Title>
         <Title>PARA ACESSAR</Title>
-        <Link to={'/intranet/portal'} >
+        <Link to={'/'} >
           <OAuthButton onClick={handleLogin}>
             <FaMicrosoft /> Entrar com Microsoft
           </OAuthButton>

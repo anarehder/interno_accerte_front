@@ -16,7 +16,7 @@ function IntranetCertificationsPage() {
 
     return (
         <PageContainer>
-            <Link to="/intranet/portal">
+            <Link to="/">
                 <ReturnButton> Voltar </ReturnButton>
             </Link>
             <TitleContainer>
