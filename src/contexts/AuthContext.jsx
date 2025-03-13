@@ -9,29 +9,33 @@ const AuthContext = createContext();
 
 // Provedor do contexto
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(storedUser || null);
   const navigate = useNavigate(); 
-  const { instance, accounts } = useMsal();
+  const { instance, inProgress } = useMsal();
 
   useEffect(() => {
     // Verifica se o usuário está logado na inicialização
+    if (user) {
+      return
+    }
     const account = instance.getAllAccounts()[0];
     if (account) {
       const user_to_save = {
         name: account.name,
         email: account.username,
         token: account.idToken,
-    };
+      };
       setUser(user_to_save);
       navigate("/intranet/homepage");
     } else {
       navigate("/"); // Redireciona para a página de login se não estiver logado
     }
-  }, [instance,navigate]);
+  }, [instance]);
 
   const login = async () => {
     const account = instance.getAllAccounts();
-    if (account.length === 0) {
+    if (account.length === 0 && inProgress === "none") {
       try {
         const loginResponse = await instance.loginPopup({
           scopes: ["User.Read"], // Permissão para ler o perfil do usuário
@@ -54,6 +58,8 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error("Erro no login:", error);
       }
+    } else {
+      console.log("algo deu errado ao tentar abrir o login");
     }
   };
 

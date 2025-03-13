@@ -27,7 +27,7 @@ function BannerSlideComponent() {
 
     return (
         <SliderContainer>
-            <PrevNextButton left onClick={prevSlide}>&#10094;</PrevNextButton>
+            <PrevNextButton onClick={prevSlide}>&#10094;</PrevNextButton>
             <Slide style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
                 {images.map((image, index) => (
                     <SlideImage key={index} src={image} alt={`Slide ${index}`} />
@@ -73,10 +73,16 @@ const PrevNextButton = styled.button`
   font-size: 20px;
   border-radius: 5px;
   z-index: 10;
+  &:first-of-type{
+    left: 10px;
+  }
+  &:not(:first-of-type) {
+    right: 10px;
+  }
 
   &:hover {
     background: rgba(0, 0, 0, 0.8);
   }
 
-  ${({ left }) => (left ? "left: 10px;" : "right: 10px;")}
+  
 `;
