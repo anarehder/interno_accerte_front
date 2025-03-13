@@ -6,6 +6,7 @@ import LogoPequena from "../assets/LOGO_PNG.png"
 import { FiSearch } from "react-icons/fi";
 import InstagramPicturesComponent from "../components/InstagramPicturesComponent";
 import FooterComponent from "../components/FooterComponent";
+import BannerSlideComponent from "../components/BannerSlideComponent";
 
 const IntranetHomePage = () => {
     const [searchBar, setSearchBar] = useState("");
@@ -25,7 +26,7 @@ const IntranetHomePage = () => {
                 <MenuContainer>
                     <div>Fale <br /> Conosco</div>
                     <div>Canal Denúncias (Compliance)</div>
-                    <div>Abertura Chamados (JIRA)</div>
+                    <div><a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">Abertura Chamados (JIRA)</a></div>
                     <div><Link to="/assinatura">Assinatura <br /> de E-mail </Link></div>
                     <form onSubmit={handleSearchSubmit}>
                     <input
@@ -40,49 +41,40 @@ const IntranetHomePage = () => {
                 </MenuContainer>
             </HeaderContainer>
             <LogoContainer>
-            <img src={Logo} alt="ACCERTE" />
-            <h1>INTRANET</h1>
+                <img src={Logo} alt="ACCERTE" />
+                <h1>INTRANET</h1>
             </LogoContainer>
-            
             <MenuContainer>
-                    <h1>On-boarding</h1>
-                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank">
-                    <h1>Políticas</h1></a>
-                    <Link to={"/intranet/certificacoes"}>
-                        <h1>Certificações</h1>
-                    </Link>
-                    <h1>RH</h1>
-                </MenuContainer>
+                <div>Sobre Nós</div>
+                <div>Para Sua Informação</div>
+                <div>Agenda</div>
+                <div>Links Rápidos</div>
+                <div>Gente e Gestão</div>
+            </MenuContainer>
+            <BannerContainer>
+                <BannerSlideComponent />
+                <h1> Saiba mais ...  </h1>
+            </BannerContainer>
             <ButtonsContainer>
                 <div>
-                    <Link to="/intranet/ferias">
-                        Férias
-                    </Link>
+                <Link to={"/intranet/certificacoes"}> Certificações</Link>
                 </div>
                 <div>
-                    <Link to="/assinatura">
-                        Assinatura <br />E-mail
-                    </Link>
+                <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank">Políticas </a>
                 </div>
                 <div>
-                    Documentos
-                </div>
-                <div>
-                    <a href="https://accerte.sharepoint.com/:x:/r/sites/AccerteTecnologiadaInformaoLtda/_layouts/15/Doc.aspx?sourcedoc=%7B0F0F31DB-FC4D-4C65-B742-0CA1F231BF3B%7D&file=Escala%20Semanal.xlsx&action=default&mobileredirect=true" target="_blank">
-                    Escala Semanal
+                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh"target="_blank">
+                    Escritório <br /> de Processos
                     </a>
                 </div>
                 <div>
-                    Planilhas
+                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EotPeOrtrE5Phg-nuwjIersBtwAaVDWLJK4Vt-5eMjhr1A?e=EsVg27" target="_blank">Compliance <br /> (Código de ética <br/> e Conduta)</a>
                 </div>
                 <div>
-                    Documentos
+                    Pesquisa <br /> e Inovação
                 </div>
                 <div>
-                    Planilhas
-                </div>
-                <div>
-                    Documentos
+                    Marketing
                 </div>
                 
             </ButtonsContainer>
@@ -100,7 +92,7 @@ const Container = styled.div`
   align-items: center;
   min-height: 100vh;
   background: #D9D9D9;
-  gap: 10px;
+  gap: 20px;
   font-family: 'Conthrax', sans-serif;
   h1 {
     font-family: 'Conthrax', sans-serif;
@@ -113,7 +105,6 @@ const HeaderContainer = styled.div`
     color: white;
     padding: 15px 10px 5px 10px;
     justify-content: center;
-    
 `
 
 const MenuContainer = styled.div`
@@ -155,6 +146,7 @@ const MenuContainer = styled.div`
 
 const LogoContainer = styled.div`
     width: 90%;
+    height: 90px;
     text-align: center;
     position: relative;
     align-items: center;
@@ -168,74 +160,34 @@ const LogoContainer = styled.div`
 `
 
 const BannerContainer = styled.div`
-    background-color: red;
+    width: 90%;
+    gap: 50px;
+    margin-top: 10px;
 `
 
 const ButtonsContainer = styled.div`
     width: 90%;
-    height: 30vh;
-    font-size: 28px;
-    color: white;
+    font-size: 22px;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 5%;
+    gap: 15px;
+    margin-bottom: 20px;
     div{
-        background-color: #20273E;
-        width: 20%;
-        height: 45%;
+        background-color:;
+        width: 25%;
+        height: 100px;
         border-radius: 30px;
         align-items: center;
         justify-content: center;
         text-align: center;
+        border: 3px solid  #20273E;
         a {
             height: 100%;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-    }
-`
-
-const ActivitiesContainer = styled.div`
-    width: 90%;
-    flex-direction: column;
-    margin-bottom: 20px;
-    gap: 40px;
-    h2 {
-        display: flex;
-        align-items: center;
-        font-size: 24px;
-        svg {
-            margin-right: 10px;
-        }
-    }
-    .UpContainer {
-        align-items: center;
-        justify-content: center;
-        gap: 50px;
-        img {
-                width: 65%; 
-            }
-    }
-    .ButtonsContainer {
-        flex-direction: column;
-        gap: 25px;
-        width: 200px;
-        button{
-            height: 100px;
-        }
-    }
-
-    .ChartsContainer {
-        display: flex;
-        gap: 25px;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-        img{
-            width: 300px;
         }
     }
 `
