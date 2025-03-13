@@ -1,9 +1,6 @@
 import { PublicClientApplication } from "@azure/msal-browser";
 
-const isLocal = window.location.hostname.includes("localhost");
-const redirectUri = isLocal 
-  ? "http://localhost:5177/" 
-  : `https://green-island-0683d5710.6.azurestaticapps.net/`;
+const redirectUri = import.meta.env.VITE_REDIRECT_URI;
     
 export const msalConfig = {
     auth: {
