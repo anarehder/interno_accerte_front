@@ -14,8 +14,8 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate(); 
   const { instance, inProgress } = useMsal();
 
-  useEffect(() => {
-    const account = instance.getAllAccounts()[0];
+  useEffect(async () => {
+    const account = await instance.getAllAccounts()[0];
     console.log(account);
     if (account) {
       const user_to_save = {
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   }, [instance]);
 
   const login = async () => {
-    const account = instance.getAllAccounts();
+    const account = await instance.getAllAccounts();
     if (account.length === 0 && inProgress === "none") {
       try {
         const request = { scopes: ["User.Read", "openid", "profile"] };
