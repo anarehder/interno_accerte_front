@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Verifica se o usuário está logado na inicialização
-    const account = msalInstance.getAllAccounts()[0];
+    const account = instance.getAllAccounts()[0];
     if (account) {
       const user_to_save = {
         name: account.name,
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       navigate("/"); // Redireciona para a página de login se não estiver logado
     }
-  }, [msalInstance,history]);
+  }, [instance,navigate]);
 
   const login = async () => {
     try {
