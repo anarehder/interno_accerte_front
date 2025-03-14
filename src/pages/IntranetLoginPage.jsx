@@ -1,11 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { FaMicrosoft } from "react-icons/fa";
 import Logo from "../assets/LOGO-INTRANET.png";
-import { useAuth } from "../contexts/AuthContext";
+import { useMsal } from "@azure/msal-react";
+import { useNavigate } from "react-router-dom";
 
 function IntranetLoginPage() {
-    const { login } = useAuth();
+    const { instance } = useMsal();
+    const navigate = useNavigate();
+
+    const checkLogin = async () => {
+      await instance.initialize(); 
+      await instance.handleRedirectPromise();
+      const accounts = instance.getAllAccounts();
+      if (accounts.length > 0) {
+        navigate("/intranet/homepage");
+      } else {
+        return accounts
+      }
+    };
+
+    useEffect(() => {
+      const accounts = instance.getAllAccounts();
+      if (accounts.length > 0) {
+        navigate("/intranet/homepage");
+      }
+      checkLogin();
+    }, [instance, navigate]);
+
+    const handleLogin = async () => {
+      const accounts = await checkLogin();
+      if (accounts.length === 0) {
+        // No user signed in
+        instance.loginRedirect();
+      }
+    };
 
     return (
         <Container>
@@ -16,7 +45,7 @@ function IntranetLoginPage() {
             <LoginBox>
                 <Title>FAÇA SEU LOGIN</Title>
                 <Title>PARA ACESSAR</Title>
-                <OAuthButton onClick={login}>
+                <OAuthButton onClick={handleLogin}>
                     <FaMicrosoft /> Entrar com Microsoft
                 </OAuthButton>
             </LoginBox>

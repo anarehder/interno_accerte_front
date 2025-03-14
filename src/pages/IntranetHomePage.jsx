@@ -10,9 +10,11 @@ import BannerSlideComponent from "../components/BannerSlideComponent";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate  } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi"; 
+import { useMsal } from "@azure/msal-react";
 
 const IntranetHomePage = () => {
-    const { user, logout } = useAuth();
+    const { instance } = useMsal();
+    const { user, setUser } = useAuth();
     const [searchBar, setSearchBar] = useState("");
     const navigate = useNavigate(); 
 
@@ -21,11 +23,20 @@ const IntranetHomePage = () => {
     };
 
     useEffect(() => {
-        if (!user) {
-          // Se não estiver logado, redireciona para o login
+        const accounts = instance.getAllAccounts();
+        if (accounts.length > 0) {
+          const account = accounts[0];
+          const user_to_save = {
+                  name: account.name,
+                  email: account.username,
+                  token: account.idToken, // Pode ser undefined, então talvez precise do acquireTokenSilent()
+                };
+                setUser(user_to_save);
+                localStorage.setItem("user", JSON.stringify(user_to_save));
+        } else {
             navigate("/");
         }
-      }, [user]);
+      }, [instance, setUser]);
     
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -33,6 +44,16 @@ const IntranetHomePage = () => {
         setSearchBar("");
     };
     
+    const logout = () => {
+          instance.logoutPopup() // Alternativamente, use logoutRedirect()
+            .then(() => {
+              setUser(null);
+              sessionStorage.removeItem("user");
+              localStorage.removeItem("user");
+              navigate("/"); // Redireciona para a página de login após logout
+            })
+            .catch((error) => console.error("Erro no logout:", error));
+        };
     return (
         <Container>
             <LogoutButton onClick={logout}>

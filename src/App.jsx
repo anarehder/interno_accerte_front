@@ -21,7 +21,6 @@ function App() {
 
   return (
     <MsalProvider instance={msalInstance}>
-
       <AppContainer>
         <BrowserRouter>
           <AuthProvider>
