@@ -10,6 +10,8 @@ function IntranetLoginPage() {
     const navigate = useNavigate();
 
     const checkLogin = async () => {
+      console.log("MSAL Instance:", instance);
+      console.log("Redirect URI:", instance?.controller?.config?.auth?.redirectUri);
       await instance.initialize(); 
       await instance.handleRedirectPromise();
       const accounts = instance.getAllAccounts();
