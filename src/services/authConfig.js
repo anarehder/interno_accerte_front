@@ -6,11 +6,11 @@ export const msalConfig = {
     auth: {
       authority: import.meta.env.VITE_API_URL,
       clientId: import.meta.env.VITE_APP_CLIENT,
-      redirectUri: "/",
+      redirectUri: window.location.origin,
     },
     cache: {
       cacheLocation: "sessionStorage",
-      storeAuthStateInCookie: false,
+      storeAuthStateInCookie: true,
     },
     system: {
         windowHashTimeout: 9000, // Applies just to popup calls - In milliseconds
