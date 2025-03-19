@@ -9,12 +9,20 @@ import FooterComponent from "../components/FooterComponent";
 import BannerSlideComponent from "../components/BannerSlideComponent";
 import { useNavigate  } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi"; 
+import { useIsAuthenticated } from '@azure/msal-react';
 
 const IntranetHomePage = () => {
     // const { instance } = useMsal();
     // const { user, setUser } = useAuth();
+    // const isAuthenticated = useIsAuthenticated();
     const [searchBar, setSearchBar] = useState("");
     // const navigate = useNavigate(); 
+
+    // useEffect(() => {
+    //       if (!isAuthenticated) {
+    //         navigate("/intranet/login");
+    //       }
+    //     }, [isAuthenticated, navigate]);
 
     const handleSearch = (e) => {
         setSearchBar(e.target.value);
@@ -91,6 +99,9 @@ const IntranetHomePage = () => {
             <BannerContainer>
                 <BannerSlideComponent />
                 <h1> Saiba mais ... </h1>
+                {/* <h1>{account[0]?.name}</h1> */}
+                {/* <h1>First Name: {graphData?.givenName}</h1> */}
+                {/* <h1>Emaile: {graphData?.userPrincipalName}</h1> */}
             </BannerContainer>
             <ButtonsContainer>
                 <div>

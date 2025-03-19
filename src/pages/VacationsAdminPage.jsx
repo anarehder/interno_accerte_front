@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import TitleComponent from '../components/TitleComponent';
 import { useState } from 'react';
 import IntranetHeaderComponent from '../components/IntranetHeaderComponent';
+import NewVacationComponent from '../components/NewVacationComponent';
 
 function VacationsAdminPage() {
     const info = { "admissao": "15/01/2023", "tipo": "CLT", "annualVacation": "30 dias" };
@@ -171,7 +172,7 @@ function VacationsAdminPage() {
     const [interval, setInterval] = useState({start:"", end:""});
     const [contractType, setContractType] = useState({contract:""});
     const [type, setType] = useState(null);
-
+    const [index, setIndex] = useState(null);
     const handleFormName = (e) => {
         e.preventDefault();
         setEmployee((prevForm) => ({ ...prevForm, [e.target.id]: e.target.value }));
@@ -205,13 +206,51 @@ function VacationsAdminPage() {
         }
     };
 
+    const gerarFerias = (admissao) => {
+        // Transformar a data de admissão em um objeto Date
+        const [dia, mes, ano] = admissao.split('/');
+        const dataAdmissao = new Date(mes + '/' + dia + '/' + ano);
+
+        // Obter a data atual
+        const dataAtual = new Date();
+
+        // Calcular o próximo ano (ano seguinte)
+        const ferias = [];
+
+        // Gerar período de férias até o ano atual
+        while (dataAdmissao <= dataAtual) {
+            let fimFerias = new Date(dataAdmissao);
+            fimFerias.setFullYear(fimFerias.getFullYear() + 1);
+            fimFerias.setDate(fimFerias.getDate() - 1);
+            let limiteFerias = new Date(dataAdmissao);
+            limiteFerias.setFullYear(fimFerias.getFullYear() + 2);
+            limiteFerias.setDate(fimFerias.getDate() - 31);
+
+            ferias.push({
+                inicio: dataAdmissao.toLocaleDateString(),
+                fim: fimFerias.toLocaleDateString(),
+                limite: limiteFerias.toLocaleDateString(),
+            });
+
+            // Incrementar a data de admissão para o próximo período
+            dataAdmissao.setFullYear(dataAdmissao.getFullYear() + 1);
+        }
+
+        return ferias;
+    };
+
+    const feriasDisponiveis = gerarFerias(info.admissao);
+    console.log(feriasDisponiveis);
+    console.log(index);
+    // console.log(feriasDisponiveis[index-1]?.inicio);
     return (
         <PageContainer>
             <IntranetHeaderComponent pageTitle={"FÉRIAS / ADMIN"} />
             <ButtonContainer>
-                <button onClick={()=>setType("employee")}>Por Funcionário</button>
-                <button onClick={()=>setType("period")}>Por Período</button>
-                <button onClick={()=>setType("contract")}>Por Contrato</button>
+                <button onClick={() => setType("employee")}>Por Funcionário</button>
+                <button onClick={() => setType("period")}>Por Período</button>
+                <button onClick={() => setType("contract")}>Por Contrato</button>
+                <button onClick={() => setType("newVacation")}>Agendar Férias</button>
             </ButtonContainer>
             {type === "employee" ?
                 <FormContainer onSubmit={handleSubmitEmployee}>
@@ -219,8 +258,8 @@ function VacationsAdminPage() {
                         <h1>Selecione o nome do funcionário:</h1>
                         <select onChange={handleFormName} id="name" value={employee.name}>
                             <option value="">Nome do Funcionário</option>
-                            {ferias.map(f => (
-                                <option key={f.NOME} value={f.NOME}>
+                            {ferias.map((f, index) => (
+                                <option key={index} value={f.NOME}>
                                     {f.NOME}
                                 </option>
                             ))}
@@ -229,41 +268,58 @@ function VacationsAdminPage() {
                     </InputArea>
                 </FormContainer>
                 : type === "period" ?
-                <FormContainer>
-                    <h1>Selecione o período</h1>
-                    <InputArea>
-                        <h1>Início:</h1>
-                        <input
-                            type="date"
-                            id="start"
-                            value={interval.start}
-                            onChange={handleFormInterval}
-                        />
-                        <h1>Fim:</h1>
-                        <input
-                            type="date"
-                            id="end"
-                            value={interval.end}
-                            onChange={handleFormInterval}
-                        />
-                        <button> Filtrar </button>
-                    </InputArea>
-                    </FormContainer>
-                    : type === "contract" &&
                     <FormContainer>
+                        <h1>Selecione o período</h1>
                         <InputArea>
-                            <h1>Selecione o nome do funcionário:</h1>
-                            <select onChange={handleFormContract} id="contract" value={contractType.contract}>
-                                <option value="">Tipo de Contrato</option>
-                                {types.map(t => (
-                                    <option key={t} value={t}>
-                                        {t}
-                                    </option>
-                                ))}
-                            </select>
+                            <h1>Início:</h1>
+                            <input
+                                type="date"
+                                id="start"
+                                value={interval.start}
+                                onChange={handleFormInterval}
+                            />
+                            <h1>Fim:</h1>
+                            <input
+                                type="date"
+                                id="end"
+                                value={interval.end}
+                                onChange={handleFormInterval}
+                            />
                             <button> Filtrar </button>
                         </InputArea>
                     </FormContainer>
+                    : type === "contract" ?
+                        <FormContainer>
+                            <InputArea>
+                                <h1>Selecione o nome do funcionário:</h1>
+                                <select onChange={handleFormContract} id="contract" value={contractType.contract}>
+                                    <option value="">Tipo de Contrato</option>
+                                    {types.map(t => (
+                                        <option key={t} value={t}>
+                                            {t}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button> Filtrar </button>
+                            </InputArea>
+                        </FormContainer>
+                        : type === "newVacation" &&
+                        <>
+                            <FormContainer onSubmit={handleSubmitEmployee}>
+                                <InputArea>
+                                    <h1>Selecione o nome do funcionário:</h1>
+                                    <select onChange={handleFormName} id="name" value={employee.name}>
+                                        <option value="">Nome do Funcionário</option>
+                                        {ferias.map((f, index) => (
+                                            <option key={index} value={f.NOME}>
+                                                {f.NOME}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <button type="submit"> Filtrar </button>
+                                </InputArea>
+                            </FormContainer>
+                        </>
             }
             {(type === "employee" && selectedEmployee.name !== "") &&
                 <>
@@ -307,34 +363,49 @@ function VacationsAdminPage() {
                     </VacationPeriod>
                 </>
             }
-            {( type === "period" || type === "contract" )&&
-            <VacationPeriod>
-                <VacationTable>
-                    <div>
-          {/* INICIO_PERIODO_AQUISITIVO: "09/12/2024",
+            {(type === "period" || type === "contract") &&
+                <VacationPeriod>
+                    <VacationTable>
+                        <div>
+                            {/* INICIO_PERIODO_AQUISITIVO: "09/12/2024",
           FIM_PERIODO_AQUISITIVO: "05/12/2025",
           LIMITE_PARA_GOZO: "06/11/2026", */}
-                        <h2>Nome</h2>
-                        <h2>Admissão</h2>
-                        <h2>Início</h2>
-                        <h2>Término</h2>
-                        <h2>Dias Totais</h2>
-                        <h2>Status</h2>
-                        <h2>Ação</h2>
-                    </div>
-                    {ferias.map((v, i) => (
-                        <div key={i}>
-                            <h2>{v.NOME}</h2>
-                            <h2>{v.DATA_ADMISSAO}</h2>
-                            <h2>{v.FERIAS_DATA_INICIO}</h2>
-                            <h2>{v.FERIAS_DATA_TERMINO}</h2>
-                            <h2>{v.DIAS_FERIAS}</h2>
-                            <h2>solicitado</h2>
-                            <h2><button>aprovar</button></h2>
+                            <h2>Nome</h2>
+                            <h2>Admissão</h2>
+                            <h2>Início</h2>
+                            <h2>Término</h2>
+                            <h2>Dias Totais</h2>
+                            <h2>Status</h2>
+                            <h2>Ação</h2>
                         </div>
-                    ))}
-                </VacationTable>
-            </VacationPeriod>
+                        {ferias.map((v, i) => (
+                            <div key={i}>
+                                <h2>{v.NOME}</h2>
+                                <h2>{v.DATA_ADMISSAO}</h2>
+                                <h2>{v.FERIAS_DATA_INICIO}</h2>
+                                <h2>{v.FERIAS_DATA_TERMINO}</h2>
+                                <h2>{v.DIAS_FERIAS}</h2>
+                                <h2>solicitado</h2>
+                                <h2><button>aprovar</button></h2>
+                            </div>
+                        ))}
+                    </VacationTable>
+                </VacationPeriod>
+            }
+            {(type === "newVacation" && selectedEmployee.name !== "") &&
+                <VacationContainer>
+                    <div>
+                        <h2>Selecione um Período Aquisitivo de Férias:</h2>
+                        {feriasDisponiveis.map((periodo, index) => (
+                            <button key={index} onClick={() => setIndex(index)}>
+                                {`${periodo.inicio} -- ${periodo.fim}`}
+                            </button>
+                        ))}
+                    </div>
+                </VacationContainer>
+            }
+            {(type === "newVacation" && selectedEmployee.name !== "" && index >= 0) &&
+                <NewVacationComponent name={selectedEmployee.name} periodoAquisitivo={feriasDisponiveis[index]} />
             }
         </PageContainer>
     )
@@ -368,7 +439,6 @@ const InputArea = styled.div`
     }
 `
 
-
 const EmployeeInfo = styled.div`
     max-width: 30%;
     flex-direction: column;
@@ -380,20 +450,19 @@ const EmployeeInfo = styled.div`
     padding: 10px 0;
 `
 
-
-const VacationContiner = styled.div`
-    width: 65%;
+const VacationContainer = styled.div`
     min-width: 700px;
-    flex-direction: column;
     gap: 30px;
-    div:first-of-type {
-        margin-bottom: 20px;
+    align-items: center;
+    
+    h2{
+        width: 200px;
     }
-    div {
-        display: flex;
-        justify-content: center;
+    div{
         gap: 30px;
+        justify-content: center;
     }
+    
 `
 
 const VacationPeriod = styled.div`

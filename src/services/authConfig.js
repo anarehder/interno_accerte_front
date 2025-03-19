@@ -13,8 +13,8 @@ import { LogLevel } from "@azure/msal-browser";
 
 export const msalConfig = {
     auth: {
-        clientId: process.env.REACT_APP_CLIENT,
-        authority: process.env.REACT_APP_API_URL,
+        clientId: import.meta.env.REACT_APP_CLIENT,
+        authority: import.meta.env.REACT_APP_API_URL,
         redirectUri: window.location.origin,
     },
     cache: {

@@ -1,41 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
+import { useMsal } from "@azure/msal-react";
+import { useIsAuthenticated } from '@azure/msal-react';
+import { useNavigate  } from "react-router-dom";
 import { FaMicrosoft } from "react-icons/fa";
 import Logo from "../assets/LOGO-INTRANET.png";
 import { Link } from 'react-router-dom';
+import { loginRequest } from "../services/authConfig";
 
 function IntranetLoginPage() {
-    // const { instance } = useMsal();
-    // const navigate = useNavigate();
+    const { instance } = useMsal();
+    const isAuthenticated = useIsAuthenticated();
+    const navigate = useNavigate(); 
+    
+    useEffect(() => {
+      if (isAuthenticated) {
+        navigate("/intranet/homepage");
+      }
+    }, [isAuthenticated, navigate]);
 
-    // const checkLogin = async () => {
-    //   console.log("MSAL Instance:", instance);
-    //   console.log("Redirect URI:", instance?.controller?.config?.auth?.redirectUri);
-    //   await instance.initialize(); 
-    //   await instance.handleRedirectPromise();
-    //   const accounts = instance.getAllAccounts();
-    //   if (accounts.length > 0) {
-    //     navigate("/intranet/homepage");
-    //   } else {
-    //     return accounts
-    //   }
-    // };
-
-    // useEffect(() => {
-    //   const accounts = instance.getAllAccounts();
-    //   if (accounts.length > 0) {
-    //     navigate("/intranet/homepage");
-    //   }
-    //   checkLogin();
-    // }, [instance, navigate]);
-
-    // const handleLogin = async () => {
-    //   const accounts = await checkLogin();
-    //   if (accounts.length === 0) {
-    //     // No user signed in
-    //     instance.loginRedirect();
-    //   }
-    // };
+    const handleLogin = (loginType) => {
+      if (loginType === "popup") {
+          instance.loginPopup(loginRequest).catch(e => {
+              console.log(e);
+          });
+      } else if (loginType === "redirect") {
+        instance.loginRedirect(loginRequest).catch(e => {
+              console.log(e);
+          });
+      }
+    }
 
     return (
         <Container>
@@ -51,9 +45,12 @@ function IntranetLoginPage() {
                     <FaMicrosoft /> Entrar com Microsoft
                 </OAuthButton>
                 </Link>
-                {/* <OAuthButton onClick={handleLogin}>
-                    <FaMicrosoft /> Entrar com Microsoft
-                </OAuthButton> */}
+                <OAuthButton onClick={() => handleLogin("popup")}>
+                    <FaMicrosoft /> Entrar com Microsoft - PopUp
+                </OAuthButton>
+                <OAuthButton onClick={() => handleLogin("redirect")}>
+                    <FaMicrosoft /> Entrar com Microsoft - Redirect
+                </OAuthButton>
             </LoginBox>
         </Container>
     );

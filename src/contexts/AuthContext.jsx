@@ -1,16 +1,16 @@
-// src/context/AuthContext.js
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { msalInstance } from "../services/authConfig"; 
-import { useNavigate  } from "react-router-dom";
-import { useMsal } from "@azure/msal-react";
+// // src/context/AuthContext.js
+// import React, { createContext, useState, useEffect, useContext } from "react";
+// import { loginRequest, msalInstance } from "../services/authConfig"; 
+// import { useNavigate  } from "react-router-dom";
+// import { useMsal } from "@azure/msal-react";
 
-// Criando o contexto
-const AuthContext = createContext();
+// // Criando o contexto
+// const AuthContext = createContext();
 
-// Provedor do contexto
-export const AuthProvider = ({ children }) => {
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const [user, setUser] = useState(storedUser || null);
+// // Provedor do contexto
+// export const AuthProvider = ({ children }) => {
+//   const storedUser = JSON.parse(localStorage.getItem("user"));
+//   const [user, setUser] = useState(storedUser || null);
   // const navigate = useNavigate(); 
   // const { instance, inProgress } = useMsal();
 
@@ -28,8 +28,33 @@ export const AuthProvider = ({ children }) => {
   //     sessionStorage.setItem("user", JSON.stringify(user_to_save));
   //     navigate("/intranet/homepage");
   //   }
-  // }, [instance]);
+  // // }, [instance]);
+  // const [graphData, setGraphData] = useState(null);
+  // const { instance, accounts } = useMsal();
 
+  // function RequestProfileData() {
+  //   // Silently acquires an access token which is then attached to a request for MS Graph data
+  //   instance
+  //       .acquireTokenSilent({
+  //           ...loginRequest,
+  //           account: accounts[0],
+  //       })
+  //       .then((response) => {
+  //           callMsGraph(response.accessToken).then((response) => setGraphData(response));
+  //       });
+  // }
+  // RequestProfileData();
+  // const handleLogin = (loginType) => {
+  //       if (loginType === "popup") {
+  //           instance.loginPopup(loginRequest).catch(e => {
+  //               console.log(e);
+  //           });
+  //       } else if (loginType === "redirect") {
+  //         instance.loginRedirect(loginRequest).catch(e => {
+  //               console.log(e);
+  //           });
+  //       }
+  //     }
   // const login = async () => {
   //   const account = instance.getAllAccounts();
   //   if (account.length === 0 && inProgress === "none") {
@@ -74,15 +99,15 @@ export const AuthProvider = ({ children }) => {
   //     .catch((error) => console.error("Erro no logout:", error));
   // };
 
-  return (
-    // <AuthContext.Provider value={{ user, login, logout }}>
-    <AuthContext.Provider value={{ user, setUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+//   return (
+//     // <AuthContext.Provider value={{ user, login, logout }}>
+//     <AuthContext.Provider value={{ user, setUser }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
 
-// Hook para acessar o contexto
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+// // Hook para acessar o contexto
+// export const useAuth = () => {
+//   return useContext(AuthContext);
+// };
