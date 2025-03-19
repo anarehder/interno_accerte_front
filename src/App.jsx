@@ -2,11 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import styled from 'styled-components'
 import VacationsPage from "./pages/VacationsPage";
-import IntranetPortalPage from "./pages/IntranetPortalPage";
 import IntranetCertificationsPage from "./pages/IntranetCertificationsPage";
 import VacationsAdminPage from "./pages/VacationsAdminPage";
 import IntranetHomePage from "./pages/IntranetHomePage";
 import IntranetLoginPage from "./pages/IntranetLoginPage";
+import EquipmentsPage from "./pages/EquipmentsPage";
 
 function App() {
   const [graphData, setGraphData] = useState(null);
@@ -14,7 +14,7 @@ function App() {
     <AppContainer>
       <BrowserRouter>
         <Routes>
-          <Route path="/intranet/portal" element={<IntranetPortalPage />} />
+          <Route path="/intranet/equipamentos" element={<EquipmentsPage />} />
           <Route path="/intranet/assinatura" element={<SignatureEmailPage />} />
           <Route path="/intranet/certificacoes" element={<IntranetCertificationsPage />} />
           <Route path="/intranet/ferias" element={<VacationsPage />} />
