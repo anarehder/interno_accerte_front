@@ -40,7 +40,7 @@ const IntranetPortalPage = () => {
                     </Link>
                 </div>
                 <div>
-                    <Link to="/assinatura">
+                    <Link to="/intranet/assinatura">
                         Assinatura <br />E-mail
                     </Link>
                 </div>

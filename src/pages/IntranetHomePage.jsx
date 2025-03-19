@@ -7,36 +7,34 @@ import { FiSearch } from "react-icons/fi";
 import InstagramPicturesComponent from "../components/InstagramPicturesComponent";
 import FooterComponent from "../components/FooterComponent";
 import BannerSlideComponent from "../components/BannerSlideComponent";
-import { useAuth } from "../contexts/AuthContext";
 import { useNavigate  } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi"; 
-import { useMsal } from "@azure/msal-react";
 
 const IntranetHomePage = () => {
-    const { instance } = useMsal();
-    const { user, setUser } = useAuth();
+    // const { instance } = useMsal();
+    // const { user, setUser } = useAuth();
     const [searchBar, setSearchBar] = useState("");
-    const navigate = useNavigate(); 
+    // const navigate = useNavigate(); 
 
     const handleSearch = (e) => {
         setSearchBar(e.target.value);
     };
 
-    useEffect(() => {
-        const accounts = instance.getAllAccounts();
-        if (accounts.length > 0) {
-          const account = accounts[0];
-          const user_to_save = {
-                  name: account.name,
-                  email: account.username,
-                  token: account.idToken, // Pode ser undefined, então talvez precise do acquireTokenSilent()
-                };
-                setUser(user_to_save);
-                localStorage.setItem("user", JSON.stringify(user_to_save));
-        } else {
-            navigate("/");
-        }
-      }, [instance, setUser]);
+    // useEffect(() => {
+    //     const accounts = instance.getAllAccounts();
+    //     if (accounts.length > 0) {
+    //       const account = accounts[0];
+    //       const user_to_save = {
+    //               name: account.name,
+    //               email: account.username,
+    //               token: account.idToken, // Pode ser undefined, então talvez precise do acquireTokenSilent()
+    //             };
+    //             setUser(user_to_save);
+    //             localStorage.setItem("user", JSON.stringify(user_to_save));
+    //     } else {
+    //         navigate("/");
+    //     }
+    //   }, [instance, setUser]);
     
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -44,19 +42,21 @@ const IntranetHomePage = () => {
         setSearchBar("");
     };
     
-    const logout = () => {
-          instance.logoutPopup() // Alternativamente, use logoutRedirect()
-            .then(() => {
-              setUser(null);
-              sessionStorage.removeItem("user");
-              localStorage.removeItem("user");
-              navigate("/"); // Redireciona para a página de login após logout
-            })
-            .catch((error) => console.error("Erro no logout:", error));
-        };
+    // const logout = () => {
+    //       instance.logoutPopup() // Alternativamente, use logoutRedirect()
+    //         .then(() => {
+    //           setUser(null);
+    //           sessionStorage.removeItem("user");
+    //           localStorage.removeItem("user");
+    //           navigate("/"); // Redireciona para a página de login após logout
+    //         })
+    //         .catch((error) => console.error("Erro no logout:", error));
+    //     };
+
     return (
         <Container>
-            <LogoutButton onClick={logout}>
+            {/* <LogoutButton onClick={logout}> */}
+            <LogoutButton>
                 <FiLogOut size={20}/>
             </LogoutButton>
             <HeaderContainer>
@@ -64,7 +64,7 @@ const IntranetHomePage = () => {
                     <div>Fale <br /> Conosco</div>
                     <div>Canal Denúncias (Compliance)</div>
                     <div><a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">Abertura Chamados (JIRA)</a></div>
-                    <div><Link to="/assinatura">Assinatura <br /> de E-mail </Link></div>
+                    <div><Link to="/intranet/assinatura">Assinatura <br /> de E-mail </Link></div>
                     <form onSubmit={handleSearchSubmit}>
                     <input
                         type="text"

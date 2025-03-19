@@ -1,42 +1,41 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { FaMicrosoft } from "react-icons/fa";
 import Logo from "../assets/LOGO-INTRANET.png";
-import { useMsal } from "@azure/msal-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 function IntranetLoginPage() {
-    const { instance } = useMsal();
-    const navigate = useNavigate();
+    // const { instance } = useMsal();
+    // const navigate = useNavigate();
 
-    const checkLogin = async () => {
-      console.log("MSAL Instance:", instance);
-      console.log("Redirect URI:", instance?.controller?.config?.auth?.redirectUri);
-      await instance.initialize(); 
-      await instance.handleRedirectPromise();
-      const accounts = instance.getAllAccounts();
-      if (accounts.length > 0) {
-        navigate("/intranet/homepage");
-      } else {
-        return accounts
-      }
-    };
+    // const checkLogin = async () => {
+    //   console.log("MSAL Instance:", instance);
+    //   console.log("Redirect URI:", instance?.controller?.config?.auth?.redirectUri);
+    //   await instance.initialize(); 
+    //   await instance.handleRedirectPromise();
+    //   const accounts = instance.getAllAccounts();
+    //   if (accounts.length > 0) {
+    //     navigate("/intranet/homepage");
+    //   } else {
+    //     return accounts
+    //   }
+    // };
 
-    useEffect(() => {
-      const accounts = instance.getAllAccounts();
-      if (accounts.length > 0) {
-        navigate("/intranet/homepage");
-      }
-      checkLogin();
-    }, [instance, navigate]);
+    // useEffect(() => {
+    //   const accounts = instance.getAllAccounts();
+    //   if (accounts.length > 0) {
+    //     navigate("/intranet/homepage");
+    //   }
+    //   checkLogin();
+    // }, [instance, navigate]);
 
-    const handleLogin = async () => {
-      const accounts = await checkLogin();
-      if (accounts.length === 0) {
-        // No user signed in
-        instance.loginRedirect();
-      }
-    };
+    // const handleLogin = async () => {
+    //   const accounts = await checkLogin();
+    //   if (accounts.length === 0) {
+    //     // No user signed in
+    //     instance.loginRedirect();
+    //   }
+    // };
 
     return (
         <Container>
@@ -47,9 +46,14 @@ function IntranetLoginPage() {
             <LoginBox>
                 <Title>FAÇA SEU LOGIN</Title>
                 <Title>PARA ACESSAR</Title>
-                <OAuthButton onClick={handleLogin}>
+                <Link to={"/intranet/homepage"}>
+                <OAuthButton >
                     <FaMicrosoft /> Entrar com Microsoft
                 </OAuthButton>
+                </Link>
+                {/* <OAuthButton onClick={handleLogin}>
+                    <FaMicrosoft /> Entrar com Microsoft
+                </OAuthButton> */}
             </LoginBox>
         </Container>
     );
