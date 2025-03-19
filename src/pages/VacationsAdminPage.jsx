@@ -454,7 +454,6 @@ const VacationContainer = styled.div`
     min-width: 700px;
     gap: 30px;
     align-items: center;
-    
     h2{
         width: 200px;
     }
