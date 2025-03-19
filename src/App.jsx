@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
 import styled from 'styled-components'
 import VacationsPage from "./pages/VacationsPage";
 import IntranetPortalPage from "./pages/IntranetPortalPage";
@@ -8,24 +9,17 @@ import IntranetHomePage from "./pages/IntranetHomePage";
 import IntranetLoginPage from "./pages/IntranetLoginPage";
 
 function App() {
-
+  const [graphData, setGraphData] = useState(null);
   return (
     <AppContainer>
       <BrowserRouter>
         <Routes>
-          {/* <Route path="/login" element={<LoginPage />} />
-          <Route path="/portal" element={<UserPortalPage />} />
-          <Route path="/equipamentos" element={<EquipmentsPage />} />
-          <Route path="/assinatura" element={<SignatureEmailPage />} />
-          <Route path="/certificacoes" element={<CertificationsPage />} />
-          <Route path="/ferias" element={<VacationsPage />} />
-          <Route path="/chat/relatorios" element={<ChatReportsPage />} /> */}
-          {/* <Route path="/intranet" element={<HomeIntranetPage />} /> */}
           <Route path="/intranet/portal" element={<IntranetPortalPage />} />
+          <Route path="/intranet/assinatura" element={<SignatureEmailPage />} />
           <Route path="/intranet/certificacoes" element={<IntranetCertificationsPage />} />
           <Route path="/intranet/ferias" element={<VacationsPage />} />
           <Route path="/intranet/admin" element={<VacationsAdminPage />} />
-          <Route path="/intranet/homepage" element={<IntranetHomePage />} />
+          <Route path="/intranet/homepage" element={<IntranetHomePage graphData={graphData} setGraphData={setGraphData}/>} />
           <Route path="/" element={<IntranetLoginPage />} />
         </Routes>
       </BrowserRouter >
