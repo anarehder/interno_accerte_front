@@ -8,16 +8,22 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const { instance, accounts } = useMsal();
   const [user, setUser] = useState(null);
-  const [graphData, setGraphData] = useState(null);
 
   useEffect(() => {
+    console.log(accounts);
     if (accounts.length > 0) {
       getUserProfile(instance, accounts).then(setUser);
     }
   }, [accounts, instance]);
 
+  function getData(){
+    if (accounts.length > 0) {
+      getUserProfile(instance, accounts).then(setUser);
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, instance, graphData }}>
+    <AuthContext.Provider value={{ user, instance, getData }}>
       {children}
     </AuthContext.Provider>
   );

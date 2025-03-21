@@ -12,9 +12,10 @@ import { FiLogOut } from "react-icons/fi";
 import { useAuth } from "../contexts/AuthContext";
 import { useIsAuthenticated } from '@azure/msal-react';
 import { useMsal } from "@azure/msal-react";
+import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
 
 const IntranetHomePage = () => {
-    const { user } = useAuth();
+    const { user, getData } = useAuth();
     const { instance } = useMsal();
     const navigate = useNavigate();
     const [searchBar, setSearchBar] = useState("");
@@ -22,8 +23,9 @@ const IntranetHomePage = () => {
     const isAuthenticated = useIsAuthenticated();
     
     useEffect(() => {
+            getData();
           if (!isAuthenticated) {
-            navigate("");
+            navigate("/");
           }
         }, [isAuthenticated, navigate]);
 
@@ -114,6 +116,7 @@ const IntranetHomePage = () => {
                 
             </ButtonsContainer>
             <InstagramPicturesComponent/>
+            {/* <LinkedinPostsComponent /> */}
             <FooterComponent />
         </Container>
     );
