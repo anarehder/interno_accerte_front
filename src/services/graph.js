@@ -1,21 +1,24 @@
-import { graphConfig } from "./authConfig";
+// src/services/graph.js
+import { loginRequest } from "./authConfig";
 
-/**
- * Attaches a given access token to a MS Graph API call. Returns information about the user
- * @param accessToken 
- */
-export async function callMsGraph(accessToken) {
-    const headers = new Headers();
-    const bearer = `Bearer ${accessToken}`;
+export async function getUserProfile(instance, accounts) {
+  if (accounts.length === 0) return null;
 
-    headers.append("Authorization", bearer);
+  try {
+    const response = await instance.acquireTokenSilent({
+      ...loginRequest,
+      account: accounts[0],
+    });
 
-    const options = {
-        method: "GET",
-        headers: headers
-    };
+    const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me", {
+      headers: {
+        Authorization: `Bearer ${response.accessToken}`,
+      },
+    });
 
-    return fetch(graphConfig.graphMeEndpoint, options)
-        .then(response => response.json())
-        .catch(error => console.log(error));
+    return await graphResponse.json();
+  } catch (error) {
+    console.error("Erro ao obter dados do usuário:", error);
+    return null;
+  }
 }

@@ -5,31 +5,31 @@ import { useIsAuthenticated } from '@azure/msal-react';
 import { useNavigate  } from "react-router-dom";
 import { FaMicrosoft } from "react-icons/fa";
 import Logo from "../assets/LOGO-INTRANET.png";
-import { Link } from 'react-router-dom';
 import { loginRequest } from "../services/authConfig";
 
 function IntranetLoginPage() {
     const { instance } = useMsal();
     const isAuthenticated = useIsAuthenticated();
     const navigate = useNavigate(); 
-    
+    console.log(import.meta.env.VITE_APP_CLIENT);
+    console.log(import.meta.env.VITE_API_URL);
     useEffect(() => {
       if (isAuthenticated) {
         navigate("/intranet/homepage");
       }
     }, [isAuthenticated, navigate]);
 
-    const handleLogin = (loginType) => {
-      if (loginType === "popup") {
-          instance.loginPopup(loginRequest).catch(e => {
-              console.log(e);
-          });
-      } else if (loginType === "redirect") {
-        instance.loginRedirect(loginRequest).catch(e => {
-              console.log(e);
-          });
-      }
+  const handleLogin = async (loginType) => {
+    if (loginType === "popup") {
+      await instance.loginPopup(loginRequest).catch(e => {
+        console.log(e);
+      });
+    } else if (loginType === "redirect") {
+      await instance.loginRedirect(loginRequest).catch(e => {
+        console.log(e);
+      });
     }
+  }
 
     return (
         <Container>
@@ -40,11 +40,6 @@ function IntranetLoginPage() {
             <LoginBox>
                 <Title>FAÇA SEU LOGIN</Title>
                 <Title>PARA ACESSAR</Title>
-                <Link to={"/intranet/homepage"}>
-                <OAuthButton >
-                    <FaMicrosoft /> Entrar com Microsoft
-                </OAuthButton>
-                </Link>
                 <OAuthButton onClick={() => handleLogin("popup")}>
                     <FaMicrosoft /> Entrar com Microsoft - PopUp
                 </OAuthButton>

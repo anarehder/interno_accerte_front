@@ -9,62 +9,44 @@ import FooterComponent from "../components/FooterComponent";
 import BannerSlideComponent from "../components/BannerSlideComponent";
 import { useNavigate  } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi"; 
+import { useAuth } from "../contexts/AuthContext";
 import { useIsAuthenticated } from '@azure/msal-react';
+import { useMsal } from "@azure/msal-react";
 
 const IntranetHomePage = () => {
-    // const { instance } = useMsal();
-    // const { user, setUser } = useAuth();
-    // const isAuthenticated = useIsAuthenticated();
+    const { user } = useAuth();
+    const { instance } = useMsal();
+    const navigate = useNavigate();
     const [searchBar, setSearchBar] = useState("");
-    // const navigate = useNavigate(); 
-
-    // useEffect(() => {
-    //       if (!isAuthenticated) {
-    //         navigate("/intranet/login");
-    //       }
-    //     }, [isAuthenticated, navigate]);
+    console.log(user);
+    const isAuthenticated = useIsAuthenticated();
+    
+    useEffect(() => {
+          if (!isAuthenticated) {
+            navigate("");
+          }
+        }, [isAuthenticated, navigate]);
 
     const handleSearch = (e) => {
         setSearchBar(e.target.value);
     };
-
-    // useEffect(() => {
-    //     const accounts = instance.getAllAccounts();
-    //     if (accounts.length > 0) {
-    //       const account = accounts[0];
-    //       const user_to_save = {
-    //               name: account.name,
-    //               email: account.username,
-    //               token: account.idToken, // Pode ser undefined, então talvez precise do acquireTokenSilent()
-    //             };
-    //             setUser(user_to_save);
-    //             localStorage.setItem("user", JSON.stringify(user_to_save));
-    //     } else {
-    //         navigate("/");
-    //     }
-    //   }, [instance, setUser]);
     
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         alert(`Buscando por: ${searchBar}`);
         setSearchBar("");
     };
-    
-    // const logout = () => {
-    //       instance.logoutPopup() // Alternativamente, use logoutRedirect()
-    //         .then(() => {
-    //           setUser(null);
-    //           sessionStorage.removeItem("user");
-    //           localStorage.removeItem("user");
-    //           navigate("/"); // Redireciona para a página de login após logout
-    //         })
-    //         .catch((error) => console.error("Erro no logout:", error));
-    //     };
 
+    const handleLogout = () => {
+        instance.logoutPopup({
+            postLogoutRedirectUri: "/",
+            mainWindowRedirectUri: "/"
+        });
+    }
+  
     return (
         <Container>
-            {/* <LogoutButton onClick={logout}> */}
-            <LogoutButton>
+            <LogoutButton onClick={handleLogout}>
                 <FiLogOut size={20}/>
             </LogoutButton>
             <HeaderContainer>
@@ -99,9 +81,14 @@ const IntranetHomePage = () => {
             <BannerContainer>
                 <BannerSlideComponent />
                 <h1> Saiba mais ... </h1>
-                {/* <h1>{account[0]?.name}</h1> */}
-                {/* <h1>First Name: {graphData?.givenName}</h1> */}
-                {/* <h1>Emaile: {graphData?.userPrincipalName}</h1> */}
+                {user && (
+                <div>
+                    <p>Name: {user.givenName}</p>
+                    <p>Surname: {user.surname}</p>
+                    <p>Email: {user.mail}</p>
+                    <p>Email: {user.jobTitle}</p>
+                </div>
+                )}
             </BannerContainer>
             <ButtonsContainer>
                 <div>

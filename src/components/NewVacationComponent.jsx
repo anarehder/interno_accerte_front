@@ -5,7 +5,7 @@ import styled from "styled-components";
 function NewVacationComponent({ name, periodoAquisitivo}) {
     const [date, setDate] = useState({ start: "", end: "" });
     const [totalDays, setTotalDays] = useState(0);
-console.log(periodoAquisitivo.limite);
+    console.log(periodoAquisitivo);
     const handleDateChange = (field, value) => {
         const newDate = { ...date, [field]: value };
         setDate(newDate);
