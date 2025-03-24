@@ -4,15 +4,17 @@ import { useMsal } from "@azure/msal-react";
 import { useIsAuthenticated } from '@azure/msal-react';
 import { useNavigate  } from "react-router-dom";
 import { FaMicrosoft } from "react-icons/fa";
-import Logo from "../assets/LOGO-INTRANET.png";
+import Logo from "../assets/LOGO_HOME.png";
 import { loginRequest } from "../services/authConfig";
+import ImgFundo from "../assets/FUNDO_HOME.png"
+import Accerte from "../assets/ACCERTE_HOME.png"
 
 function IntranetLoginPage() {
     const { instance } = useMsal();
     const isAuthenticated = useIsAuthenticated();
     const navigate = useNavigate(); 
-    console.log(import.meta.env.VITE_APP_CLIENT);
-    console.log(import.meta.env.VITE_API_URL);
+    // console.log(import.meta.env.VITE_APP_CLIENT);
+    // console.log(import.meta.env.VITE_API_URL);
     useEffect(() => {
       if (isAuthenticated) {
         navigate("/intranet/homepage");
@@ -32,48 +34,49 @@ function IntranetLoginPage() {
   }
 
     return (
-        <Container>
+        <PageContainer>
             <LogoContainer>
                 <img src={Logo} alt="ACCERTE" />
-                <h1>INTRANET</h1>
+                {/* <h1>INTRANET</h1> */}
             </LogoContainer>
             <LoginBox>
-                <Title>FAÇA SEU LOGIN</Title>
-                <Title>PARA ACESSAR</Title>
-                <OAuthButton onClick={() => handleLogin("popup")}>
+                <Title>Intra<span>net</span></Title>
+                <img src={Accerte} alt="ACCERTE" />
+                {/* <OAuthButton onClick={() => handleLogin("popup")}>
                     <FaMicrosoft /> Entrar com Microsoft - PopUp
-                </OAuthButton>
+                </OAuthButton> */}
                 <OAuthButton onClick={() => handleLogin("redirect")}>
-                    <FaMicrosoft /> Entrar com Microsoft - Redirect
+                    <FaMicrosoft /> ENTRAR
                 </OAuthButton>
             </LoginBox>
-        </Container>
+        </PageContainer>
     );
 }
 
 export default IntranetLoginPage;
 
 // 🎨 Estilização com Styled Components
-const Container = styled.div`
+const PageContainer = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   height: 100vh;
-  background: #D9D9D9;
+  background: url(${ImgFundo}) no-repeat center center;
+  background-size: cover;
   gap: 50px;
 `;
 
 const LogoContainer = styled.div`
   flex-direction: column;
-  height: 85vh;
-  width: 50vw;
-  border-right: 5px solid #343434;
+  height: 75vh;
+  width: 40%;
+  border-right: 3px solid WHITE;
   justify-content: center;
   align-items: flex-end;
   gap: 15px;
-  padding-right: 50px;
+  // background-color: red;
   img{
-    width: 50vw;
+    width: 35vw;
   }
   h1{
     font-size: 76px;
@@ -83,27 +86,37 @@ const LogoContainer = styled.div`
 `
 
 const LoginBox = styled.div`
-  background-color: #D9D9D9;
-  padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 30%;
   border-radius: 8px;
-  width: 350px;
+  // background-color: red;
+  height: 55vh;
+  width: 600px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 50px;
+  img {
+    width: 418px;
+  }
 `;
 
 const Title = styled.h2`
-  color: #343434;
+  color: white;
   line-height: 30px;
-  font-family: 'Conthrax', sans-serif;
+  font-family: "Poppins", serif;
+  font-weight:  300;
+  font-size: 120px;
+  font-style: normal;
+  margin-top: 25px;
+  span {
+    font-weight:  700;
+  }
 `;
 
 const OAuthButton = styled.button`
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  margin-top: 2rem;
+  width: 85%;
+  height: 70px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -112,9 +125,9 @@ const OAuthButton = styled.button`
   justify-content: center;
   font-weight: bold;
   gap: 8px;
-  font-family: 'Conthrax', sans-serif;
-  background: #2f2f2f;
-      color: white;
+  font-family: "Poppins", serif;
+  background: white;
+      color: #067DD1;
       &:hover {
         background: #1a1a1a;
   }
