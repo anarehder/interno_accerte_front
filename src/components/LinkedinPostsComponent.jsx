@@ -8,7 +8,7 @@ import apiService from '../services/apiService';
 function LinkedinPostsComponent() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true); 
-
+    console.log(posts);
     useEffect(() => {
         // Função para buscar posts
         const fetchPosts = async () => {

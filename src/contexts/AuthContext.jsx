@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    console.log(accounts);
+    // console.log(accounts);
     if (accounts.length > 0) {
       getUserProfile(instance, accounts).then(setUser);
     }
