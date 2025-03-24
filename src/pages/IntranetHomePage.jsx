@@ -13,6 +13,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useIsAuthenticated } from '@azure/msal-react';
 import { useMsal } from "@azure/msal-react";
 import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
+import BannerTopo from "../assets/INTRANET_BANNER.png"
 
 const IntranetHomePage = () => {
     const { user, getData } = useAuth();
@@ -52,11 +53,22 @@ const IntranetHomePage = () => {
                 <FiLogOut size={20}/>
             </LogoutButton>
             <HeaderContainer>
-                <MenuContainer>
-                    <div>Fale <br /> Conosco</div>
-                    <div>Canal Denúncias (Compliance)</div>
-                    <div><a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">Abertura Chamados (JIRA)</a></div>
-                    <div><Link to="/intranet/assinatura">Assinatura <br /> de E-mail </Link></div>
+                <div>
+                    <h1>Olá, <span> {user.givenName} </span>
+                        <br /> Seja Bem-Vindo(a)!
+                    </h1>
+                </div>
+            </HeaderContainer>
+            <MenuContainer>
+                    <div> <h1>SOBRE <span> NÓS</span></h1></div>
+                    <div> <h1>PARA <span> SUA INFORMAÇÃO</span></h1></div>
+                    <div> <h1><span> AGENDA </span></h1></div>
+                    <div> <h1>LINKS <span> RÁPIDOS</span></h1></div>
+                    <div> <h1>GENTE <span> E GESTÃO</span></h1></div>
+                    <div> <h1>COMPLIANCE</h1></div>
+                    <div> <a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">
+                        <h1>JIRA</h1></a></div>
+                    <div> <Link to="/intranet/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
                     <form onSubmit={handleSearchSubmit}>
                     <input
                         type="text"
@@ -66,54 +78,25 @@ const IntranetHomePage = () => {
                     />
                     <button type="submit"><FiSearch size={25} /></button>
                     </form>
-                    <img src={LogoPequena} alt="ACCERTE" />
                 </MenuContainer>
-            </HeaderContainer>
-            <LogoContainer>
-                <img src={Logo} alt="ACCERTE" />
-                <h1>INTRANET</h1>
-            </LogoContainer>
-            <MenuContainer>
-                <div>Sobre Nós</div>
-                <div>Para Sua Informação</div>
-                <div>Agenda</div>
-                <div>Links Rápidos</div>
-                <div>Gente e Gestão</div>
-            </MenuContainer>
             <BannerContainer>
                 <BannerSlideComponent />
-                <h1> Saiba mais ... </h1>
-                {user && (
-                <div>
-                    <p>Name: {user.givenName}</p>
-                    <p>Surname: {user.surname}</p>
-                    <p>Email: {user.mail}</p>
-                    <p>Email: {user.jobTitle}</p>
-                </div>
-                )}
             </BannerContainer>
             <ButtonsContainer>
                 <div>
-                <Link to={"/intranet/certificacoes"}> Certificações</Link>
+                <Link to={"/intranet/certificacoes"}> CERTIFICAÇÕES</Link>
                 </div>
                 <div>
-                <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank">Políticas </a>
+                <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank">POLÍTICAS </a>
                 </div>
                 <div>
                     <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh"target="_blank">
-                    Escritório <br /> de Processos
+                    ESCRITORIO <br /> DE PROCESSOS
                     </a>
                 </div>
                 <div>
-                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EotPeOrtrE5Phg-nuwjIersBtwAaVDWLJK4Vt-5eMjhr1A?e=EsVg27" target="_blank">Compliance <br /> (Código de ética <br/> e Conduta)</a>
-                </div>
-                <div>
-                    Pesquisa <br /> e Inovação
-                </div>
-                <div>
-                    Marketing
-                </div>
-                
+                    MARKETING
+                </div>                
             </ButtonsContainer>
             <InstagramPicturesComponent/>
             {/* <LinkedinPostsComponent /> */}
@@ -125,53 +108,81 @@ const IntranetHomePage = () => {
 export default IntranetHomePage;
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  background: #D9D9D9;
-  gap: 20px;
-  position: relative;
-  font-family: 'Conthrax', sans-serif;
-  h1 {
-    font-family: 'Conthrax', sans-serif;
-  }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background: #D9D9D9;
+    position: relative;
+    font-family: "Poppins", serif;
+    h1 {
+        font-weight: 400;
+        font-size: 15px;
+        font-family: "Poppins", serif;
+    }
+    span{
+        font-weight: 700;
+    }
+//   font-family: 'Conthrax', sans-serif;
 `;
+
 const LogoutButton = styled.button`
     position: absolute;
     top: 25px;
-    left: 15px;
+    right: 15px;
     font-size: 10px;
 `
 
 const HeaderContainer = styled.div`
-    height: 10 0px;
     background-color: #434343;
-    color: white;
-    padding: 15px 0 5px 0;
-    justify-content: center;
+    height: 200px;
+    background: url(${BannerTopo}) no-repeat right center;
+    background-size: cover;
+    color: #067DD1;
+    overflow: hidden;
+    div{
+        width: 50%;
+        background-color: white;
+        border-bottom-right-radius: 80px;
+        box-shadow: 12px -21px 3px 5px rgba(0, 0, 0, 0.2);
+        justify-content: center;
+        align-items: center;
+        h1 {
+            width: 80%;
+            text-align: left;
+            line-height: 50px;
+            font-size: 36px;
+            // background-color: red;
+        }
+    }
 `
 
 const MenuContainer = styled.div`
     width: 90%;
-    margin-top: 20px;
-    align-items: flex-start;
-    justify-content: space-around;
-    font-family: 'Conthrax', sans-serif;
+    background-color: #067DD1;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    gap: 20px;
     div {
-        width: 15%;
-        height: 50px;
+        // line-height: 50px;
         justify-content: center;
         text-align: center;
+        width: fit-content;
+        margin: 5px;
     }
     form {
         width: 20%;
+        margin-left: 30px;
+        height: 40px;
         display: flex;
+        background-color: white;
+        border-radius: 10px;
         input {
             width: 80%;
             color: white;
-            font-family: 'Conthrax', sans-serif;
             font-size: 15px;
+            border-right: 2px solid #067DD1;
             &::placeholder {
                 color: white;
                 opacity: 0.7;               
@@ -180,12 +191,11 @@ const MenuContainer = styled.div`
         button {
             width:15%;
             background-color: transparent;
+            color: #067DD1;
             padding: 0;
+            margin-left: 5px;
             border: none;
         }
-    }
-    img {
-        width: 50px;
     }
 `;
 
@@ -208,25 +218,27 @@ const BannerContainer = styled.div`
     width: 90%;
     gap: 50px;
     margin-top: 10px;
+    justify-content: center;
+    margin: 30px 0;
 `
 
 const ButtonsContainer = styled.div`
-    width: 90%;
     font-size: 22px;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 30px;
     margin-bottom: 20px;
+    color: white;
     div{
-        background-color:;
-        width: 25%;
+        background-color: #1c8ad9;
+        width: 20%;
         height: 100px;
-        border-radius: 30px;
+        border-radius: 15px;
         align-items: center;
         justify-content: center;
         text-align: center;
-        border: 3px solid  #20273E;
+        box-shadow: 2px -2px 3px 5px rgba(0, 0, 0, 0.2);
         a {
             height: 100%;
             width: 100%;
