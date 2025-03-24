@@ -1,12 +1,12 @@
 {
   "routes": [
     {
-      "route": "/*",
+      "route": "/intranet/*",
       "serve": "/index.html",
       "statusCode": 200
     },
     {
-      "route": "/intranet/homepage",
+      "route": "/*",
       "serve": "/index.html",
       "statusCode": 200
     }
