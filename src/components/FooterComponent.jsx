@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import { FaInstagram, FaWhatsapp, FaGoogle  } from "react-icons/fa";
+import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
+import { TfiEmail } from "react-icons/tfi";
 import Logo from "../assets/LOGO-INTRANET-BRANCO.png";
 import Fundo from "../assets/FUNDO_HOME.png";
 
@@ -25,7 +26,7 @@ function FooterComponent() {
                             <FaWhatsapp size={30} color="#FFFFFF" />
                         </a>
                         <a href="mailto:comercial@accerte.com.br?subject=Gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os&body=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os%20de%20...">
-                            <FaGoogle  size={29} color="#FFFFFF" />
+                            <TfiEmail  size={30} color="#FFFFFF" />
                         </a>
                     </div>
 
