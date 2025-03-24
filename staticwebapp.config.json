@@ -9,6 +9,11 @@
       "route": "/*",
       "serve": "/index.html",
       "statusCode": 200
+    },
+    {
+      "route": "/intranet/homepage",
+      "redirect": "/intranet/homepage",
+      "statusCode": 200
     }
   ]
 }
