@@ -72,7 +72,7 @@ const IntranetHomePage = () => {
                     <form onSubmit={handleSearchSubmit}>
                     <input
                         type="text"
-                        placeholder="Busque por pessoas"
+                        placeholder=" Pesquise aqui"
                         value={searchBar}
                         onChange={handleSearch}
                     />
@@ -180,11 +180,13 @@ const MenuContainer = styled.div`
         border-radius: 10px;
         input {
             width: 80%;
-            color: white;
+            color: #067DD1;
             font-size: 15px;
             border-right: 2px solid #067DD1;
+            padding-left: 15px;
             &::placeholder {
-                color: white;
+                color: #067DD1;
+                padding-left: 5px;
                 opacity: 0.7;               
             }
         }
@@ -196,21 +198,6 @@ const MenuContainer = styled.div`
             margin-left: 5px;
             border: none;
         }
-    }
-`;
-
-const LogoContainer = styled.div`
-    width: 90%;
-    height: 90px;
-    text-align: center;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    img {
-        width: 12%;
-        left: 5%;
-        z-index: 2;
-        position: absolute;
     }
 `
 
