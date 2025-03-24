@@ -54,7 +54,7 @@ const IntranetHomePage = () => {
             </LogoutButton>
             <HeaderContainer>
                 <div>
-                    <h1>Olá, <span> {user.givenName} </span>
+                    <h1>Olá, <span> {user?.givenName} </span>
                         <br /> Seja Bem-Vindo(a)!
                     </h1>
                 </div>

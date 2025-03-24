@@ -3,6 +3,7 @@ import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import Logo from "../assets/LOGO-INTRANET-BRANCO.png";
+import Fundo from "../assets/FUNDO_HOME.png";
 
 function FooterComponent() {
 
@@ -11,12 +12,14 @@ function FooterComponent() {
             <FooterContainer>
                 <div className="left">
                     Accerte Tecnologia
-                    www.accerte.com.br
+                    <a href="https://www.accerte.com.br" target="_blank">
+                        www.accerte.com.br
+                    </a>
                     <div className="icons">
-                        <a href="https://www.instagram.com/accertetecnologia/">
+                        <a href="https://www.instagram.com/accertetecnologia/" target="_blank">
                             <FaInstagram size={30} color="#E4405F" />
                         </a>
-                        <a href="https://www.linkedin.com/company/accerte-tecnologia/posts/?feedView=all">
+                        <a href="https://www.linkedin.com/company/accerte-tecnologia/posts/?feedView=all" target="_blank">
                             <FaLinkedin size={30} color="#0077B5" />
                         </a>
                         <a href="https://wa.me/556239459510?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os%20de%20..." target="_blank">
@@ -32,9 +35,9 @@ function FooterComponent() {
                     <img src={Logo} alt="ACCERTE" />
                 </div>
                 <div className="right">
-                    R. 128-A, Qd Nº 34 Qd 11
-                    St. Sul, Goiânia - GO
-                    74093-110
+                <h1>R. 128-A, Qd Nº 34 Qd 11 
+                <br/>  St. Sul -  74093-110
+                    <br/> <span>Goiânia | GO </span> </h1>
                 </div>
             </FooterContainer>
         </PageContainer>
@@ -46,24 +49,27 @@ export default FooterComponent;
 const PageContainer = styled.div`
     width: 100%;
     position: relative;
-    justify-content: center;   
+    justify-content: center;  
+    font-family: "Poppins", serif;
 `
 
 const FooterContainer = styled.div`
-    background-color: #a8a8a8;
+    background: url(${Fundo}) no-repeat bottom center;
+    filter: brightness(85%); /* Escurece a imagem */
+    background-size: cover; 
     gap: 50px;
+    height: 140px;
     justify-content: center;
     align-items: center;
     padding: 15px 0;
     line-height: 20px;
     color: white;
     .left{
-        width: 500px;
+        width: 35%;
         padding-left: 5%;
         flex-direction: column;
         text-align: center;
         gap: 10px;
-        
         .icons{
             justify-content: center;
             gap: 15px;
@@ -72,14 +78,20 @@ const FooterContainer = styled.div`
     .middle{
         align-items: center;
         justify-content: center;
+        border-left: 2px solid white;
+        border-right: 2px solid white;
         img{
             width: 40%;
         }
     }
 
     .right{
-        width: 500px;
+        width: 35%;
         text-align: center;
         padding-right: 5%;
+        h1{
+            line-height: 28px;
+            font-size: 17px;
+        }
     }
 `
