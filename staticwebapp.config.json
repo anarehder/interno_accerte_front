@@ -6,7 +6,9 @@
       "statusCode": 200
     },
     {
-      "route": "/intranet/homepage"
+      "route": "/intranet/homepage",
+      "serve": "/index.html",
+      "statusCode": 200
     }
   ]
 }
