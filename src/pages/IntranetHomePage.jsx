@@ -60,11 +60,18 @@ const IntranetHomePage = () => {
                 </div>
             </HeaderContainer>
             <MenuContainer>
-                    <div> <h1>SOBRE <span> NÓS</span></h1></div>
+                <div> <h1>SOBRE <span> NÓS</span></h1></div>
+                <MenuItem>
                     <div> <h1>PARA <span> SUA INFORMAÇÃO</span></h1></div>
-                    <div> <h1><span> AGENDA </span></h1></div>
-                    <div> <h1>LINKS <span> RÁPIDOS</span></h1></div>
-                    <div> <h1>GENTE <span> E GESTÃO</span></h1></div>
+                    <Dropdown>
+                        <DropdownItem>Aniversários</DropdownItem>
+                        <DropdownItem>Férias | Pausas</DropdownItem>
+                        <DropdownItem>Calendário Accerte</DropdownItem>
+                    </Dropdown>
+                </MenuItem>
+                <div> <h1><span> AGENDA </span></h1></div>
+                <div> <h1>LINKS <span> RÁPIDOS</span></h1></div>
+                <div> <h1>GENTE <span> E GESTÃO</span></h1></div>
                     <div> <h1>COMPLIANCE</h1></div>
                     <div> <a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">
                         <h1>JIRA</h1></a></div>
@@ -235,3 +242,36 @@ const ButtonsContainer = styled.div`
         }
     }
 `
+
+const MenuItem = styled.div`
+  position: relative;
+  padding: 10px;
+  cursor: pointer;
+
+  &:hover div {
+    display: block;
+  }
+`;
+
+const Dropdown = styled.div`
+  position: absolute;
+  top: 80%;
+  left: 0;
+  background: #4493dc;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 4px 3px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  border-top-left-radius: 0;
+  padding: 5px;
+  display: none;
+  min-width: 150px;
+  z-index: 2;
+`;
+
+const DropdownItem = styled.div`
+  padding: 8px;
+  cursor: pointer;
+  &:hover {
+    color: black;
+  }
+`;
