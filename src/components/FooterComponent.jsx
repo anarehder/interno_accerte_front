@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import { FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { FaInstagram, FaWhatsapp, FaGoogle  } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
-import { FcGoogle } from "react-icons/fc";
 import Logo from "../assets/LOGO-INTRANET-BRANCO.png";
 import Fundo from "../assets/FUNDO_HOME.png";
 
@@ -17,16 +16,16 @@ function FooterComponent() {
                     </a>
                     <div className="icons">
                         <a href="https://www.instagram.com/accertetecnologia/" target="_blank">
-                            <FaInstagram size={30} color="#E4405F" />
+                            <FaInstagram size={30} color="#FFFFFF" />
                         </a>
                         <a href="https://www.linkedin.com/company/accerte-tecnologia/posts/?feedView=all" target="_blank">
-                            <FaLinkedin size={30} color="#0077B5" />
+                            <FaLinkedin size={30} color="#FFFFFF" />
                         </a>
                         <a href="https://wa.me/556239459510?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os%20de%20..." target="_blank">
-                            <FaWhatsapp size={30} color="#25D366" />
+                            <FaWhatsapp size={30} color="#FFFFFF" />
                         </a>
                         <a href="mailto:comercial@accerte.com.br?subject=Gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os&body=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20servi%C3%A7os%20de%20...">
-                            <FcGoogle size={30} />
+                            <FaGoogle  size={29} color="#FFFFFF" />
                         </a>
                     </div>
 
