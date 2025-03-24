@@ -31,7 +31,7 @@ function LinkedinPostsComponent() {
                 <h2>
                     <FaInstagram size={24} /> Acompanhe nas redes sociais...
                 </h2>
-                {loading && <div> Carregando posts... </div>}
+                {loading && <div> <br/>Carregando posts... </div>}
                 <div className="carousel" >
                     {posts.length > 0 &&
                         posts.map((p, index) => (
