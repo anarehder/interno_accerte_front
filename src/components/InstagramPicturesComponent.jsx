@@ -68,6 +68,7 @@ const PageContainer = styled.div`
     width: 100%;
     position: relative;
     justify-content: center;
+    margin: 30px 0;
 `
 
 
