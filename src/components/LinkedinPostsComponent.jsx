@@ -3,41 +3,18 @@ import axios from "axios";
 import { IoIosArrowDropright } from "react-icons/io";
 import { FaInstagram } from "react-icons/fa";
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import apiService from '../services/apiService';
 
 function LinkedinPostsComponent() {
     const [posts, setPosts] = useState([]);
-    const [visiblePosts, setVisiblePosts] = useState(5);
     const [loading, setLoading] = useState(true); 
-    const token =  import.meta.env.VITE_API_FACEBOOK_ACCESS_TOKEN;
-    const pageId = import.meta.env.VITE_API_FACEBOOK_PAGE_ID;
-    // console.log(posts);
+
     useEffect(() => {
         // Função para buscar posts
         const fetchPosts = async () => {
             try {
-                const accessToken = "YOUR_ACCESS_TOKEN";
-                const organizationId = "YOUR_ID";
-                const url = `https://api.linkedin.com/v2/shares?q=owners&owners=urn:li:organization:${organizationId}`;
-                const response = await axios.get(
-                    url, {
-                    headers: { "Authorization": `Bearer ${accessToken}` }
-                });
-                const data = await response.json();
-                const postsData = data.elements.map(post => ({
-                    link: post.content?.contentEntities?.[0]?.entity || "Sem link",
-                    image: post.content?.contentEntities?.[0]?.thumbnails?.[0]?.resolvedUrl || "Sem imagem"
-                }))
-                // const postsData = response.data.data
-                //     .filter((post) => post.full_picture) // Filtra os posts com foto
-                //     .map((post) => ({
-                //         message: post.message,
-                //         link: post.permalink_url,
-                //         created_time: post.created_time,
-                //         full_picture: post.full_picture,
-                //     }));
-
-                setPosts(postsData);
+                const response = await apiService.getPosts();
+                setPosts(response.data);
                 setLoading(false);
             } catch (error) {
                 console.error("Erro ao buscar os posts:", error);
@@ -46,7 +23,7 @@ function LinkedinPostsComponent() {
         };
 
         fetchPosts();
-    }, [pageId, token]);
+    }, []);
 
     return (
         <PageContainer>
@@ -99,7 +76,7 @@ const InstagramContainer = styled.div`
         gap: 25px;
         overflow-x: auto; /* Ativa o scroll horizontal */
         overflow-y: hidden; /* Evita scroll vertical */
-        height: 280px;
+        height: 350px;
         align-items: center;
     }
         /* Para navegadores baseados em WebKit (Chrome, Safari, Edge) */
@@ -121,13 +98,14 @@ const InstagramContainer = styled.div`
     }
 
   .card {
-    flex: 0 0 250px;
+    flex: 0 0 260px;
     background: white;
     border-radius: 35px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out;
-    height: 250px;
+    width: 260px;
+    height: 320px;
     position: relative;
     display: inline-block;
     .card .link-overlay {
@@ -148,8 +126,9 @@ const InstagramContainer = styled.div`
 
     img {
       width: 100%;
-      height: 250px;
+      height: 100%;
       object-fit: cover;
+      object-position: center; 
     }
 
     .content {

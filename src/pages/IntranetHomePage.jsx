@@ -105,8 +105,8 @@ const IntranetHomePage = () => {
                     MARKETING
                 </div>                
             </ButtonsContainer>
-            <InstagramPicturesComponent/>
-            {/* <LinkedinPostsComponent /> */}
+            {/* <InstagramPicturesComponent/> */}
+            <LinkedinPostsComponent />
             <FooterComponent />
         </Container>
     );
