@@ -42,7 +42,7 @@ function UserPortalPage() {
                             DE E-MAIL
                         </div>
                     </div>
-                    <Link to="/intranet/assinatura"><button>SABER MAIS</button></Link>
+                    <Link to="/assinatura"><button>SABER MAIS</button></Link>
                 </Card>
             </CardsContainer>
         </PageContainer>

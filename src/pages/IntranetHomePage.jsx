@@ -20,15 +20,18 @@ const IntranetHomePage = () => {
     const { instance } = useMsal();
     const navigate = useNavigate();
     const [searchBar, setSearchBar] = useState("");
-    console.log(user);
     const isAuthenticated = useIsAuthenticated();
-    
+
     useEffect(() => {
+        if (!user) {
             getData();
-          if (!isAuthenticated) {
+            console.log(user);
+        }
+        
+        if (!isAuthenticated) {
             navigate("/");
-          }
-        }, [isAuthenticated, navigate]);
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleSearch = (e) => {
         setSearchBar(e.target.value);
@@ -75,7 +78,7 @@ const IntranetHomePage = () => {
                     <div> <h1>COMPLIANCE</h1></div>
                     <div> <a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">
                         <h1>JIRA</h1></a></div>
-                    <div> <Link to="/intranet/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
+                    <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
                     <form onSubmit={handleSearchSubmit}>
                     <input
                         type="text"
@@ -91,7 +94,7 @@ const IntranetHomePage = () => {
             </BannerContainer>
             <ButtonsContainer>
                 <div>
-                <Link to={"/intranet/certificacoes"}> CERTIFICAÇÕES</Link>
+                <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
                 </div>
                 <div>
                 <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank">POLÍTICAS </a>

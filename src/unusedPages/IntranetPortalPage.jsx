@@ -24,7 +24,7 @@ const IntranetPortalPage = () => {
                     <h1>On-boarding</h1>
                     <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank">
                     <h1>Políticas</h1></a>
-                    <Link to={"/intranet/certificacoes"}>
+                    <Link to={"/certificacoes"}>
                         <h1>Certificações</h1>
                     </Link>
                     <h1>RH</h1>
@@ -35,12 +35,12 @@ const IntranetPortalPage = () => {
             </HeaderContainer>
             <ButtonsContainer>
                 <div>
-                    <Link to="/intranet/ferias">
+                    <Link to="/ferias">
                         Férias
                     </Link>
                 </div>
                 <div>
-                    <Link to="/intranet/assinatura">
+                    <Link to="/assinatura">
                         Assinatura <br />E-mail
                     </Link>
                 </div>

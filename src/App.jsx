@@ -21,12 +21,12 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<IntranetLoginPage />} />
-              <Route path="/intranet/homepage" element={<IntranetHomePage />} />
-              <Route path="/intranet/equipamentos" element={<EquipmentsPage />} />
-              <Route path="/intranet/assinatura" element={<SignatureEmailPage />} />
-              <Route path="/intranet/certificacoes" element={<IntranetCertificationsPage />} />
-              <Route path="/intranet/ferias" element={<VacationsPage />} />
-              <Route path="/intranet/admin" element={<VacationsAdminPage />} />
+              <Route path="/homepage" element={<IntranetHomePage />} />
+              <Route path="/equipamentos" element={<EquipmentsPage />} />
+              <Route path="/assinatura" element={<SignatureEmailPage />} />
+              <Route path="/certificacoes" element={<IntranetCertificationsPage />} />
+              <Route path="/ferias" element={<VacationsPage />} />
+              <Route path="/admin" element={<VacationsAdminPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

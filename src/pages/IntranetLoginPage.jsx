@@ -17,7 +17,7 @@ function IntranetLoginPage() {
     // console.log(import.meta.env.VITE_API_URL);
     useEffect(() => {
       if (isAuthenticated) {
-        navigate("/intranet/homepage");
+        navigate("/homepage");
       }
     }, [isAuthenticated, navigate]);
 
