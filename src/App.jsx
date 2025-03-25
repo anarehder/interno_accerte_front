@@ -40,5 +40,6 @@ export default App
 
 const AppContainer = styled.main`
   width: 100vw;
+  overflow: hidden;
   background-color: #F0F5F9;
 `

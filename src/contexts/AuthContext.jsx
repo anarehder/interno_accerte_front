@@ -10,16 +10,28 @@ export const AuthProvider = ({ children }) => {
   const [dados, setDados] = useState(null);
 
   useEffect(() => {
-    if (accounts.length > 0) {
-      getUserProfile(instance, accounts).then(setUser);
-      getSharePointData(instance, accounts).then(setDados);
+    async function fetchData() {
+      if (accounts.length > 0) {
+        await getData();
+      }
     }
+    fetchData();
   }, [accounts, instance]);
 
-  function getData(){
+  async function getData() {
     if (accounts.length > 0) {
-      getUserProfile(instance, accounts).then(setUser);
-      getSharePointData(instance, accounts).then(setDados);
+      try {
+        if (!user) {
+          const user = await getUserProfile(instance, accounts);
+          setUser(user);
+        }
+        if (!dados) {
+          const dados = await getSharePointData(instance, accounts);
+          setDados(dados);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
     }
   }
 

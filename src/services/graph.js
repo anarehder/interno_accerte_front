@@ -21,7 +21,7 @@ async function getToken(instance, accounts) {
 export async function getUserProfile(instance, accounts) {
   try {
     const response = await getToken(instance, accounts);
-    console.log("userr", response);
+    // console.log("userr", response);
     const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me", {
       headers: {
         Authorization: `Bearer ${response.accessToken}`,
@@ -122,16 +122,26 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4};
-  return responseObject;
+  const agenda = await fetch("https://graph.microsoft.com/v1.0/users?$top=999", {
+        headers: {
+          Authorization: `Bearer ${response.accessToken}`,
+        },
+      });
 
-    //const graphResponse = await fetch("https://graph.microsoft.com/v1.0/users", {
-    //     headers: {
-    //       Authorization: `Bearer ${response.accessToken}`,
-    //     },
-    //   });
-  
-    //   const agenda = await graphResponse.json();
+  const files5 = await agenda.json();
+  const fileList5 = files5.value.map(file => ({
+    name: file.displayName,
+    givenName: file.givenName,
+    surname: file.surname,
+    jobTitle: file.jobTitle,
+    mail: file.mail,
+    mobilePhone: file.mobilePhone,
+    officeLocation: file.officeLocation
+  }));
+
+  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, agenda: fileList5};
+
+  return responseObject;    
 
   }catch (error) {
     console.error("Erro ao obter dados do sharepoint:", error);

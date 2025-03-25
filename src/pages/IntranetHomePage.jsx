@@ -21,15 +21,18 @@ const IntranetHomePage = () => {
     const navigate = useNavigate();
     const [searchBar, setSearchBar] = useState("");
     const isAuthenticated = useIsAuthenticated();
-    console.log(dados);
+
     useEffect(() => {
-        if (!user) {
-            getData();
+        async function fetchData() {
+            if (!user) {
+                await getData();
+            }
+            if (!isAuthenticated) {
+                navigate("/");
+            }
         }
-        
-        if (!isAuthenticated) {
-            navigate("/");
-        }
+    
+        fetchData();
     }, [isAuthenticated, navigate]);
 
     const handleSearch = (e) => {
@@ -51,65 +54,69 @@ const IntranetHomePage = () => {
   
     return (
         <Container>
-            <LogoutButton onClick={handleLogout}>
-                <FiLogOut size={20}/>
-            </LogoutButton>
-            <HeaderContainer>
-                <div>
-                    <h1>Olá, <span> {user?.givenName} </span>
-                        <br /> Seja Bem-Vindo(a)!
-                    </h1>
-                </div>
-            </HeaderContainer>
-            <MenuContainer>
-                <div> <h1>SOBRE <span> NÓS</span></h1></div>
-                <MenuItem>
-                    <div> <h1>PARA <span> SUA INFORMAÇÃO</span></h1></div>
-                    <Dropdown>
-                        <DropdownItem>Aniversários</DropdownItem>
-                        <DropdownItem>Férias | Pausas</DropdownItem>
-                        <DropdownItem>Calendário Accerte</DropdownItem>
-                    </Dropdown>
-                </MenuItem>
-                <div> <h1><span> AGENDA </span></h1></div>
-                <div> <h1>LINKS <span> RÁPIDOS</span></h1></div>
-                <div> <h1>GENTE <span> E GESTÃO</span></h1></div>
-                    <div> <h1>COMPLIANCE</h1></div>
-                    <div> <a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">
-                        <h1>JIRA</h1></a></div>
-                    <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
-                    <form onSubmit={handleSearchSubmit}>
-                    <input
-                        type="text"
-                        placeholder=" Pesquise aqui"
-                        value={searchBar}
-                        onChange={handleSearch}
-                    />
-                    <button type="submit"><FiSearch size={25} /></button>
-                    </form>
-                </MenuContainer>
-            <BannerContainer>
-                <BannerSlideComponent />
-            </BannerContainer>
-            <ButtonsContainer>
-                <div>
-                <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
-                </div>
-                <div>
-                <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank">POLÍTICAS </a>
-                </div>
-                <div>
-                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh"target="_blank">
-                    ESCRITORIO <br /> DE PROCESSOS
-                    </a>
-                </div>
-                <div>
-                    MARKETING
-                </div>                
-            </ButtonsContainer>
-            {/* <InstagramPicturesComponent/> */}
-            <LinkedinPostsComponent />
-            <FooterComponent />
+            {!user ? <h1> Carregando dados...</h1> :
+                <>
+                    <LogoutButton onClick={handleLogout}>
+                        <FiLogOut size={20} />
+                    </LogoutButton>
+                    <HeaderContainer>
+                        <div>
+                            <h1>Olá, <span> {user?.givenName} </span>
+                                <br /> Seja Bem-Vindo(a)!
+                            </h1>
+                        </div>
+                    </HeaderContainer>
+                    <MenuContainer>
+                        <div> <h1>SOBRE <span> NÓS</span></h1></div>
+                        <MenuItem>
+                            <div> <h1>PARA <span> SUA INFORMAÇÃO</span></h1></div>
+                            <Dropdown>
+                                <DropdownItem>Aniversários</DropdownItem>
+                                <DropdownItem>Férias | Pausas</DropdownItem>
+                                <DropdownItem>Calendário Accerte</DropdownItem>
+                            </Dropdown>
+                        </MenuItem>
+                        <div> <h1><span> AGENDA </span></h1></div>
+                        <div> <h1>LINKS <span> RÁPIDOS</span></h1></div>
+                        <div> <h1>GENTE <span> E GESTÃO</span></h1></div>
+                        <div> <h1>COMPLIANCE</h1></div>
+                        <div> <a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">
+                            <h1>JIRA</h1></a></div>
+                        <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
+                        <form onSubmit={handleSearchSubmit}>
+                            <input
+                                type="text"
+                                placeholder=" Pesquise aqui"
+                                value={searchBar}
+                                onChange={handleSearch}
+                            />
+                            <button type="submit"><FiSearch size={25} /></button>
+                        </form>
+                    </MenuContainer>
+                    <BannerContainer>
+                        <BannerSlideComponent />
+                    </BannerContainer>
+                    <ButtonsContainer>
+                        <div>
+                            <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
+                        </div>
+                        <div>
+                            <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank">POLÍTICAS </a>
+                        </div>
+                        <div>
+                            <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
+                                ESCRITORIO <br /> DE PROCESSOS
+                            </a>
+                        </div>
+                        <div>
+                            MARKETING
+                        </div>
+                    </ButtonsContainer>
+                    {/* <InstagramPicturesComponent/> */}
+                    <LinkedinPostsComponent />
+                    <FooterComponent />
+                </>
+            }
         </Container>
     );
 };
@@ -117,6 +124,7 @@ const IntranetHomePage = () => {
 export default IntranetHomePage;
 
 const Container = styled.div`
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -138,7 +146,7 @@ const Container = styled.div`
 const LogoutButton = styled.button`
     position: absolute;
     top: 25px;
-    right: 15px;
+    right: 20px;
     font-size: 10px;
 `
 

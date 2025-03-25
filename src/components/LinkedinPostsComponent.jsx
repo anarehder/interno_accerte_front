@@ -8,17 +8,28 @@ import apiService from '../services/apiService';
 function LinkedinPostsComponent() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState("");
+
     // console.log(posts);
     useEffect(() => {
         // Função para buscar posts
         const fetchPosts = async () => {
+            const cachedPosts = sessionStorage.getItem("posts");
+
+            if (cachedPosts) {
+                setPosts(JSON.parse(cachedPosts)); // Usa os dados salvos
+                setLoading(false);
+                return;
+            }
             try {
                 const response = await apiService.getPosts();
                 setPosts(response.data);
                 setLoading(false);
+                sessionStorage.setItem("posts", JSON.stringify(response.data));
             } catch (error) {
                 console.error("Erro ao buscar os posts:", error);
                 setLoading(false);
+                setError("Erro ao buscar os posts");
             }
         };
 
@@ -32,6 +43,7 @@ function LinkedinPostsComponent() {
                     <FaInstagram size={24} /> Acompanhe nas redes sociais...
                 </h2>
                 {loading && <div> <br/>Carregando posts... </div>}
+                {error && <div> <br/>{error} </div>}
                 <div className="carousel" >
                     {posts.length > 0 &&
                         posts.map((p, index) => (
@@ -60,7 +72,7 @@ const PageContainer = styled.div`
 const InstagramContainer = styled.div`
     font-family: 'Conthrax', sans-serif;
     padding: 20px;
-    width: 90%;
+    width: 92%;
     flex-direction: column;
     h2 {
         display: flex;
