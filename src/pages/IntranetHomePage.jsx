@@ -16,7 +16,7 @@ import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
 import BannerTopo from "../assets/INTRANET_BANNER.png"
 
 const IntranetHomePage = () => {
-    const { user, dados, getData } = useAuth();
+    const { user, getData } = useAuth();
     const { instance } = useMsal();
     const navigate = useNavigate();
     const [searchBar, setSearchBar] = useState("");
