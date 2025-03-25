@@ -3,7 +3,7 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function getPosts() {
-    console.log(`${BASE_URL}/linkedin/posts`);
+    // console.log(`${BASE_URL}/linkedin/posts`);
     return axios.get(`${BASE_URL}/linkedin/posts`);
 }
 

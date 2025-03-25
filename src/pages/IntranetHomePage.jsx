@@ -16,16 +16,15 @@ import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
 import BannerTopo from "../assets/INTRANET_BANNER.png"
 
 const IntranetHomePage = () => {
-    const { user, getData } = useAuth();
+    const { user, dados, getData } = useAuth();
     const { instance } = useMsal();
     const navigate = useNavigate();
     const [searchBar, setSearchBar] = useState("");
     const isAuthenticated = useIsAuthenticated();
-
+    console.log(dados);
     useEffect(() => {
         if (!user) {
             getData();
-            console.log(user);
         }
         
         if (!isAuthenticated) {

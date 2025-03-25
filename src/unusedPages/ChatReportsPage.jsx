@@ -62,7 +62,7 @@ const ChatReportsPage = () => {
         }
 
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         // setResponse(data);
         const newInput = [...messages, { text: inputMessage, isUser: true },{ text: data, isUser: false }];
         setMessages(newInput);
