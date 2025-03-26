@@ -240,8 +240,8 @@ function VacationsAdminPage() {
     };
 
     const feriasDisponiveis = gerarFerias(info.admissao);
-    console.log(feriasDisponiveis);
-    console.log(index);
+    // console.log(feriasDisponiveis);
+    // console.log(index);
     // console.log(feriasDisponiveis[index-1]?.inicio);
     return (
         <PageContainer>

@@ -29,7 +29,7 @@ function App() {
               <Route path="/assinatura" element={<SignatureEmailPage />} />
               <Route path="/certificacoes" element={<IntranetCertificationsPage />} />
               <Route path="/ferias" element={<VacationsPage />} />
-              <Route path="/admin" element={<VacationsAdminPage />} />
+              <Route path="/ferias/admin" element={<VacationsAdminPage />} />
               <Route path="/contatos" element={<ContactsPage />} />
               <Route path="/aniversarios" element={<AnniversaryPage />} />
               <Route path="/calendario" element={<CalendarPage />} />

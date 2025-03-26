@@ -46,9 +46,9 @@ function NewVacationComponent({ name, periodoAquisitivo}) {
         <Container>
             <Header>Nome: {name} 
             <br /><br /><br />
-            Período Aquisitivo: de {periodoAquisitivo.inicio} até {periodoAquisitivo.fim}
+            Período Aquisitivo: de {periodoAquisitivo?.inicio} até {periodoAquisitivo?.fim}
             <br /><br /><br />
-            Data Limite: {periodoAquisitivo.limite}
+            Data Limite: {periodoAquisitivo?.limite}
             </Header>
             <Form>
                 <Label>Início das Férias:</Label>

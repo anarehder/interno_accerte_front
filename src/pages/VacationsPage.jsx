@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
+import { Link } from "react-router-dom";
 import IntranetHeaderComponent from '../components/IntranetHeaderComponent';
 
 function VacationsPage() {
@@ -91,6 +92,7 @@ function VacationsPage() {
     const feriasDisponiveis = gerarFerias(info.admissao);
     return (
         <PageContainer>
+            <AdminButton><Link to="/ferias/admin">Gerenciar Férias</Link></AdminButton>
             <IntranetHeaderComponent pageTitle={"FÉRIAS"} />
             <HeaderContainer>
                 <LogoContainer>
@@ -165,6 +167,22 @@ const PageContainer = styled.div`
     align-items: center;
     gap: 20px;
 `
+
+const AdminButton = styled.button`
+    top: 5%;
+    right: 2%;
+    position: absolute;
+    font-size: 16px;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    &:hover {
+        background-color: #0056b3;
+    }
+`;
 
 const HeaderContainer = styled.div`
     width: 90%;
