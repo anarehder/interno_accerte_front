@@ -73,7 +73,7 @@ const IntranetHomePage = () => {
                             <Dropdown>
                                 <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
                                 <DropdownItem>Férias | Pausas</DropdownItem>
-                                <DropdownItem>Calendário Accerte</DropdownItem>
+                                <DropdownItem><Link to={"/calendario"}>Calendário Accerte</Link></DropdownItem>
                             </Dropdown>
                         </MenuItem>
                         <div> <Link to="/contatos"><h1><span> AGENDA </span></h1></Link></div>
