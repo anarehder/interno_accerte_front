@@ -11,6 +11,7 @@ import SignatureEmailPage from "./pages/SignatureEmailPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { msalInstance } from "./services/authConfig";
 import { AuthProvider } from "./contexts/AuthContext";
+import ContactsPage from "./pages/ContactsPage";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
               <Route path="/certificacoes" element={<IntranetCertificationsPage />} />
               <Route path="/ferias" element={<VacationsPage />} />
               <Route path="/admin" element={<VacationsAdminPage />} />
+              <Route path="/contatos" element={<ContactsPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

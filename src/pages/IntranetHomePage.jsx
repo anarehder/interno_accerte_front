@@ -76,7 +76,7 @@ const IntranetHomePage = () => {
                                 <DropdownItem>Calendário Accerte</DropdownItem>
                             </Dropdown>
                         </MenuItem>
-                        <div> <h1><span> AGENDA </span></h1></div>
+                        <div> <Link to="/contatos"><h1><span> AGENDA </span></h1></Link></div>
                         <div> <h1>LINKS <span> RÁPIDOS</span></h1></div>
                         <div> <h1>GENTE <span> E GESTÃO</span></h1></div>
                         <div> <h1>COMPLIANCE</h1></div>
