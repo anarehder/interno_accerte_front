@@ -12,6 +12,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import { msalInstance } from "./services/authConfig";
 import { AuthProvider } from "./contexts/AuthContext";
 import ContactsPage from "./pages/ContactsPage";
+import AnniversaryPage from "./pages/AnniversaryPage";
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
               <Route path="/ferias" element={<VacationsPage />} />
               <Route path="/admin" element={<VacationsAdminPage />} />
               <Route path="/contatos" element={<ContactsPage />} />
+              <Route path="/aniversarios" element={<AnniversaryPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >
