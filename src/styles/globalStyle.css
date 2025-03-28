@@ -84,17 +84,18 @@ button {
     font-size: 20px;
     font-weight: 400;
     cursor: pointer;
-    background-color: #021121;
-    color: #FFFFFF;
     transition: border-color 0.25s;
     display: flex;
     padding: 10px 15px;
     justify-content: space-between;
     align-items: center;
+    background-color: #007bff;
+    color: white;
 }
 
 button:hover {
     cursor: pointer;
+    background-color: #0056b3;
 }
 
 button:disabled {

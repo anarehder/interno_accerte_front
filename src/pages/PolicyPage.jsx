@@ -3,28 +3,20 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import BannerTopo from "../assets/INTRANET_BANNER.png"
 import { useAuth } from "../contexts/AuthContext";
+import HeaderComponent from "../components/HeaderComponent";
 
 const PolicyPage = () => {{
     const { dados } = useAuth();
 
     return (
         <Container>
-            <Link to="/homepage">
-                <ReturnButton> Voltar </ReturnButton>
-            </Link>
-            <HeaderContainer>
-                <div>
-                    <h1>Políticas </h1>
-                </div>
-            </HeaderContainer>
+            <HeaderComponent pageTitle={"Políticas"} type={"page"} />
             <List>
-            {dados?.politicas?.map((file, index) => (
-                <div key={index}>
-                    <h1>{file.name.slice(0,-4)}</h1>
-                    <div>{file.url}</div>
-                    <button><a href={file.url}></a> Acessar </button>
-                </div>
-                
+                {dados?.politicas?.map((file, index) => (
+                <Card key={index}>
+                    <Info>{file.name.slice(0,-4)}</Info>
+                    <Info><button><a href={file.url} target="_blank"> Acessar </a></button></Info>
+                </Card>
             ))}
             </List>
         </Container>
@@ -34,44 +26,6 @@ const PolicyPage = () => {{
 
 export default PolicyPage;
   
-const HeaderContainer = styled.div`
-    background-color: #434343;
-    height: 200px;
-    background: url(${BannerTopo}) no-repeat right center;
-    background-size: cover;
-    color: #067DD1;
-    overflow: hidden;
-    div{
-        width: 50%;
-        background-color: white;
-        border-bottom-right-radius: 80px;
-        box-shadow: 12px -21px 3px 5px rgba(0, 0, 0, 0.2);
-        justify-content: center;
-        align-items: center;
-        h1 {
-            width: 80%;
-            text-align: left;
-            line-height: 50px;
-            font-size: 36px;
-            // background-color: red;
-        }
-    }
-`
-const ReturnButton = styled.button`
-    top: 2%;
-    left: 2%;
-    position: absolute;
-    font-size: 16px;
-    justify-content: center;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    &:hover {
-        background-color: #0056b3;
-    }
-`;
 
 const Container = styled.div`
     flex-direction: column;
@@ -84,23 +38,31 @@ const Container = styled.div`
 
 const List = styled.div`
     display: flex;
+    flex-direction: column;
     gap: 40px;
-    width: 90%;
-    margin-top: 30px;
-    flex-wrap: wrap;
+    margin: 30px 0;
     justify-content: center;
-    margin-bottom: 20px;
-    div {
-        gap: 20px;
-        width: 90%;
-        align-items: center;
+    align-items: center;
+    width: 55%;
+`;
+
+const Card = styled.div`
+    background: white;
+    padding: 15px 25px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    gap: 10%;
+    flex-wrap: wrap;
+    p:first-child {
+        width: 70%;
     }
 `;
 
-const Image = styled.img`
-    width: 450px;
-    height: 650px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+const Info = styled.p`
+    margin: 5px 0;
+    color: #555;
+    text-align: left;
 `;
+  
