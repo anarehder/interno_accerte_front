@@ -70,7 +70,7 @@ const IntranetHomePage = () => {
                             </Dropdown>
                         </MenuItem>
                         <div> <Link to="/contatos"><h1><span> AGENDA </span></h1></Link></div>
-                        <div> <h1>LINKS <span> RÁPIDOS</span></h1></div>
+                        <div> <Link to="/links"><h1>LINKS <span> RÁPIDOS</span></h1></Link></div>
                         <div> <h1>FIQUE <span>POR DENTRO </span> </h1></div>
                         <div> <a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">
                             <h1>JIRA</h1></a></div>

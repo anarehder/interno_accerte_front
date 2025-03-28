@@ -16,6 +16,7 @@ import CalendarPage from "./pages/CalendarPage";
 import PolicyPage from "./pages/PolicyPage";
 import CertificationsPage from "./pages/CertificationsPage";
 import CompliancePage from "./pages/CompliancePage";
+import FastLinksPage from "./pages/FastLinksPage";
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
               <Route path="/calendario" element={<CalendarPage />} />
               <Route path="/politicas" element={<PolicyPage />} />
               <Route path="/compliance" element={<CompliancePage />} />
+              <Route path="/links" element={<FastLinksPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >
