@@ -35,13 +35,13 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    font-size: 30px;
+    font-size: 25px;
     margin-bottom: 20px;
 `
 
 const LevelContainer = styled.div`
     width: 80%;
-    border: 2px solid #345B68;
+    border: 2px solid #007bff;
     flex-direction: column;
     gap: 5px;
     border-radius: 50px;
@@ -49,7 +49,7 @@ const LevelContainer = styled.div`
 `
 
 const LevelTitle = styled.div`
-    background-color: #345B68;
+    background-color: #007bff;
     border-radius: 50px;
     color: white;
     width: 80%;

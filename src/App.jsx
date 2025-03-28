@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MsalProvider } from '@azure/msal-react';
 import styled from 'styled-components'
 import VacationsPage from "./pages/VacationsPage";
-import IntranetCertificationsPage from "./pages/IntranetCertificationsPage";
 import VacationsAdminPage from "./pages/VacationsAdminPage";
 import IntranetHomePage from "./pages/IntranetHomePage";
 import IntranetLoginPage from "./pages/IntranetLoginPage";
@@ -15,6 +14,7 @@ import ContactsPage from "./pages/ContactsPage";
 import AnniversaryPage from "./pages/AnniversaryPage";
 import CalendarPage from "./pages/CalendarPage";
 import PolicyPage from "./pages/PolicyPage";
+import CertificationsPage from "./pages/CertificationsPage";
 
 function App() {
 
@@ -28,7 +28,7 @@ function App() {
               <Route path="/homepage" element={<IntranetHomePage />} />
               <Route path="/equipamentos" element={<EquipmentsPage />} />
               <Route path="/assinatura" element={<SignatureEmailPage />} />
-              <Route path="/certificacoes" element={<IntranetCertificationsPage />} />
+              <Route path="/certificacoes" element={<CertificationsPage />} />
               <Route path="/ferias" element={<VacationsPage />} />
               <Route path="/ferias/admin" element={<VacationsAdminPage />} />
               <Route path="/contatos" element={<ContactsPage />} />
