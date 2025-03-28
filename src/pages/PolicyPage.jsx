@@ -1,7 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import BannerTopo from "../assets/INTRANET_BANNER.png"
 import { useAuth } from "../contexts/AuthContext";
 import HeaderComponent from "../components/HeaderComponent";
 
