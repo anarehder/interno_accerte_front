@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import Logo from "../assets/LOGO-INTRANET.png";
-import LogoPequena from "../assets/LOGO_PNG.png"
 import { FiSearch } from "react-icons/fi";
-import InstagramPicturesComponent from "../components/InstagramPicturesComponent";
 import FooterComponent from "../components/FooterComponent";
 import BannerSlideComponent from "../components/BannerSlideComponent";
 import { useNavigate  } from "react-router-dom";
@@ -96,9 +93,7 @@ const IntranetHomePage = () => {
                             <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
                         </div>
                         <div>
-                            {/* <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank"> */}
                             <Link to={"/politicas"}>POLÍTICAS </Link>
-                            {/* </a> */}
                         </div>
                         <div>
                             <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
@@ -106,10 +101,9 @@ const IntranetHomePage = () => {
                             </a>
                         </div>
                         <div>
-                            COMPLIANCE
+                            <Link to="/compliance">COMPLIANCE </Link>
                         </div>
                     </ButtonsContainer>
-                    {/* <InstagramPicturesComponent/> */}
                     <LinkedinPostsComponent />
                     <FooterComponent />
                 </>
@@ -137,7 +131,6 @@ const Container = styled.div`
     span{
         font-weight: 700;
     }
-//   font-family: 'Conthrax', sans-serif;
 `;
 
 const LogoutButton = styled.button`
@@ -145,30 +138,6 @@ const LogoutButton = styled.button`
     top: 25px;
     right: 20px;
     font-size: 10px;
-`
-
-const HeaderContainer = styled.div`
-    background-color: #434343;
-    height: 200px;
-    background: url(${BannerTopo}) no-repeat right center;
-    background-size: cover;
-    color: #067DD1;
-    overflow: hidden;
-    div{
-        width: 50%;
-        background-color: white;
-        border-bottom-right-radius: 80px;
-        box-shadow: 12px -21px 3px 5px rgba(0, 0, 0, 0.2);
-        justify-content: center;
-        align-items: center;
-        h1 {
-            width: 80%;
-            text-align: left;
-            line-height: 50px;
-            font-size: 36px;
-            // background-color: red;
-        }
-    }
 `
 
 const MenuContainer = styled.div`
@@ -179,7 +148,6 @@ const MenuContainer = styled.div`
     color: white;
     gap: 30px;
     div {
-        // line-height: 50px;
         justify-content: center;
         text-align: center;
         width: fit-content;

@@ -15,6 +15,7 @@ import AnniversaryPage from "./pages/AnniversaryPage";
 import CalendarPage from "./pages/CalendarPage";
 import PolicyPage from "./pages/PolicyPage";
 import CertificationsPage from "./pages/CertificationsPage";
+import CompliancePage from "./pages/CompliancePage";
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
               <Route path="/aniversarios" element={<AnniversaryPage />} />
               <Route path="/calendario" element={<CalendarPage />} />
               <Route path="/politicas" element={<PolicyPage />} />
+              <Route path="/compliance" element={<CompliancePage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

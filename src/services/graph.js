@@ -156,7 +156,33 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'agenda': fileList5, 'calendario': fileList6};
+  const compliance = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Código de Ética e Conduta:/children`,
+    {
+      headers: { Authorization: `Bearer ${response.accessToken}` }
+    }
+  );
+  const files7 = await compliance.json();
+
+  const fileList7 = files7.value.map(file => ({
+    name: file.name,
+    url: file.webUrl
+  }));
+
+  const background = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Papel de Fundo:/children`,
+    {
+      headers: { Authorization: `Bearer ${response.accessToken}` }
+    }
+  );
+  const files8 = await background.json();
+
+  const fileList8 = files8.value.map(file => ({
+    name: file.name,
+    url: file.webUrl
+  }));
+
+  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8};
 
   return responseObject;    
 

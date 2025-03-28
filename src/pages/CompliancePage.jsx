@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import HeaderComponent from "../components/HeaderComponent";
 
-const PolicyPage = () => {{
+const CompliancePage = () => {{
     const { dados } = useAuth();
 
     useEffect(() => {
@@ -12,9 +12,21 @@ const PolicyPage = () => {{
 
     return (
         <Container>
-            <HeaderComponent pageTitle={"Políticas"} type={"page"} />
+            <HeaderComponent pageTitle={"Compliance"} type={"page"} />
             <List>
-                {dados?.politicas?.map((file, index) => (
+                <h1>Canais de Denúncias
+                    <div>
+                        <div>
+                        <h2>Telefone: (62) 3945-9510</h2>
+                        <h2> canaldedenuncia@accerte.com.br</h2>
+                        </div>
+                        <p>opção 7 - Fale conosco <br/> (agente interno)</p>
+                        <p>opção 8 - Canal de denúncia <br/>(agente externo)</p>
+                    </div>   
+                </h1>
+            </List> 
+            <List>
+                {dados?.compliance?.map((file, index) => (
                 <Card key={index}>
                     <Info>{file.name.slice(0,-4)}</Info>
                     <Info><button><a href={file.url} target="_blank"> Acessar </a></button></Info>
@@ -26,7 +38,7 @@ const PolicyPage = () => {{
   };
 }
 
-export default PolicyPage;
+export default CompliancePage;
   
 
 const Container = styled.div`
@@ -46,6 +58,23 @@ const List = styled.div`
     justify-content: center;
     align-items: center;
     width: 55%;
+    h1 {
+        div {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            p{
+                width: 200px;
+                font-size: 18px;
+            }
+            div {
+                flex-direction: column;
+                width: 450px;
+            }
+        }
+    }
 `;
 
 const Card = styled.div`
@@ -67,4 +96,3 @@ const Info = styled.p`
     color: #555;
     text-align: left;
 `;
-  
