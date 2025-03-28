@@ -42,8 +42,8 @@ export default BannerSlideComponent;
 
 const SliderContainer = styled.div`
   width: 100%;
-  max-width: 800px;
-  max-height: 400px;
+  max-width: 1000px;
+  max-height: 500px;
   overflow: hidden;
   position: relative;
   border-radius: 10px;
@@ -68,9 +68,9 @@ const PrevNextButton = styled.button`
   background: rgba(0, 0, 0, 0.5);
   color: white;
   border: none;
-  padding: 10px;
+  padding: 5px;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 10px;
   border-radius: 5px;
   z-index: 10;
   &:first-of-type{

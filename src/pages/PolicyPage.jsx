@@ -4,32 +4,35 @@ import { Link } from "react-router-dom";
 import BannerTopo from "../assets/INTRANET_BANNER.png"
 import { useAuth } from "../contexts/AuthContext";
 
-const AnniversaryPage = () => {{
+const PolicyPage = () => {{
     const { dados } = useAuth();
-    const mes = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date()).toUpperCase();
+
     return (
         <Container>
-
             <Link to="/homepage">
                 <ReturnButton> Voltar </ReturnButton>
             </Link>
             <HeaderContainer>
                 <div>
-                    <h1>Aniversários - {mes} </h1>
+                    <h1>Políticas </h1>
                 </div>
             </HeaderContainer>
             <List>
-            {dados?.aniversarios?.map((file, index) => (
-                <Image key={index} src={file.url} alt={`Aniversário ${file.name}`} />
+            {dados?.politicas?.map((file, index) => (
+                <div key={index}>
+                    <h1>{file.name.slice(0,-4)}</h1>
+                    <div>{file.url}</div>
+                    <button><a href={file.url}></a> Acessar </button>
+                </div>
+                
             ))}
             </List>
-            <div>{dados.aniversarios[0].webUrl} </div>
         </Container>
     );
   };
 }
 
-export default AnniversaryPage;
+export default PolicyPage;
   
 const HeaderContainer = styled.div`
     background-color: #434343;
@@ -87,11 +90,16 @@ const List = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     margin-bottom: 20px;
+    div {
+        gap: 20px;
+        width: 90%;
+        align-items: center;
+    }
 `;
 
 const Image = styled.img`
-    width: 350px;
-    height: 350px;
+    width: 450px;
+    height: 650px;
     object-fit: cover;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

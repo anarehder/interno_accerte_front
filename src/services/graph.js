@@ -75,6 +75,7 @@ export async function getSharePointData(instance, accounts) {
   );
   
   const files = await politica.json();
+  console.log(files);
   const fileList = files.value.map(file => ({
     name: file.name,
     url: file.webUrl
@@ -122,22 +123,25 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const agenda = await fetch("https://graph.microsoft.com/v1.0/users?$top=999", {
+  const agenda = await fetch("https://graph.microsoft.com/v1.0/users?$filter=accountEnabled eq true&$top=999", {
         headers: {
           Authorization: `Bearer ${response.accessToken}`,
         },
       });
-
+      
   const files5 = await agenda.json();
-  const fileList5 = files5.value.map(file => ({
+  const fileList5 = files5.value
+  .map(file => ({
     name: file.displayName,
     givenName: file.givenName,
     surname: file.surname,
     jobTitle: file.jobTitle,
     mail: file.mail,
     mobilePhone: file.mobilePhone,
-    officeLocation: file.officeLocation
-  }));
+    officeLocation: file.officeLocation,
+    department: file.department,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));;
 
   const calendario = await fetch(
     `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Calendários Accerte 2025:/children`,

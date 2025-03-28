@@ -14,6 +14,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ContactsPage from "./pages/ContactsPage";
 import AnniversaryPage from "./pages/AnniversaryPage";
 import CalendarPage from "./pages/CalendarPage";
+import PolicyPage from "./pages/PolicyPage";
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
               <Route path="/contatos" element={<ContactsPage />} />
               <Route path="/aniversarios" element={<AnniversaryPage />} />
               <Route path="/calendario" element={<CalendarPage />} />
+              <Route path="/politicas" element={<PolicyPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

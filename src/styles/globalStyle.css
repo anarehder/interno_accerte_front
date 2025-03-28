@@ -5,14 +5,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 @font-face {
-    font-family: 'Conthrax';
+    font-family: "Poppins", serif;
     src: url('/fonts/conthrax-sb.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
 
 body {
-    font-family: 'Roboto Condensed', sans-serif;
+    font-family: "Poppins", serif;
     display: flex;
     height: 100%;
     min-width: 320px;
@@ -46,7 +46,6 @@ h1 {
     font-weight: 700;
     font-size: 30px;
     padding: 10px 0;
-    font-family: "Dosis", sans-serif;
 }
 
 h2 {
@@ -63,7 +62,6 @@ h3 {
 }
 
 input {
-    font-family: 'Roboto Condensed', sans-serif;
     font-weight: 400;
     font-size: 24px;
     outline: none;
@@ -105,7 +103,6 @@ button:disabled {
 }
 
 select {
-    font-family: 'Roboto Condensed', sans-serif;
     font-weight: 400;
     font-size: 20px;
     border-radius: 16px;

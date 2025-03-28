@@ -14,6 +14,7 @@ import { useIsAuthenticated } from '@azure/msal-react';
 import { useMsal } from "@azure/msal-react";
 import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
 import BannerTopo from "../assets/INTRANET_BANNER.png"
+import HeaderComponent from "../components/HeaderComponent";
 
 const IntranetHomePage = () => {
     const { user, getData } = useAuth();
@@ -59,27 +60,21 @@ const IntranetHomePage = () => {
                     <LogoutButton onClick={handleLogout}>
                         <FiLogOut size={20} />
                     </LogoutButton>
-                    <HeaderContainer>
-                        <div>
-                            <h1>Olá, <span> {user?.givenName} </span>
-                                <br /> Seja Bem-Vindo(a)!
-                            </h1>
-                        </div>
-                    </HeaderContainer>
+                    <HeaderComponent pageTitle={user?.givenName} type={"homepage"} />
                     <MenuContainer>
                         <div> <h1>SOBRE <span> NÓS</span></h1></div>
                         <MenuItem>
-                            <div> <h1>PARA <span> SUA INFORMAÇÃO</span></h1></div>
+                            <div> <h1>GENTE <span> E GESTÃO </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
                                 <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
+                                <DropdownItem><Link to={"/ferias"}>Escala Semanal</Link></DropdownItem>
                                 <DropdownItem><Link to={"/calendario"}>Calendário Accerte</Link></DropdownItem>
                             </Dropdown>
                         </MenuItem>
                         <div> <Link to="/contatos"><h1><span> AGENDA </span></h1></Link></div>
                         <div> <h1>LINKS <span> RÁPIDOS</span></h1></div>
-                        <div> <h1>GENTE <span> E GESTÃO</span></h1></div>
-                        <div> <h1>COMPLIANCE</h1></div>
+                        <div> <h1>FIQUE <span>POR DENTRO </span> </h1></div>
                         <div> <a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">
                             <h1>JIRA</h1></a></div>
                         <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
@@ -101,7 +96,9 @@ const IntranetHomePage = () => {
                             <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
                         </div>
                         <div>
-                            <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank">POLÍTICAS </a>
+                            {/* <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/EhU76OelhAxMmiqJub4B-V4Bi_3D6qndYbq3TRqbC-SyvA?e=5fh8LN" target="_blank"> */}
+                            <Link to={"/politicas"}>POLÍTICAS </Link>
+                            {/* </a> */}
                         </div>
                         <div>
                             <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
@@ -109,7 +106,7 @@ const IntranetHomePage = () => {
                             </a>
                         </div>
                         <div>
-                            MARKETING
+                            COMPLIANCE
                         </div>
                     </ButtonsContainer>
                     {/* <InstagramPicturesComponent/> */}
@@ -180,7 +177,7 @@ const MenuContainer = styled.div`
     align-items: center;
     justify-content: center;
     color: white;
-    gap: 20px;
+    gap: 30px;
     div {
         // line-height: 50px;
         justify-content: center;
@@ -257,7 +254,6 @@ const MenuItem = styled.div`
   position: relative;
   padding: 10px;
   cursor: pointer;
-
   &:hover div {
     display: block;
   }
@@ -274,12 +270,12 @@ const Dropdown = styled.div`
   border-top-left-radius: 0;
   padding: 5px;
   display: none;
-  min-width: 150px;
+  min-width: 180px;
   z-index: 2;
 `;
 
 const DropdownItem = styled.div`
-  padding: 8px;
+  padding: 4px 2px;
   cursor: pointer;
   &:hover {
     color: black;
