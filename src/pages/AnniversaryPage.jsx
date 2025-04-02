@@ -1,9 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import BannerTopo from "../assets/INTRANET_BANNER.png"
 import { useAuth } from "../contexts/AuthContext";
-import HeaderComponent from "../components/HeaderComponent";
+import HeaderGGComponent from "../components/HeaderGGComponent";
 
 const AnniversaryPage = () => {{
     const { dados } = useAuth();
@@ -11,7 +9,7 @@ const AnniversaryPage = () => {{
     const mesFormatado = mes.charAt(0).toUpperCase() + mes.slice(1).toLowerCase();
     return (
         <Container>
-            <HeaderComponent pageTitle={`Aniversários - ${mesFormatado}`} type={"page"} />
+            <HeaderGGComponent pageTitle={`Aniversários - ${mesFormatado}`} />
             <List>
             {dados?.aniversarios?.map((file, index) => (
                 <Image key={index} src={file.url} alt={`Aniversário ${file.name}`} />
@@ -45,8 +43,8 @@ const List = styled.div`
 `;
 
 const Image = styled.img`
-    width: 350px;
-    height: 350px;
+    width: 400px;
+    height: 400px;
     object-fit: cover;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

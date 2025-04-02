@@ -17,6 +17,7 @@ import PolicyPage from "./pages/PolicyPage";
 import CertificationsPage from "./pages/CertificationsPage";
 import CompliancePage from "./pages/CompliancePage";
 import FastLinksPage from "./pages/FastLinksPage";
+import ScalePage from "./pages/ScalePage";
 
 function App() {
 
@@ -38,6 +39,7 @@ function App() {
               <Route path="/calendario" element={<CalendarPage />} />
               <Route path="/politicas" element={<PolicyPage />} />
               <Route path="/compliance" element={<CompliancePage />} />
+              <Route path="/escala" element={<ScalePage />} />
               <Route path="/links" element={<FastLinksPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

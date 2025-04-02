@@ -182,7 +182,21 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8};
+  const banners = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/BANNERS:/children`,
+    {
+      headers: { Authorization: `Bearer ${response.accessToken}` }
+    }
+  );
+  const files9 = await banners.json();
+  
+  const fileList9 = files9.value.map(file => ({
+    name: file.name,
+    url: file.webUrl
+  }));
+
+
+  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9};
 
   return responseObject;    
 

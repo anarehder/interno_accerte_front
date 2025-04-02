@@ -65,7 +65,7 @@ const IntranetHomePage = () => {
                             <Dropdown>
                                 <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
                                 <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
-                                <DropdownItem><Link to={"/ferias"}>Escala Semanal</Link></DropdownItem>
+                                <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
                                 <DropdownItem><Link to={"/calendario"}>Calendário Accerte</Link></DropdownItem>
                             </Dropdown>
                         </MenuItem>
@@ -138,6 +138,7 @@ const LogoutButton = styled.button`
     top: 25px;
     right: 20px;
     font-size: 10px;
+    z-index: 2;
 `
 
 const MenuContainer = styled.div`

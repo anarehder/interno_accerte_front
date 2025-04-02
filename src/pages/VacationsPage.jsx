@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
 import IntranetHeaderComponent from '../components/IntranetHeaderComponent';
+import HeaderGGComponent from '../components/HeaderGGComponent';
 
 function VacationsPage() {
     const info = { "admissao": "15/01/2023", "tipo": "CLT", "annualVacation": "30 dias" };
@@ -92,8 +93,8 @@ function VacationsPage() {
     const feriasDisponiveis = gerarFerias(info.admissao);
     return (
         <PageContainer>
-            <AdminButton><Link to="/ferias/admin">Gerenciar Férias</Link></AdminButton>
-            <IntranetHeaderComponent pageTitle={"FÉRIAS"} />
+            <HeaderGGComponent pageTitle={"Férias"} />
+            <AdminButton><Link to="/ferias/admin">Administrar</Link></AdminButton>
             <HeaderContainer>
                 <LogoContainer>
                     {/* <img src={Logo} alt="ACCERTE" /> */}
@@ -169,7 +170,7 @@ const PageContainer = styled.div`
 `
 
 const AdminButton = styled.button`
-    top: 5%;
+    top: 2%;
     right: 2%;
     position: absolute;
     font-size: 16px;
@@ -177,10 +178,10 @@ const AdminButton = styled.button`
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    background-color: #007bff;
+    background-color: #ED1F4C;
     color: white;
     &:hover {
-        background-color: #0056b3;
+        background-color: #ED1F4C;
     }
 `;
 
