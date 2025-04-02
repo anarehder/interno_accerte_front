@@ -75,7 +75,7 @@ export async function getSharePointData(instance, accounts) {
   );
   
   const files = await politica.json();
-  console.log(files);
+
   const fileList = files.value.map(file => ({
     name: file.name,
     url: file.webUrl
@@ -194,7 +194,6 @@ export async function getSharePointData(instance, accounts) {
     name: file.name,
     url: file.webUrl
   }));
-
 
   const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9};
 

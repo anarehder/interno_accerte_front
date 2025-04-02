@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
-import banner1 from "../assets/BANNER1.png";
-import banner2 from "../assets/BANNER2.jpeg";
-import banner3 from "../assets/BANNER3.jpeg";
+import { useAuth } from "../contexts/AuthContext";
+import banner1 from "../assets/BANNER1.png"; 
 
 function BannerSlideComponent() {
-    const images = [banner1, banner2, banner3];
+    const { dados } = useAuth();
+    const images = dados?.banners?.length > 0 ? dados.banners : [{ name: "Default", url: banner1 }];
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
@@ -30,7 +30,7 @@ function BannerSlideComponent() {
             <PrevNextButton onClick={prevSlide}>&#10094;</PrevNextButton>
             <Slide style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
                 {images.map((image, index) => (
-                    <SlideImage key={index} src={image} alt={`Slide ${index}`} />
+                    <SlideImage key={index} src={image.url} alt={`Slide ${image.name}`} />
                 ))}
             </Slide>
             <PrevNextButton onClick={nextSlide}>&#10095;</PrevNextButton>
