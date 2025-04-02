@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
-import IntranetHeaderComponent from '../components/IntranetHeaderComponent';
 import HeaderGGComponent from '../components/HeaderGGComponent';
 
 function VacationsPage() {
