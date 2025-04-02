@@ -59,7 +59,7 @@ const IntranetHomePage = () => {
                     </LogoutButton>
                     <HeaderComponent pageTitle={user?.givenName} type={"homepage"} />
                     <MenuContainer>
-                        <div> <h1>SOBRE <span> NÓS</span></h1></div>
+                        <div><Link to={"/sobre"}> <h1>SOBRE <span> NÓS</span></h1></Link></div>
                         <MenuItem>
                             <div> <h1>GENTE <span> E GESTÃO </span></h1></div>
                             <Dropdown>

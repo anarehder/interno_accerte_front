@@ -18,6 +18,7 @@ import CertificationsPage from "./pages/CertificationsPage";
 import CompliancePage from "./pages/CompliancePage";
 import FastLinksPage from "./pages/FastLinksPage";
 import ScalePage from "./pages/ScalePage";
+import AboutUsPage from "./pages/AboutUsPage";
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
             <Routes>
               <Route path="/" element={<IntranetLoginPage />} />
               <Route path="/homepage" element={<IntranetHomePage />} />
+              <Route path="/sobre" element={<AboutUsPage />} /> 
               <Route path="/equipamentos" element={<EquipmentsPage />} />
               <Route path="/assinatura" element={<SignatureEmailPage />} />
               <Route path="/certificacoes" element={<CertificationsPage />} />

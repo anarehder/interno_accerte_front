@@ -20,8 +20,8 @@ const CompliancePage = () => {{
                         <h2>Telefone: (62) 3945-9510</h2>
                         <h2> canaldedenuncia@accerte.com.br</h2>
                         </div>
-                        <p>opção 7 - Fale conosco <br/> (agente interno)</p>
-                        <p>opção 8 - Canal de denúncia <br/>(agente externo)</p>
+                        {/* <p>opção 7 - Fale conosco <br/> (agente interno)</p>
+                        <p>opção 8 - Canal de denúncia <br/>(agente externo)</p> */}
                     </div>   
                 </h1>
             </List> 
