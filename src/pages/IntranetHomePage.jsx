@@ -10,8 +10,8 @@ import { useAuth } from "../contexts/AuthContext";
 import { useIsAuthenticated } from '@azure/msal-react';
 import { useMsal } from "@azure/msal-react";
 import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
-import BannerTopo from "../assets/INTRANET_BANNER.png"
 import HeaderComponent from "../components/HeaderComponent";
+import BirthdayPopUpComponent from "../components/BirthdayPopUpComponent";
 
 const IntranetHomePage = () => {
     const { user, getData } = useAuth();
@@ -85,6 +85,7 @@ const IntranetHomePage = () => {
                             <button type="submit"><FiSearch size={25} /></button>
                         </form>
                     </MenuContainer>
+                    <BirthdayPopUpComponent />
                     <BannerContainer>
                         <BannerSlideComponent />
                     </BannerContainer>
@@ -185,9 +186,8 @@ const MenuContainer = styled.div`
 `
 
 const BannerContainer = styled.div`
-    width: 90%;
-    gap: 50px;
-    margin-top: 10px;
+    width: 85%;
+    margin-top: 50px;
     justify-content: center;
     margin: 30px 0;
 `

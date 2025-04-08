@@ -123,26 +123,64 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const agenda = await fetch("https://graph.microsoft.com/v1.0/users?$filter=accountEnabled eq true&$top=999", {
+  const hoje = new Date();
+  const diaHoje = hoje.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit"
+  }).replace("/", "-");
+
+  const encontrado = fileList4.filter(aniv =>
+    aniv.name.startsWith(diaHoje)
+  );
+
+  let aniversarioDia = encontrado || [];
+  console.log(aniversarioDia);
+  const agenda = await fetch("https://graph.microsoft.com/v1.0/users?$filter=accountEnabled eq true&$select=id,displayName,givenName,surname,jobTitle,mail,mobilePhone,officeLocation,department,userPrincipalName&$top=999",
+      {
         headers: {
           Authorization: `Bearer ${response.accessToken}`,
         },
       });
       
   const files5 = await agenda.json();
-  const fileList5 = files5.value
-  .map(file => ({
-    name: file.displayName,
-    givenName: file.givenName,
-    surname: file.surname,
-    jobTitle: file.jobTitle,
-    mail: file.mail,
-    mobilePhone: file.mobilePhone,
-    officeLocation: file.officeLocation,
-    department: file.department,
-  }))
-  .sort((a, b) => a.name.localeCompare(b.name));;
 
+  const fileList5 = await Promise.all(
+    files5.value
+    .filter(f => f.officeLocation !== "NA" && f.officeLocation !== "OFF" && f.mail)
+    .sort((a, b) => a.displayName.localeCompare(b.displayName))
+    .map(async (file) => {
+      let managerName = null;
+      try {
+        const managerRes = await fetch(`https://graph.microsoft.com/v1.0/users/${file.mail}/manager`, {
+          headers: {
+            Authorization: `Bearer ${response.accessToken}`,
+          },
+        });
+  
+        if (managerRes.ok) {
+          const managerData = await managerRes.json();
+          managerName = managerData.displayName || "-";
+        } else {
+          managerName = "-";
+        }
+      } catch (e) {
+        managerName = "-";
+      }
+  
+      return {
+        name: file.displayName,
+        givenName: file.givenName,
+        surname: file.surname,
+        jobTitle: file.jobTitle,
+        mail: file.mail,
+        mobilePhone: file.mobilePhone,
+        officeLocation: file.officeLocation,
+        department: file.department,
+        manager: managerName,
+      };
+    })
+  );
+  
   const calendario = await fetch(
     `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Calendários Accerte 2025:/children`,
     {
@@ -195,7 +233,7 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9};
+  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9};
 
   return responseObject;    
 

@@ -11,7 +11,7 @@ function BannerSlideComponent() {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-        }, 3000);
+        }, 5000);
         return () => clearInterval(interval);
     }, [images.length]);
 
@@ -42,8 +42,8 @@ export default BannerSlideComponent;
 
 const SliderContainer = styled.div`
   width: 100%;
-  max-width: 1000px;
-  max-height: 500px;
+  max-width: 2000px;
+  max-height: 800px;
   overflow: hidden;
   position: relative;
   border-radius: 10px;

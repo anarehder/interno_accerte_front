@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import HeaderGGComponent from "../components/HeaderGGComponent";
 
-const AnniversaryPage = () => {{
+const AnniversaryPage = () => {
     const { dados } = useAuth();
     const mes = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date());
     const mesFormatado = mes.charAt(0).toUpperCase() + mes.slice(1).toLowerCase();
@@ -11,15 +11,14 @@ const AnniversaryPage = () => {{
         <Container>
             <HeaderGGComponent pageTitle={`Aniversários - ${mesFormatado}`} />
             <List>
-            {dados?.aniversarios?.map((file, index) => (
-                <Image key={index} src={file.url} alt={`Aniversário ${file.name}`} />
-            ))}
+                {dados?.aniversarios?.map((file, index) => (
+                    <Image key={index} src={file.url} alt={`Aniversário ${file.name}`} />
+                ))}
             </List>
             <div>{dados.aniversarios[0].webUrl} </div>
         </Container>
     );
-  };
-}
+};
 
 export default AnniversaryPage;
 

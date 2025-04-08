@@ -8,15 +8,15 @@ export const AuthProvider = ({ children }) => {
   const { instance, accounts } = useMsal();
   const [user, setUser] = useState(null);
   const [dados, setDados] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      if (accounts.length > 0) {
-        await getData();
-      }
-    }
-    fetchData();
-  }, [accounts, instance]);
+  const [carregando, setCarregando] = useState(true);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     if (accounts.length > 0) {
+  //       await getData();
+  //     }
+  //   }
+  //   fetchData();
+  // }, [accounts, instance]);
 
   async function getData() {
     if (accounts.length > 0) {
@@ -31,12 +31,14 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
+      } finally {
+        setCarregando(false);
       }
     }
   }
 
   return (
-    <AuthContext.Provider value={{ user, dados, instance, getData }}>
+    <AuthContext.Provider value={{ user, dados, instance, carregando, getData }}>
       {children}
     </AuthContext.Provider>
   );
