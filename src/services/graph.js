@@ -239,7 +239,20 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9};
+  const docs = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/DOCUMENTOS PADRAO:/children`,
+    {
+      headers: { Authorization: `Bearer ${response.accessToken}` }
+    }
+  );
+  const files10 = await docs.json();
+
+  const fileList10 = files10.value.map(file => ({
+    name: file.name,
+    url: file.webUrl
+  }));
+
+  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10};
   sessionStorage.setItem("sharePoint", JSON.stringify(responseObject));
   return responseObject;    
 
