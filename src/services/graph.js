@@ -214,7 +214,7 @@ export async function getSharePointData(instance, accounts) {
   }));
 
   const background = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Papel de Fundo:/children`,
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/PAPEL DE FUNDO:/children`,
     {
       headers: { Authorization: `Bearer ${response.accessToken}` }
     }
