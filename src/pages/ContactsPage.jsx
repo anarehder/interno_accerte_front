@@ -12,7 +12,7 @@ const ContactsPage = () => {{
             <List>
                 <ContactCard>
                     <Info><span>Nome</span></Info>
-                    <Info><span>Email</span></Info>
+                    <Info><span>E-mail</span></Info>
                     <Info><span>Telefone</span></Info>
                     <Info><span>Cargo</span></Info>
                     <Info><span>Gestor</span></Info>
@@ -47,32 +47,45 @@ const List = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 97%;
     margin: 30px 0;
+    // background-color:red;
 `;
 
 const ContactCard = styled.div`
     background: white;
-    padding: 15px 0;
     align-items: center;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    gap: 30px;
+    gap: 5px;
+    height: 50px;
     flex-wrap: wrap;
     justify-content: center;
 `;
 
 const Info = styled.p`
-    margin: 5px 0;
+
     color: #555;
     width: 15%;
     text-align: center;
     word-break: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    // background-color: red;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); // sombra suave
     &:nth-of-type(2) {
         width: 25%;
     }
     span{
-      font-weight: bold;
+        width: 100%;
+        height: 100%;
+        font-weight: bold;
+        background-color: #001F3F;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 `;
   

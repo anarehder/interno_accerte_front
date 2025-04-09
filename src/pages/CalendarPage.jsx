@@ -10,12 +10,13 @@ const CalendarPage = () => {{
         <Container>
             <HeaderGGComponent pageTitle={"Calendários"} />
             <List>
-            {dados?.calendario?.map((file, index) => (
-                <div key={index}>
-                    <h1>{file.name.slice(0,-5)}</h1>
-                    <Image  src={file.url} alt={`Aniversário ${file.name}`} />
-                </div>
-                
+                {dados?.calendario?.map((file, index) => (
+                    <div key={index}>
+                        <a href={file.url} target="_blank" download={`${file.name.slice(0, -4)}.jpg`}>
+                            <Button>Download imagem</Button>
+                        </a>
+                        <Image src={file.url} alt={`Aniversário ${file.name}`} />
+                    </div>
             ))}
             </List>
         </Container>
@@ -33,6 +34,24 @@ const Container = styled.div`
     color: black;
 `;
 
+const Button = styled.button`
+    top: -15px;
+    right: -15px;
+    position: absolute;
+    width: 70px;
+    font-size: 13px;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #ED1F4C;
+    color: white;
+    &:hover {
+        background-color: #ED1F4C;
+    }
+`;
+
+
 const List = styled.div`
     display: flex;
     gap: 40px;
@@ -43,14 +62,15 @@ const List = styled.div`
     margin-bottom: 20px;
     div {
         flex-direction: column;
-        width: 45%;
+        width: 500px;
         align-items: center;
+        position: relative;
     }
 `;
 
 const Image = styled.img`
-    width: 450px;
-    height: 650px;
+    width: 500px;
+    height: 500px;
     object-fit: cover;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

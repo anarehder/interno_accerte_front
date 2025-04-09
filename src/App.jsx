@@ -19,6 +19,8 @@ import CompliancePage from "./pages/CompliancePage";
 import FastLinksPage from "./pages/FastLinksPage";
 import ScalePage from "./pages/ScalePage";
 import AboutUsPage from "./pages/AboutUsPage";
+import AdminPage from "./pages/AdminPage";
+import UpdatesPage from "./pages/UpdatesPage";
 
 function App() {
 
@@ -30,12 +32,12 @@ function App() {
             <Routes>
               <Route path="/" element={<IntranetLoginPage />} />
               <Route path="/homepage" element={<IntranetHomePage />} />
+              <Route path="/admin" element={<AdminPage />} />
               <Route path="/sobre" element={<AboutUsPage />} /> 
               <Route path="/equipamentos" element={<EquipmentsPage />} />
               <Route path="/assinatura" element={<SignatureEmailPage />} />
               <Route path="/certificacoes" element={<CertificationsPage />} />
               <Route path="/ferias" element={<VacationsPage />} />
-              <Route path="/ferias/admin" element={<VacationsAdminPage />} />
               <Route path="/contatos" element={<ContactsPage />} />
               <Route path="/aniversarios" element={<AnniversaryPage />} />
               <Route path="/calendario" element={<CalendarPage />} />
@@ -43,6 +45,7 @@ function App() {
               <Route path="/compliance" element={<CompliancePage />} />
               <Route path="/escala" element={<ScalePage />} />
               <Route path="/links" element={<FastLinksPage />} />
+              <Route path="/fiquepordentro" element={<UpdatesPage/>}/>
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >
@@ -58,4 +61,5 @@ const AppContainer = styled.main`
   width: 100vw;
   overflow: hidden;
   background-color: #F0F5F9;
+  min-height: 100vh;
 `

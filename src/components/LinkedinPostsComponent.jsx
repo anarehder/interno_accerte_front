@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import axios from "axios";
 import { IoIosArrowDropright } from "react-icons/io";
-import { FaInstagram } from "react-icons/fa";
+import { FaLinkedin } from "react-icons/fa";
 import { useEffect, useState } from 'react';
 import apiService from '../services/apiService';
 
@@ -40,7 +40,7 @@ function LinkedinPostsComponent() {
         <PageContainer>
             <InstagramContainer>
                 <h2>
-                    <FaInstagram size={24} /> Acompanhe nas redes sociais...
+                    <FaLinkedin size={30} color="#067DD1" /> Acompanhe nas redes sociais...
                 </h2>
                 {loading && <div> <br/>Carregando posts... </div>}
                 {error && <div> <br/>{error} </div>}
@@ -70,14 +70,15 @@ const PageContainer = styled.div`
 
 
 const InstagramContainer = styled.div`
-    font-family: 'Conthrax', sans-serif;
     padding: 20px;
+    margin-top: 15px;
     width: 92%;
     flex-direction: column;
+    color: #067DD1;
     h2 {
         display: flex;
         align-items: center;
-        font-size: 24px;
+        font-size: 26px;
         margin-bottom: 20px;
         svg {
             margin-right: 10px;

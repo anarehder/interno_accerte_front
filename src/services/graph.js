@@ -3,17 +3,20 @@ import { loginRequest } from "./authConfig";
 import moment from 'moment';
 
 async function getToken(instance, accounts) {
-  if (accounts.length === 0) return null;
+  if (accounts.length === 0) {
+    console.warn("Nenhuma conta encontrada.");
+    return null;
+  }
 
   try {
     const response = await instance.acquireTokenSilent({
       ...loginRequest,
       account: accounts[0],
     });
-    
+
     return response;
   } catch (error) {
-    console.error("Erro ao obter dados do usuário:", error);
+    console.error("Erro ao obter dados do token:", error);
     return null;
   }
 }
@@ -21,14 +24,15 @@ async function getToken(instance, accounts) {
 export async function getUserProfile(instance, accounts) {
   try {
     const response = await getToken(instance, accounts);
-    // console.log("userr", response);
     const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me", {
       headers: {
         Authorization: `Bearer ${response.accessToken}`,
       },
     });
-
-    return await graphResponse.json();
+    const user = await graphResponse.json();
+     
+    sessionStorage.setItem("userMSAL", JSON.stringify(user));
+    return user;
   } catch (error) {
     console.error("Erro ao obter dados do usuário:", error);
     return null;
@@ -134,7 +138,7 @@ export async function getSharePointData(instance, accounts) {
   );
 
   let aniversarioDia = encontrado || [];
-  console.log(aniversarioDia);
+  // console.log(aniversarioDia);
   const agenda = await fetch("https://graph.microsoft.com/v1.0/users?$filter=accountEnabled eq true&$select=id,displayName,givenName,surname,jobTitle,mail,mobilePhone,officeLocation,department,userPrincipalName&$top=999",
       {
         headers: {
@@ -181,12 +185,14 @@ export async function getSharePointData(instance, accounts) {
     })
   );
   
+  const ano = new Date().getFullYear();
   const calendario = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Calendários Accerte 2025:/children`,
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/CALENDARIOS/${ano}:/children`,
     {
       headers: { Authorization: `Bearer ${response.accessToken}` }
     }
   );
+
   const files6 = await calendario.json();
 
   const fileList6 = files6.value.map(file => ({
@@ -234,7 +240,7 @@ export async function getSharePointData(instance, accounts) {
   }));
 
   const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9};
-
+  sessionStorage.setItem("sharePoint", JSON.stringify(responseObject));
   return responseObject;    
 
   }catch (error) {

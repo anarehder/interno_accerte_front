@@ -14,7 +14,7 @@ import HeaderComponent from "../components/HeaderComponent";
 import BirthdayPopUpComponent from "../components/BirthdayPopUpComponent";
 
 const IntranetHomePage = () => {
-    const { user, getData } = useAuth();
+    const { user, dados, getData } = useAuth();
     const { instance } = useMsal();
     const navigate = useNavigate();
     const [searchBar, setSearchBar] = useState("");
@@ -22,7 +22,7 @@ const IntranetHomePage = () => {
 
     useEffect(() => {
         async function fetchData() {
-            if (!user) {
+            if (!user || !dados) {
                 await getData();
             }
             if (!isAuthenticated) {
@@ -71,8 +71,8 @@ const IntranetHomePage = () => {
                         </MenuItem>
                         <div> <Link to="/contatos"><h1><span> AGENDA </span></h1></Link></div>
                         <div> <Link to="/links"><h1>LINKS <span> RÁPIDOS</span></h1></Link></div>
-                        <div> <h1>FIQUE <span>POR DENTRO </span> </h1></div>
-                        <div> <a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portals" target="blank">
+                        <div> <Link to="/fiquepordentro"><h1>FIQUE <span>POR DENTRO </span> </h1></Link></div>
+                        <div> <a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">
                             <h1>JIRA</h1></a></div>
                         <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
                         <form onSubmit={handleSearchSubmit}>

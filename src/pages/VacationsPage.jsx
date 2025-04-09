@@ -1,61 +1,43 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import HeaderGGComponent from '../components/HeaderGGComponent';
+import { useAuth } from '../contexts/AuthContext';
+import apiService from '../services/apiService';
 
 function VacationsPage() {
-    const info = { "admissao": "15/01/2023", "tipo": "CLT", "annualVacation": "30 dias" };
-    const vacations = {
-        "1": [
-            {
-                "inicio": "07/05/2023",
-                "fim": "16/05/2023",
-                "totalDias": 10,
-                "status": "concluído"
-            },
-            {
-                "inicio": "20/11/2023",
-                "fim": "29/11/2023",
-                "totalDias": 10,
-                "status": "concluído"
-            },
-            {
-                "inicio": "10/01/2024",
-                "fim": "19/01/2024",
-                "totalDias": 10,
-                "status": "concluído"
+    const { user, carregando } = useAuth();
+    const [ vacationInfo, setVacationInfo] = useState(null);
+    const [feriasDisponiveis, setFeriasDisponiveis] = useState(null);
+    const [feriasSelecionadas, setFeriasSelecionadas] = useState([]);
+    const [admissao, setAdmissao] = useState(null);
+    const [inicioRef, setInicioRef] = useState(null);
+
+    useEffect(() => {
+        async function fetchData() {
+            if (!carregando) {
+                const response = await apiService.getVacation(user.mail);
+                setVacationInfo(response.data[0]);
+                const dataOriginal = new Date(response.data[0].admissao);
+                dataOriginal.setDate(dataOriginal.getDate() + 1); // adiciona 1 dia
+                const admissao = dataOriginal.toLocaleDateString("pt-BR");
+                setAdmissao(admissao);
+                const feriasDatas = gerarFerias(admissao);
+                setFeriasDisponiveis(feriasDatas);
             }
-        ],
-        "2": [
-            {
-                "inicio": "01/07/2024",
-                "fim": "10/07/2024",
-                "totalDias": 10,
-                "status": "concluído"
-            },
-            {
-                "inicio": "05/09/2024",
-                "fim": "14/09/2024",
-                "totalDias": 10,
-                "status": "concluído"
-            }
-        ],
-        "3": [
-            {
-                "inicio": "05/07/2025",
-                "fim": "14/07/2025",
-                "totalDias": 10,
-                "status": "agendado"
-            },
-            {
-                "inicio": "01/09/2025",
-                "fim": "10/09/2025",
-                "totalDias": 10,
-                "status": "solicitado"
-            }
-        ]
+        }
+        fetchData();
+    }, [user, carregando]);
+
+    const selecionarFeriasPorInicio = (dataRef) => {
+        setInicioRef(dataRef);
+        const feriasFiltradas = vacationInfo.Ferias.filter((f) => {
+            return formatarDataBR(f.referenteInicio) === dataRef;
+        });
+
+        setFeriasSelecionadas(feriasFiltradas);
     };
-    const [index, setIndex] = useState(null);
+
     const gerarFerias = (admissao) => {
         // Transformar a data de admissão em um objeto Date
         const [dia, mes, ano] = admissao.split('/');
@@ -88,71 +70,71 @@ function VacationsPage() {
 
         return ferias;
     };
-    
-    const feriasDisponiveis = gerarFerias(info.admissao);
+
+    function formatarDataBR(dataIso) {
+        const data = new Date(dataIso);
+        const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
     return (
         <PageContainer>
             <HeaderGGComponent pageTitle={"Férias"} />
-            <AdminButton><Link to="/ferias/admin">Administrar</Link></AdminButton>
-            <HeaderContainer>
-                <LogoContainer>
-                    {/* <img src={Logo} alt="ACCERTE" /> */}
-                    <h1>Olá, João. <br /> <br /> <br />Confira aqui suas férias:</h1>
-                </LogoContainer>
-                <EmployeeInfo>
+            {
+                (user?.mail === 'maria.silva@accerte.com.br' || user?.mail ==='ana.rehder@accerte.com.br') && <AdminButton><Link to="/admin">Painel Admin</Link></AdminButton>
+            }
+            {
+                vacationInfo && 
+                <>
+                    <EmployeeInfo>
                     <h2>
-                        Admissão: {info.admissao}
-                    </h2>
-                    <h2>
-                        Tipo Contrato: {info.tipo}
-                    </h2>
-                    <h2>
-                        Total Anual: {info.annualVacation}
+                        <span>Início: {admissao}</span> •
+                        <span>Tipo Contrato: {vacationInfo?.Contratos?.tipo}</span> •
+                        <span>Total Anual: {vacationInfo?.Contratos?.diasFerias}</span>
                     </h2>
                 </EmployeeInfo>
-            </HeaderContainer>
-            <VacationContiner>
-                <h1>Períodos Aquisitivos de Férias:</h1>
-                <div>
-                    {feriasDisponiveis.map((periodo, index) => (
-                        <button key={index} onClick={()=>setIndex(index+1)}>
-                            {`${periodo.inicio} -- ${periodo.fim}`}
-                        </button>
-                    ))}
-                </div>
-                {index &&
-                    <>
-                        <VacationPeriod>
-                            <VacationTable>
-                                <div>
-                                    <h2>Início</h2>
-                                    <h2>Fim</h2>
-                                    <h2>Total</h2>
-                                    <h2>Status</h2>
-                                </div>
-                                {index && vacations[index].map((v, i) => (
+                <VacationContiner>
+                    <Periodos>
+                    <h2>Períodos Aquisitivos <br/>de Férias:</h2>
+                    <div>
+                        {feriasDisponiveis.map((periodo, index) => (
+                            <button key={index} onClick={() => selecionarFeriasPorInicio(periodo.inicio)} active={inicioRef === periodo.inicio ? "show" : ""}>
+                                {`${periodo.inicio} - ${periodo.fim}`}
+                            </button>
+                        ))}
+                    </div>
+                    </Periodos>
+                        {inicioRef &&
+                            <VacationPeriod>
+                                <VacationTable>
                                     <div>
-                                        <h2>{v.inicio}</h2>
-                                        <h2>{v.fim}</h2>
-                                        <h2>{v.totalDias}</h2>
-                                        <h2>{v.status}</h2>
+                                        <p><span>Início</span></p>
+                                        <p><span>Fim</span></p>
+                                        <p><span>Total</span></p>
                                     </div>
-                                ))}
-                            </VacationTable>
-                            <VacationButtons>
-                                <button> Data Limite - {feriasDisponiveis[index-1].limite} </button>
-                                <button> Agendar Férias </button>
-                                <button> Alterar Férias</button>
-                            </VacationButtons>
-                        </VacationPeriod>
+                                    {inicioRef && feriasSelecionadas.map((f, i) => (
+                                        <div key={i}>
+                                            <p>{formatarDataBR(f.inicio)}</p>
+                                            <p>{formatarDataBR(f.fim)}</p>
+                                            <p>{f.totalDias}</p>
+                                        </div>
+                                    ))}
+                                </VacationTable>
+                                {/* <VacationButtons> */}
+                                    {/* <button> Data Limite - {feriasDisponiveis[index-1].limite} </button> */}
+                                    {/* <button> Agendar Férias </button> */}
+                                    {/* <button> Alterar Férias</button> */}
+                                {/* </VacationButtons> */}
+                            </VacationPeriod>
+                        }
                         <div>
-                            <h2>Dias Agendados ou Finalizados: {vacations[index].map(v => v.totalDias).reduce((acc, val) => acc + val, 0)} dias </h2>
+                            <h2>Dias Agendados ou Finalizados:<br/> {feriasSelecionadas.map(v => v.totalDias).reduce((acc, val) => acc + val, 0)} dias </h2>
                             <h2> / </h2>
-                            <h2>Dias Restantes no Período: {info.annualVacation.slice(0, 2) - vacations[index].map(v => v.totalDias).reduce((acc, val) => acc + val, 0)} dias</h2>
+                            <h2>Dias Restantes no Período: <br/>{vacationInfo?.Contratos?.diasFerias - feriasSelecionadas.map(v => v.totalDias).reduce((acc, val) => acc + val, 0)} dias</h2>
                         </div>
-                    </>
-                }
-            </VacationContiner>
+                </VacationContiner>
+                </>
+            }
         </PageContainer>
     )
 }
@@ -184,39 +166,17 @@ const AdminButton = styled.button`
     }
 `;
 
-const HeaderContainer = styled.div`
-    width: 90%;
-    margin-top: 20px;
-    min-height: 20vh;
-    gap: 5%;
-    justify-content: center;
-`
-
-const LogoContainer = styled.div`
-    flex-direction: column;
-    max-width: 30%;
-    background-color: #343434;
-    justify-content: space-around;
-    align-items: center;
-    border-radius: 30px;
-    h1{
-        font-size: 25px;
-        color: white;
-        font-family: 'Conthrax', sans-serif;
-        word-break: break-word;
-    }
-    img{
-        width: 20%;
-    }
-`
-
 const EmployeeInfo = styled.div`
-    max-width: 30%;
     flex-direction: column;
+    // background-color: red;
     justify-content: space-around;
     align-items: center;
-    border: 3px solid #343434;
+    color: #ED1F4C;
     border-radius: 30px;
+    margin: 15px 0;
+    span {
+        margin: 0 20px;
+    }
 `
 
 const VacationContiner = styled.div`
@@ -224,13 +184,49 @@ const VacationContiner = styled.div`
     min-width: 700px;
     flex-direction: column;
     gap: 30px;
-    div:first-of-type {
-        margin-bottom: 20px;
-    }
+    margin-bottom: 40px;
+    // div:first-of-type {
+    //     margin-bottom: 20px;
+    //     background-color: red;
+    // }
     div {
         display: flex;
         justify-content: center;
         gap: 30px;
+        
+    }
+    button {
+        background-color: #ff5843;
+        border: 2px solid #ff5843;
+        &:hover {
+            background-color: white;
+            color: #ff5843;
+            border: 2px solid #ff5843;
+    };
+    }
+`
+
+const Periodos = styled.div`
+    align-items: flex-end;
+    margin: 10px 0 15px 0;
+    h2{
+        color: #ED1F4C;
+    }
+    div{
+        width: 65%;      
+        height: 100%;  
+        margin: 0;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        justify-content: center;
+        
+    }
+        button{
+        background-color: ${({ active }) => (active  === 'show' ? "transparent" : "#ff5843")};
+        color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")};
+        &:hover {
+            background-color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")
+        }
     }
 `
 
@@ -254,19 +250,24 @@ const VacationTable = styled.div`
         min-height: 40px;
         border-bottom: 2px solid gray;
     }
-    h2{
+    p{
         text-align: center;
         width: 25%;
+    }
+    span{
+        font-weight: 700;
     }
 `
 
 const VacationButtons = styled.div`
-    width: 12%;   
+    width: 15%;   
     flex-direction: column;
     gap: 40px;
     align-items: center;
     button {
         text-align: center;
         word-break: break-word;
+        background-color:#ff5843;
+        width: 150px;
     }
 `

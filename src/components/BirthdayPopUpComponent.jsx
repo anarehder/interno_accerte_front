@@ -5,9 +5,9 @@ import { useAuth } from '../contexts/AuthContext';
 function BirthdayPopUpComponent() {
     const { dados, carregando } = useAuth();
     const [closed, setClosed] = useState(true);
-    
+
     useEffect(() => {
-        if (carregando || dados.aniversarioDia.lenght === 0) return;
+        if (carregando || !dados || !dados.aniversarioDia || dados.aniversarioDia.length === 0) return;
 
         const lastClosed = localStorage.getItem("popupFechado");
         
@@ -30,8 +30,9 @@ function BirthdayPopUpComponent() {
         setClosed(true);
         localStorage.setItem("popupFechado", Date.now().toString());
     };
-    // console.log(dados.aniversarioDia);
-    if (closed || dados.aniversarioDia.lenght === 0) return null;
+
+    if (closed || !dados || !dados.aniversarioDia || dados.aniversarioDia.length === 0) return null;
+
     return (
         <Overlay>
             <CloseButton onClick={fecharPopup}>✖</CloseButton>
@@ -65,12 +66,11 @@ const Overlay = styled.div`
 
 const Modal = styled.div`
   position: relative;
-  background-color: white;
+  background-color: transparent;
   width: 900px;
   padding: 20px;
   min-width: 400px;
   border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   justify-content: space-around;
   align-items: center;
 `;
