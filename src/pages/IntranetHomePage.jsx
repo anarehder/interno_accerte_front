@@ -12,6 +12,7 @@ import { useMsal } from "@azure/msal-react";
 import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
 import HeaderComponent from "../components/HeaderComponent";
 import BirthdayPopUpComponent from "../components/BirthdayPopUpComponent";
+import ContactsComponent from "../components/ContactsComponent";
 
 const IntranetHomePage = () => {
     const { user, dados, getData } = useAuth();
@@ -19,6 +20,7 @@ const IntranetHomePage = () => {
     const navigate = useNavigate();
     const [searchBar, setSearchBar] = useState("");
     const isAuthenticated = useIsAuthenticated();
+    const [filteredContacts, setFilteredContacts] = useState([]);
 
     useEffect(() => {
         async function fetchData() {
@@ -36,13 +38,29 @@ const IntranetHomePage = () => {
     const handleSearch = (e) => {
         setSearchBar(e.target.value);
     };
-    
+    function removeAcentos(text) {
+        return text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    }
+
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        alert(`Buscando por: ${searchBar}`);
+        const filtered = dados.agenda.filter(contato =>
+            removeAcentos(contato.name.toLowerCase())
+            .includes(searchBar.toLowerCase())
+        );
+        setFilteredContacts(filtered);
+        if (filtered.length === 0){
+            alert("Nenhum resultado encontrado.")
+            setSearchBar("");
+        }
+    };
+
+    const clearSearch = () => {
+        setFilteredContacts([]);
         setSearchBar("");
     };
 
+    console.log(filteredContacts);
     const handleLogout = () => {
         instance.logoutPopup({
             postLogoutRedirectUri: "/",
@@ -85,27 +103,44 @@ const IntranetHomePage = () => {
                             <button type="submit"><FiSearch size={25} /></button>
                         </form>
                     </MenuContainer>
-                    <BirthdayPopUpComponent />
-                    <BannerContainer>
-                        <BannerSlideComponent />
-                    </BannerContainer>
-                    <ButtonsContainer>
-                        <div>
-                            <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
-                        </div>
-                        <div>
-                            <Link to={"/politicas"}>POLÍTICAS </Link>
-                        </div>
-                        <div>
-                            <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
-                                ESCRITORIO <br /> DE PROCESSOS
-                            </a>
-                        </div>
-                        <div>
-                            <Link to="/compliance">COMPLIANCE </Link>
-                        </div>
-                    </ButtonsContainer>
-                    <LinkedinPostsComponent />
+                    {/* <BirthdayPopUpComponent /> */}
+                    {filteredContacts.length > 0 ?
+                    <>
+                    <SearchResponse>
+                    <h2> Resultados da busca...</h2>
+                    <ContactsComponent contatos={filteredContacts} />
+                    <button onClick={clearSearch}> Limpar pesquisa</button>
+                    </SearchResponse>
+                    
+                    </>
+
+                    
+                    :
+                        <>
+                            <BannerContainer>
+                                <BannerSlideComponent />
+                            </BannerContainer>
+                            <ButtonsContainer>
+                                <div>
+                                    <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
+                                </div>
+                                <div>
+                                    <Link to={"/politicas"}>POLÍTICAS </Link>
+                                </div>
+                                <div>
+                                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
+                                        ESCRITORIO <br /> DE PROCESSOS
+                                    </a>
+                                </div>
+                                <div>
+                                    <Link to="/compliance">COMPLIANCE </Link>
+                                </div>
+                            </ButtonsContainer>
+                <LinkedinPostsComponent />
+                    </>
+                    
+                    }
+                    
                     <FooterComponent />
                 </>
             }
@@ -250,3 +285,17 @@ const DropdownItem = styled.div`
     color: black;
   }
 `;
+
+const SearchResponse = styled.div`
+    margin: 35px 0;
+    width: 95%;
+    color: #067DD1;
+    flex-direction: column;
+    position: relative;
+    button {
+        position: absolute;
+        justify-content: center;
+        right: 50px;
+        top:-5px;
+    }
+`
