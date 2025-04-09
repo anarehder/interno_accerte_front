@@ -66,6 +66,9 @@ const IntranetHomePage = () => {
             postLogoutRedirectUri: "/",
             mainWindowRedirectUri: "/"
         });
+        sessionStorage.removeItem("posts");
+        sessionStorage.removeItem("sharePoint");
+        sessionStorage.removeItem("userMSAL");
     }
   
     return (
