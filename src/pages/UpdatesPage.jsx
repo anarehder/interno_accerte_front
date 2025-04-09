@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import HeaderComponent from '../components/HeaderComponent';
 import Logo from '../assets/LOGO-SVG.svg';
 import { GiMegaphone } from "react-icons/gi";
+import ReactPlayer from 'react-player';
 
 function UpdatesPage() {
     const videos = ["https://www.youtube-nocookie.com/embed/HH8K0MYqZnU?si=7zvXk45DSzBmgD2U", "https://www.youtube-nocookie.com/embed/HsXLjxAG-ng?start=1223"];
@@ -12,13 +13,11 @@ function UpdatesPage() {
             <Title><GiMegaphone size={60} style={{ transform: 'rotate(-15deg)', position: 'relative', top: '-5' }} /> <img src={Logo} style={{ color: '#067DD1' }} /> na mídia </Title>
             <Videos>
                 {videos.map((v, index) => (
-                    <iframe key={index}
-                        width="500"
-                        height="300"
-                        src={v}
-                        title="YouTube video"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
+                    <ReactPlayer key={index}
+                        url={v}
+                        controls
+                        width="500px"
+                        height="300px"
                     />
                 ))}
             </Videos>
