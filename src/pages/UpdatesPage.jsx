@@ -4,8 +4,8 @@ import Logo from '../assets/LOGO-SVG.svg';
 import { GiMegaphone } from "react-icons/gi";
 
 function UpdatesPage() {
-    const videos = ["https://www.youtube.com/embed/HH8K0MYqZnU?si=7zvXk45DSzBmgD2U", "https://www.youtube.com/embed/HsXLjxAG-ng?start=1223"];
-    
+    const videos = ["https://www.youtube-nocookie.com/embed/HH8K0MYqZnU?si=7zvXk45DSzBmgD2U", "https://www.youtube-nocookie.com/embed/HsXLjxAG-ng?start=1223"];
+
     return (
         <PageContainer>
             <HeaderComponent pageTitle={"Fique Por Dentro"} type={"page"} />
