@@ -96,7 +96,7 @@ const IntranetHomePage = () => {
                         <form onSubmit={handleSearchSubmit}>
                             <input
                                 type="text"
-                                placeholder=" Pesquise aqui"
+                                placeholder=" Pesquise aqui um contato"
                                 value={searchBar}
                                 onChange={handleSearch}
                             />
@@ -202,7 +202,7 @@ const MenuContainer = styled.div`
             color: #067DD1;
             font-size: 15px;
             border-right: 2px solid #067DD1;
-            padding-left: 15px;
+            padding-left: 5px;
             &::placeholder {
                 color: #067DD1;
                 padding-left: 5px;
