@@ -6,36 +6,62 @@ import HeaderComponent from "../components/HeaderComponent";
 const FastLinksPage = () => {{
     const { dados } = useAuth();
     const [wallpaper, setWallpaper] = useState(false);
+    const [documents, setDocuments] = useState(false);
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
-
+    console.log(dados?.docs);
     return (
         <Container>
             <HeaderComponent pageTitle={"Links Rápidos"} type={"page"} />
-            <List>
-                <Card >
-                    <Info>Fundos de Tela</Info>
-                    <Info> 
-                        <button onClick={() => setWallpaper(!wallpaper)}>
-                            {wallpaper ? "Ocultar" : "Exibir"}
-                        </button>
-                    </Info>
-                </Card>
-            </List>
-            {wallpaper && 
-                <SmallList>
-                    {dados?.background?.map((file, index) => (
-                    <Card key={index}>
-                        <Info>{file.name.slice(0,-4)}</Info>
-                        <Info><button><a href={file.url} target="_blank"> Acessar </a></button></Info>
-                    </Card>
-                ))}
-                </SmallList>
+            {
+                dados &&
+                <>
+                    <List>
+                        <Card >
+                            <Info>Fundos de Tela</Info>
+                            <Info>
+                                <button onClick={() => setWallpaper(!wallpaper)}>
+                                    {wallpaper ? "Ocultar" : "Exibir"}
+                                </button>
+                            </Info>
+                        </Card>
+                        {wallpaper &&
+                            <SmallList>
+                                {dados?.background?.map((file, index) => (
+                                    <Card key={index}>
+                                        <Info>{file.name.slice(0, -4)}</Info>
+                                        <Info><button><a href={file.url} target="_blank"> Acessar </a></button></Info>
+                                    </Card>
+                                ))}
+                            </SmallList>
+                        }
+                        <Card >
+                            <Info>Documentos Padrão</Info>
+                            <Info>
+                                <button onClick={() => setDocuments(!documents)}>
+                                    {documents ? "Ocultar" : "Exibir"}
+                                </button>
+                            </Info>
+                        </Card>
+                    
+                    {documents &&
+                        <SmallList>
+                            {dados?.docs?.map((file, index) => (
+                                <Card key={index}>
+                                    <Info>{file.name.slice(0, -4)}</Info>
+                                    <Info><button><a href={file.url} target="_blank"> Acessar </a></button></Info>
+                                </Card>
+                            ))}
+                        </SmallList>
+                    }
+                    </List>
+                </>
             }
         </Container>
     );
-  };
+};
 }
 
 export default FastLinksPage;
@@ -53,8 +79,8 @@ const Container = styled.div`
 const List = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 40px;
-    margin: 30px 0;
+    gap: 25px;
+    margin: 30px 0 0 0;
     justify-content: center;
     align-items: center;
     width: 65%;
@@ -66,13 +92,13 @@ const SmallList = styled.div`
     gap: 10px;
     justify-content: center;
     align-items: center;
-    width: 40%;
+    width: 75%;
     margin-bottom: 30px;
 `;
 
 const Card = styled.div`
     background: white;
-    padding: 15px 25px;
+    padding: 8px 25px;
     align-items: center;
     justify-content: center;
     border-radius: 5px;
