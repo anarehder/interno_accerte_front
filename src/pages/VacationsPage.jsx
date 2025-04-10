@@ -243,6 +243,9 @@ const VacationPeriod = styled.div`
     margin-bottom: 20px;
     align-items: center;
     justify-content: center;
+    h2{
+        color: grey;
+    }
     div {
         margin-bottom: 0 !important;
     }

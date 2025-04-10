@@ -224,7 +224,7 @@ const MenuContainer = styled.div`
 `
 
 const BannerContainer = styled.div`
-    width: 85%;
+    width: 50%;
     margin-top: 50px;
     justify-content: center;
     margin: 30px 0;
