@@ -33,10 +33,8 @@ function NewVacationComponent() {
     const funcionario = agenda.find((f) => f.mail === email);
     if (funcionario) {
       setSelectedEmployee(funcionario);
-      console.log(funcionario.mail);
       try {
         const response = await apiService.getVacation(funcionario.mail);
-        console.log(response.data.length);
         if (response.data.length === 0) {
           alert("Usuário não cadastrado no sistema de férias e escalas");
           setVacationInfo(null);
@@ -54,7 +52,8 @@ function NewVacationComponent() {
           setFeriasDisponiveis(feriasDatas);
         }
       } catch (error) {
-        console.log(error.message);
+        // console.log(error.message);
+        alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
       }
     }
   };
@@ -129,18 +128,18 @@ function NewVacationComponent() {
         "referenteFim": `${yearE}-${monthE.toString().padStart(2, '0')}-${dayE.toString().padStart(2, '0')}T00:00:00Z`
       }
     }
-    console.log(body);
+
     try {
       const response = await apiService.createVacation(body);
       if (response.statusText === "OK") {
         alert("Período de Férias Inserido com Sucesso!");
       }
     } catch (error) {
-      console.error("Erro ao enviar requisição:", error);
+      // console.error("Erro ao enviar requisição:", error);
       alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
     }
   };
-  // console.log(feriasDisponiveis?[selectedPeriod]?.inicio);
+
   return (
     <Container>
       {dados &&
