@@ -6,26 +6,26 @@ import { useAuth } from "../contexts/AuthContext";
 function NewLicenseComponent(){
     const { user, dados } = useAuth();
     const agenda = dados?.agenda;
-    const [selected, setSelected] = useState(null);
-    const [admissao, setAdmissao] = useState("");
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [vacationInfo, setVacationInfo] = useState(null);
-    const [feriasDisponiveis, setFeriasDisponiveis] = useState(null);
-    const [selectedPeriod, setSelectedPeriod] = useState(null);
-    // console.log(feriasDisponiveis);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [tipoContrato, setTipoContrato] = useState(null);
+    const [date, setDate] = useState({ start: "", end: "" });
+    const [totalDays, setTotalDays] = useState(0);
+    const tiposLicenca = ["Licença Maternidade", "Licença Paternidade", "Atestado"];
+
+    console.log(tiposLicenca[0]);
     const handleSelect = async (email) => {
         const funcionario = agenda.find((f) => f.mail === email);
         if (funcionario) {
-            setSelected(funcionario);
-            console.log(funcionario.mail);
             try {
                 const response = await apiService.getVacation(funcionario.mail);
                 console.log(response.data.length);
-                if(response.data.length === 0){
+                if (response.data.length === 0) {
                     alert("Usuário não cadastrado no sistema de férias e escalas");
+                    setVacationInfo(null);
+                    setSelectedEmployee(null);
                 } else {
-                console.log(response.data);
-                setVacationInfo(response.data[0]);
+                    console.log(response.data);
+                    setSelectedEmployee(response.data[0]);
                 }
             } catch (error) {
                 console.log(error.message);
@@ -33,67 +33,75 @@ function NewLicenseComponent(){
         }
     };
 
+    const handleDateChange = (field, value) => {
+        const newDate = { ...date, [field]: value };
+        setDate(newDate);
+    
+        if (newDate.start && newDate.end) {
+          const start = new Date(newDate.start);
+          const end = new Date(newDate.end);
+          const diffTime = Math.abs(end - start);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+          setTotalDays(diffDays);
+        } else {
+          setTotalDays(0);
+        }
+      };
+
     const formatDate = (dateStr) => {
       if (!dateStr) return null;
       return new Date(dateStr).toISOString();
     };
-  
-    const handleSubmit = async (type) => {
-      if (!selected) return;
-    
-      const body = {
-        adminEmail: user.mail,
-        funcionario: {
-          nome: selected.givenName,
-          sobrenome: selected.surname,
-          email: selected.mail,
-          tipoContratoId: parseInt(tipoContratoId),
-          admissao: formatDate(admissao),
-          demissao: demissao ? formatDate(demissao) : null,
-          isAdmin: isAdmin,
-        },
-      };
-      // console.log(body);
-      if (
-        !body.adminEmail ||
-        !body.funcionario.nome ||
-        !body.funcionario.sobrenome ||
-        !body.funcionario.email ||
-        !body.funcionario.tipoContratoId ||
-        !body.funcionario.admissao
-      ) {
-        alert("Todos os campos devem estar preenchidos, com exceção do campo 'demissão'.");
-        return;
-      }
-      confirm(
-        `Solicitante: ${body.adminEmail}\n` +
-        `Confirma os dados da requisição?\n` +
-        `Nome: ${body.funcionario.nome}\n` +
-        `Sobrenome: ${body.funcionario.sobrenome}\n` +
-        `Email: ${body.funcionario.email}\n` +
-        `Tipo Contrato: ${body.funcionario.tipoContratoId} - ${tiposContrato[body.funcionario.tipoContratoId]}\n` +
-        `Administrador: ${body.funcionario.isAdmin ? 'Sim' : 'Não'}\n`
-      );
-      try {
-        let response;
-      
-        if (type === "create") {
-          const response = await apiService.createUser(body);
-          if (response.statusText === "OK") {
-            alert("Usuário criado com sucesso!");
-          }
-        } else {
-          const response = await apiService.editUser(body);
-          if (response.statusText === "OK") {
-            alert("Usuário editado com sucesso!");
-          }
+
+    const handleSubmit = async () => {
+        if (date.start >= date.end) {
+            alert("A data final das licença deve ser posterior à data inicial");
         }
-      } catch (error) {
-        console.error("Erro ao enviar requisição:", error);
-        alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
-      }
+
+        const body = {
+            "adminEmail": user.mail,
+            "email": selectedEmployee.email,
+            "inicio": `${date.start}T00:00:00Z`,
+            "fim": `${date.end}T00:00:00Z`,
+            "totalDias": totalDays,
+            "tipo": tipoContrato
+        }
+
+        if (
+            !body.adminEmail ||
+            !body.email ||
+            !body.inicio ||
+            !body.fim ||
+            !body.totalDias ||
+            !body.tipo
+        ) {
+            alert("Todos os campos devem estar preenchidos.");
+            return;
+        }
+
+        const confirmed = window.confirm(
+            `Solicitante: ${user.mail}}\n` +
+            `Funcionário: ${selectedEmployee.nome} ${selectedEmployee.sobrenome}\n` +
+            `Início da Licença: ${date.start}\n` +
+            `Fim da Licença: ${date.end}\n` +
+            `Total de Dias: ${totalDays}\n` +
+            `tipo: ${tipoContrato}`
+        );
+        if (!confirmed) {
+            // Se clicou em "Cancelar", sai da função aqui
+            return;
+          }
+        console.log(body);
+        try {
+            const response = await apiService.createLicense(body);
+            if (response.statusText === "OK") {
+                alert("Período de Licença Inserido com Sucesso!");
+            }
+        } catch (error) {
+            console.error("Erro ao enviar requisição:", error);
+            alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
+        }
     };
-    
 
     return (
         <>
@@ -108,55 +116,46 @@ function NewLicenseComponent(){
                         ))}
                     </Select>
                     
-                    
-                    {/* {selected && (
+                    {selectedEmployee && (
                         <>
                             <div>
-                                <Label>Tipo de Contrato</Label>
+                                <Label>Tipo de Licença</Label>
                                 <Select
-                                    value={tipoContratoId}
-                                    onChange={(e) => setTipoContratoId(Number(e.target.value))}
+                                    onChange={(e) => setTipoContrato(e.target.value)}
                                 >
                                     <option value="">Selecione...</option>
-                                    {Object.entries(tiposContrato).map(([id, nome]) => (
-                                        <option key={id} value={id}>
-                                            {nome}
+                                    {tiposLicenca.map((t, index) => (
+                                        <option key={index} value={t}>
+                                            {t}
                                         </option>
                                     ))}
                                 </Select>
                             </div>
-                            <div>
-                                <Label>Data de Admissão</Label>
-                                <Input
-                                    type="date"
-                                    value={admissao}
-                                    onChange={(e) => setAdmissao(e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <Label>Data de Demissão (opcional)</Label>
-                                <Input
-                                    type="date"
-                                    value={demissao}
-                                    onChange={(e) => setDemissao(e.target.value)}
-                                />
-                            </div>
-                            <div>
-                                <Label>
-                                    <Checkbox
-                                        type="checkbox"
-                                        checked={isAdmin}
-                                        onChange={(e) => setIsAdmin(e.target.checked)}
-                                    />
-                                    É administrador?
-                                </Label>
-                            </div>
-                            <ButtonContainer>
-                                <Button onClick={() => handleSubmit("create")}>Criar Usuário</Button>
-                                <Button onClick={() => handleSubmit("edit")}>Editar Usuário</Button>
-                            </ButtonContainer>
+                            <Form>
+                                <div>
+                                    <div>
+                                        <Label>Início da Licença:</Label>
+                                        <Input
+                                            type="date"
+                                            value={date.start}
+                                            onChange={(e) => handleDateChange("start", e.target.value)}
+                                        />
+                                    </div><div>
+                                        <Label>Fim da Licença:</Label>
+                                        <Input
+                                            type="date"
+                                            value={date.end}
+                                            onChange={(e) => handleDateChange("end", e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                {totalDays > 0 && <TotalDias>Total de dias: {totalDays}</TotalDias>}
+                                <Button onClick={handleSubmit} disabled={totalDays === 0}>
+                                    Confirmar
+                                </Button>
+                            </Form>
                         </>
-                    )} */}
+                    )}
                 </Container>
             }
         </>
@@ -176,19 +175,10 @@ const Container = styled.div`
         align-items: center;
         gap: 20px;
         select{
-          width: 250px;
+          width: 450px;
         }
     }
 `
-
-const Label = styled.label`
-  display: block;
-  font-weight: bold;
-  display: flex;
-  width: 250px;
-  height: 40px;
-  align-items: center;
-`;
 
 const Select = styled.select`
   width: 550px;
@@ -197,36 +187,59 @@ const Select = styled.select`
   border: 1px solid #ccc;
 `;
 
-const Input = styled.input`
-  width: 250px;
-  justify-content: center;
-  text-align: center;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  height: 40px;
-`;
 
-const Checkbox = styled.input`
-  margin-right: 8px;
-  width: 50px;
-  padding: 20px;
-`;
-
-const ButtonContainer = styled.div`
+const Form = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+  div{
+    align-items: center;
+    gap: 20px;
+    div{
+        width: 300px;
+    }
+  }
 `;
+
+const Label = styled.label`
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+  text-align: left;
+`;
+
+const Input = styled.input`
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const TotalDias = styled.p`
+  font-size: 16px;
+  font-weight: bold;
+  color: #007bff;
+  margin: 10px 0;
+`;
+
 
 const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #4caf50;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #28a745;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
-  font-weight: bold;
+  transition: 0.3s;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #218838;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 `;

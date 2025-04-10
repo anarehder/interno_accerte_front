@@ -104,13 +104,17 @@ function NewVacationComponent() {
     else if (new Date(date.end) > dateLimit) {
       alert("O período selecionado excede a data limite do período aquisitivo");
     } else {
-      confirm(
+      const confirmed = window.confirm(
         `Funcionário: ${vacationInfo.name} ${vacationInfo.sobrenome}\n` +
         `Período Aquisitivo: de ${feriasDisponiveis[selectedPeriod].inicio} até ${feriasDisponiveis[selectedPeriod].fim} \n` +
         `Início das Férias: ${date.start}\n` +
         `Fim das Férias: ${date.end}\n` +
         `Total de Dias: ${totalDays}`
       );
+      if (!confirmed) {
+        // Se clicou em "Cancelar", sai da função aqui
+        return;
+      }
     }
     const [dayS, monthS, yearS] = feriasDisponiveis[selectedPeriod].inicio.split("/").map(Number);
     const [dayE, monthE, yearE] = feriasDisponiveis[selectedPeriod].fim.split("/").map(Number);
