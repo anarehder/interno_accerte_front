@@ -76,7 +76,7 @@ function NewVacationComponent() {
       fimFerias.setDate(fimFerias.getDate() - 1);
       let limiteFerias = new Date(dataAdmissao);
       limiteFerias.setFullYear(fimFerias.getFullYear() + 2);
-      limiteFerias.setDate(fimFerias.getDate() - 31);
+      limiteFerias.setDate(fimFerias.getDate() - 45);
 
       ferias.push({
         inicio: dataAdmissao.toLocaleDateString(),
