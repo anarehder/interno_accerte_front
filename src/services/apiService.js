@@ -19,6 +19,13 @@ function getVacation(email) {
     return axios.get(`${BASE_URL}/ferias/filtros/email?email=${email}`);
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation}
+function getEscala(){
+    return axios.get(`${BASE_URL}/escala`)
+}
+
+function createEscala(body){
+    return axios.post(`${BASE_URL}/escala/criar`, body)
+}
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala}
 
 export default apiService;

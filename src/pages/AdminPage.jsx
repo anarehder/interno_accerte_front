@@ -3,30 +3,78 @@ import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import HeaderGGComponent from "../components/HeaderGGComponent";
 import UserComponent from "../components/UserComponent";
+import apiService from "../services/apiService";
 
 const AdminPage = () => {{
     const { dados, user, carregando, getData } = useAuth();
     const [activeButton, setActiveButton] = useState("");
-    console.log(dados);
-    // useEffect(() => {
-    //     async function fetchData() {
-    //         if (!user || !dados) {
-    //             await getData();
-    //         }
-    //     }
-    //     fetchData();
-    // }, []);
-    console.log(user);
+    const [inicioSemana, setInicioSemana] = useState('');
+    const [fimSemana, setFimSemana] = useState('');
+
+    const handleSubmit = async () => {
+        if (!inicioSemana || !fimSemana) {
+            alert("Preencha ambas as datas!");
+            return;
+        }
+        const body = {
+            "adminEmail": user.mail,
+            "inicioSemana": inicioSemana,
+            "fimSemana": fimSemana,
+            "funcionarios": dados.agenda
+        };
+        // alert(body.funcionarios[0].mail);
+        confirm(
+            `Solicitante: ${body.adminEmail}\n` +
+            `Confirma os dados da requisição?\n` +
+            `Início: ${body.inicioSemana}\n` +
+            `Fim: ${body.fimSemana}\n`
+        );
+        try {
+            const response = await apiService.createEscala(body);
+            if (response.statusText === "OK") {
+                setActiveButton("");
+                alert("Escala criada com sucesso!");
+            }
+        } catch (error) {
+            console.error("Erro ao enviar requisição:", error);
+            alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
+        }
+    };
+
     return (
         <Container>
             <HeaderGGComponent pageTitle={"RH  Painel Admin"} />
             <ButtonsContainer>
                 <Button onClick={() => setActiveButton("User")} active={activeButton === "User" ? "show" : ""}>Usuários</Button>
                 <Button onClick={() => setActiveButton("Ferias")} active={activeButton === "Ferias" ? "show" : ""}>Gerenciar Férias</Button>
-                <Button onClick={() => setActiveButton("Escala")} active={activeButton === "Escala" ? "show" : ""}>Gerenciar Escalas</Button>
+                <Button onClick={() => setActiveButton("Escala")} active={activeButton === "Escala" ? "show" : ""}>Criar Escalas</Button>
             </ButtonsContainer>
 
             {activeButton === "User" && !carregando && <UserComponent />}
+            {activeButton === "Escala" && !carregando && dados &&
+                <EscalaContainer>
+                    <h3>Selecionar Período <br/> da Escala</h3>
+                    <div style={{ marginBottom: '1rem' }}>
+                        <label>Início da Semana:</label><br />
+                        <input
+                            type="date"
+                            value={inicioSemana}
+                            onChange={(e) => setInicioSemana(e.target.value)}
+                        />
+                    </div>
+                    <div style={{ marginBottom: '1rem' }}>
+                        <label>Fim da Semana:</label><br />
+                        <input
+                            type="date"
+                            value={fimSemana}
+                            onChange={(e) => setFimSemana(e.target.value)}
+                        />
+                    </div>
+                    <Button onClick={handleSubmit}>
+                        Gerar Escala
+                    </Button>
+                </EscalaContainer>
+            }
         </Container>
     );
   };
@@ -60,3 +108,19 @@ const Button = styled.button`
         background-color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")
     };
 `;
+
+const EscalaContainer = styled.div`
+    width: 750px;
+    margin-top: 20px;
+    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    height: 100px;
+    div{
+        width: 40%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+`
