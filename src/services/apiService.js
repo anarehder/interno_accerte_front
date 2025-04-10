@@ -26,6 +26,11 @@ function getEscala(){
 function createEscala(body){
     return axios.post(`${BASE_URL}/escala/criar`, body)
 }
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala}
+
+function editScale(body){
+    return axios.post(`${BASE_URL}/escala/editar`, body)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale}
 
 export default apiService;

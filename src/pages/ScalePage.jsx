@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 import { toPng } from "html-to-image";
 import download from "downloadjs";
+import EditScaleComponent from '../components/EditScaleComponent';
 
 function ScalePage() {
     const imageRef = useRef(null);
@@ -16,16 +17,27 @@ function ScalePage() {
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedButton, setSelectedButton] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [editScale, setEditScale] = useState(false);
+    const [scaleToEdit, setScaleToEdit] = useState(null);
+    const [updatedScale, setUpdatedScale] = useState(false);
+
     const setores = ["Diretoria", "Administrativo", "Arquitetura de Soluções", "Comercial Público", "Comercial Privado", "Financeiro", "Gente e Gestão", "Governança de Dados", "Jurídico", 'Marketing', "Tecnologia da Informação"];
-    const cores = { "Home": "blue", "Presencial": "green", "Férias - CLT": "pink", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantao": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Licença Maternidade": "pink", "Licença Paternidade": "pink", "Licença": "#EC2855" };
+
+    const cores = { "Home": "blue", "Presencial": "green", "Férias - CLT": "#f94860", "Feriado": "#f94860", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantão": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Licença Maternidade": "#f94860", "Licença Paternidade": "#f94860", "Licença": "#EC2855" };
 
     useEffect(() => {
         if (!dados) return;
+        console.log('useEffect disparado', updatedScale);
         const fetchScale = async () => {
             try {
                 const response = await apiService.getEscala();
                 setScale(response.data);
                 setLoading(false);
+
+                if(updatedScale && selectedButton){
+                    handleSelect(response.data[selectedButton][0], selectedButton);
+                    setUpdatedScale(false);
+                }
             } catch (error) {
                 console.error("Erro ao buscar a escala:", error);
                 setLoading(false);
@@ -33,8 +45,9 @@ function ScalePage() {
         };
 
         fetchScale();
-    }, []);
-    // console.log(dados?.agenda);
+    
+    }, [updatedScale]);
+
     const handleSelect = (escalas, tipo) => {
         
         const escalasComDados = escalas.Escalas.map(escala => {
@@ -50,6 +63,8 @@ function ScalePage() {
         setSelectedScale(escalasComDados);
         const date = `${formatarDataBR(escalas.inicioSemana)} a ${formatarDataBR(escalas.fimSemana)}`;
         setSelectedDate(date);
+        const toEdit =  escalasComDados.find(f => f.Funcionarios.email === user.mail);
+        setScaleToEdit(toEdit);
         setSelectedButton(tipo);
     };
 
@@ -58,6 +73,7 @@ function ScalePage() {
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
         return `${dia}/${mes}/${ano}`;
     }
+    console.log(scaleToEdit);
 
     const handleDownload = () => {
         if (imageRef.current) {
@@ -77,21 +93,33 @@ function ScalePage() {
             {
                 (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br') && <AdminButton><Link to="/admin">Painel Admin</Link></AdminButton>
             }
+            {selectedScale.length > 0 && 
+                <EditScaleButton ativo={editScale} onClick={()=> setEditScale(!editScale)} >Editar Minha Escala</EditScaleButton>
+            }
+            {editScale &&
+                < EditScaleComponent scale={scaleToEdit} opcoes={Object.keys(cores)} setUpdatedScale={setUpdatedScale} setEditScale={setEditScale} editScale={editScale}/>
+            }
             {loading && <h2> Carregando escala...</h2>}
-            {dados && scale &&
+            {!editScale && <>
+            {dados && scale && 
                 <ButtonsContainer>
+                    <h3> Selecione uma escala:</h3>
+                    <div>
                     <Button onClick={() => handleSelect(scale.atual[0], "atual")} selecionado={selectedButton === "atual" ? 'show' : undefined}>{formatarDataBR(scale.atual[0].inicioSemana)} a {formatarDataBR(scale.atual[0].fimSemana)} </Button>
                     {scale.proxima &&
                         <button onClick={() => handleSelect(scale.proxima[0], "proximo")} seleciondo={selectedButton === "proximo"}>{formatarDataBR(scale.proxima[0].inicioSemana)} a {formatarDataBR(scale.proxima[0].fimSemana)} </button>
                     }
-                </ButtonsContainer>}
-            {selectedScale.length > 0 &&
+                    </div>
+                </ButtonsContainer>
+            }
+            {selectedScale.length > 0 && 
                 < DownloadButton onClick={handleDownload}>
-                    Baixar Imagem
+                    Baixar Escala <br/> Como Imagem
                 </DownloadButton>
             }
             <ImageContainer ref={imageRef}>
-                {selectedScale.length > 0 && <DepartmentContainer>
+                {selectedScale.length > 0 && 
+                 <DepartmentContainer>
                     <h2>Escala Semanal {selectedDate}</h2>
                     <Week cor={'#F94860'}>
                         <Day>Nome</Day>
@@ -124,6 +152,7 @@ function ScalePage() {
                 );
             })}
             </ImageContainer>
+            </>}
         </PageContainer>
     )
 }
@@ -160,7 +189,14 @@ const AdminButton = styled.button`
 const ButtonsContainer = styled.div`
     justify-content: center;
     margin: 20px 0;
-    gap: 25px;
+    gap: 15px;
+    flex-direction: column;
+    align-items: center;
+    div {
+        gap: 25px;
+        align-items: center;
+        justify-content: center;
+    }
 `
 
 const Button = styled.button`
@@ -169,19 +205,41 @@ const Button = styled.button`
     color: ${({ selecionado }) => (selecionado === 'show' ? "#fff": "#F94860")};
 `
 
+const EditScaleButton = styled.button`
+    background-color: ${({ ativo }) => (ativo ?  "#F94860 " :"white")};
+    border: 2px solid #F94860;
+    color: ${({ ativo }) => (ativo ? "white" : "#F94860 ")};
+    top: 250px;
+    left: 120px;
+    position: absolute;
+    z-index: 2;
+    border-radius: 50px;
+    height: 50px;
+    &:hover {
+        background-color: ${({ ativo }) => (ativo ?  "white" : "#F94860 ")};
+        color: ${({ ativo }) => (ativo ?  "#F94860 " :"white")};
+    }
+`
+
 const DownloadButton = styled.div`
     width: 150px;
-    padding: 5px;
+    height: 50px;
+    text-align: center;
     border-radius: 50px;
-    top: 280px;
+    top: 250px;
+    width: 170px;
     right: 120px;
     justify-content: center;
+    align-items: center;
     background-color: #ED1F4C;
     position: absolute;
     cursor: pointer;
     color: white;
+    border: 2px solid #F94860;
     &:hover {
-        background-color: #ED1F4C;
+        background-color: white;
+        color: #F94860;
+        border: 2px solid #F94860;
     }
 `
 
