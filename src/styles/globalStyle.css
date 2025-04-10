@@ -11,6 +11,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Hegomoni';
+    src: url('/fonts/Hegomoni.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     font-family: "Poppins", serif;
     display: flex;

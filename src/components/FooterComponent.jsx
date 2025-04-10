@@ -35,7 +35,7 @@ function FooterComponent() {
                     <img src={Logo} alt="ACCERTE" />
                 </div>
                 <div className="right">
-                <h1>R. 128-A, Qd Nº 34 Qd 11 
+                <h1>R. 128-A, nº 34, Qd. F29 Lt. 11 
                 <br/>  St. Sul -  74093-110
                     <br/> <span>Goiânia | GO </span> </h1>
                 </div>
