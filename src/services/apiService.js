@@ -39,7 +39,18 @@ function createLicense(body){
     return axios.post(`${BASE_URL}/escala/licencas`, body)
 }
 
+function getVacationByPeriod(inicio, fim){
+    return axios.get(`${BASE_URL}/ferias/filtros/periodo?inicio=${inicio}&fim=${fim}`)
+}
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense}
+function getVacationByEmail(email){
+    return axios.get(`${BASE_URL}/ferias/filtros/email?email=${email}`)
+}
+
+function getVacationByContract(tipoContrato){
+    return axios.get(`${BASE_URL}/ferias/filtros/contrato?contrato=${tipoContrato}`)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract}
 
 export default apiService;
