@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import apiService from "../services/apiService";
+import gerarFerias from "../services/vacationGenerate";
 
 function NewVacationComponent() {
   const { user, dados } = useAuth();
@@ -56,39 +57,6 @@ function NewVacationComponent() {
         alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
       }
     }
-  };
-
-  const gerarFerias = (admissao) => {
-    // Transformar a data de admissão em um objeto Date
-    const [dia, mes, ano] = admissao.split('/');
-    const dataAdmissao = new Date(mes + '/' + dia + '/' + ano);
-
-    // Obter a data atual
-    const dataAtual = new Date();
-
-    // Calcular o próximo ano (ano seguinte)
-    const ferias = [];
-
-    // Gerar período de férias até o ano atual
-    while (dataAdmissao <= dataAtual) {
-      let fimFerias = new Date(dataAdmissao);
-      fimFerias.setFullYear(fimFerias.getFullYear() + 1);
-      fimFerias.setDate(fimFerias.getDate() - 1);
-      let limiteFerias = new Date(dataAdmissao);
-      limiteFerias.setFullYear(fimFerias.getFullYear() + 2);
-      limiteFerias.setDate(fimFerias.getDate() - 45);
-
-      ferias.push({
-        inicio: dataAdmissao.toLocaleDateString(),
-        fim: fimFerias.toLocaleDateString(),
-        limite: limiteFerias.toLocaleDateString(),
-      });
-
-      // Incrementar a data de admissão para o próximo período
-      dataAdmissao.setFullYear(dataAdmissao.getFullYear() + 1);
-    }
-
-    return ferias;
   };
 
   const handleConfirm = async () => {
@@ -201,15 +169,13 @@ function NewVacationComponent() {
 export default NewVacationComponent;
 
 const Container = styled.div`
-  max-width: 600px;
+  max-width: 90%;
   margin: auto;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
   text-align: center;
   gap: 30px;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
   align-items: center;
   flex-direction: column;
 `;
@@ -232,6 +198,7 @@ const Select = styled.select`
 
 const SelectContainer = styled.div`
   justify-content: space-between;
+  width: 600px;
 `
 
 const Form = styled.div`
@@ -243,7 +210,6 @@ const Form = styled.div`
 `;
 
 const Label = styled.label`
-  font-size: 14px;
   font-weight: bold;
   color: #555;
   text-align: left;
@@ -251,9 +217,9 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 8px;
-  font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  height: 30px;
 `;
 
 const TotalDias = styled.p`
@@ -264,19 +230,21 @@ const TotalDias = styled.p`
 `;
 
 const ButtonsContainer = styled.div`
-    justify-content: center;
-    gap: 50px;
+  width: 95%;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
 `
   
 const PeriodButton = styled.button`
     text-align: center;
-    width: 250px;
+    width: 220px;
     justify-content: center;
     font-weight: 700;
     font-size: 15px;
     background-color: ${({ active }) => (active  === 'show' ? "#ff5843" : "transparent")};
     color: ${({ active }) => (active === 'show' ? "white" : "#ff5843")};
-    border: ${({ active }) => (active === 'show' ? "3px solid #ff5843" : "3px solid #ff5843")};
+    border: 3px solid #ff5843;
     &:hover {
         background-color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")
     };

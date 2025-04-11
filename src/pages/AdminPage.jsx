@@ -98,6 +98,7 @@ const Container = styled.div`
 
 const ButtonsContainer = styled.div`
     justify-content: center;
+    flex-wrap: wrap;
     margin: 30px 0;
     gap: 50px;
 `

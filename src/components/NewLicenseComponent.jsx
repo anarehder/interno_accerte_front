@@ -166,7 +166,8 @@ const Container = styled.div`
     width: 60%;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
+    padding: 20px;
     gap: 25px;
     div { 
         justify-content: center;
@@ -200,7 +201,6 @@ const Form = styled.div`
 `;
 
 const Label = styled.label`
-  font-size: 14px;
   font-weight: bold;
   color: #555;
   text-align: left;
@@ -208,7 +208,6 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 8px;
-  font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 5px;
 `;

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import HeaderGGComponent from '../components/HeaderGGComponent';
 import { useAuth } from '../contexts/AuthContext';
 import apiService from '../services/apiService';
+import gerarFerias from "../services/vacationGenerate";
 
 function VacationsPage() {
     const { user, carregando } = useAuth();
@@ -36,39 +37,6 @@ function VacationsPage() {
         });
         setSelectedPeriod(index);
         setFeriasSelecionadas(feriasFiltradas);
-    };
-
-    const gerarFerias = (admissao) => {
-        // Transformar a data de admissão em um objeto Date
-        const [dia, mes, ano] = admissao.split('/');
-        const dataAdmissao = new Date(mes + '/' + dia + '/' + ano);
-
-        // Obter a data atual
-        const dataAtual = new Date();
-
-        // Calcular o próximo ano (ano seguinte)
-        const ferias = [];
-
-        // Gerar período de férias até o ano atual
-        while (dataAdmissao <= dataAtual) {
-            let fimFerias = new Date(dataAdmissao);
-            fimFerias.setFullYear(fimFerias.getFullYear() + 1);
-            fimFerias.setDate(fimFerias.getDate() - 1);
-            let limiteFerias = new Date(dataAdmissao);
-            limiteFerias.setFullYear(fimFerias.getFullYear() + 2);
-            limiteFerias.setDate(fimFerias.getDate() - 45);
-
-            ferias.push({
-                inicio: dataAdmissao.toLocaleDateString(),
-                fim: fimFerias.toLocaleDateString(),
-                limite: limiteFerias.toLocaleDateString(),
-            });
-
-            // Incrementar a data de admissão para o próximo período
-            dataAdmissao.setFullYear(dataAdmissao.getFullYear() + 1);
-        }
-
-        return ferias;
     };
 
     function formatarDataBR(dataIso) {
@@ -112,7 +80,7 @@ function VacationsPage() {
                                         <button> Data Limite Para Férias No Período - {feriasDisponiveis[selectedPeriod].limite} </button>
                                         </VacationPeriod>
                                         <TotalContainer>
-                                            <h2>Dias Agendados ou Finalizados:<br /> 0dias </h2>
+                                            <h2>Dias Agendados ou Finalizados:<br /> 0 dias </h2>
                                             <h2> / </h2>
                                             <h2>Dias Restantes no Período: <br />{vacationInfo?.Contratos?.diasFerias} dias</h2>
                                         </TotalContainer>

@@ -3,6 +3,7 @@ import TitleComponent from '../components/TitleComponent';
 import { useState } from 'react';
 import IntranetHeaderComponent from '../components/IntranetHeaderComponent';
 import NewVacationComponent from '../components/NewVacationComponent';
+import gerarFerias from "../services/vacationGenerate";
 
 function VacationsAdminPage() {
     const info = { "admissao": "15/01/2023", "tipo": "CLT", "annualVacation": "30 dias" };
@@ -204,39 +205,6 @@ function VacationsAdminPage() {
             //     alert("Ocorreu um erro, tente novamente");
             // }
         }
-    };
-
-    const gerarFerias = (admissao) => {
-        // Transformar a data de admissão em um objeto Date
-        const [dia, mes, ano] = admissao.split('/');
-        const dataAdmissao = new Date(mes + '/' + dia + '/' + ano);
-
-        // Obter a data atual
-        const dataAtual = new Date();
-
-        // Calcular o próximo ano (ano seguinte)
-        const ferias = [];
-
-        // Gerar período de férias até o ano atual
-        while (dataAdmissao <= dataAtual) {
-            let fimFerias = new Date(dataAdmissao);
-            fimFerias.setFullYear(fimFerias.getFullYear() + 1);
-            fimFerias.setDate(fimFerias.getDate() - 1);
-            let limiteFerias = new Date(dataAdmissao);
-            limiteFerias.setFullYear(fimFerias.getFullYear() + 2);
-            limiteFerias.setDate(fimFerias.getDate() - 45);
-
-            ferias.push({
-                inicio: dataAdmissao.toLocaleDateString(),
-                fim: fimFerias.toLocaleDateString(),
-                limite: limiteFerias.toLocaleDateString(),
-            });
-
-            // Incrementar a data de admissão para o próximo período
-            dataAdmissao.setFullYear(dataAdmissao.getFullYear() + 1);
-        }
-
-        return ferias;
     };
 
     const feriasDisponiveis = gerarFerias(info.admissao);
