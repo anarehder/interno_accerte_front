@@ -1,14 +1,15 @@
 import styled from 'styled-components';
 
-function VacationsListComponent({filteredData}) {
+function VacationsListComponent({filteredData, activeButton}) {
     function formatarDataBR(dataIso) {
         const data = new Date(dataIso);
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
         return `${dia}/${mes}/${ano}`;
     }
-    console.log(filteredData);
+
     return (
         <PageContainer>
+            {activeButton === "Funcionário" &&<h2>Admissão: {formatarDataBR(filteredData[0].admissao) } • Tipo Contrato: {filteredData[0].Contratos.tipo} • Dias Ferias: {filteredData[0].Contratos.diasFerias}</h2> }
             <h2>Férias</h2>
             {filteredData.some(item => item.Ferias && item.Ferias.length > 0) ?
                     <VacationTable>
@@ -34,7 +35,7 @@ function VacationsListComponent({filteredData}) {
                         ))}
                     </VacationTable>
                 : <h3>Sem Ferias nesta busca</h3>}
-                <br/>
+            <br/>
             <h2>Licenças</h2>
             {filteredData.some(item => item.Licenca && item.Licenca.length > 0) ?
                 <VacationTable>
@@ -69,6 +70,7 @@ const PageContainer = styled.div`
     gap: 20px; 
     h2{
         color: #ff5843;
+        margin: 10px 0;
     }
     h3{
         color: gray;

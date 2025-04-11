@@ -160,7 +160,7 @@ function VacationsFilterComponent(){
                             </ConfirmButton>
                         }
                     </OpContainer>
-                    {filteredData.length > 0 && <VacationsListComponent filteredData={filteredData} />}
+                    {filteredData.length > 0 && <VacationsListComponent filteredData={filteredData} activeButton={activeButton} />}
                     
                     {noData === true && <h2>Sem resultados para a pesquisa </h2>}
                 </Container>
