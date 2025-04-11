@@ -72,6 +72,9 @@ function UserComponent(){
           const response = await apiService.createUser(body);
           if (response.statusText === "OK") {
             alert("Usuário criado com sucesso!");
+            setAdmissao("");
+            setDemissao("");
+            setIsAdmin(false);
           }
         } else {
           const response = await apiService.editUser(body);

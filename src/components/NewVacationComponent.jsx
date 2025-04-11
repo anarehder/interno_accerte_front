@@ -72,7 +72,7 @@ function NewVacationComponent() {
       alert("O período selecionado excede a data limite do período aquisitivo");
     } else {
       const confirmed = window.confirm(
-        `Funcionário: ${vacationInfo.name} ${vacationInfo.sobrenome}\n` +
+        `Funcionário: ${vacationInfo.nome} ${vacationInfo.sobrenome}\n` +
         `Período Aquisitivo: de ${feriasDisponiveis[selectedPeriod].inicio} até ${feriasDisponiveis[selectedPeriod].fim} \n` +
         `Início das Férias: ${date.start}\n` +
         `Fim das Férias: ${date.end}\n` +
@@ -101,6 +101,8 @@ function NewVacationComponent() {
       const response = await apiService.createVacation(body);
       if (response.statusText === "OK") {
         alert("Período de Férias Inserido com Sucesso!");
+        selectedPeriod(-1);
+        setDate({ start: "", end: "" });
       }
     } catch (error) {
       // console.error("Erro ao enviar requisição:", error);

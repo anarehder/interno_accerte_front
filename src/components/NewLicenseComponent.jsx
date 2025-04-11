@@ -7,7 +7,7 @@ function NewLicenseComponent(){
     const { user, dados } = useAuth();
     const agenda = dados?.agenda;
     const [selectedEmployee, setSelectedEmployee] = useState(null);
-    const [tipoContrato, setTipoContrato] = useState(null);
+    const [tipoSelecionado, setTiporSelecionado] = useState(null);
     const [date, setDate] = useState({ start: "", end: "" });
     const [totalDays, setTotalDays] = useState(0);
     const tiposLicenca = ["Licença Maternidade", "Licença Paternidade", "Atestado"];
@@ -63,7 +63,7 @@ function NewLicenseComponent(){
             "inicio": `${date.start}T00:00:00Z`,
             "fim": `${date.end}T00:00:00Z`,
             "totalDias": totalDays,
-            "tipo": tipoContrato
+            "tipo": tipoSelecionado
         }
 
         if (
@@ -84,7 +84,7 @@ function NewLicenseComponent(){
             `Início da Licença: ${date.start}\n` +
             `Fim da Licença: ${date.end}\n` +
             `Total de Dias: ${totalDays}\n` +
-            `tipo: ${tipoContrato}`
+            `tipo: ${tipoSelecionado}`
         );
         if (!confirmed) {
             // Se clicou em "Cancelar", sai da função aqui
@@ -119,7 +119,7 @@ function NewLicenseComponent(){
                             <div>
                                 <Label>Tipo de Licença</Label>
                                 <Select
-                                    onChange={(e) => setTipoContrato(e.target.value)}
+                                    onChange={(e) => setTiporSelecionado(e.target.value)}
                                 >
                                     <option value="">Selecione...</option>
                                     {tiposLicenca.map((t, index) => (
