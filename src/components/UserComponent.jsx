@@ -80,6 +80,9 @@ function UserComponent(){
           const response = await apiService.editUser(body);
           if (response.statusText === "OK") {
             alert("Usuário editado com sucesso!");
+            setAdmissao("");
+            setDemissao("");
+            setIsAdmin(false);
           }
         }
       } catch (error) {
