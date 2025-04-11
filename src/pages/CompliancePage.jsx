@@ -46,7 +46,7 @@ const Container = styled.div`
     border-radius: 8px;
     align-items: center;
     min-height: 100vh;
-    color: black;
+    color: rgb(75, 74, 75);
 `;
 
 

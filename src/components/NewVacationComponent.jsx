@@ -31,6 +31,7 @@ function NewVacationComponent() {
   };
 
   const handleSelect = async (email) => {
+    setSelectedPeriod(-1)
     const funcionario = agenda.find((f) => f.mail === email);
     if (funcionario) {
       setSelectedEmployee(funcionario);
