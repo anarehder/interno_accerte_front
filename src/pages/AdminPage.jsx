@@ -7,6 +7,8 @@ import apiService from "../services/apiService";
 import NewVacationComponent from "../components/NewVacationComponent";
 import NewLicenseComponent from "../components/NewLicenseComponent";
 import VacationsFilterComponent from "../components/VacationsFilterComponent";
+import ScalePage from "./ScalePage";
+import ScaleTableComponent from "../components/ScaleTableComponent";
 
 const AdminPage = () => {{
     const { dados, user, carregando, getData } = useAuth();
@@ -25,13 +27,18 @@ const AdminPage = () => {{
             "fimSemana": fimSemana,
             "funcionarios": dados.agenda
         };
+        console.log(body);
         // alert(body.funcionarios[0].mail);
-        confirm(
+        const confirmed = window.confirm(
             `Solicitante: ${body.adminEmail}\n` +
             `Confirma os dados da requisição?\n` +
             `Início: ${body.inicioSemana}\n` +
             `Fim: ${body.fimSemana}\n`
         );
+        if (!confirmed) {
+            // Se clicou em "Cancelar", sai da função aqui
+            return;
+        }
         try {
             const response = await apiService.createEscala(body);
             if (response.statusText === "OK") {
@@ -53,6 +60,7 @@ const AdminPage = () => {{
                 <Button onClick={() => setActiveButton("Escala")} active={activeButton === "Escala" ? "show" : ""}>Criar Escalas</Button>
                 <Button onClick={() => setActiveButton("Criar Licença")} active={activeButton === "Criar Licença" ? "show" : ""}>Criar Licença</Button>
                 <Button onClick={() => setActiveButton("Criar Férias")} active={activeButton === "Criar Férias" ? "show" : ""}>Criar Férias</Button>
+                <Button onClick={() => setActiveButton("Editar Escala")} active={activeButton === "Editar Escala" ? "show" : ""}>Editar Escala</Button>
             </ButtonsContainer>
 
             {activeButton === "User" && !carregando && <UserComponent />}
@@ -83,6 +91,7 @@ const AdminPage = () => {{
             {activeButton === "Filtrar" && !carregando && <VacationsFilterComponent />}
             {activeButton === "Criar Licença" && !carregando && <NewLicenseComponent />}
             {activeButton === "Criar Férias" && !carregando && <NewVacationComponent />}
+            {activeButton === "Editar Escala" && !carregando && <ScaleTableComponent type={"admin"} />}
         </Container>
     );
   };
@@ -101,7 +110,7 @@ const Container = styled.div`
 const ButtonsContainer = styled.div`
     justify-content: center;
     flex-wrap: wrap;
-    margin: 30px 0;
+    margin: 30px 0 40px 0;
     gap: 50px;
 `
   

@@ -47,6 +47,8 @@ function EditScaleComponent({scale, opcoes, setUpdatedScale, setEditScale, editS
 
     return (
         <PageContainer>
+            <h2>Editar escala de: {scale.name}</h2>
+            <div>
             {diasSemana.map(dia => (
                 <DropdownContainer key={dia}>
                     <Label>{dia.charAt(0).toUpperCase() + dia.slice(1)}:</Label>
@@ -62,6 +64,7 @@ function EditScaleComponent({scale, opcoes, setUpdatedScale, setEditScale, editS
                 </DropdownContainer>
       ))}
             <SubmitButton onClick={handleSubmit}>Alterar Escala</SubmitButton>
+            </div>
         </PageContainer>
     )
 }
@@ -72,28 +75,38 @@ const PageContainer = styled.div`
     width: 80%;
     position: relative;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
+    flex-direction: column;
+    z-index: 2;
+    h2{
+        color: gray;
+    }
+    div{
+        align-items: flex-end;
+    }
 `
 
 const DropdownContainer = styled.div`
-    margin-top: 100px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    gap: 5px;
 `;
 
 const Label = styled.label`
   display: block;
   font-weight: bold;
   display: flex;
-  width: 250px;
+  width: 200px;
   height: 40px;
   align-items: center;
   text-align: center;
 `;
 
 const Select = styled.select`
-  width: 230px;
+  width: 200px;
+  font-size: 18px;
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;
@@ -107,7 +120,8 @@ const SubmitButton = styled.button`
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 17px;
+  margin-left: 10px;
   height: 60px;
   &:hover {
     background-color:rgb(192, 57, 75);
