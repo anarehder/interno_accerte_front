@@ -47,7 +47,7 @@ function VacationsFilterComponent(){
     const handleSubmit = async () => {
         //2025-07-01 formato do inicio e fim
         if(activeButton === 'Funcionário'){
-            console.log("filtro funcionario");
+            // console.log("filtro funcionario");
             try {
                 const response = await apiService.getVacationByEmail(selectedEmployee.email);
                 if (response.statusText === "OK") {
@@ -61,7 +61,7 @@ function VacationsFilterComponent(){
             }
         }
         if(activeButton === 'Período'){
-            console.log("filtro Período");
+            // console.log("filtro Período");
             if (!date.start || !date.end) {
                 alert("Preencha corretamente as datas");
             }
@@ -81,7 +81,7 @@ function VacationsFilterComponent(){
             }
         }
         if(activeButton === 'Tipo de Contrato'){
-            console.log("filtro Tipo de Contrato");
+            // console.log("filtro Tipo de Contrato");
             try {
                 const response = await apiService.getVacationByContract(tipoContrato);
                 if (response.statusText === "OK") {

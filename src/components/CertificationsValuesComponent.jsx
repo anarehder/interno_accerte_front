@@ -3,7 +3,7 @@ import prices from "../assets/LevelsPrices";
 
 function CertificationsValueComponent() {
     const pricesArray = Object.keys(prices);
-    console.log(prices[pricesArray[0]]);
+    // console.log(prices[pricesArray[0]]);
     return (
         <PageContainer>
             <LevelTitle>

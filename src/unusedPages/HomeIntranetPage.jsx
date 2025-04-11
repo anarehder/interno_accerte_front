@@ -10,7 +10,7 @@ const HomeIntranetPage = () => {
   const navigate = useNavigate();
   const { instance, accounts } = useMsal();
   const [user, setUser] = useState(null);
-  console.log(user);
+  // console.log(user);
 
   const handleLogin = async () => {
     try {
@@ -20,7 +20,7 @@ const HomeIntranetPage = () => {
 
       if (loginResponse) {
         const accessToken = loginResponse.accessToken; // Obtém o token
-        console.log(loginResponse.account);
+        // console.log(loginResponse.account);
         const user = {
           name: loginResponse.account.name,
           email: loginResponse.account.username,

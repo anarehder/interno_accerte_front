@@ -44,7 +44,7 @@ function ScaleTableComponent({type}) {
         fetchScale();
     
     }, [updatedScale]);
-    console.log(scaleToEdit);
+    // console.log(scaleToEdit);
     const handleSelect = (escalas, tipo) => {
         
         const escalasComDados = escalas.Escalas.map(escala => {
@@ -72,7 +72,7 @@ function ScaleTableComponent({type}) {
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
         return `${dia}/${mes}/${ano}`;
     }
-    console.log('to edit', editScale);
+    // console.log('to edit', editScale);
 
     const handleDownload = () => {
         if (imageRef.current) {

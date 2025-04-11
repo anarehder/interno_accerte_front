@@ -27,7 +27,7 @@ const AdminPage = () => {{
             "fimSemana": fimSemana,
             "funcionarios": dados.agenda
         };
-        console.log(body);
+        // console.log(body);
         // alert(body.funcionarios[0].mail);
         const confirmed = window.confirm(
             `Solicitante: ${body.adminEmail}\n` +

@@ -60,7 +60,7 @@ const IntranetHomePage = () => {
         setSearchBar("");
     };
 
-    console.log(filteredContacts);
+    // console.log(filteredContacts);
     const handleLogout = () => {
         instance.logoutPopup({
             postLogoutRedirectUri: "/",

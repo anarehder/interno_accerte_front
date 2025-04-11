@@ -11,7 +11,7 @@ const FastLinksPage = () => {{
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
-    console.log(dados?.docs);
+    // console.log(dados?.docs);
     return (
         <Container>
             <HeaderComponent pageTitle={"Links Rápidos"} type={"page"} />
