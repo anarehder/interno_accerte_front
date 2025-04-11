@@ -48,6 +48,7 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    color: rgb(75, 74, 75);
 `
 
 const Button = styled.button`
@@ -56,9 +57,9 @@ const Button = styled.button`
     justify-content: center;
     border: none;
     border-radius: 5px;
-    background-color: ${({ active }) => (active ? "black" : "#007bff")};
+    background-color: ${({ active }) => (active ? "rgb(75, 74, 75)" : "#007bff")};
     &:hover {
-        background-color: ${({ active }) => (active ? "#007bff" : "black")
+        background-color: ${({ active }) => (active ? "#007bff" : "rgb(75, 74, 75)")
     };
 `;
 

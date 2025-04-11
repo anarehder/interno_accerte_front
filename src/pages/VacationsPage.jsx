@@ -132,7 +132,7 @@ const PageContainer = styled.div`
 `
 
 const AdminButton = styled.button`
-    top: 2%;
+    top: 20px;
     right: 2%;
     position: absolute;
     font-size: 16px;

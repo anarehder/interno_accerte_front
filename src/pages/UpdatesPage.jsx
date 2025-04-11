@@ -46,6 +46,7 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    margin-bottom: 50px;
 `
 
 const Title = styled.div`

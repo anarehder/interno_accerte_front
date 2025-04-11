@@ -105,7 +105,7 @@ function ScaleTableComponent({type}) {
                     <div>
                     <Button onClick={() => handleSelect(scale.atual[0], "atual")} selecionado={selectedButton === "atual" ? 'show' : undefined}>{formatarDataBR(scale.atual[0].inicioSemana)} a {formatarDataBR(scale.atual[0].fimSemana)} </Button>
                     {scale.proxima &&
-                        <button onClick={() => handleSelect(scale.proxima[0], "proximo")} seleciondo={selectedButton === "proximo"}>{formatarDataBR(scale.proxima[0].inicioSemana)} a {formatarDataBR(scale.proxima[0].fimSemana)} </button>
+                        <Button onClick={() => handleSelect(scale.proxima[0], "proximo")} selecionado={selectedButton === "proximo" ? 'show' : undefined}>{formatarDataBR(scale.proxima[0].inicioSemana)} a {formatarDataBR(scale.proxima[0].fimSemana)} </Button>
                     }
                     </div>
                 </ButtonsContainer>

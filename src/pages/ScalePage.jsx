@@ -29,10 +29,11 @@ const PageContainer = styled.div`
     gap: 20px;
     margin-bottom: 35px;
     position: relative;
+    color:rgb(75, 74, 75);
 `
 
 const AdminButton = styled.button`
-    top: 2%;
+    top: 20px;
     right: 2%;
     position: absolute;
     font-size: 16px;
