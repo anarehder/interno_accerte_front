@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import HeaderComponent from '../components/HeaderComponent';
-import Logo from '../assets/LOGO-SVG.svg';
+import Logo from '../assets/LOGO-PNG.png';
 import { GiMegaphone } from "react-icons/gi";
 import ReactPlayer from 'react-player';
 
@@ -47,7 +47,7 @@ const Title = styled.div`
     gap: 5px;
     img{
         margin-left: 20px;
-        height: 50px;
+        height: 49px;
     }
 `
 
