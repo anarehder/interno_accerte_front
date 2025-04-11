@@ -6,6 +6,7 @@ import UserComponent from "../components/UserComponent";
 import apiService from "../services/apiService";
 import NewVacationComponent from "../components/NewVacationComponent";
 import NewLicenseComponent from "../components/NewLicenseComponent";
+import VacationsFilterComponent from "../components/VacationsFilterComponent";
 
 const AdminPage = () => {{
     const { dados, user, carregando, getData } = useAuth();
@@ -48,7 +49,7 @@ const AdminPage = () => {{
             <HeaderGGComponent pageTitle={"RH  Painel Admin"} />
             <ButtonsContainer>
                 <Button onClick={() => setActiveButton("User")} active={activeButton === "User" ? "show" : ""}>Usuários</Button>
-                <Button onClick={() => setActiveButton("Ferias")} active={activeButton === "Ferias" ? "show" : ""}>Filtrar Férias</Button>
+                <Button onClick={() => setActiveButton("Filtrar")} active={activeButton === "Filtrar" ? "show" : ""}>Filtrar Férias</Button>
                 <Button onClick={() => setActiveButton("Escala")} active={activeButton === "Escala" ? "show" : ""}>Criar Escalas</Button>
                 <Button onClick={() => setActiveButton("Criar Licença")} active={activeButton === "Criar Licença" ? "show" : ""}>Criar Licença</Button>
                 <Button onClick={() => setActiveButton("Criar Férias")} active={activeButton === "Criar Férias" ? "show" : ""}>Criar Férias</Button>
@@ -79,6 +80,7 @@ const AdminPage = () => {{
                     </Button>
                 </EscalaContainer>
             }
+            {activeButton === "Filtrar" && !carregando && <VacationsFilterComponent />}
             {activeButton === "Criar Licença" && !carregando && <NewLicenseComponent />}
             {activeButton === "Criar Férias" && !carregando && <NewVacationComponent />}
         </Container>
