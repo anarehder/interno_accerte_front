@@ -43,7 +43,7 @@ function ScaleTableComponent({type}) {
 
         fetchScale();
     
-    }, [updatedScale]);
+    }, [updatedScale, dados]);
     // console.log(scaleToEdit);
     const handleSelect = (escalas, tipo) => {
         
