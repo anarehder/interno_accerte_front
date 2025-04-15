@@ -184,6 +184,7 @@ const Info = styled.div`
     display: flex;
     color: #555;
     text-align: left;
+    font-size: 20px;
     gap: 20px;
 `;
 
