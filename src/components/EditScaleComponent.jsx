@@ -53,7 +53,7 @@ function EditScaleComponent({scale, opcoes, setUpdatedScale, setEditScale, editS
                 <DropdownContainer key={dia}>
                     <Label>{dia.charAt(0).toUpperCase() + dia.slice(1)}:</Label>
                     <Select onChange={e => handleChange(dia, e.target.value)}>
-                        <option value={scale[dia]}>{scale[dia]}</option>
+                        <option value="" hidden>{scale[dia]}</option>
                         {opcoes?.map((opcao, index) => (
                             <option key={index} value={opcao}>
                                 {opcao}
