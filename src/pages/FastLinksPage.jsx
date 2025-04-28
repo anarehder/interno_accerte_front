@@ -6,10 +6,10 @@ import AppleLogo from "../assets/logos-parceiros/apple_branco.png";
 import AndroidLogo from "../assets/logos-parceiros/google_play.png";
 import CajuLogo from "../assets/logos-parceiros/caju.png";  // Substitua pelos caminhos corretos
 import OnflyLogo from "../assets/logos-parceiros/onfly.png";  // Substitua pelos caminhos corretos
-import GympassLogo from "../assets/logos-parceiros/gympass.png";  // E assim por diante...
 import GymratsLogo from "../assets/logos-parceiros/gymrats.png"; 
 import MarqpontoLogo from "../assets/logos-parceiros/marq.png"; 
 import ClickSignLogo from "../assets/logos-parceiros/clicksign.png"; 
+import WellhubLogo from "../assets/logos-parceiros/wellhub.png";
 
 const FastLinksPage = () => {{
     const { dados } = useAuth();
@@ -20,7 +20,7 @@ const FastLinksPage = () => {{
         Android: AndroidLogo,
         Caju: CajuLogo,
         Onfly: OnflyLogo,
-        Gympass: GympassLogo,
+        Gympass: WellhubLogo,
         GymRats: GymratsLogo,
         MarqPonto: MarqpontoLogo,
         Clicksign: ClickSignLogo
