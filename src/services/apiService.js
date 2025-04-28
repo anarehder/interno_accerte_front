@@ -51,6 +51,14 @@ function getVacationByContract(tipoContrato){
     return axios.get(`${BASE_URL}/ferias/filtros/contrato?contrato=${tipoContrato}`)
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract}
+function getVagasInfo(){
+    return axios.get(`${BASE_URL}/vagas`)
+}
+
+function createVagas(body){
+    return axios.post(`${BASE_URL}/vagas/criar`, body)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas}
 
 export default apiService;

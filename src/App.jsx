@@ -21,6 +21,8 @@ import ScalePage from "./pages/ScalePage";
 import AboutUsPage from "./pages/AboutUsPage";
 import AdminPage from "./pages/AdminPage";
 import UpdatesPage from "./pages/UpdatesPage";
+import PowerBIDashs from "./pages/PowerBIDashs";
+import PainelGestoresPage from "./pages/PainelGestoresPage";
 
 function App() {
 
@@ -46,6 +48,8 @@ function App() {
               <Route path="/escala" element={<ScalePage />} />
               <Route path="/links" element={<FastLinksPage />} />
               <Route path="/fiquepordentro" element={<UpdatesPage/>}/>
+              <Route path="/gestaoavista" element={<PowerBIDashs />} />
+              <Route path="/painelgestores" element={<PainelGestoresPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

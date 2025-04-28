@@ -63,16 +63,16 @@ function LinkedinPostsComponent() {
 export default LinkedinPostsComponent;
 
 const PageContainer = styled.div`
-    width: 100%;
+    width: 90%;
     position: relative;
     justify-content: center;
+    margin: 25px 0;
 `
 
 
 const InstagramContainer = styled.div`
     padding: 20px;
     margin-top: 15px;
-    width: 92%;
     flex-direction: column;
     color: #067DD1;
     h2 {

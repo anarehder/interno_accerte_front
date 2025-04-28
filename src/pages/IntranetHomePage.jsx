@@ -70,7 +70,7 @@ const IntranetHomePage = () => {
         sessionStorage.removeItem("sharePoint");
         sessionStorage.removeItem("userMSAL");
     }
-  
+
     return (
         <Container>
             {!user ? <h1> Carregando dados...</h1> :
@@ -78,11 +78,12 @@ const IntranetHomePage = () => {
                     <LogoutButton onClick={handleLogout}>
                         <FiLogOut size={20} />
                     </LogoutButton>
+                    {/* <BirthdayPopUpComponent /> */}
                     <HeaderComponent pageTitle={user?.givenName} type={"homepage"} />
                     <MenuContainer>
-                        <div><Link to={"/sobre"}> <h1>SOBRE <span> NÓS</span></h1></Link></div>
+                        <div><Link to={"/sobre"}> <h1>SOBRE <br /><span> NÓS</span></h1></Link></div>
                         <MenuItem>
-                            <div> <h1>GENTE <span> E GESTÃO </span></h1></div>
+                            <div> <h1>GENTE <br /><span> E GESTÃO </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
                                 <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
@@ -91,10 +92,16 @@ const IntranetHomePage = () => {
                             </Dropdown>
                         </MenuItem>
                         <div> <Link to="/contatos"><h1><span> AGENDA </span></h1></Link></div>
-                        <div> <Link to="/links"><h1>LINKS <span> RÁPIDOS</span></h1></Link></div>
-                        <div> <Link to="/fiquepordentro"><h1>FIQUE <span>POR DENTRO </span> </h1></Link></div>
-                        <div> <a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">
-                            <h1>JIRA</h1></a></div>
+                        <div> <Link to="/links"><h1>LINKS <br /><span> RÁPIDOS</span></h1></Link></div>
+                        <div> <Link to="/fiquepordentro"><h1>FIQUE <br /><span>POR DENTRO </span> </h1></Link></div>
+                        <MenuItem>
+                            <div> <h1>GESTÃO <br /><span> DE TI </span></h1></div>
+                            <Dropdown>
+                                <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
+                                <DropdownItem><Link to={"/escala"}>Plantões</Link></DropdownItem>
+                                {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
+                            </Dropdown>
+                        </MenuItem>
                         <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
                         <form onSubmit={handleSearchSubmit}>
                             <input
@@ -106,19 +113,15 @@ const IntranetHomePage = () => {
                             <button type="submit"><FiSearch size={25} /></button>
                         </form>
                     </MenuContainer>
-                    {/* <BirthdayPopUpComponent /> */}
                     {filteredContacts.length > 0 ?
-                    <>
-                    <SearchResponse>
-                    <h2> Resultados da busca...</h2>
-                    <ContactsComponent contatos={filteredContacts} />
-                    <button onClick={clearSearch}> Limpar pesquisa</button>
-                    </SearchResponse>
-                    
-                    </>
-
-                    
-                    :
+                        <>
+                            <SearchResponse>
+                                <h2> Resultados da busca...</h2>
+                                <ContactsComponent contatos={filteredContacts} />
+                                <button onClick={clearSearch}> Limpar pesquisa</button>
+                            </SearchResponse>
+                        </>
+                        :
                         <>
                             <BannerContainer>
                                 <BannerSlideComponent />
@@ -138,12 +141,13 @@ const IntranetHomePage = () => {
                                 <div>
                                     <Link to="/compliance">COMPLIANCE </Link>
                                 </div>
+                                <div>
+                                    <Link to="/painelgestores">PAINEL DE GESTORES</Link>
+                                </div>
                             </ButtonsContainer>
-                <LinkedinPostsComponent />
-                    </>
-                    
+                            <LinkedinPostsComponent />
+                        </>
                     }
-                    
                     <FooterComponent />
                 </>
             }
@@ -184,12 +188,14 @@ const MenuContainer = styled.div`
     width: 90%;
     background-color: #067DD1;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     color: white;
-    gap: 30px;
+    padding: 0 15px;
     div {
         justify-content: center;
         text-align: center;
+        min-width: 8%;
+        line-height: 20px;
         width: fit-content;
         margin: 5px;
     }
@@ -232,15 +238,17 @@ const BannerContainer = styled.div`
 
 const ButtonsContainer = styled.div`
     font-size: 22px;
+    width: 90%;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 30px;
+    // gap: 30px;
     margin-bottom: 20px;
     color: white;
     div{
         background-color: #1c8ad9;
-        width: 20%;
+        width: 16%;
+        padding: 0 10px;
         height: 100px;
         border-radius: 15px;
         align-items: center;
@@ -258,17 +266,17 @@ const ButtonsContainer = styled.div`
 `
 
 const MenuItem = styled.div`
-  position: relative;
-  padding: 10px;
-  cursor: pointer;
-  &:hover div {
-    display: block;
-  }
+    position: relative;
+    cursor: pointer;
+    justify-content: center;
+    &:hover div {
+        display: block;
+    }
 `;
 
 const Dropdown = styled.div`
   position: absolute;
-  top: 80%;
+  top: 95%;
   left: 0;
   background: #4493dc;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -277,7 +285,7 @@ const Dropdown = styled.div`
   border-top-left-radius: 0;
   padding: 5px;
   display: none;
-  min-width: 180px;
+  width: 175px !important;
   z-index: 2;
 `;
 
