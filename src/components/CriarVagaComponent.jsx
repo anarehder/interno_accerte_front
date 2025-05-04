@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
 import apiService from '../services/apiService';
+import { PiExcludeSquareDuotone } from 'react-icons/pi';
 
 function CriarVagaComponent({setSelectedItem}) {
     const { user } = useAuth();
-    const formRef = useRef(null);
+    const [allowed, setAllowed] = useState(false);
     const [formularioInfo, setFormularioInfo] = useState(null);
     const [carregando, setCarregando] = useState(true);
     const [funcionarioSolicitante, setFuncionarioSolicitante] = useState(0);
@@ -52,8 +53,13 @@ function CriarVagaComponent({setSelectedItem}) {
             try {
                 const response = await apiService.getVagasInfo();
                 setFormularioInfo(response.data);
-                const func = response.data.funcionarios.find((func) => func.email === user.mail);
+                const func = response.data.funcionarios.find((func) => func.email === 'user.mail');
+                if (!func){
+                    setCarregando(false);
+                    return;
+                }
                 const area = response.data.gestores.find((gestor) => gestor.funcionarioId === func.id);
+                setAllowed(true);
                 setFuncionarioSolicitante(func);
                 setAreaIdDoSolicitante(area);
                 setNewReq((prev) => ({
@@ -93,10 +99,13 @@ function CriarVagaComponent({setSelectedItem}) {
     return (
         <PageContainer>
             <h2>Requisição de Vaga</h2>
-            {carregando ? <div> Carregando dados...</div> :
+            {carregando && <div> Carregando dados...</div> }
+            {(!carregando && !allowed)&&  <h1> Área destinada aos gestores</h1>}
+            {(!carregando && allowed) &&
+            // && funcionarioSolicitante !== 0
                 <Formulario onSubmit={handleSubmit}>
                     <div>
-                        <label>1. Solicitante da vaga:</label>
+                        <label>1. Solicitante da vaga: {funcionarioSolicitante.length}</label>
                         <input
                             type="text"
                             value={`${funcionarioSolicitante?.nome} ${funcionarioSolicitante?.sobrenome}`}

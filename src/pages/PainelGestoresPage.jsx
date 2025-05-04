@@ -6,25 +6,27 @@ import HeaderComponent from '../components/HeaderComponent';
 import CriarVagaComponent from '../components/CriarVagaComponent';
 
 function PainelGestoresPage() {
-    const [selectedItem, setSelectedItem] = useState("");
+    const [selectedItem, setSelectedItem] = useState("ReqVaga");
+    // buscar gestores
+    // se meu email tiver na lista ok
 
     return (
         <PageContainer>
             <HeaderComponent pageTitle={"Painel Gestores"} />
             <div>
                 <SideBar>
-                    <div onClick={() => setSelectedItem("ReqVaga")}>
+                    <button onClick={() => setSelectedItem("ReqVaga")}>
                         {selectedItem === "ReqVaga" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
                         Requisição de Vaga
-                    </div>
-                    <div onClick={() => setSelectedItem("RelTI")}>
+                    </button>
+                    {/* <button onClick={() => setSelectedItem("RelTI")}>
                         {selectedItem === "RelTI" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
                         Relatórios TI
-                    </div>
-                    <div onClick={() => setSelectedItem("DashMark")}>
+                    </button>
+                    <button onClick={() => setSelectedItem("DashMark")}>
                         {selectedItem === "DashMark" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
                         Dashboards Marketing
-                    </div>
+                    </button> */}
                 </SideBar>
                 <div>    
                     {selectedItem === "ReqVaga" && <CriarVagaComponent setSelectedItem={setSelectedItem}/>}
@@ -57,10 +59,12 @@ const SideBar = styled.div`
     margin: 0 15px;
     flex-direction: column;
     gap: 30px;
-    div{
+    button{
+        width: 300px;
         font-size: 22px;
         align-items: center;
-        gap: 5px;
+        justify-content: flex-start;
+        gap: 10px;
         &: hover {
         cursor: pointer;
         }

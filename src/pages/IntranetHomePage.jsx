@@ -86,19 +86,28 @@ const IntranetHomePage = () => {
                             <div> <h1>GENTE <br /><span> E GESTÃO </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
-                                <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
-                                <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
+                                {/* <DropdownItem><Link to={"/calendario"}>Benefícios</Link></DropdownItem> */}
                                 <DropdownItem><Link to={"/calendario"}>Calendário Accerte</Link></DropdownItem>
+                                <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
+                                <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
                             </Dropdown>
                         </MenuItem>
-                        <div> <Link to="/contatos"><h1><span> AGENDA </span></h1></Link></div>
+                        <div> <Link to="/contatos"><h1>NOSSA <br/><span> AGENDA </span></h1></Link></div>
                         <div> <Link to="/links"><h1>LINKS <br /><span> RÁPIDOS</span></h1></Link></div>
                         <div> <Link to="/fiquepordentro"><h1>FIQUE <br /><span>POR DENTRO </span> </h1></Link></div>
                         <MenuItem>
                             <div> <h1>GESTÃO <br /><span> DE TI </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
-                                <DropdownItem><Link to={"/escala"}>Plantões</Link></DropdownItem>
+                                {/* <DropdownItem><Link to={"/escala"}>Plantões</Link></DropdownItem> */}
+                                {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
+                            </Dropdown>
+                        </MenuItem>
+                        <MenuItem>
+                            <div> <h1>GESTÃO <br /><span>À VISTA</span></h1> </div>
+                            <Dropdown>
+                                <DropdownItem> <Link to="/painelgestores">Painel de Gestores</Link></DropdownItem>
+                                {/* <DropdownItem><Link to={"/escala"}>Dashboards</Link></DropdownItem> */}
                                 {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
                             </Dropdown>
                         </MenuItem>
@@ -135,15 +144,15 @@ const IntranetHomePage = () => {
                                 </div>
                                 <div>
                                     <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
-                                        ESCRITORIO <br /> DE PROCESSOS
+                                        ESCRITÓRIO <br /> DE PROCESSOS
                                     </a>
                                 </div>
                                 <div>
                                     <Link to="/compliance">COMPLIANCE </Link>
                                 </div>
-                                <div>
-                                    <Link to="/painelgestores">PAINEL DE GESTORES</Link>
-                                </div>
+                                {/* <div>
+                                    <Link to="/painelgestores">DÚVIDAS FREQUENTES</Link>
+                                </div> */}
                             </ButtonsContainer>
                             <LinkedinPostsComponent />
                         </>
@@ -247,7 +256,7 @@ const ButtonsContainer = styled.div`
     color: white;
     div{
         background-color: #1c8ad9;
-        width: 16%;
+        width: 20%;
         padding: 0 10px;
         height: 100px;
         border-radius: 15px;
