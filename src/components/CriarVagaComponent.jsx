@@ -53,7 +53,7 @@ function CriarVagaComponent({setSelectedItem}) {
             try {
                 const response = await apiService.getVagasInfo();
                 setFormularioInfo(response.data);
-                const func = response.data.funcionarios.find((func) => func.email === 'user.mail');
+                const func = response.data.funcionarios.find((func) => func.email === user.mail);
                 if (!func){
                     setCarregando(false);
                     return;
