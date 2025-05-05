@@ -5,20 +5,22 @@ import apiService from '../services/apiService';
 
 function BuscarVagasComponent() {
     const { user } = useAuth();
+    const [errorMessage, setErrorMessage] = useState("");
     const [carregando, setCarregando] = useState(true);
+    const [vagas, setVagas] = useState([]);
 
 
     useEffect(() => {
         if (!user) return;
-
         const fetchScale = async () => {
             try {
+                // const body = {adminEmail: "wandyna.oliveira@accerte.com.br"};
                 const body = {adminEmail: user.mail};
-                const response = await apiService.getFullVagas(body);
-                console.log(response.data);
+                const response = await apiService.getVagas(body);
+                setVagas(response.data);
                 setCarregando(false);
             } catch (error) {
-                console.error("Erro ao buscar informacoes vagas:", error);
+                setErrorMessage(error.response.data.message);
                 setCarregando(false);
             }
         };
@@ -29,7 +31,10 @@ function BuscarVagasComponent() {
 
     return (
         <PageContainer>
-            <h2>Status Vagas</h2>
+            <h2>Acompanhamento Contratações</h2>
+            {errorMessage && <h3>{errorMessage}</h3>}
+            {(vagas.length === 0 && !carregando) && <h3>Sem vagas para exibir na sua área.</h3>}
+            {(vagas.length !== 0 && !carregando) && <h3>Tenho {vagas.length} vagas.</h3>}
         </PageContainer>
     )
 }
