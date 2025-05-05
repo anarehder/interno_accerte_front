@@ -4,9 +4,10 @@ import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import HeaderComponent from '../components/HeaderComponent';
 import CriarVagaComponent from '../components/CriarVagaComponent';
+import BuscarVagasComponent from '../components/BuscarVagasComponent';
 
 function PainelGestoresPage() {
-    const [selectedItem, setSelectedItem] = useState("ReqVaga");
+    const [selectedItem, setSelectedItem] = useState("");
     // buscar gestores
     // se meu email tiver na lista ok
 
@@ -19,17 +20,14 @@ function PainelGestoresPage() {
                         {selectedItem === "ReqVaga" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
                         Requisição de Vaga
                     </button>
-                    {/* <button onClick={() => setSelectedItem("RelTI")}>
-                        {selectedItem === "RelTI" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                        Relatórios TI
+                    <button onClick={() => setSelectedItem("ListarVagas")}>
+                        {selectedItem === "ListarVagas" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
+                        Lista Vagas
                     </button>
-                    <button onClick={() => setSelectedItem("DashMark")}>
-                        {selectedItem === "DashMark" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                        Dashboards Marketing
-                    </button> */}
                 </SideBar>
                 <div>    
                     {selectedItem === "ReqVaga" && <CriarVagaComponent setSelectedItem={setSelectedItem}/>}
+                    {selectedItem === "ListarVagas" && <BuscarVagasComponent />}
                 </div>
             </div>
 
@@ -46,21 +44,20 @@ const PageContainer = styled.div`
     align-items: center;
     position: absolute;
     gap: 20px;
-    // margin-bottom: 35px;
-    position: relative;
     color:rgb(75, 74, 75);
 `
 const SideBar = styled.div`
-    width: 400px;
+    width: 350px;
     position: fixed;
     padding: 15px 0;
+    align-items: center;
     height: 60vh;
     border-right: 2px solid gray;
-    margin: 0 15px;
     flex-direction: column;
     gap: 30px;
     button{
         width: 300px;
+        height: 60px;
         font-size: 22px;
         align-items: center;
         justify-content: flex-start;

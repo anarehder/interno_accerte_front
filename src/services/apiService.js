@@ -59,6 +59,14 @@ function createVagas(body){
     return axios.post(`${BASE_URL}/vagas/criar`, body)
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas}
+function getVagas(body){
+    return axios.post(`${BASE_URL}/vagas/buscar`, body)
+}
+
+function getFullVagas(body){
+    return axios.post(`${BASE_URL}/vagas/buscar/completo`, body)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas}
 
 export default apiService;

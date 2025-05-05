@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
 import apiService from '../services/apiService';
-import { PiExcludeSquareDuotone } from 'react-icons/pi';
 
 function CriarVagaComponent({setSelectedItem}) {
     const { user } = useAuth();
@@ -26,16 +25,21 @@ function CriarVagaComponent({setSelectedItem}) {
     reqHardSkills: '',
     reqSoftSkills: '',
     informacoes: '',
-    status: 'Solicitado' // ou algum valor default 
+    status: 'Solicitado', // ou algum valor default 
+    confidencial: false,
+    grauDeUrgencia: 'baixo',
+    qtdeDeVagas: 1
     };
+
     const [newReq, setNewReq] = useState(reqDefault);
-    // console.log(newReq);
+
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setNewReq((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+    const { name, type, value, checked } = e.target;
+
+    setNewReq((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+    }));
     };
 
     const handleSelectId = (e) => {
@@ -99,8 +103,8 @@ function CriarVagaComponent({setSelectedItem}) {
     return (
         <PageContainer>
             <h2>Requisição de Vaga</h2>
-            {carregando && <div> Carregando dados...</div> }
-            {(!carregando && !allowed)&&  <h1> Área destinada aos gestores</h1>}
+            {carregando && <Formulario><div> Carregando dados...</div> </Formulario>}
+            {(!carregando && !allowed)&&<Formulario><h1> Área destinada aos gestores</h1></Formulario> }
             {(!carregando && allowed) &&
             // && funcionarioSolicitante !== 0
                 <Formulario onSubmit={handleSubmit}>
@@ -124,12 +128,41 @@ function CriarVagaComponent({setSelectedItem}) {
 
                     <div>
                         <label>3. Título do cargo:</label>
-                        <input type="text" name="cargo" onChange={handleChange} />
+                        <input type="text" name="cargo" onChange={handleChange} maxLength={250}/>
                     </div>
 
                     <div>
+                        <div>
+                            <label> 3.1. Confidencial</label>
+                            <input
+                                type="checkbox"
+                                name="confidencial"
+                                checked={newReq.confidencial}
+                                // onChange={(e) => setConfidencial(e.target.checked)}
+                                onChange={handleChange}
+                                style={{ transform: 'scale(1.8)'}}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>3.2. Quantidade de Vagas:</label>
+                        <input
+                            type="number"
+                            value={newReq.qtdeDeVagas}
+                            min={1}
+                            name="qtdeDeVagas" onChange={handleSelectId}
+                        />
+                    </div>
+
+                    <div>
+                        <label>3.3. Qual o grau de urgência?</label>
+                        <input type="text" name="grauDeUrgencia" onChange={handleChange} maxLength={250}/>
+                    </div>
+                    
+                    <div>
                         <label>4. Qual o salário/remuneração?</label>
-                        <input type="text" name="salario" onChange={handleChange} />
+                        <input type="number" name="salario" onChange={handleChange} />
                     </div>
 
                     <div>
@@ -207,22 +240,22 @@ function CriarVagaComponent({setSelectedItem}) {
 
                     <div>
                         <label>10. Responsabilidades e atribuições desse cargo:</label>
-                        <textarea name="atividades" onChange={handleChange} />
+                        <textarea name="atividades" onChange={handleChange} maxLength={990}/>
                     </div>
 
                     <div>
                         <label>11. Pré-requisitos técnicos e qualificações para este cargo:</label>
-                        <textarea name="reqHardSkills" onChange={handleChange} />
+                        <textarea name="reqHardSkills" onChange={handleChange} maxLength={990} />
                     </div>
 
                     <div>
                         <label>12. Comportamentos e habilidades esperados e/ou valorizados para este cargo:</label>
-                        <textarea name="reqSoftSkills" onChange={handleChange} />
+                        <textarea name="reqSoftSkills" onChange={handleChange} maxLength={990}/>
                     </div>
 
                     <div>
                         <label>13. Informações relevantes:</label>
-                        <textarea name="informacoes" onChange={handleChange} />
+                        <textarea name="informacoes" onChange={handleChange} maxLength={990}/>
                     </div>
 
                     <button type="submit" onClick={handleSubmit}>Enviar Solicitação</button>
@@ -237,9 +270,9 @@ function CriarVagaComponent({setSelectedItem}) {
 export default CriarVagaComponent;
 
 const PageContainer = styled.div`
-    margin: 0 15px;
-    margin-left: 450px;
+    margin: 0 10px 0 350px;
     justify-content: flex-start;
+    align-items: center;
     flex-direction: column;
     gap: 10px;
     height: 60vh;
@@ -248,21 +281,27 @@ const PageContainer = styled.div`
     position: relative;
     overflow-y: scroll;
     h2 {
-        margin: 10px;
+        margin: 10px 0;
     }
 `
 
 const Formulario = styled.form`
-    width: 90%;
+    width: 85%;
     div {
-        margin-bottom: 40px;
+        margin-bottom: 35px;
         flex-direction: column;
+        div{
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 5px;
+        }
     }
     label {
         margin-bottom: 8px;
         font-weight: bold;
     }
-        input, select, textarea {
+    input, select, textarea {
         padding: 10px;
         font-size: 1rem;
         border: 1px solid #555;
@@ -275,7 +314,6 @@ const Formulario = styled.form`
         padding-left: 20px;
     }
     button {
-        // height: 50px;
         display: flex;
         font-size: 16px;
     }
