@@ -11,7 +11,7 @@ function BannerSlideComponent() {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-        }, 5000);
+        }, 10000);
         return () => clearInterval(interval);
     }, [images.length]);
 
