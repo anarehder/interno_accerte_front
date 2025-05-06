@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useAuth } from '../contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import apiService from '../services/apiService';
+import ListagemVagasGestoresComponent from './ListagemVagasGestoresComponent';
 
 function BuscarVagasComponent() {
     const { user } = useAuth();
@@ -34,7 +35,16 @@ function BuscarVagasComponent() {
             <h2>Acompanhamento Contratações</h2>
             {errorMessage && <h3>{errorMessage}</h3>}
             {(vagas.length === 0 && !carregando) && <h3>Sem vagas para exibir na sua área.</h3>}
-            {(vagas.length !== 0 && !carregando) && <h3>Tenho {vagas.length} vagas.</h3>}
+            
+            {vagas.length !== 0 && !carregando && (
+                <CardsContainer>
+                    {vagas.map((v, index) => (
+                        <ListagemVagasGestoresComponent key={index} vaga={v} />
+                    ))}
+                </CardsContainer>
+            )}
+            
+            
         </PageContainer>
     )
 }
@@ -55,4 +65,11 @@ const PageContainer = styled.div`
     h2 {
         margin: 10px 0;
     }
+`
+
+const CardsContainer = styled.div`
+    flex-wrap: wrap;
+    width: 90%;
+    gap: 5%;
+    justify-content: center;
 `
