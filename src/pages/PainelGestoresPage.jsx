@@ -22,7 +22,7 @@ function PainelGestoresPage() {
                     </button>
                     <button onClick={() => setSelectedItem("ListarVagas")}>
                         {selectedItem === "ListarVagas" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                        Lista Vagas
+                        Minhas Vagas
                     </button>
                 </SideBar>
                 <div>    

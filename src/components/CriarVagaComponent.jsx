@@ -10,6 +10,7 @@ function CriarVagaComponent({setSelectedItem}) {
     const [carregando, setCarregando] = useState(true);
     const [funcionarioSolicitante, setFuncionarioSolicitante] = useState(0);
     const [areaIdDoSolicitante, setAreaIdDoSolicitante] = useState(0);  
+
     const reqDefault = {  
     solicitanteId: 0,
     areaId: 0,
@@ -27,12 +28,12 @@ function CriarVagaComponent({setSelectedItem}) {
     informacoes: '',
     status: 'Solicitado', // ou algum valor default 
     confidencial: false,
-    grauDeUrgencia: 'baixo',
+    imediato: false,
     qtdeDeVagas: 1
     };
 
     const [newReq, setNewReq] = useState(reqDefault);
-
+    console.log(newReq);
     const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
 
@@ -156,8 +157,17 @@ function CriarVagaComponent({setSelectedItem}) {
                     </div>
 
                     <div>
-                        <label>3.3. Qual o grau de urgência?</label>
-                        <input type="text" name="grauDeUrgencia" onChange={handleChange} maxLength={250}/>
+                        <label>3.3. Início Imediato?</label>
+                        <select name="imediato" onChange={(e) => {
+                            setNewReq((prev) => ({
+                                ...prev,
+                                imediato: e.target.value === 'true'
+                            }));
+                        }}>
+                            <option value="">Selecione</option>
+                            <option value="true">Sim</option>
+                            <option value="false">Não</option>
+                        </select>
                     </div>
                     
                     <div>

@@ -96,8 +96,8 @@ function ListagemVagasGestoresComponent({vaga}) {
                             <Value>{vaga.sal_variavel === 1 ? "Sim" : "Não"}</Value>
                         </DetailCard>
                         <DetailCard>
-                            <Label>Grau de Urgência</Label>
-                            <Value>{vaga.grauDeUrgencia}</Value>
+                            <Label>Início Imediato</Label>
+                            <Value>{vaga.imediato}</Value>
                         </DetailCard>
                         
                         <DetailCard>

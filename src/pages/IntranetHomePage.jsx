@@ -111,7 +111,7 @@ const IntranetHomePage = () => {
                                 {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
                             </Dropdown>
                         </MenuItem>
-                        <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
+                        
                         <form onSubmit={handleSearchSubmit}>
                             <input
                                 type="text"
@@ -134,8 +134,27 @@ const IntranetHomePage = () => {
                         <>
                             <BannerContainer>
                                 <BannerSlideComponent />
+                                <BannerMenu>
+                                <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
+                                    <div>
+                                    <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
+                                </div>
+                                <div>
+                                    <Link to="/compliance">COMPLIANCE </Link>
+                                </div>
+                                
+                                <div>
+                                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
+                                        ESCRITÓRIO <br /> DE PROCESSOS
+                                    </a>
+                                </div>
+                                <div>
+                                    <Link to={"/politicas"}>POLÍTICAS </Link>
+                                </div>
+                                
+                                </BannerMenu>
                             </BannerContainer>
-                            <ButtonsContainer>
+                            {/* <ButtonsContainer>
                                 <div>
                                     <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
                                 </div>
@@ -150,10 +169,7 @@ const IntranetHomePage = () => {
                                 <div>
                                     <Link to="/compliance">COMPLIANCE </Link>
                                 </div>
-                                {/* <div>
-                                    <Link to="/painelgestores">DÚVIDAS FREQUENTES</Link>
-                                </div> */}
-                            </ButtonsContainer>
+                            </ButtonsContainer> */}
                             <LinkedinPostsComponent />
                         </>
                     }
@@ -239,10 +255,37 @@ const MenuContainer = styled.div`
 `
 
 const BannerContainer = styled.div`
-    width: 50%;
-    margin-top: 50px;
-    justify-content: center;
-    margin: 30px 0;
+    width: 90%;
+    justify-content: space-between;
+    margin: 50px 0;
+    gap: 50px;
+    
+`
+
+const BannerMenu = styled.div`
+    width: 30%;
+    border-left: 1px solid #555;
+    flex-direction: column;
+    padding: 30px;
+    gap: 30px;
+    div{
+        background-color: #1c8ad9;
+        padding: 0 10px;
+        color: white;
+        height: 75px;
+        border-radius: 15px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-shadow: 2px -2px 2px 2px rgba(0, 0, 0, 0.2);
+        a {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+}
 `
 
 const ButtonsContainer = styled.div`
