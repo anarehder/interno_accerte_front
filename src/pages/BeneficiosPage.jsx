@@ -4,16 +4,14 @@ import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import { CiCircleMinus } from "react-icons/ci";
 import { CiCirclePlus } from "react-icons/ci";
-import IPOG1 from "../assets/IPOG/IPOG1.png"
-import IPOG2 from "../assets/IPOG/IPOG2.png"
-import IPOG3 from "../assets/IPOG/IPOG3.png"
-import IPOG4 from "../assets/IPOG/IPOG4.png"
-import IPOG5 from "../assets/IPOG/IPOG5.png"
-import IPOG6 from "../assets/IPOG/IPOG6.png"
-import IPOG7 from "../assets/IPOG/IPOG7.png"
-import IPOG8 from "../assets/IPOG/IPOG8.png"
-
-
+// import IPOG1 from "../assets/IPOG/IPOG1.png";
+// import IPOG2 from "../assets/IPOG/IPOG2.png";
+// import IPOG3 from "../assets/IPOG/IPOG3.png";
+// import IPOG4 from "../assets/IPOG/IPOG4.png";
+// import IPOG5 from "../assets/IPOG/IPOG5.png";
+// import IPOG6 from "../assets/IPOG/IPOG6.png";
+// import IPOG7 from "../assets/IPOG/IPOG7.png";
+// import IPOG8 from "../assets/IPOG/IPOG8.png";
 import styled from 'styled-components';
 
 function BeneficiosPage() {
