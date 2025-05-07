@@ -86,7 +86,7 @@ const IntranetHomePage = () => {
                             <div> <h1>GENTE <br /><span> E GESTÃO </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
-                                {/* <DropdownItem><Link to={"/calendario"}>Benefícios</Link></DropdownItem> */}
+                                <DropdownItem><Link to={"/beneficios"}>Benefícios</Link></DropdownItem>
                                 <DropdownItem><Link to={"/calendario"}>Calendário Accerte</Link></DropdownItem>
                                 <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
                                 <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>

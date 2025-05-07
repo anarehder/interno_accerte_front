@@ -23,6 +23,7 @@ import AdminPage from "./pages/AdminPage";
 import UpdatesPage from "./pages/UpdatesPage";
 import PowerBIDashs from "./pages/PowerBIDashs";
 import PainelGestoresPage from "./pages/PainelGestoresPage";
+import BeneficiosPage from "./pages/BeneficiosPage";
 
 function App() {
 
@@ -50,6 +51,7 @@ function App() {
               <Route path="/fiquepordentro" element={<UpdatesPage/>}/>
               <Route path="/gestaoavista" element={<PowerBIDashs />} />
               <Route path="/painelgestores" element={<PainelGestoresPage />} />
+              <Route path="/beneficios" element={<BeneficiosPage/>} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >
