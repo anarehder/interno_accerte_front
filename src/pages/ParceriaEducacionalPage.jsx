@@ -2,33 +2,20 @@ import { useState } from 'react';
 import HeaderGGComponent from '../components/HeaderGGComponent';
 import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
-import { CiCircleMinus } from "react-icons/ci";
-import { CiCirclePlus } from "react-icons/ci";
 import styled from 'styled-components';
 import ParceriaEducacionalComponent from '../components/ParceriaEducacionalComponent';
-import BeneficiosComponent from '../components/BeneficiosComponent';
 
-function BeneficiosPage() {
-    const [selectedItem, setSelectedItem] = useState("");
+function ParceriaEducacionalPage() {
+    const [selectedItem, setSelectedItem] = useState("IPOG");
     const options = [
-        { value: "AFASTAMENTOS", label: "Afastamentos" },
-        // { value: "AUXILIO_ALIMENTACAO", label: "Auxílio Alimentação" },
-        // { value: "DAYOFF", label: "Day Off" },
-        { value: "HOME_OFFICE", label: "Home Office" },
-        { value: "PARCERIA_EDUCACIONAL", label: "Parceria Educacional" },
-        // { value: "AUXILIO_SAUDE", label: "Plano de Saúde" },
-        // { value: "AUXILIO_ODONTOLOGICO", label: "Plano Odontológico" },
-        { value: "CERTIFICACAO", label: "Programa de Certificação" },
-        // { value: "SEGURO_VIDA", label: "Seguro de Vida" },
-        { value: "VALE_TRANSPORTE", label: "Vale Transporte" },
-        { value: "WELLHUB_GYMPASS", label: "Wellhub (Gympass)" },
+        { value: "IPOG", label: "IPOG" },
     ];
 
     return (
         <PageContainer>
-            <HeaderGGComponent pageTitle={"Benefícios"} />
+            <HeaderGGComponent pageTitle={"Parceria Educacional"} />
             <Container>
-                <MenuLateral>
+                {/* <MenuLateral>
                     {options.map((item) => (
                         <button key={item.label} onClick={() => setSelectedItem(item.label)}>
                             {selectedItem === item.label ? (
@@ -39,12 +26,9 @@ function BeneficiosPage() {
                             {item.label}
                         </button>
                     ))}
-                </MenuLateral>
+                </MenuLateral> */}
                 <Info>
-                {selectedItem === 'Parceria Educacional' && <ParceriaEducacionalComponent />}
-                    
-                    {(selectedItem !== 'Parceria Educacional' && selectedItem !== "") && <BeneficiosComponent item={selectedItem} />}
-
+                {selectedItem === 'IPOG' && <ParceriaEducacionalComponent />}
                 </Info>
                     
             </Container>
@@ -52,7 +36,7 @@ function BeneficiosPage() {
     )
 }
 
-export default BeneficiosPage;
+export default ParceriaEducacionalPage;
 
 const PageContainer = styled.div`
     width: 100%;
@@ -84,5 +68,5 @@ const MenuLateral = styled.div`
 `
 
 const Info = styled.div`
-    width: calc(100% - 320px);
+    // width: calc(100% - 320px);
 `

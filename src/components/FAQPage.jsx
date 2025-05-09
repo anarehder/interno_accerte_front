@@ -2,13 +2,11 @@ import { useState } from 'react';
 import HeaderGGComponent from '../components/HeaderGGComponent';
 import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
-import { CiCircleMinus } from "react-icons/ci";
-import { CiCirclePlus } from "react-icons/ci";
 import styled from 'styled-components';
 import ParceriaEducacionalComponent from '../components/ParceriaEducacionalComponent';
-import BeneficiosComponent from '../components/BeneficiosComponent';
+import FAQComponent from './FAQComponent';
 
-function BeneficiosPage() {
+function FAQPage() {
     const [selectedItem, setSelectedItem] = useState("");
     const options = [
         { value: "AFASTAMENTOS", label: "Afastamentos" },
@@ -26,7 +24,7 @@ function BeneficiosPage() {
 
     return (
         <PageContainer>
-            <HeaderGGComponent pageTitle={"Benefícios"} />
+            <HeaderGGComponent pageTitle={"FAQs"} />
             <Container>
                 <MenuLateral>
                     {options.map((item) => (
@@ -43,7 +41,7 @@ function BeneficiosPage() {
                 <Info>
                 {selectedItem === 'Parceria Educacional' && <ParceriaEducacionalComponent />}
                     
-                    {(selectedItem !== 'Parceria Educacional' && selectedItem !== "") && <BeneficiosComponent item={selectedItem} />}
+                    {(selectedItem !== 'Parceria Educacional' && selectedItem !== "") && <FAQComponent item={selectedItem} />}
 
                 </Info>
                     
@@ -52,7 +50,7 @@ function BeneficiosPage() {
     )
 }
 
-export default BeneficiosPage;
+export default FAQPage;
 
 const PageContainer = styled.div`
     width: 100%;

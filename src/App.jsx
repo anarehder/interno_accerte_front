@@ -24,6 +24,8 @@ import UpdatesPage from "./pages/UpdatesPage";
 import PowerBIDashs from "./pages/PowerBIDashs";
 import PainelGestoresPage from "./pages/PainelGestoresPage";
 import BeneficiosPage from "./pages/BeneficiosPage";
+import FAQPage from "./components/FAQPage";
+import ParceriaEducacionalPage from "./pages/ParceriaEducacionalPage";
 
 function App() {
 
@@ -51,6 +53,8 @@ function App() {
               <Route path="/fiquepordentro" element={<UpdatesPage/>}/>
               <Route path="/gestaoavista" element={<PowerBIDashs />} />
               <Route path="/painelgestores" element={<PainelGestoresPage />} />
+              <Route path="/faqs" element={<FAQPage />}/>
+              <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />
               <Route path="/beneficios" element={<BeneficiosPage/>} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

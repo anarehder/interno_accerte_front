@@ -86,10 +86,12 @@ const IntranetHomePage = () => {
                             <div> <h1>GENTE <br /><span> E GESTÃO </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
-                                <DropdownItem><Link to={"/beneficios"}>Benefícios</Link></DropdownItem>
+                                {/* <DropdownItem><Link to={"/beneficios"}>Benefícios</Link></DropdownItem> */}
                                 <DropdownItem><Link to={"/calendario"}>Calendário Accerte</Link></DropdownItem>
                                 <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
+                                <DropdownItem><Link to={"/faqs"}>FAQs</Link></DropdownItem>
                                 <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
+                                <DropdownItem><Link to={"/parceriaeducacional"}>IPOG</Link></DropdownItem>
                             </Dropdown>
                         </MenuItem>
                         <div> <Link to="/contatos"><h1>NOSSA <br/><span> AGENDA </span></h1></Link></div>
@@ -337,7 +339,7 @@ const Dropdown = styled.div`
   border-top-left-radius: 0;
   padding: 5px;
   display: none;
-  width: 175px !important;
+  width: 190px !important;
   z-index: 2;
 `;
 

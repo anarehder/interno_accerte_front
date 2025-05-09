@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import CertificationsValueComponent from '../components/CertificationsValuesComponent';
 import { useState } from 'react';
 import CertificationsLevelsComponent from '../components/CertificationsLevelsComponent';
-import CertificationsList from "../assets/CertificationsList";
+import CertificationsList from "../constants/CertificationsList";
 import HeaderComponent from '../components/HeaderComponent';
 
 function CertificationsPage() {
