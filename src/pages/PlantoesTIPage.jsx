@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import HeaderComponent from "../components/HeaderComponent";
 import dayjs from 'dayjs';
-// import PlantoesTIComponent from "../components/PlantoesTIComponent";
+import PlantoesTIComponent from "../components/PlantoesTIComponent";
 import { useRef } from 'react';
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import apiService from "../services/apiService";
+import 'dayjs/locale/pt-br';
 
 const PlantoesTIPage = () => {
   const [currentDay, setCurrentDay] = useState(dayjs().startOf('day'));
@@ -98,11 +99,11 @@ const PlantoesTIPage = () => {
 
         </WeekHeader>
         {carregando && <h2> Carregando dados ... </h2>}
-        {/* {!carregando && currentOnCall.length > 0 &&
+        {!carregando && currentOnCall.length > 0 &&
           scales.map((s, index) => (
             <PlantoesTIComponent key={s} id={s} currentDay={currentDay} lastDay={lastDay} oncall={currentOnCall.find((oc) => oc.schedule.id === s)} />
           ))
-        } */}
+        }
       </Container>
     </>
   );
