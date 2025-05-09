@@ -3,7 +3,6 @@ import HeaderGGComponent from '../components/HeaderGGComponent';
 import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import styled from 'styled-components';
-import ParceriaEducacionalComponent from '../components/ParceriaEducacionalComponent';
 import FAQComponent from './FAQComponent';
 
 function FAQPage() {
@@ -13,7 +12,7 @@ function FAQPage() {
         // { value: "AUXILIO_ALIMENTACAO", label: "Auxílio Alimentação" },
         // { value: "DAYOFF", label: "Day Off" },
         { value: "HOME_OFFICE", label: "Home Office" },
-        { value: "PARCERIA_EDUCACIONAL", label: "Parceria Educacional" },
+        { value: "PARCERIA_EDUCACIONAL", label: "Parceria Educacional IPOG" },
         // { value: "AUXILIO_SAUDE", label: "Plano de Saúde" },
         // { value: "AUXILIO_ODONTOLOGICO", label: "Plano Odontológico" },
         { value: "CERTIFICACAO", label: "Programa de Certificação" },
@@ -39,12 +38,8 @@ function FAQPage() {
                     ))}
                 </MenuLateral>
                 <Info>
-                {selectedItem === 'Parceria Educacional' && <ParceriaEducacionalComponent />}
-                    
-                    {(selectedItem !== 'Parceria Educacional' && selectedItem !== "") && <FAQComponent item={selectedItem} />}
-
+                    {selectedItem !== "" && <FAQComponent item={selectedItem} />}
                 </Info>
-                    
             </Container>
         </PageContainer>
     )
@@ -69,7 +64,7 @@ const Container = styled.div`
 `
 
 const MenuLateral = styled.div`
-    width: 320px;
+    width: 350px;
     gap: 15px;
     flex-direction: column;
     padding-right: 50px;

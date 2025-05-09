@@ -24,16 +24,25 @@ function FAQComponent({item}) {
                         }
                         {openIndex === index && (
                             item.pergunta === "Justificativas aceitas para abono de faltas" ?
-                            <Respostas><img src={Afastamentos} alt={Afastamentos} /></Respostas>
-                            :
-                            <Respostas>
-                                {item.resposta.split('\n').map((linha, index) => (
-                                    <React.Fragment key={index}>
-                                        {linha}
-                                        <br />
-                                    </React.Fragment>
-                                ))}
-                            </Respostas>
+                                <Respostas><img src={Afastamentos} alt={Afastamentos} /></Respostas>
+                                :
+                                <Respostas>
+                                    {item.resposta.split('\n').map((linha, index) => (
+                                        <React.Fragment key={index}>
+                                            {linha.trim().startsWith("•") ? (
+                                                <span style={{ marginLeft: '1em' }}>{linha}</span>
+                                            ) :
+                                            linha.trim().startsWith("o") ? (
+                                                <span style={{ marginLeft: '2em' }}>{linha}</span>
+                                            ) :
+                                            (
+                                                linha
+                                            )}
+                                            <br />
+                                        </React.Fragment>
+
+                                    ))}
+                                </Respostas>
                         )}
                     </Descricoes>
                 ))}
@@ -79,7 +88,9 @@ const Respostas = styled.div`
     padding: 0 15px 15px 15px;
     text-align: justify;
     span{
-        font-weight: 700;
+        text-align: left;
+        padding: 0;
+        margin: 0;
     }
     img {
         width: 95%;

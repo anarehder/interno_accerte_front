@@ -234,7 +234,32 @@ const FAQS = {
     },
     {
       pergunta: "Observações Importantes",
-      resposta: "•	Prazo de 48 horas para entrega dos atestados. \n •	Atestados rasurados ou ilegíveis (CRM ou nome do médico) não serão aceitos. \n •	Outras ausências podem ser abonadas: \n o	Com débito no banco de horas \n o	Ou por liberalidade da empresa \n o	Caso contrário, será descontado na folha de pagamento.",
+      resposta: "✅	Prazo de 48 horas para entrega dos atestados. \n ✅	Atestados rasurados ou ilegíveis (CRM ou nome do médico) não serão aceitos. \n ✅	Outras ausências podem ser abonadas: \n •	Com débito no banco de horas \n •	Ou por liberalidade da empresa \n   •	Caso contrário, será descontado na folha de pagamento.",
+    }
+    ]
+  },
+  "Parceria Educacional IPOG":{
+    intro:"Esta FAQ tem como objetivo esclarecer as principais dúvidas sobre a parceria da Accerte Tecnologia com o Instituto IPOG, que oferece condições especiais em cursos de graduação, pós-graduação e extensão para colaboradores e seus familiares...",
+    info: [
+    {
+      pergunta: "Quem tem direito aos benefícios da parceria IPOG?",
+      resposta: "Todos os colaboradores e parceiros da Accerte Tecnologia podem participar, incluindo: \n •	Estagiários \n •	Celetistas \n •	Prestadores de serviço (PJ)",
+    },
+    {
+      pergunta: "Posso indicar um familiar para aproveitar os descontos?",
+      resposta: "Sim! Os descontos também se aplicam a parentes de 1º grau, como pais, filhos e cônjuges.",
+    },
+    {
+      pergunta: "Em quais cursos os descontos são válidos?",
+      resposta: "A parceria contempla os seguintes cursos: \n •	Pós-graduação e MBA \n•	Curso de Extensão Universitária \n •	Graduação (EaD, online e ao vivo)",
+    },
+    {
+      pergunta: "Qual é o valor dos descontos oferecidos?",
+      resposta: "Os benefícios variam conforme o tipo de curso: \n •	Pós-graduação e MBA: de R$120,00 a R$150,00 por parcela \n •	Graduação: 15% de desconto na mensalidade \n •	Curso de Extensão Universitária: até 10% de desconto",
+    },
+    {
+      pergunta: "Onde procuro se tiver mais dúvidas?",
+      resposta: "Caso tenha dúvidas adicionais ou queira iniciar sua inscrição, entre em contato com a área de Gente e Gestão ou consulte o site oficial do IPOG para conhecer os cursos disponíveis."
     }
     ]
   }
