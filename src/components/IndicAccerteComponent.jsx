@@ -11,11 +11,13 @@ function IndicAccerteComponent({user}) {
     const [arquivo, setArquivo] = useState(null);
     const [area, setArea] = useState("");
     const areas = ["Administrativo", "Arquitetura de Soluções", "Comercial Público", "Comercial Privado", "Financeiro", "Gente e Gestão", "Governança de Dados", "Jurídico", 'Marketing', "Tecnologia da Informação"];
+
     const handleArquivoChange = (e) => {
         setArquivo(e.target.files[0]);
     };
 
     const handleIndicar = async () => {
+        // e.preventDefault(); // ⛔️ impede o reload
         if (!arquivo) {
             alert("Selecione um currículo antes de indicar.");
             return;
@@ -24,6 +26,7 @@ function IndicAccerteComponent({user}) {
             alert("Selecione uma área antes de indicar.");
             return;
         }
+        
         const novoNome = `${area} (${user.displayName}) - ${arquivo.name}`;
         const local = 'BANCO DE TALENTOS';
         const novoArquivo = new File([arquivo], novoNome, {
@@ -31,14 +34,17 @@ function IndicAccerteComponent({user}) {
         });
 
         const response = await postVagaIndicada(instance, accounts, local, novoArquivo);
-        console.log(response.webUrl);
-        alert(`Indicação Finalizada com Sucesso! Obrigada!`)
+        alert(`Indicação Finalizada com Sucesso! Obrigada!`);
+        setArquivo(null);
+        setArea("");
+        // console.log(response.webUrl);
+
     };
 
     return (
         <Container>
             <h2><BsPersonVcardFill size={30} /> IndicAccerte</h2>
-            <form>
+            <BigItens>
                 <ItensContainer>
                     <label>
                         Área:
@@ -47,6 +53,7 @@ function IndicAccerteComponent({user}) {
                         value={area}
                         onChange={(e) => setArea(e.target.value)}
                     >
+                        <option value={""}>Selecione uma área</option>
                         {areas.map((area) => (
                             <option key={area} value={area}>
                                 {area}
@@ -64,7 +71,7 @@ function IndicAccerteComponent({user}) {
                 <Button onClick={handleIndicar}>
                     Indicar
                 </Button>
-            </form>
+            </BigItens>
         </Container>
     );
 };
@@ -101,6 +108,18 @@ const Container = styled.div`
         }
     }
 }
+`
+
+const BigItens = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    div:first-of-type{
+        width: 30%;
+    }
+    div:nth-of-type(2){
+        min-width: 40%;
+    }
 `
 
 const ItensContainer = styled.div`

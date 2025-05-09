@@ -75,6 +75,14 @@ function criarSugestoes(body){
     return axios.post(`${BASE_URL}/sugestoes/criar`, body)
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes }
+function getOnCallsPagerDuty(){
+    return axios.get(`${BASE_URL}/pagerduty/oncalls`)
+}
+
+function getEscalaPagerDuty(params){
+    return axios.get(`${BASE_URL}/pagerduty/escala?${params}`)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty }
 
 export default apiService;
