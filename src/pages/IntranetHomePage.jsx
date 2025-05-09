@@ -104,7 +104,7 @@ const IntranetHomePage = () => {
                             <div> <h1>GESTÃO <br /><span> DE TI </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
-                                <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem>
+                                {/* <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem> */}
                                 {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
                             </Dropdown>
                         </MenuItem>
