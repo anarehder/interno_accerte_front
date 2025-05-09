@@ -10,7 +10,7 @@ function IndicAccerteComponent({user}) {
     const { instance, accounts } = useMsal();
     const [arquivo, setArquivo] = useState(null);
     const [area, setArea] = useState("");
-    const areas = ["Presidência", "Administrativo", "Arquitetura de Soluções", "Comercial Público", "Comercial Privado", "Financeiro", "Gente e Gestão", "Governança de Dados", "Jurídico", 'Marketing', "Tecnologia da Informação"];
+    const areas = ["Administrativo", "Arquitetura de Soluções", "Comercial Público", "Comercial Privado", "Financeiro", "Gente e Gestão", "Governança de Dados", "Jurídico", 'Marketing', "Tecnologia da Informação"];
     const handleArquivoChange = (e) => {
         setArquivo(e.target.files[0]);
     };
