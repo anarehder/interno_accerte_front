@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MsalProvider } from '@azure/msal-react';
 import styled from 'styled-components'
 import VacationsPage from "./pages/VacationsPage";
-import VacationsAdminPage from "./pages/VacationsAdminPage";
 import IntranetHomePage from "./pages/IntranetHomePage";
 import IntranetLoginPage from "./pages/IntranetLoginPage";
 import EquipmentsPage from "./pages/EquipmentsPage";
@@ -27,7 +26,6 @@ import BeneficiosPage from "./pages/BeneficiosPage";
 import FAQPage from "./components/FAQPage";
 import ParceriaEducacionalPage from "./pages/ParceriaEducacionalPage";
 import VagasAbertasPage from "./pages/VagasAbertasPage";
-import PlantoesTIPage from "./pages/PlantoesTIPage";
 
 function App() {
 
@@ -59,7 +57,7 @@ function App() {
               <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />
               <Route path="/beneficios" element={<BeneficiosPage/>} />
               <Route path="/vagasemaberto" element={<VagasAbertasPage />} />
-              <Route path="/plantoes" element={<PlantoesTIPage />} />
+              {/* <Route path="/plantoes" element={<PlantoesTIPage />} /> */}
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >
