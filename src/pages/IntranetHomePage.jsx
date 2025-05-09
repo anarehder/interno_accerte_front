@@ -92,6 +92,7 @@ const IntranetHomePage = () => {
                                 <DropdownItem><Link to={"/faqs"}>FAQs</Link></DropdownItem>
                                 <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
                                 <DropdownItem><Link to={"/parceriaeducacional"}>IPOG</Link></DropdownItem>
+                                <DropdownItem><Link to={"/vagasemaberto"}>Vagas em Aberto</Link></DropdownItem>
                             </Dropdown>
                         </MenuItem>
                         <div> <Link to="/contatos"><h1>NOSSA <br/><span> AGENDA </span></h1></Link></div>
@@ -101,7 +102,7 @@ const IntranetHomePage = () => {
                             <div> <h1>GESTÃO <br /><span> DE TI </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
-                                {/* <DropdownItem><Link to={"/escala"}>Plantões</Link></DropdownItem> */}
+                                <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem>
                                 {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
                             </Dropdown>
                         </MenuItem>
@@ -156,22 +157,6 @@ const IntranetHomePage = () => {
                                 
                                 </BannerMenu>
                             </BannerContainer>
-                            {/* <ButtonsContainer>
-                                <div>
-                                    <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
-                                </div>
-                                <div>
-                                    <Link to={"/politicas"}>POLÍTICAS </Link>
-                                </div>
-                                <div>
-                                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
-                                        ESCRITÓRIO <br /> DE PROCESSOS
-                                    </a>
-                                </div>
-                                <div>
-                                    <Link to="/compliance">COMPLIANCE </Link>
-                                </div>
-                            </ButtonsContainer> */}
                             <LinkedinPostsComponent />
                         </>
                     }
