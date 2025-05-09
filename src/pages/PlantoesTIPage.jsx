@@ -10,13 +10,13 @@ import apiService from "../services/apiService";
 import 'dayjs/locale/pt-br';
 
 const PlantoesTIPage = () => {
-  const [currentDay, setCurrentDay] = useState(dayjs().startOf('day'));
-  const [lastDay, setLastDay] = useState(dayjs().startOf('day').add(7, 'day'));
+  const [currentDay, setCurrentDay] = useState(dayjs());
+  const [lastDay, setLastDay] = useState(dayjs().add(7, 'day'));
   const [currentOnCall, setCurrentOnCall] = useState([]);
   const [carregando, setCarregando] = useState(true);
-  
+  console.log(currentDay,lastDay);
   const imageRef = useRef(null);
-  dayjs.locale('pt-br');
+  // dayjs.locale('pt-br');
   const scales = [
     "PCHC5N9",
     "PABNNC7",
@@ -45,7 +45,7 @@ const PlantoesTIPage = () => {
         
           return () => clearInterval(interval); // limpa o intervalo ao desmontar o componente
         }, [currentDay]);
-
+        
   const handleNextDay = () => {
     setCurrentDay(prev => prev.add(1, 'day'));
     setLastDay(currentDay => currentDay.add(8, 'day'));
