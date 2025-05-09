@@ -14,6 +14,7 @@ import HeaderComponent from "../components/HeaderComponent";
 import BirthdayPopUpComponent from "../components/BirthdayPopUpComponent";
 import ContactsComponent from "../components/ContactsComponent";
 import SugestoesComponent from "../components/SugestoesComponent";
+import IndicAccerteComponent from "../components/IndicAccerteComponent";
 
 const IntranetHomePage = () => {
     const { user, dados, getData } = useAuth();
@@ -162,6 +163,7 @@ const IntranetHomePage = () => {
                         </>
                     }
                     <SugestoesComponent email={user.mail} />
+                    <IndicAccerteComponent user={user}/>
                     <FooterComponent />
                 </>
             }

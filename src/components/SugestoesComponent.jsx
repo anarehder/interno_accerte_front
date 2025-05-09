@@ -28,22 +28,22 @@ function SugestoesComponent({email}) {
   };
 
   return (
-    <Container>
-      <h2><FcIdea size={24} /> Compartilhe suas ideias para a Intranet</h2>
+      <Container>
+          <h2><FcIdea size={24} /> Compartilhe suas ideias para a Intranet</h2>
           <form onSubmit={handleSubmit}>
               <ItensContainer>
                   <label>
                       Tipo:
-                      
+
                   </label>
                   <select
-                          value={tipo}
-                          onChange={(e) => setTipo(e.target.value)}
-                          className="w-full p-2 border rounded mt-1"
-                      >
-                          <option value="Melhoria">Melhoria</option>
-                          <option value="Sugestão">Sugestão</option>
-                      </select>
+                      value={tipo}
+                      onChange={(e) => setTipo(e.target.value)}
+                      className="w-full p-2 border rounded mt-1"
+                  >
+                      <option value="Melhoria">Melhoria</option>
+                      <option value="Sugestão">Sugestão</option>
+                  </select>
               </ItensContainer>
               <ItensContainer>
                   <label>
@@ -57,13 +57,13 @@ function SugestoesComponent({email}) {
                       required
                   />
               </ItensContainer>
-        
-        <Button type="submit">
-          Enviar
-        </Button>
-      </form>
-      {/* {mensagem && <p className="mt-4 text-green-700">{mensagem}</p>} */}
-    </Container>
+
+              <Button type="submit">
+                  Enviar
+              </Button>
+          </form>
+          {/* {mensagem && <p className="mt-4 text-green-700">{mensagem}</p>} */}
+      </Container>
   );
 };
 
@@ -77,6 +77,7 @@ const Container = styled.div`
     margin-bottom: 50px;
     h2{
         color:#067DD1;
+        font-size: 26px;
         text-align: left;
         margin: 15px 0;
         margin-bottom: 35px;
@@ -98,7 +99,6 @@ const ItensContainer = styled.div`
     justify-content: flex-start;
     font-size: 20px;
     gap: 20px;
-    // background-color: red;
     height: 160px;
     max-width: 50%;
     textarea {
