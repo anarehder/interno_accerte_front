@@ -7,16 +7,15 @@ import { useRef } from 'react';
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import apiService from "../services/apiService";
-import 'dayjs/locale/pt-br';
 
 const PlantoesTIPage = () => {
-  const [currentDay, setCurrentDay] = useState(dayjs());
-  const [lastDay, setLastDay] = useState(dayjs().add(7, 'day'));
+  const [currentDay, setCurrentDay] = useState(dayjs().startOf('day'));
+  const [lastDay, setLastDay] = useState(currentDay.add(7, 'day'));
   const [currentOnCall, setCurrentOnCall] = useState([]);
   const [carregando, setCarregando] = useState(true);
-  console.log(currentDay,lastDay);
+  
   const imageRef = useRef(null);
-  // dayjs.locale('pt-br');
+
   const scales = [
     "PCHC5N9",
     "PABNNC7",
@@ -45,15 +44,15 @@ const PlantoesTIPage = () => {
         
           return () => clearInterval(interval); // limpa o intervalo ao desmontar o componente
         }, [currentDay]);
-        
+
   const handleNextDay = () => {
     setCurrentDay(prev => prev.add(1, 'day'));
-    setLastDay(currentDay => currentDay.add(8, 'day'));
+    setLastDay(currentDay.add(8, 'day'));
   };
 
   const handlePreviousDay = () => {
     setCurrentDay(prev => prev.subtract(1, 'day'));
-    setLastDay(currentDay => currentDay.add(6, 'day'));
+    setLastDay(currentDay.add(6, 'day'));
   };
 
   const goToPreviousWeek = () => {
@@ -63,7 +62,7 @@ const PlantoesTIPage = () => {
 
   const goToNextWeek = () => {
     setCurrentDay(prev => prev.add(7, 'day'));
-    setLastDay(currentDay => currentDay.add(14, 'day'));
+    setLastDay(currentDay.add(14, 'day'));
   };
 
   const handleDownload = () => {

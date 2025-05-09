@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { useState, useEffect } from "react";
 import dayjs from 'dayjs';
-import 'dayjs/locale/pt-br';
 import apiService from '../services/apiService';
 
 function PlantoesTIComponent({id, currentDay, lastDay, oncall}) {
@@ -16,13 +15,11 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall}) {
 
     const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
     const WEEK_MINUTES = 7 * 24 * 60;
-
+    // console.log(`${currentDay.   format('YYYY-MM-DD')}T00:00:00.000Z`, currentDay.toISOString());
     useEffect(() => {
       const fetchEntries = async () => {
         try {
           setCarregando(true);
-          const currentFormatted = `${currentDay.format('YYYY-MM-DD')}T00:00:00.000Z`;
-          const lastFormatted = `${currentDay.format('YYYY-MM-DD')}T00:00:00.000Z`
           const params = `id=${id}&since=${currentDay.toISOString()}&until=${lastDay.toISOString()}`;
           const response = await apiService.getEscalaPagerDuty(params);
           
