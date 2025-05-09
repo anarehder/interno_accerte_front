@@ -44,7 +44,7 @@ function IndicAccerteComponent({user}) {
     return (
         <Container>
             <h2><BsPersonVcardFill size={30} /> IndicAccerte</h2>
-            <BigItens>
+            <form>
                 <ItensContainer>
                     <label>
                         Área:
@@ -71,7 +71,7 @@ function IndicAccerteComponent({user}) {
                 <Button onClick={handleIndicar}>
                     Indicar
                 </Button>
-            </BigItens>
+            </form>
         </Container>
     );
 };
@@ -108,18 +108,6 @@ const Container = styled.div`
         }
     }
 }
-`
-
-const BigItens = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    div:first-of-type{
-        width: 30%;
-    }
-    div:nth-of-type(2){
-        min-width: 40%;
-    }
 `
 
 const ItensContainer = styled.div`
