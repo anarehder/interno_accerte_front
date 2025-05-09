@@ -3,7 +3,7 @@ import CertificationsValueComponent from '../components/CertificationsValuesComp
 import { useState } from 'react';
 import TitleComponent from '../components/TitleComponent';
 import CertificationsLevelsComponent from '../components/CertificationsLevelsComponent';
-import CertificationsList from "../assets/CertificationsList";
+import CertificationsList from "../constants/CertificationsList";
 
 function CertificationsPage() {
     const partnersList = Object.keys(CertificationsList);

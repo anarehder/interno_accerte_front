@@ -21,6 +21,12 @@ import ScalePage from "./pages/ScalePage";
 import AboutUsPage from "./pages/AboutUsPage";
 import AdminPage from "./pages/AdminPage";
 import UpdatesPage from "./pages/UpdatesPage";
+import PowerBIDashs from "./pages/PowerBIDashs";
+import PainelGestoresPage from "./pages/PainelGestoresPage";
+import BeneficiosPage from "./pages/BeneficiosPage";
+import FAQPage from "./components/FAQPage";
+import ParceriaEducacionalPage from "./pages/ParceriaEducacionalPage";
+import VagasAbertasPage from "./pages/VagasAbertasPage";
 
 function App() {
 
@@ -46,6 +52,12 @@ function App() {
               <Route path="/escala" element={<ScalePage />} />
               <Route path="/links" element={<FastLinksPage />} />
               <Route path="/fiquepordentro" element={<UpdatesPage/>}/>
+              <Route path="/gestaoavista" element={<PowerBIDashs />} />
+              <Route path="/painelgestores" element={<PainelGestoresPage />} />
+              <Route path="/faqs" element={<FAQPage />}/>
+              <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />
+              <Route path="/beneficios" element={<BeneficiosPage/>} />
+              <Route path="/vagasemaberto" element={<VagasAbertasPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

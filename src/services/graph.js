@@ -252,11 +252,52 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10};
+  const vagas = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/VAGAS EM ABERTO:/children`,
+    {
+      headers: { Authorization: `Bearer ${response.accessToken}` }
+    }
+  );
+  const files11 = await vagas.json();
+
+  const fileList11 = files11.value.map(file => ({
+    name: file.name,
+    url: file.webUrl
+  }));
+
+  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10, 'vagas': fileList11};
   sessionStorage.setItem("sharePoint", JSON.stringify(responseObject));
   return responseObject;    
 
   }catch (error) {
+    console.error("Erro ao obter dados do sharepoint:", error);
+    return null;
+  }
+}
+
+export async function postVagaIndicada(instance, accounts, local, file) {
+
+  try {
+    const sharedDocumentsId = "b!xlhstM3P3EaQzU6bGge34Glt-vRamHpMi47-bucH58MDGgu4dgmNSJGRO0nIdQD1";
+    
+    const response = await getToken(instance, accounts);
+    const fileName = encodeURIComponent(file.name);
+    const caminho = `Indicações/${local}`; // Caminho completo no SharePoint
+    const uploadUrl = `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/${encodeURIComponent(caminho)}/${fileName}:/content`;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const insert = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${response.accessToken}`
+      },
+      body: file,
+    });
+    const data = await insert.json();
+    return data;
+  } catch (error) {
     console.error("Erro ao obter dados do sharepoint:", error);
     return null;
   }

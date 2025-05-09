@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import prices from "../assets/LevelsPrices";
+import prices from "../constants/LevelsPrices";
 
 function CertificationsValueComponent() {
     const pricesArray = Object.keys(prices);

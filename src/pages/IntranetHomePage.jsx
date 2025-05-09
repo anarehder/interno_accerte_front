@@ -13,6 +13,8 @@ import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
 import HeaderComponent from "../components/HeaderComponent";
 import BirthdayPopUpComponent from "../components/BirthdayPopUpComponent";
 import ContactsComponent from "../components/ContactsComponent";
+import SugestoesComponent from "../components/SugestoesComponent";
+import IndicAccerteComponent from "../components/IndicAccerteComponent";
 
 const IntranetHomePage = () => {
     const { user, dados, getData } = useAuth();
@@ -70,7 +72,7 @@ const IntranetHomePage = () => {
         sessionStorage.removeItem("sharePoint");
         sessionStorage.removeItem("userMSAL");
     }
-  
+
     return (
         <Container>
             {!user ? <h1> Carregando dados...</h1> :
@@ -78,24 +80,43 @@ const IntranetHomePage = () => {
                     <LogoutButton onClick={handleLogout}>
                         <FiLogOut size={20} />
                     </LogoutButton>
+                    {/* <BirthdayPopUpComponent /> */}
                     <HeaderComponent pageTitle={user?.givenName} type={"homepage"} />
                     <MenuContainer>
-                        <div><Link to={"/sobre"}> <h1>SOBRE <span> NÓS</span></h1></Link></div>
+                        <div><Link to={"/sobre"}> <h1>SOBRE <br /><span> NÓS</span></h1></Link></div>
                         <MenuItem>
-                            <div> <h1>GENTE <span> E GESTÃO </span></h1></div>
+                            <div> <h1>GENTE <br /><span> E GESTÃO </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
-                                <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
-                                <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
+                                {/* <DropdownItem><Link to={"/beneficios"}>Benefícios</Link></DropdownItem> */}
                                 <DropdownItem><Link to={"/calendario"}>Calendário Accerte</Link></DropdownItem>
+                                <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
+                                <DropdownItem><Link to={"/faqs"}>FAQs</Link></DropdownItem>
+                                <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
+                                <DropdownItem><Link to={"/parceriaeducacional"}>IPOG</Link></DropdownItem>
+                                <DropdownItem><Link to={"/vagasemaberto"}>Vagas em Aberto</Link></DropdownItem>
                             </Dropdown>
                         </MenuItem>
-                        <div> <Link to="/contatos"><h1><span> AGENDA </span></h1></Link></div>
-                        <div> <Link to="/links"><h1>LINKS <span> RÁPIDOS</span></h1></Link></div>
-                        <div> <Link to="/fiquepordentro"><h1>FIQUE <span>POR DENTRO </span> </h1></Link></div>
-                        <div> <a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">
-                            <h1>JIRA</h1></a></div>
-                        <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
+                        <div> <Link to="/contatos"><h1>NOSSA <br/><span> AGENDA </span></h1></Link></div>
+                        <div> <Link to="/links"><h1>LINKS <br /><span> RÁPIDOS</span></h1></Link></div>
+                        <div> <Link to="/fiquepordentro"><h1>FIQUE <br /><span>POR DENTRO </span> </h1></Link></div>
+                        <MenuItem>
+                            <div> <h1>GESTÃO <br /><span> DE TI </span></h1></div>
+                            <Dropdown>
+                                <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
+                                <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem>
+                                {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
+                            </Dropdown>
+                        </MenuItem>
+                        <MenuItem>
+                            <div> <h1>GESTÃO <br /><span>À VISTA</span></h1> </div>
+                            <Dropdown>
+                                <DropdownItem> <Link to="/painelgestores">Painel de Gestores</Link></DropdownItem>
+                                {/* <DropdownItem><Link to={"/escala"}>Dashboards</Link></DropdownItem> */}
+                                {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
+                            </Dropdown>
+                        </MenuItem>
+                        
                         <form onSubmit={handleSearchSubmit}>
                             <input
                                 type="text"
@@ -106,44 +127,43 @@ const IntranetHomePage = () => {
                             <button type="submit"><FiSearch size={25} /></button>
                         </form>
                     </MenuContainer>
-                    {/* <BirthdayPopUpComponent /> */}
                     {filteredContacts.length > 0 ?
-                    <>
-                    <SearchResponse>
-                    <h2> Resultados da busca...</h2>
-                    <ContactsComponent contatos={filteredContacts} />
-                    <button onClick={clearSearch}> Limpar pesquisa</button>
-                    </SearchResponse>
-                    
-                    </>
-
-                    
-                    :
+                        <>
+                            <SearchResponse>
+                                <h2> Resultados da busca...</h2>
+                                <ContactsComponent contatos={filteredContacts} />
+                                <button onClick={clearSearch}> Limpar pesquisa</button>
+                            </SearchResponse>
+                        </>
+                        :
                         <>
                             <BannerContainer>
                                 <BannerSlideComponent />
-                            </BannerContainer>
-                            <ButtonsContainer>
-                                <div>
+                                <BannerMenu>
+                                <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
+                                    <div>
                                     <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
-                                </div>
-                                <div>
-                                    <Link to={"/politicas"}>POLÍTICAS </Link>
-                                </div>
-                                <div>
-                                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
-                                        ESCRITORIO <br /> DE PROCESSOS
-                                    </a>
                                 </div>
                                 <div>
                                     <Link to="/compliance">COMPLIANCE </Link>
                                 </div>
-                            </ButtonsContainer>
-                <LinkedinPostsComponent />
-                    </>
-                    
+                                
+                                <div>
+                                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
+                                        ESCRITÓRIO <br /> DE PROCESSOS
+                                    </a>
+                                </div>
+                                <div>
+                                    <Link to={"/politicas"}>POLÍTICAS </Link>
+                                </div>
+                                
+                                </BannerMenu>
+                            </BannerContainer>
+                            <LinkedinPostsComponent />
+                        </>
                     }
-                    
+                    <SugestoesComponent email={user.mail} />
+                    <IndicAccerteComponent user={user}/>
                     <FooterComponent />
                 </>
             }
@@ -184,12 +204,14 @@ const MenuContainer = styled.div`
     width: 90%;
     background-color: #067DD1;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     color: white;
-    gap: 30px;
+    padding: 0 15px;
     div {
         justify-content: center;
         text-align: center;
+        min-width: 8%;
+        line-height: 20px;
         width: fit-content;
         margin: 5px;
     }
@@ -224,23 +246,52 @@ const MenuContainer = styled.div`
 `
 
 const BannerContainer = styled.div`
-    width: 50%;
-    margin-top: 50px;
-    justify-content: center;
-    margin: 30px 0;
+    width: 90%;
+    justify-content: space-between;
+    margin: 50px 0;
+    gap: 50px;
+    
+`
+
+const BannerMenu = styled.div`
+    width: 30%;
+    border-left: 1px solid #555;
+    flex-direction: column;
+    padding: 30px;
+    gap: 30px;
+    div{
+        background-color: #1c8ad9;
+        padding: 0 10px;
+        color: white;
+        height: 75px;
+        border-radius: 15px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-shadow: 2px -2px 2px 2px rgba(0, 0, 0, 0.2);
+        a {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+}
 `
 
 const ButtonsContainer = styled.div`
     font-size: 22px;
+    width: 90%;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 30px;
+    // gap: 30px;
     margin-bottom: 20px;
     color: white;
     div{
         background-color: #1c8ad9;
         width: 20%;
+        padding: 0 10px;
         height: 100px;
         border-radius: 15px;
         align-items: center;
@@ -258,17 +309,17 @@ const ButtonsContainer = styled.div`
 `
 
 const MenuItem = styled.div`
-  position: relative;
-  padding: 10px;
-  cursor: pointer;
-  &:hover div {
-    display: block;
-  }
+    position: relative;
+    cursor: pointer;
+    justify-content: center;
+    &:hover div {
+        display: block;
+    }
 `;
 
 const Dropdown = styled.div`
   position: absolute;
-  top: 80%;
+  top: 95%;
   left: 0;
   background: #4493dc;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -277,7 +328,7 @@ const Dropdown = styled.div`
   border-top-left-radius: 0;
   padding: 5px;
   display: none;
-  min-width: 180px;
+  width: 190px !important;
   z-index: 2;
 `;
 

@@ -18,5 +18,5 @@ export const msalInstance = new PublicClientApplication(msalConfig);
 
 export const loginRequest = {
   // scopes: ["User.Read", "User.Read.All"],
-  scopes: ["User.Read", "Sites.Read.All", "Files.Read.All", "User.ReadBasic.All", "User.Read.All"],
+  scopes: ["User.Read", "Sites.Read.All", "Files.Read.All", "User.ReadBasic.All", "User.Read.All", "Sites.ReadWrite.All", "Files.ReadWrite.All"],
 };
