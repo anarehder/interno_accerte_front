@@ -97,7 +97,7 @@ const PlantoesTIPage = () => {
           </div>
 
         </WeekHeader>
-        {carregando && <h2> Carregando dados... </h2>}
+        {carregando && <h2> Carregando dados ... </h2>}
         {!carregando && currentOnCall.length > 0 &&
           scales.map((s, index) => (
             <PlantoesTIComponent key={s} id={s} currentDay={currentDay} lastDay={lastDay} oncall={currentOnCall.find((oc) => oc.schedule.id === s)} />
