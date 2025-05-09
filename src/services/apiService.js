@@ -67,6 +67,14 @@ function getFullVagas(body){
     return axios.post(`${BASE_URL}/vagas/buscar/completo`, body)
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas}
+function getSugestoes(){
+    return axios.get(`${BASE_URL}/sugestoes`)
+}
+
+function criarSugestoes(body){
+    return axios.post(`${BASE_URL}/sugestoes/criar`, body)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes }
 
 export default apiService;

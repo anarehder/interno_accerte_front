@@ -13,6 +13,7 @@ import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
 import HeaderComponent from "../components/HeaderComponent";
 import BirthdayPopUpComponent from "../components/BirthdayPopUpComponent";
 import ContactsComponent from "../components/ContactsComponent";
+import SugestoesComponent from "../components/SugestoesComponent";
 
 const IntranetHomePage = () => {
     const { user, dados, getData } = useAuth();
@@ -160,6 +161,7 @@ const IntranetHomePage = () => {
                             <LinkedinPostsComponent />
                         </>
                     }
+                    <SugestoesComponent email={user.mail} />
                     <FooterComponent />
                 </>
             }
