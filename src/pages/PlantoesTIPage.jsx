@@ -48,12 +48,12 @@ const PlantoesTIPage = () => {
 
   const handleNextDay = () => {
     setCurrentDay(prev => prev.add(1, 'day'));
-    setLastDay(currentDay.add(8, 'day'));
+    setLastDay(currentDay => currentDay.add(8, 'day'));
   };
 
   const handlePreviousDay = () => {
     setCurrentDay(prev => prev.subtract(1, 'day'));
-    setLastDay(currentDay.add(6, 'day'));
+    setLastDay(currentDay => currentDay.add(6, 'day'));
   };
 
   const goToPreviousWeek = () => {
@@ -63,7 +63,7 @@ const PlantoesTIPage = () => {
 
   const goToNextWeek = () => {
     setCurrentDay(prev => prev.add(7, 'day'));
-    setLastDay(currentDay.add(14, 'day'));
+    setLastDay(currentDay => currentDay.add(14, 'day'));
   };
 
   const handleDownload = () => {
