@@ -7,9 +7,10 @@ import { IoBowlingBall } from "react-icons/io5";
 import { SiPolkadot } from "react-icons/si";
 import { PiDotsThreeCircleFill } from "react-icons/pi";
 import { useAuth } from '../contexts/AuthContext';
+import apiService from '../services/apiService';
 
 
-function ListagemVagasGestoresComponent({vaga}) {
+function ListagemVagasGestoresComponent({vaga, setUpdated}) {
     const {user} = useAuth();
     const [expanded, setExpanded] = useState(false);
     const [novoStatus, setNovoStatus] = useState(vaga.status);
@@ -36,14 +37,26 @@ function ListagemVagasGestoresComponent({vaga}) {
         setNovoStatus(novoStatus);
     };
 
-    const handleSubmit= ()=>{
-        alert(`${vaga.id} alterada para ${novoStatus}`);
+    const handleSubmit= async ()=>{
         const body = {
-            "adminEmail": user.mail,
-            "vagaId": vaga.id,
-            "novoStatus": novoStatus
+            "email": user.mail,
+            "id": vaga.id,
+            "status": novoStatus
         }
-        // enviar o body para alterar no backend
+        const confirmado = window.confirm(`Deseja realmente alterar o status da vaga para ${novoStatus}?`);
+
+        if (confirmado) {
+            try {
+                await apiService.editarVagaStatus(body);
+                setUpdated(true);
+                setExpanded(false);
+                alert("Status alterado")
+            } catch (error) {
+                console.error("Erro ao editar status", error.data);
+            }
+        } else {
+            console.log('Ação cancelada.');
+        }
     };
 
     return (
@@ -125,7 +138,7 @@ function ListagemVagasGestoresComponent({vaga}) {
                         </DetailCard>
                     </DetailRow>
 
-                    {(user.mail === "ana.rehder@accerte.com.br" || user.mail === "maria.silva@accerte.com.br") && (
+                    {(user.mail === "ana.rehder@accerte.com.br" || user.mail === "maria.silva@accerte.com.br") ? (
                         <EditRow>
                             <div>
                                 <h2>Alterar Status: </h2>
@@ -145,7 +158,18 @@ function ListagemVagasGestoresComponent({vaga}) {
                             </div>
                             <button onClick={handleSubmit}>Alterar Status</button>
                         </EditRow>
-                    )}
+                    ):
+                    <EditRow>
+                            <div>
+                                <h2>Alterar Status: </h2>
+                                <select value={novoStatus} onChange={(e) => handleStatusChange(e.target.value)}>
+                                    <option value="">{novoStatus}</option>
+                                    <option value="Cancelada">Cancelada</option>
+                                </select>
+                            </div>
+                            <button onClick={handleSubmit}>Alterar Status</button>
+                        </EditRow>
+                    }
                 </Details>
             )}
         </PageContainer>

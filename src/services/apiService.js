@@ -67,6 +67,10 @@ function getFullVagas(body){
     return axios.post(`${BASE_URL}/vagas/buscar/completo`, body)
 }
 
+function editarVagaStatus(body){
+    return axios.post(`${BASE_URL}/vagas/editar/status`, body)
+}
+
 function getSugestoes(){
     return axios.get(`${BASE_URL}/sugestoes`)
 }
@@ -83,6 +87,6 @@ function getEscalaPagerDuty(params){
     return axios.get(`${BASE_URL}/pagerduty/escala?${params}`)
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty }
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus }
 
 export default apiService;

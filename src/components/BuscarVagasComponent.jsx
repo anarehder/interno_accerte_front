@@ -9,17 +9,18 @@ function BuscarVagasComponent() {
     const [errorMessage, setErrorMessage] = useState("");
     const [carregando, setCarregando] = useState(true);
     const [vagas, setVagas] = useState([]);
-
+    const [updated, setUpdated] = useState(false);
 
     useEffect(() => {
         if (!user) return;
         const fetchScale = async () => {
             try {
-                // const body = {adminEmail: "wandyna.oliveira@accerte.com.br"};
+                // const body = {adminEmail: "antonio.fernandes@accerte.com.br"};
                 const body = {adminEmail: user.mail};
                 const response = await apiService.getVagas(body);
                 setVagas(response.data);
                 setCarregando(false);
+                setUpdated(false);
             } catch (error) {
                 setErrorMessage(error.response.data.message);
                 setCarregando(false);
@@ -28,7 +29,7 @@ function BuscarVagasComponent() {
 
         fetchScale();
 
-    }, [user]);
+    }, [user, updated]);
 
     return (
         <PageContainer>
@@ -39,7 +40,7 @@ function BuscarVagasComponent() {
             {vagas.length !== 0 && !carregando && (
                 <CardsContainer>
                     {vagas.map((v, index) => (
-                        <ListagemVagasGestoresComponent key={index} vaga={v} />
+                        <ListagemVagasGestoresComponent key={index} vaga={v}  setUpdated={setUpdated}/>
                     ))}
                 </CardsContainer>
             )}
