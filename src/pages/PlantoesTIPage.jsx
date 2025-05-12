@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import HeaderComponent from "../components/HeaderComponent";
-import dayjs from 'dayjs';
 import PlantoesTIComponent from "../components/PlantoesTIComponent";
 import { useRef } from 'react';
 import { toPng } from "html-to-image";
@@ -9,11 +8,15 @@ import download from "downloadjs";
 import apiService from "../services/apiService";
 
 const PlantoesTIPage = () => {
-  const [currentDay, setCurrentDay] = useState(dayjs().startOf('day'));
-  const [lastDay, setLastDay] = useState(currentDay.add(7, 'day'));
+  const [duration, setDuration] = useState(7);
+  const [currentDay, setCurrentDay] = useState(new Date(new Date().setHours(0, 0, 0, 0)));
+  const [lastDay, setLastDay] = useState(() => {
+    const data = new Date(currentDay);
+    data.setDate(data.getDate() + duration);
+    return data;
+  });
   const [currentOnCall, setCurrentOnCall] = useState([]);
   const [carregando, setCarregando] = useState(true);
-  
   const imageRef = useRef(null);
 
   const scales = [
@@ -24,52 +27,88 @@ const PlantoesTIPage = () => {
     "PAHZ4GE",
   ];
 
-    useEffect(() => {
-          const fetchEntries = async () => {
-            try {
-              setCarregando(true);
-              const response = await apiService.getOnCallsPagerDuty();
-              setCurrentOnCall(response.data.oncalls); // salva quem está de plantão agora
-              setCarregando(false);
-            } catch (error) {
-              console.error("Erro ao buscar escalas", error);
-              setCarregando(false);
-            }
-          };
-    
-          fetchEntries();
-          const interval = setInterval(() => {
-            fetchEntries(); // chama a cada 5 minutos
-          }, 5 * 60 * 1000); // 5 minutos em milissegundos
-        
-          return () => clearInterval(interval); // limpa o intervalo ao desmontar o componente
-        }, [currentDay]);
+  useEffect(() => {
+    const fetchEntries = async () => {
+      try {
+        setCarregando(true);
+        const response = await apiService.getOnCallsPagerDuty();
+        setCurrentOnCall(response.data.oncalls); // salva quem está de plantão agora
+        setCarregando(false);
+      } catch (error) {
+        console.error("Erro ao buscar escalas", error);
+        setCarregando(false);
+      }
+    };
+
+    fetchEntries();
+    const interval = setInterval(() => {
+      fetchEntries(); // chama a cada 5 minutos
+    }, 5 * 60 * 1000); // 5 minutos em milissegundos
+
+    return () => clearInterval(interval); // limpa o intervalo ao desmontar o componente
+  }, [currentDay]);
+
+  useEffect(() => {
+    const novaData = new Date(currentDay);
+    novaData.setDate(novaData.getDate() + duration);
+    setLastDay(novaData);
+  }, [currentDay, duration]);
 
   const handleNextDay = () => {
-    setCurrentDay(prev => prev.add(1, 'day'));
-    setLastDay(currentDay.add(8, 'day'));
+    setCurrentDay(prev => {
+      const novaData = new Date(prev);
+      novaData.setDate(novaData.getDate() + 1);
+      return novaData;
+    });
   };
 
   const handlePreviousDay = () => {
-    setCurrentDay(prev => prev.subtract(1, 'day'));
-    setLastDay(currentDay.add(6, 'day'));
+    setCurrentDay(prev => {
+      const novaData = new Date(prev);
+      novaData.setDate(novaData.getDate() - 1);
+      return novaData;
+    });
   };
 
   const goToPreviousWeek = () => {
-    setCurrentDay(prev => prev.subtract(7, 'day'));
-    setLastDay(currentDay);
+    setCurrentDay(prev => {
+      const novaData = new Date(prev);
+      novaData.setDate(novaData.getDate() - duration);
+      return novaData;
+    });
   };
 
   const goToNextWeek = () => {
-    setCurrentDay(prev => prev.add(7, 'day'));
-    setLastDay(currentDay.add(14, 'day'));
+    setCurrentDay(prev => {
+      const novaData = new Date(prev);
+      novaData.setDate(novaData.getDate() + duration);
+      return novaData;
+    });
+  };
+
+  const handleChangeDuration = (novaDuracao) => {
+    setDuration(novaDuracao);
+  };
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    return `${day}/${month}`;
+  };
+
+  const formatDate2 = (date) => {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    return `${day}-${month}`;
   };
 
   const handleDownload = () => {
           if (imageRef.current) {
               toPng(imageRef.current, { quality: 1 })
                   .then((dataUrl) => {
-                      download(dataUrl, `Escala_Plantoes-${currentDay.format('DD/MM')}-${lastDay.format('DD/MM')}.png`, "image/png");
+                      download(dataUrl, `Escala_Plantoes-${formatDate2(currentDay)}-${formatDate2(lastDay)}.png`, "image/png");
                   })
         .catch((error) => {
           console.error("Erro ao gerar a imagem:", error);
@@ -86,11 +125,16 @@ const PlantoesTIPage = () => {
         <HeaderComponent pageTitle={"Escala Plantões Sustentação"} type={"page"} />
 
         <WeekHeader>
+          {/* <div> */}
+            {/* <button onClick={() => handleChangeDuration(3)}>Escala de 3 dias</button> */}
+            {/* <button onClick={() => handleChangeDuration(7)}>Escala de 7 dias</button> */}
+            {/* Coloque aqui seus botões para navegação e exibição das datas */}
+          {/* </div> */}
           <div>
             <button onClick={goToPreviousWeek}> ⏮ Semana Anterior</button>
             <button onClick={handlePreviousDay}>◀ Dia Anterior</button>
           </div>
-          <div> <h2>Semana: {currentDay.format('DD/MM')} – {lastDay.format('DD/MM')}</h2> </div>
+          <div> <h2>Semana: {formatDate(currentDay)} – {formatDate(lastDay)}</h2> </div>
           <div>
             <button onClick={handleNextDay}>Próximo Dia ▶</button>
             <button onClick={goToNextWeek}> Próxima Semana ⏭</button>
@@ -100,7 +144,7 @@ const PlantoesTIPage = () => {
         {carregando && <h2> Carregando dados ... </h2>}
         {!carregando && currentOnCall.length > 0 &&
           scales.map((s, index) => (
-            <PlantoesTIComponent key={s} id={s} currentDay={currentDay} lastDay={lastDay} oncall={currentOnCall.find((oc) => oc.schedule.id === s)} />
+            <PlantoesTIComponent key={s} id={s} currentDay={currentDay} lastDay={lastDay} oncall={currentOnCall.find((oc) => oc.schedule.id === s)} duration={duration}/>
           ))
         }
       </Container>
