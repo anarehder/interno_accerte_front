@@ -110,7 +110,7 @@ function ListagemVagasGestoresComponent({vaga, setUpdated}) {
                         </DetailCard>
                         <DetailCard>
                             <Label>Início Imediato</Label>
-                            <Value>{vaga.imediato}</Value>
+                            <Value>{vaga.imediato === 1 ? "Sim" : "Não"}</Value>
                         </DetailCard>
                         
                         <DetailCard>
