@@ -1,14 +1,18 @@
 import styled from 'styled-components';
 import { useEffect, useState } from "react";
 import { useAuth } from '../contexts/AuthContext';
+import MensagemAniversaio from '../assets//ANIVERSARIANTE_DIA.jpeg';
 
 function BirthdayPopUpComponent() {
-    const { dados, carregando } = useAuth();
+    const { user, carregando } = useAuth();
     const [closed, setClosed] = useState(true);
 
     useEffect(() => {
-        if (carregando || !dados || !dados.aniversarioDia || dados.aniversarioDia.length === 0) return;
-
+        // if (carregando || !dados || !dados.aniversarioDia || dados.aniversarioDia.length === 0) return;
+        //buscar se tem aniversariante hoje, se tiver vejo se o email é o mesmo do user
+        // se for eu renderizo
+        // se nao so dou null
+        if (user.mail !== 'augusto.cesar@accerte.com.br') return;
         const lastClosed = localStorage.getItem("popupFechado");
         
         if (!lastClosed) {
@@ -24,26 +28,31 @@ function BirthdayPopUpComponent() {
             setClosed(false);
         }
 
-    }, [carregando, dados]);
+    }, [carregando]);
 
     const fecharPopup = () => {
         setClosed(true);
         localStorage.setItem("popupFechado", Date.now().toString());
     };
 
-    if (closed || !dados || !dados.aniversarioDia || dados.aniversarioDia.length === 0) return null;
-
+    // if (closed || !dados || !dados.aniversarioDia || dados.aniversarioDia.length === 0) return null;
+    if (closed || user.mail !== 'augusto.cesar@accerte.com.br') return null;
     return (
         <Overlay>
             <CloseButton onClick={fecharPopup}>✖</CloseButton>
             <Modal>
-                {dados.aniversarioDia.map((aniv, index) => (
+                {/* {dados.aniversarioDia.map((aniv, index) => (
                     <AniversarianteImagem
                         key={index}
                         src={aniv.url}
                         alt={aniv.name}
                     />
-                ))}
+                ))} */}
+                <AniversarianteImagem
+                        src={MensagemAniversaio}
+                        alt={"Mensagem"}
+                    />
+                
             </Modal>
         </Overlay>
     )
@@ -65,7 +74,7 @@ const Overlay = styled.div`
 `;
 
 const Modal = styled.div`
-  position: relative;
+  
   background-color: transparent;
   width: 900px;
   padding: 20px;
@@ -77,14 +86,15 @@ const Modal = styled.div`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 8%;
-  right: 10%;
+  top: 2%;
+  right: 25%;
   background: transparent;
   font-size: 25px;
   padding: 10px;
   cursor: pointer;
   color: white;
   border: 2px solid white;
+  z-index: 10;
 
   &:hover {
     cursor: pointer;
@@ -94,7 +104,7 @@ const CloseButton = styled.button`
 `;
 
 const AniversarianteImagem = styled.img`
-  max-width: 400px;
-  max-height: 80vh;
+  width: 450px;
   border-radius: 10px;
+  position: relative;
 `;

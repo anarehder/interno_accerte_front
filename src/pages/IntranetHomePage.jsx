@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
@@ -80,7 +80,7 @@ const IntranetHomePage = () => {
                     <LogoutButton onClick={handleLogout}>
                         <FiLogOut size={20} />
                     </LogoutButton>
-                    {/* <BirthdayPopUpComponent /> */}
+                    <BirthdayPopUpComponent />
                     <HeaderComponent pageTitle={user?.givenName} type={"homepage"} />
                     <MenuContainer>
                         <div><Link to={"/sobre"}> <h1>SOBRE <br /><span> NÓS</span></h1></Link></div>
