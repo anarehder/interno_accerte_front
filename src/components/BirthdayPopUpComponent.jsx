@@ -2,17 +2,32 @@ import styled from 'styled-components';
 import { useEffect, useState } from "react";
 import { useAuth } from '../contexts/AuthContext';
 import MensagemAniversaio from '../assets//ANIVERSARIANTE_DIA.jpeg';
+import apiService from '../services/apiService';
 
 function BirthdayPopUpComponent() {
     const { user, carregando } = useAuth();
     const [closed, setClosed] = useState(true);
+    const [isMyBDay, setIsMyBDay] = useState(false);
 
     useEffect(() => {
-        // if (carregando || !dados || !dados.aniversarioDia || dados.aniversarioDia.length === 0) return;
-        //buscar se tem aniversariante hoje, se tiver vejo se o email é o mesmo do user
-        // se for eu renderizo
-        // se nao so dou null
-        if (user.mail !== 'augusto.cesar@accerte.com.br') return;
+        const fetchScale = async () => {
+            try {
+                const response = await apiService.getAniversariosDia();
+                const isMyBirthday = response.data.some(item => item.email === user.mail);
+                if(isMyBirthday){
+                    setIsMyBDay(true);
+                }
+                else {
+                    return;
+                }
+            } catch (error) {
+                console.error("Erro ao buscar informacoes vagas:", error);
+                return;
+            }
+        };
+
+        fetchScale();
+
         const lastClosed = localStorage.getItem("popupFechado");
         
         if (!lastClosed) {
@@ -28,26 +43,19 @@ function BirthdayPopUpComponent() {
             setClosed(false);
         }
 
-    }, [carregando]);
+    }, [carregando, user]);
 
     const fecharPopup = () => {
         setClosed(true);
         localStorage.setItem("popupFechado", Date.now().toString());
     };
 
-    // if (closed || !dados || !dados.aniversarioDia || dados.aniversarioDia.length === 0) return null;
-    if (closed || user.mail !== 'augusto.cesar@accerte.com.br') return null;
+    if (closed || !isMyBDay) return null;
+
     return (
         <Overlay>
             <CloseButton onClick={fecharPopup}>✖</CloseButton>
             <Modal>
-                {/* {dados.aniversarioDia.map((aniv, index) => (
-                    <AniversarianteImagem
-                        key={index}
-                        src={aniv.url}
-                        alt={aniv.name}
-                    />
-                ))} */}
                 <AniversarianteImagem
                         src={MensagemAniversaio}
                         alt={"Mensagem"}
