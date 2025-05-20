@@ -58,7 +58,7 @@ function ListagemVagasGestoresComponent({vaga, setUpdated}) {
             console.log('Ação cancelada.');
         }
     };
-
+    console.log(vaga);
     return (
         <PageContainer>
             <HeaderRow>
@@ -101,6 +101,24 @@ function ListagemVagasGestoresComponent({vaga, setUpdated}) {
                     </DetailRow>
                     <DetailRow>
                         <DetailCard>
+                            <Label>Área</Label>
+                            <Value>{vaga.area}</Value>
+                        </DetailCard>
+                        <DetailCard>
+                            <Label>Motivo</Label>
+                            <Value>{vaga.motivo}</Value>
+                        </DetailCard>
+                        <DetailCard>
+                            <Label>Substituído</Label>
+                            <Value>{vaga.Substituido ? vaga.Substituido : "-"}</Value>
+                        </DetailCard>
+                        <DetailCard>
+                            <Label>Última Atualização</Label>
+                            <Value>{new Date(vaga.updatedAt).toLocaleDateString()}</Value>
+                        </DetailCard>
+                    </DetailRow>
+                    <DetailRow>
+                        <DetailCard>
                             <Label>Formação Acadêmica</Label>
                             <Value>{vaga.formacaoAcad}</Value>
                         </DetailCard>
@@ -122,19 +140,36 @@ function ListagemVagasGestoresComponent({vaga, setUpdated}) {
                     <DetailRow>
                         <DetailCard>
                             <Label>Hard Skills</Label>
-                            <Value>{vaga.reqHardSkills}</Value>
+                            <Value>
+                                {vaga.reqHardSkills.split('\n').map((linha, index) => (
+                                    <p key={index}>{linha}</p>
+                                ))}
+                            </Value>
+                            {/* <Value>{vaga.reqHardSkills}</Value> */}
                         </DetailCard>
                         <DetailCard>
                             <Label>Soft Skills</Label>
-                            <Value>{vaga.reqSoftSkills}</Value>
+                            <Value>
+                                {vaga.reqSoftSkills.split('\n').map((linha, index) => (
+                                    <p key={index}>{linha}</p>
+                                ))}
+                            </Value>
                         </DetailCard>
                         <DetailCard>
                             <Label>Atividades</Label>
-                            <Value>{vaga.atividades}</Value>
+                            <Value>
+                                {vaga.atividades.split('\n').map((linha, index) => (
+                                    <p key={index}>{linha}</p>
+                                ))}
+                            </Value>
                         </DetailCard>
                         <DetailCard>
                             <Label>Informações adicionais</Label>
-                            <Value>{vaga.informacoes}</Value>
+                            <Value>
+                                {vaga.informacoes.split('\n').map((linha, index) => (
+                                    <p key={index}>{linha}</p>
+                                ))}
+                            </Value>
                         </DetailCard>
                     </DetailRow>
 
@@ -296,15 +331,16 @@ const Details = styled.div`
 `;
 
 const DetailRow = styled.div`
-    background-color; red;
-    gap: 5px;
+    // background-color: red;
+    gap: 15px;
 `
 
 const DetailCard = styled.div`
     gap: 12x;
     flex-direction: column;
     margin-bottom: 10px;
-    line-height: 15px;
+    line-height: 20px;
+    // background-color: red;
 `
 
 const Label = styled.div`
@@ -317,8 +353,16 @@ const Label = styled.div`
 
 const Value = styled.div`
     font-size: 14px;
+    // background-color: red;
+    width: 90%;
     color: #555;
     margin-bottom: 10px;
+    flex-direction: column;
+    p{
+        margin-top: 10px;
+        font-size: 14px;
+        text-align: left;
+    }
 `;
 
 const EditRow = styled.div`
@@ -327,6 +371,7 @@ const EditRow = styled.div`
     }
     select {
         height: 40px;
+        width: 250px;
         font-size: 14px;
         color: #555;
         border: 1px solid #555;

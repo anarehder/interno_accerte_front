@@ -15,6 +15,7 @@ import BirthdayPopUpComponent from "../components/BirthdayPopUpComponent";
 import ContactsComponent from "../components/ContactsComponent";
 import SugestoesComponent from "../components/SugestoesComponent";
 import IndicAccerteComponent from "../components/IndicAccerteComponent";
+import HumorComponent from "../components/HumorComponent";
 
 const IntranetHomePage = () => {
     const { user, dados, getData } = useAuth();
@@ -83,7 +84,7 @@ const IntranetHomePage = () => {
                     <BirthdayPopUpComponent />
                     <HeaderComponent pageTitle={user?.givenName} type={"homepage"} />
                     <MenuContainer>
-                        <div><Link to={"/sobre"}> <h1>SOBRE <br /><span> NÓS</span></h1></Link></div>
+                        <MenuItem><Link to={"/sobre"}> <h1>SOBRE <br /><span> NÓS</span></h1></Link></MenuItem>
                         <MenuItem>
                             <div> <h1>GENTE <br /><span> E GESTÃO </span></h1></div>
                             <Dropdown>
@@ -97,23 +98,24 @@ const IntranetHomePage = () => {
                                 <DropdownItem><Link to={"/vagasemaberto"}>Vagas em Aberto</Link></DropdownItem>
                             </Dropdown>
                         </MenuItem>
-                        <div> <Link to="/contatos"><h1>NOSSA <br/><span> AGENDA </span></h1></Link></div>
-                        <div> <Link to="/links"><h1>LINKS <br /><span> RÁPIDOS</span></h1></Link></div>
-                        <div> <Link to="/fiquepordentro"><h1>FIQUE <br /><span>POR DENTRO </span> </h1></Link></div>
+                        <MenuItem> <Link to="/contatos"><h1>NOSSA <br/><span> AGENDA </span></h1></Link></MenuItem>
+                        <MenuItem> <Link to="/links"><h1>LINKS <br /><span> RÁPIDOS</span></h1></Link></MenuItem>
+                        <MenuItem> <Link to="/fiquepordentro"><h1>FIQUE <br /><span>POR DENTRO </span> </h1></Link></MenuItem>
                         <MenuItem>
                             <div> <h1>GESTÃO <br /><span> DE TI </span></h1></div>
                             <Dropdown>
                                 <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
                                 <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem>
-                                {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
                             </Dropdown>
                         </MenuItem>
                         <MenuItem>
                             <div> <h1>GESTÃO <br /><span>À VISTA</span></h1> </div>
                             <Dropdown>
                                 <DropdownItem> <Link to="/painelgestores">Painel de Gestores</Link></DropdownItem>
-                                {/* <DropdownItem><Link to={"/escala"}>Dashboards</Link></DropdownItem> */}
-                                {/* <DropdownItem><Link to={"/escala"}>Atividades</Link></DropdownItem> */}
+                                {
+                                    (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br') && 
+                                    <DropdownItem> <Link to="/admin">Painel Admin</Link></DropdownItem>
+                                }
                             </Dropdown>
                         </MenuItem>
                         
@@ -159,9 +161,10 @@ const IntranetHomePage = () => {
                                 
                                 </BannerMenu>
                             </BannerContainer>
-                            <LinkedinPostsComponent />
                         </>
                     }
+                    {/* <HumorComponent /> */}
+                    <LinkedinPostsComponent />
                     <SugestoesComponent email={user.mail} />
                     <IndicAccerteComponent user={user}/>
                     <FooterComponent />
@@ -312,6 +315,8 @@ const MenuItem = styled.div`
     position: relative;
     cursor: pointer;
     justify-content: center;
+    align-items: center;
+    height: 60px;
     &:hover div {
         display: block;
     }

@@ -38,24 +38,27 @@ function LinkedinPostsComponent() {
 
     return (
         <PageContainer>
-            <InstagramContainer>
+            <LinkedinContainer>
                 <h2>
-                    <FaLinkedin size={30} color="#067DD1" /> Acompanhe nas redes sociais...
+                    <FaLinkedin size={30} color="#067DD1" /> Acompanhe nas redes sociais
                 </h2>
-                {loading && <div> <br/>Carregando posts... </div>}
-                {error && <div> <br/>{error} </div>}
-                <div className="carousel" >
-                    {posts.length > 0 &&
-                        posts.map((p, index) => (
-                            <div className="card" key={index} >
-                                <a href={p.link} target="_blank">
-                                    <img src={p.image} alt={"Post do Linkedin"} />
-                                </a>
-                            </div>
-                        ))}
-                </div>
-                {/* <IoIosArrowDropright size={54}/> */}
-            </InstagramContainer>
+                {loading && <div> <br />Carregando posts... </div>}
+                {error && <div> <br />{error} </div>}
+                {!loading && posts.length === 0 && <FalhaContainer> <br />Falha ao carregar os posts... </FalhaContainer>}
+                {posts.length > 0 &&
+                    <PostsContainer>
+                        <div className="carousel" >
+                            {posts.map((p, index) => (
+                                <div className="card" key={index} >
+                                    <a href={p.link} target="_blank">
+                                        <img src={p.image} alt={"Post do Linkedin"} />
+                                    </a>
+                                </div>
+                            ))}
+                        </div>
+                    </PostsContainer>
+                }
+            </LinkedinContainer>
         </PageContainer>
     )
 }
@@ -63,29 +66,38 @@ function LinkedinPostsComponent() {
 export default LinkedinPostsComponent;
 
 const PageContainer = styled.div`
-    width: 90%;
-    position: relative;
-    justify-content: center;
-    margin: 25px 0;
-`
-
-
-const InstagramContainer = styled.div`
-    padding: 20px;
-    margin-top: 15px;
+    width:90%;
+    color: #555;
     flex-direction: column;
-    color: #067DD1;
-    h2 {
-        display: flex;
-        align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 50px;
+    h2{
+        color:#067DD1;
         font-size: 26px;
-        margin-bottom: 20px;
+        text-align: left;
+        margin: 15px 0;
+        margin-bottom: 35px;
         svg {
             margin-right: 10px;
         }
     }
+`
 
-    .carousel {
+
+const LinkedinContainer = styled.div`
+    margin-top: 15px;
+    flex-direction: column;
+    color: #067DD1;
+`;
+
+const FalhaContainer = styled.div`
+    height: 100px;
+    font-weight: 500;
+    font-size: 18px;
+`
+
+const PostsContainer = styled.div`
+.carousel {
         display: flex;
         gap: 25px;
         overflow-x: auto; /* Ativa o scroll horizontal */
@@ -160,5 +172,4 @@ const InstagramContainer = styled.div`
         color: #555;
       }
     }
-  }
-`;
+`

@@ -97,7 +97,7 @@ function CriarVagaComponent({setSelectedItem}) {
             setSelectedItem("");
         } catch (error) {
             console.error('Erro ao criar vaga:', error);
-            alert('Erro ao criar vaga. Tente novamente.');
+            alert('Possível erro ao criar vaga no servidor. Verifique se a vaga está na sua lista de vagas antes de tentar novamente.');
         }
     };
 

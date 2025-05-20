@@ -5,6 +5,7 @@ import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import HeaderComponent from '../components/HeaderComponent';
 import CriarVagaComponent from '../components/CriarVagaComponent';
 import BuscarVagasComponent from '../components/BuscarVagasComponent';
+import HumorGestoresComponent from '../components/HumorGestoresComponent';
 
 function PainelGestoresPage() {
     const [selectedItem, setSelectedItem] = useState("");
@@ -24,10 +25,15 @@ function PainelGestoresPage() {
                         {selectedItem === "ListarVagas" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
                         Minhas Vagas
                     </button>
+                    {/* <button onClick={() => setSelectedItem("Humor")}>
+                        {selectedItem === "Humor" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
+                        MoodBoard
+                    </button> */}
                 </SideBar>
                 <div>    
                     {selectedItem === "ReqVaga" && <CriarVagaComponent setSelectedItem={setSelectedItem}/>}
                     {selectedItem === "ListarVagas" && <BuscarVagasComponent />}
+                    {selectedItem === "Humor" && <HumorGestoresComponent />}
                 </div>
             </div>
 

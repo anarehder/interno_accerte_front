@@ -52,7 +52,7 @@ function SugestoesComponent({email}) {
                   </label>
                   <textarea
                       value={texto}
-                      onChange={(e) => setTexto(e.target.value)}
+                      onChange={(e) => s(e.target.value)}
                       rows="5"
                       required
                   />

@@ -15,7 +15,7 @@ function BuscarVagasComponent() {
         if (!user) return;
         const fetchScale = async () => {
             try {
-                // const body = {adminEmail: "antonio.fernandes@accerte.com.br"};
+                // const body = {adminEmail: "wandyna.oliveira@accerte.com.br"};
                 const body = {adminEmail: user.mail};
                 const response = await apiService.getVagas(body);
                 setVagas(response.data);
