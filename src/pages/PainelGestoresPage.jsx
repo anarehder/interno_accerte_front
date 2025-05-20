@@ -25,10 +25,10 @@ function PainelGestoresPage() {
                         {selectedItem === "ListarVagas" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
                         Minhas Vagas
                     </button>
-                    {/* <button onClick={() => setSelectedItem("Humor")}>
+                    <button onClick={() => setSelectedItem("Humor")}>
                         {selectedItem === "Humor" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                        MoodBoard
-                    </button> */}
+                        Termômetro de Humor
+                    </button>
                 </SideBar>
                 <div>    
                     {selectedItem === "ReqVaga" && <CriarVagaComponent setSelectedItem={setSelectedItem}/>}

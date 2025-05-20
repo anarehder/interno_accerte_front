@@ -1,9 +1,8 @@
-// SugestoesComponent.jsx
 import { useState } from 'react';
 import styled from "styled-components";
-import { BsPersonVcardFill } from "react-icons/bs";
-import { postVagaIndicada } from "../services/graph";
 import { useAuth } from '../contexts/AuthContext';
+import { LuMessageCircleMore } from "react-icons/lu";
+
 import Humor1 from '../assets/humor/1.png'
 import Humor2 from '../assets/humor/2.png'
 import Humor3 from '../assets/humor/3.png'
@@ -36,23 +35,29 @@ function HumorComponent() {
 
     return (
         <Container>
-            <h2>Como você está se sentindo hoje?</h2>
+            <h2><LuMessageCircleMore sice={24}/> Como você está se sentindo hoje?</h2>
             <ItensContainer>
                 <HumorContainer>
-                    <HumorDiv onClick={() => setHumor(1)} borda={humor === 1 ? 'sim' : 'nao'}>
-                        <img src={Humor1} alt={"1"} />
+                    <HumorDiv onClick={() => setHumor(1)} opacidade={humor === 1 ? 'nao' : 'sim'}>
+                        {/* <img src={Humor1} alt={"1"} /> */}
+                        <p>😡</p> 
                     </HumorDiv>
-                    <HumorDiv onClick={() => setHumor(2)} borda={humor === 2 ? 'sim' : 'nao'}>
-                        <img src={Humor2} alt={"2"} />
+                    {/* 😶‍🌫️😤😢🙂 😬😊*/}
+                    <HumorDiv onClick={() => setHumor(2)} opacidade={humor === 2 ? 'nao' : 'sim'}>
+                        {/* <img src={Humor2} alt={"2"} /> */}
+                        <p>🥹</p>
                     </HumorDiv>
-                    <HumorDiv onClick={() => setHumor(3)} borda={humor === 3 ? 'sim' : 'nao'}>
-                        <img src={Humor3} alt={"3"} />
+                    <HumorDiv onClick={() => setHumor(3)} opacidade={humor === 3 ? 'nao' : 'sim'}>
+                        {/* <img src={Humor3} alt={"3"} /> */}
+                        <p>😐</p>
                     </HumorDiv>
-                    <HumorDiv onClick={() => setHumor(4)} borda={humor === 4 ? 'sim' : 'nao'}>
-                        <img src={Humor4} alt={"4"} />
+                    <HumorDiv onClick={() => setHumor(4)} opacidade={humor === 4 ? 'nao' : 'sim'}>
+                        {/* <img src={Humor4} alt={"4"} /> */}
+                        <p>😁</p>
                     </HumorDiv>
-                    <HumorDiv onClick={() => setHumor(5)} borda={humor === 5 ? 'sim' : 'nao'}>
-                        <img src={Humor5} alt={"5"} />
+                    <HumorDiv onClick={() => setHumor(5)} opacidade={humor === 5 ? 'nao' : 'sim'}>
+                        {/* <img src={Humor5} alt={"5"} /> */}
+                        <p>🤩</p>
                     </HumorDiv>
                 </HumorContainer>
 
@@ -64,15 +69,6 @@ function HumorComponent() {
                 />
                 <Button onClick={handleEnviar} disabled={!humor}> Enviar Humor </Button>
             </ItensContainer>
-            {/* <ItensContainer>
-                  <textarea
-                        placeholder='Gostaria de nos contar porque se sente assim?'
-                        value={mensagem}
-                        onChange={(e) => setMensagem(e.target.value)}
-                        rows="5"
-                  />
-            </ItensContainer>
-            <Button onClick={handleEnviar} disabled={!humor}> Enviar Humor </Button> */}
         </Container>
     );
 };
@@ -82,17 +78,19 @@ export default HumorComponent;
 const Container = styled.div`
     width: 90%;
     color: #555;
+    margin-top: 30px;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 30px;
-    margin-bottom: 50px;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 10px;
     h2{
         color:#067DD1;
-        text-align: left;
+        text-align: center;
         font-size: 26px;
-        margin: 15px 0;
+        margin: 10px 0;
         display: flex;
         align-items: center;
+        justify-content: center;
         svg {
             margin-right: 10px;
         }
@@ -102,16 +100,21 @@ const Container = styled.div`
 
 const ItensContainer = styled.div`
     font-size: 20px;
-    height: 90px;
+    gap: 25px;
     align-items: center; 
+    flex-direction: column;
     justify-content: space-between;
     textarea {
-        min-width: 450px; 
-        height: 70px; 
+        width: 55%; 
+        height: 50px; 
         border-radius: 10px;
         color: #555;
         font-family: "Poppins", serif;
-        padding: 5px;
+        // padding: 5px;
+        padding: 5px 5px 5px 10px;
+        &::placeholder{
+            margin-left: 15px;
+        }
     }
 `
 
@@ -128,9 +131,13 @@ const HumorDiv = styled.div`
     align-items: center;
     box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.4);
     border-radius: 50px;
-    border: ${({ borda }) => (borda  === 'sim' ? "2px solid #555" : "none")};
+    // border: ${({ borda }) => (borda  === 'sim' ? "2px solid #555" : "2px solid #D9D9D9")};
+    opacity: ${({ opacidade }) => (opacidade  === 'sim' ? "0.5" : "1")};
     img { 
         width: 70px;
+    }
+    p {
+        font-size: 55px;
     }
 `
 

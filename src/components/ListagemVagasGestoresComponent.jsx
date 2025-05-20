@@ -32,7 +32,7 @@ function ListagemVagasGestoresComponent({vaga, setUpdated}) {
         }
     };
     const progress = getProgressPercent(vaga.status);
-    console.log(progress);
+    // console.log(progress);
     const handleStatusChange = (novoStatus) => {
         setNovoStatus(novoStatus);
     };
@@ -58,7 +58,7 @@ function ListagemVagasGestoresComponent({vaga, setUpdated}) {
             console.log('Ação cancelada.');
         }
     };
-    console.log(vaga);
+    // console.log(vaga);
     return (
         <PageContainer>
             <HeaderRow>

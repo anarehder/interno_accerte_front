@@ -16,8 +16,8 @@ function IndicAccerteComponent({user}) {
         setArquivo(e.target.files[0]);
     };
 
-    const handleIndicar = async () => {
-        // e.preventDefault(); // ⛔️ impede o reload
+    const handleIndicar = async (e) => {
+        e.preventDefault(); // ⛔️ impede o reload
         if (!arquivo) {
             alert("Selecione um currículo antes de indicar.");
             return;

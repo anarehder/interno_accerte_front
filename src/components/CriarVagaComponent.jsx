@@ -9,7 +9,7 @@ function CriarVagaComponent({setSelectedItem}) {
     const [formularioInfo, setFormularioInfo] = useState(null);
     const [carregando, setCarregando] = useState(true);
     const [funcionarioSolicitante, setFuncionarioSolicitante] = useState(0);
-    const [areaIdDoSolicitante, setAreaIdDoSolicitante] = useState(0);  
+    const [areaIdDoSolicitante, setAreaIdDoSolicitante] = useState([]);  
 
     const reqDefault = {  
     solicitanteId: 0,
@@ -33,7 +33,7 @@ function CriarVagaComponent({setSelectedItem}) {
     };
 
     const [newReq, setNewReq] = useState(reqDefault);
-    console.log(newReq);
+    // console.log(newReq);
     const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
 
@@ -63,7 +63,9 @@ function CriarVagaComponent({setSelectedItem}) {
                     setCarregando(false);
                     return;
                 }
-                const area = response.data.gestores.find((gestor) => gestor.funcionarioId === func.id);
+                const area = response.data.gestores.filter(
+                    (gestor) => gestor.funcionarioId === func.id
+                );
                 setAllowed(true);
                 setFuncionarioSolicitante(func);
                 setAreaIdDoSolicitante(area);
@@ -120,11 +122,26 @@ function CriarVagaComponent({setSelectedItem}) {
 
                     <div>
                         <label>2. Área:</label>
-                        <input
-                            type="text"
-                            value={formularioInfo? formularioInfo?.areas.find((area) => area.id === areaIdDoSolicitante?.areaId)?.area : "Carregando..."}
-                            disabled
-                        />
+                        {
+                            areaIdDoSolicitante.length > 1 &&
+                            <select name="areaId" onChange={handleSelectId}>
+                            <option value="">Selecione</option>
+                            {areaIdDoSolicitante.map((item) => (
+                                <option key={item.areaId} value={item.areaId}>
+                                    {formularioInfo? formularioInfo?.areas.find((area) => area.id === item.areaId)?.area : "Carregando..."}
+                                </option>
+                            ))}
+                        </select>
+                        }
+                        {
+                            areaIdDoSolicitante.length === 1 &&
+                            <input
+                                type="text"
+                                value={formularioInfo ? formularioInfo?.areas.find((area) => area.id === areaIdDoSolicitante[0]?.areaId)?.area : "Carregando..."}
+                                disabled
+                            />
+                        }
+
                     </div>
 
                     <div>

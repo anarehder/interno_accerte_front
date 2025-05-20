@@ -129,6 +129,7 @@ const IntranetHomePage = () => {
                             <button type="submit"><FiSearch size={25} /></button>
                         </form>
                     </MenuContainer>
+                    <HumorComponent />
                     {filteredContacts.length > 0 ?
                         <>
                             <SearchResponse>

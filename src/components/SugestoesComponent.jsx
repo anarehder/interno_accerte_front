@@ -105,6 +105,7 @@ const ItensContainer = styled.div`
         color: #555;
         font-family: "Poppins", serif;
         padding: 5px;
+        border-radius: 10px;
     }
 `
 

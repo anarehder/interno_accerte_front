@@ -40,7 +40,7 @@ function LinkedinPostsComponent() {
         <PageContainer>
             <LinkedinContainer>
                 <h2>
-                    <FaLinkedin size={30} color="#067DD1" /> Acompanhe nas redes sociais
+                    <FaLinkedin size={27} color="#067DD1" /> Acompanhe nas redes sociais
                 </h2>
                 {loading && <div> <br />Carregando posts... </div>}
                 {error && <div> <br />{error} </div>}
@@ -76,7 +76,9 @@ const PageContainer = styled.div`
         font-size: 26px;
         text-align: left;
         margin: 15px 0;
+        display: flex;
         margin-bottom: 35px;
+        align-items: flex-end !important;
         svg {
             margin-right: 10px;
         }
