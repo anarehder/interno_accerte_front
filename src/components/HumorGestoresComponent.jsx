@@ -49,8 +49,7 @@ function HumorGestoresComponent() {
 
     const handleConfirm = async () => {
         try {
-            // const body = {email: user.mail, data: date};
-            const body = {email: 'maria.silva@accerte.com.br', data: date};
+            const body = {email: user.mail, data: date};
             const response = await apiService.buscarHumorArea(body);
             if(response.data.length !== 0 ) {
                 const mediaHumor = response.data.reduce((soma, item) => soma + item.humor, 0) / response.data.length;
