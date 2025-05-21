@@ -88,9 +88,25 @@ function getEscalaPagerDuty(params){
 }
 
 function getAniversariosDia(){
-    return axios.get(`${BASE_URL}/funcionarios/aniversarios`)
+    return axios.get(`${BASE_URL}/funcionarios/aniversarios`);
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia }
+function criarHumor(body){
+    return axios.post(`${BASE_URL}/humor/`, body)
+}
+
+function buscarHumorArea(body){
+    return axios.post(`${BASE_URL}/humor/area`, body)
+}
+
+function buscarHumorFuncionario(body){
+    return axios.post(`${BASE_URL}/humor/funcionario`, body)
+}
+
+function buscarGestoresInfo(){
+    return axios.get(`${BASE_URL}/funcionarios/gestores`)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo }
 
 export default apiService;

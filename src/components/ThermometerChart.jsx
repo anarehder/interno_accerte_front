@@ -13,14 +13,24 @@ const ThermometerChart = ({ media }) => {
   
   return (
     <ChartContainer>
-      <TimeBlock
-        start={0}
-        width={(media/5)*100}
-        color={getColorByMedia(media)}
-        title={media}
-      >
-        {(media / 5 * 100).toFixed(1)}%
-      </TimeBlock>
+      {
+        media === 0 ?
+          <TimeBlock
+            start={0}
+            width={100}
+          >
+            0%
+          </TimeBlock>
+          :
+          <TimeBlock
+            start={0}
+            width={(media / 5) * 100}
+            color={getColorByMedia(media)}
+            title={media}
+          >
+            {(media / 5 * 100).toFixed(1)}%
+          </TimeBlock>
+      }
     </ChartContainer>
   );
 

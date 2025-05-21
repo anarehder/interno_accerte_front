@@ -47,6 +47,7 @@ const SliderContainer = styled.div`
   overflow: hidden;
   position: relative;
   border-radius: 10px;
+  box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.4);
 `;
 
 const Slide = styled.div`

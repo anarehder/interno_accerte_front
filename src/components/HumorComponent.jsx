@@ -1,35 +1,57 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from "styled-components";
 import { useAuth } from '../contexts/AuthContext';
 import { LuMessageCircleMore } from "react-icons/lu";
-
-import Humor1 from '../assets/humor/1.png'
-import Humor2 from '../assets/humor/2.png'
-import Humor3 from '../assets/humor/3.png'
-import Humor4 from '../assets/humor/4.png'
-import Humor5 from '../assets/humor/5.png'
+import apiService from '../services/apiService';
 
 function HumorComponent() {
     const { user } = useAuth();
     const [humor, setHumor] = useState("");
+    const [savedHumor, setSavedHumor] = useState([]);
     const [mensagem, setMensagem] = useState('');
-    
-    console.log(humor);
+    const [carregando, setCarregando] = useState(true);
+    const today = new Date().toISOString().slice(0, 10);
+    // console.log(humor);
+    useEffect(() => {
+        if (!user) return;
+        const fetchScale = async () => {
+            try {
+                const body = { email: user.mail, data: today };
+                const response = await apiService.buscarHumorFuncionario(body);
+                if (response.data.length === 1){
+                    setSavedHumor(response.data);
+                    setHumor(response.data[0].humor);
+                    // setMensagem(response.data[0].mensagem);
+                }
+                setCarregando(false);
+            } catch (error) {
+                console.error(error.response.data.message);
+                setCarregando(false);
+            }
+        };
+
+        fetchScale();
+
+    }, [user, savedHumor]);
+
+    const handleSelect = (number) =>{
+        if(savedHumor.length === 0){
+            setHumor(number);
+        }
+    }
 
     const handleEnviar = async () => {
-        alert(`humor selecionado! ${humor}`);
-        const body = {email: user.mail, humor, mensagem};
-        // const novoNome = `${area} (${user.displayName}) - ${arquivo.name}`;
-        // const local = 'BANCO DE TALENTOS';
-        // const novoArquivo = new File([arquivo], novoNome, {
-        //     type: arquivo.type,
-        // });
-
-        // const response = await postVagaIndicada(instance, accounts, local, novoArquivo);
-        // alert(`Indicação Finalizada com Sucesso! Obrigada!`);
-        // setArquivo(null);
-        // setArea("");
-        // console.log(response.webUrl);
+        const body = { email: user.mail, humor, mensagem };
+        try {
+            const response = await apiService.criarHumor(body);
+            let array = [];
+            array.push(response);
+            setSavedHumor(array);
+            setCarregando(false);
+        } catch (error) {
+            console.error(error.response.data.message);
+            setCarregando(false);
+        }
 
     };
 
@@ -38,36 +60,33 @@ function HumorComponent() {
             <h2><LuMessageCircleMore sice={24}/> Como você está se sentindo hoje?</h2>
             <ItensContainer>
                 <HumorContainer>
-                    <HumorDiv onClick={() => setHumor(1)} opacidade={humor === 1 ? 'nao' : 'sim'}>
-                        {/* <img src={Humor1} alt={"1"} /> */}
-                        <p>😡</p> 
+                    <HumorDiv onClick={()=>handleSelect(1)} $opacidade={humor === 1 ? 'nao' : 'sim'}>
+                        <div>😡</div> 
                     </HumorDiv>
                     {/* 😶‍🌫️😤😢🙂 😬😊*/}
-                    <HumorDiv onClick={() => setHumor(2)} opacidade={humor === 2 ? 'nao' : 'sim'}>
-                        {/* <img src={Humor2} alt={"2"} /> */}
-                        <p>🥹</p>
+                    <HumorDiv onClick={()=>handleSelect(2)} $opacidade={humor === 2 ? 'nao' : 'sim'}>
+                        <div>🥹</div>
                     </HumorDiv>
-                    <HumorDiv onClick={() => setHumor(3)} opacidade={humor === 3 ? 'nao' : 'sim'}>
-                        {/* <img src={Humor3} alt={"3"} /> */}
-                        <p>😐</p>
+                    <HumorDiv onClick={()=>handleSelect(3)} $opacidade={humor === 3 ? 'nao' : 'sim'}>
+                        <div>😐</div>
                     </HumorDiv>
-                    <HumorDiv onClick={() => setHumor(4)} opacidade={humor === 4 ? 'nao' : 'sim'}>
-                        {/* <img src={Humor4} alt={"4"} /> */}
-                        <p>😁</p>
+                    <HumorDiv onClick={()=>handleSelect(4)} $opacidade={humor === 4 ? 'nao' : 'sim'}>
+                        <div>😁</div>
                     </HumorDiv>
-                    <HumorDiv onClick={() => setHumor(5)} opacidade={humor === 5 ? 'nao' : 'sim'}>
-                        {/* <img src={Humor5} alt={"5"} /> */}
-                        <p>🤩</p>
+                    <HumorDiv onClick={()=>handleSelect(5)} $opacidade={humor === 5 ? 'nao' : 'sim'}>
+                        <div>🤩</div>
                     </HumorDiv>
                 </HumorContainer>
 
                 <textarea
-                    placeholder='Gostaria de nos contar porque se sente assim?'
+                    placeholder={savedHumor.length === 0 ? 'Gostaria de nos contar porque se sente assim?' : 'Você já enviou seu humor hoje.'}
                     value={mensagem}
                     onChange={(e) => setMensagem(e.target.value)}
                     rows="5"
+                    disabled={savedHumor.length !== 0}
                 />
-                <Button onClick={handleEnviar} disabled={!humor}> Enviar Humor </Button>
+                <p>Fique à vontade para falar o que sente. Essa informação é privada e será lida somente por alguém que quer te ver feliz.</p>
+                <Button onClick={handleEnviar} disabled={savedHumor.length >0}> Enviar Humor </Button>
             </ItensContainer>
         </Container>
     );
@@ -100,7 +119,7 @@ const Container = styled.div`
 
 const ItensContainer = styled.div`
     font-size: 20px;
-    gap: 25px;
+    gap: 20px;
     align-items: center; 
     flex-direction: column;
     justify-content: space-between;
@@ -115,6 +134,10 @@ const ItensContainer = styled.div`
         &::placeholder{
             margin-left: 15px;
         }
+    }
+    p{
+        font-size: 12px;
+        font-style: italic;
     }
 `
 
@@ -131,13 +154,16 @@ const HumorDiv = styled.div`
     align-items: center;
     box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.4);
     border-radius: 50px;
-    // border: ${({ borda }) => (borda  === 'sim' ? "2px solid #555" : "2px solid #D9D9D9")};
-    opacity: ${({ opacidade }) => (opacidade  === 'sim' ? "0.5" : "1")};
+    opacity: ${({ $opacidade }) => ($opacidade  === 'sim' ? "0.5" : "1")};
     img { 
         width: 70px;
     }
     p {
         font-size: 55px;
+    }
+    div {
+        font-size: 55px;
+        caret-color: transparent;
     }
 `
 

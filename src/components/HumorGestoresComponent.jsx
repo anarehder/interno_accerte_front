@@ -4,93 +4,97 @@ import styled from "styled-components";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useAuth } from '../contexts/AuthContext';
 import ThermometerChart from './ThermometerChart';
+import apiService from '../services/apiService';
 
 function HumorGestoresComponent() {
     const { user } = useAuth();
     const [humor, setHumor] = useState([]);
-    const [media, setMedia] = useState(4.7);
-    
+    const [media, setMedia] = useState(0);
     const emoji = ["-", '😡', '🥹', '😐','😁','🤩'];
     const today = new Date().toISOString().slice(0, 10);
     const [date, setDate] = useState(today);
-    console.log(humor);
+
     const handleDateChange = (value) => {
-        // const newDate = { ...date, [field]: value };
         setDate(value);
     };
 
     const [errorMessage, setErrorMessage] = useState("");
     const [carregando, setCarregando] = useState(true);
+
     useEffect(() => {
         if (!user) return;
-        // const fetchScale = async () => {
-        //     try {
-        //         const body = {adminEmail: user.mail};
-        //         const response = await apiService.getVagas(body);
-        //         setVagas(response.data);
-        //         setCarregando(false);
-        //         setUpdated(false);
-        //     } catch (error) {
-        //         setErrorMessage(error.response.data.message);
-        //         setCarregando(false);
-        //     }
-        // };
+        const fetchScale = async () => {
+            try {
+                const body = {email: user.mail, data: date};
+                const response = await apiService.buscarHumorArea(body);
+                if (response.data.length !== 0) {
+                    const mediaHumor = response.data.reduce((soma, item) => soma + item.humor, 0) / response.data.length;
+                    setMedia(mediaHumor);
+                    setHumor(response.data);
+                } else {
+                    setMedia(0);
+                    setHumor([]);
+                }
+                setCarregando(false);
+            } catch (error) {
+                setErrorMessage(error.response.data.message);
+                setCarregando(false);
+            }
+        };
 
-        // fetchScale();
+        fetchScale();
 
     }, [user]);
 
 
     const handleConfirm = async () => {
-        // const [dayE, monthE, yearE] = feriasDisponiveis[selectedPeriod].fim.split("/").map(Number);
-        const body = {
-          "adminEmail": user.mail,
-          "data": date
+        try {
+            // const body = {email: user.mail, data: date};
+            const body = {email: 'maria.silva@accerte.com.br', data: date};
+            const response = await apiService.buscarHumorArea(body);
+            if(response.data.length !== 0 ) {
+                const mediaHumor = response.data.reduce((soma, item) => soma + item.humor, 0) / response.data.length;
+                setMedia(mediaHumor);
+                setHumor(response.data);
+            } else {
+                setMedia(0);
+                setHumor([]);
+            }
+            setCarregando(false);
+        } catch (error) {
+            setErrorMessage(error.response.data.message);
+            setCarregando(false);
         }
-        alert(date);
-        // try {
-        //   const response = await apiService.createVacation(body);
-        //   if (response.statusText === "OK") {
-        //     alert("Período de Férias Inserido com Sucesso!");
-        //     selectedPeriod(-1);
-        //     setDate({ start: "", end: "" });
-        //   }
-        // } catch (error) {
-        //   // console.error("Erro ao enviar requisição:", error);
-        //   alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
-        // }
-      };
+    };
 
-    
+
 
     return (
         <Container>
             <h2>Como sua equipe está se sentindo hoje...</h2>
             <ThermometerChart media={media} />
             <Form>
-                {/* <Label>Selecione uma data</Label> */}
                 <Input
                     type="date"
-                    value={today}
+                    value={date}
                     onChange={(e) => handleDateChange(e.target.value)}
                 />
                 <button onClick={handleConfirm}>
-                    <FaArrowRightLong size={24}/>
+                    <FaArrowRightLong size={24} />
                 </button>
             </Form>
             <ItensContainer>
-                <HumorContainer0>
-                    <h2>João Maria José</h2> <p>{emoji[1]}</p>   <div> OBS.: texto se tiver texto se tiver texto se tiver texto se tiver texto se tiver se tiver texto se tiver texto se tiver texto se tiver</div>
-                </HumorContainer0>
-                <HumorContainer0>
-                    <h2>João Maria José</h2> <p>{emoji[2]}</p>  <div>  </div>
-                </HumorContainer0>
-                <HumorContainer0>
-                    <h2>João Maria José</h2> <p>{emoji[3]}</p>  <div>  OBS.: texto se tiver texto se tiver texto se tiver texto se tiver texto se tiver se tiver texto se tiver texto se tiver texto se tiver</div>
-                </HumorContainer0>
-                <HumorContainer0>
-                    <h2>João Maria José</h2> <p>{emoji[5]}</p>  <div>  OBS.: texto se tiver texto se tiver texto se tiver texto se tiver texto se tiver se tiver texto se tiver texto se tiver texto se tiver</div>
-                </HumorContainer0>
+                {
+                    !carregando && humor.length === 0 &&
+                    <h2> Sem dados para o dia atual. </h2>
+                }
+                {
+                    humor.map((k, index) => (
+                        <HumorContainer0 key={index}>
+                            <h2>{k.Funcionarios.nome} {k.Funcionarios.sobrenome}</h2> <p>{emoji[k.humor]}</p>   <div> {k.mensagem}</div>
+                        </HumorContainer0>
+                    ))
+                }
             </ItensContainer>
         </Container>
     );
@@ -187,7 +191,7 @@ const HumorContainer0 = styled.div`
         width: 97%;
         line-height: 20px;
         font-size: 15px;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: flex-start;
         text-align: left;
         overflow-y: auto;

@@ -183,7 +183,8 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    background: #D9D9D9;
+    // background: #D9D9D9;
+    background-color: white;
     position: relative;
     font-family: "Poppins", serif;
     h1 {
