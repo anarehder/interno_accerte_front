@@ -165,6 +165,9 @@ const HumorDiv = styled.div`
     div {
         font-size: 55px;
         caret-color: transparent;
+        &:hover {
+            transform: scale(1.5);
+        }
     }
 `
 
