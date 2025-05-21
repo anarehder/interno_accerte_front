@@ -48,6 +48,7 @@ function HumorComponent() {
             array.push(response);
             setSavedHumor(array);
             setCarregando(false);
+            alert("Enviado com sucesso!");
         } catch (error) {
             console.error(error.response.data.message);
             setCarregando(false);
