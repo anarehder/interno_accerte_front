@@ -165,6 +165,8 @@ const HumorDiv = styled.div`
     div {
         font-size: 55px;
         caret-color: transparent;
+        justify-content: center;
+        align-items: center;
         &:hover {
             transform: scale(1.5);
         }
