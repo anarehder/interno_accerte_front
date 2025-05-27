@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import banner1 from "../assets/BANNER1.png"; 
+import ipog from "../assets/3---PARCERIA-IPOG.png"; 
 
 function BannerSlideComponent() {
     const { dados } = useAuth();
@@ -25,32 +26,59 @@ function BannerSlideComponent() {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     };
 
-    return (
-        <SliderContainer>
-            <PrevNextButton onClick={prevSlide}>&#10094;</PrevNextButton>
-            <Slide style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
-                {images.map((image, index) => (
-                    <SlideImage key={index} src={image.url} alt={`Slide ${image.name}`} />
-                ))}
-            </Slide>
-            <PrevNextButton onClick={nextSlide}>&#10095;</PrevNextButton>
-        </SliderContainer>
-    );
+  return (
+    <SliderContainer>
+      <PrevNextButton onClick={prevSlide}>&#10094;</PrevNextButton>
+      <SlideWrapper style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+        <Slide>
+          <SlideLink href="https://tinyurl.com/37razdyb" target="_blank" >
+            <SlideImage src={ipog} alt="IPOG" />
+          </SlideLink>
+        </Slide>
+        <Slide>
+          {images.map((image, index) => (
+            <SlideImage key={index} src={image.url} alt={`Slide ${image.name}`} />
+          ))}
+        </Slide>
+      </SlideWrapper>
+      <PrevNextButton onClick={nextSlide}>&#10095;</PrevNextButton>
+    </SliderContainer>
+  );
 };
 
 export default BannerSlideComponent;
 
 const SliderContainer = styled.div`
   width: 100%;
-  max-width: 2000px;
-  max-height: 800px;
+  width: 1000px;
+  height: 500px;
   overflow: hidden;
   position: relative;
   border-radius: 10px;
   box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.4);
 `;
 
-const Slide = styled.div`
+const SlideWrapper = styled.div`
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%; 
+  a{
+    // background-color: red;
+    // min-width: 100% !important;
+    height: 500px !important;
+    margin: 0;
+    padding:0;
+  }
+`
+
+const Slide = styled.div` 
+  min-width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  // width: 300%;
+`
+
+const SlideLink = styled.a`
   display: flex;
   transition: transform 0.5s ease-in-out;
   width: 300%;

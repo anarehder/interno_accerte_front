@@ -255,7 +255,7 @@ const BannerContainer = styled.div`
     justify-content: space-between;
     margin: 50px 0;
     gap: 50px;
-    
+    align-items: center;
 `
 
 const BannerMenu = styled.div`
