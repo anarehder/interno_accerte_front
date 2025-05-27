@@ -15,8 +15,8 @@ function gerarFerias(admissao) {
         fimFerias.setFullYear(fimFerias.getFullYear() + 1);
         fimFerias.setDate(fimFerias.getDate() - 1);
         let limiteFerias = new Date(dataAdmissao);
-        limiteFerias.setFullYear(fimFerias.getFullYear() + 1);
-        limiteFerias.setDate(fimFerias.getDate() - 45);
+        limiteFerias.setFullYear(limiteFerias.getFullYear() + 2);
+        limiteFerias.setDate(limiteFerias.getDate() - 45);
     
         ferias.push({
             inicio: dataAdmissao.toLocaleDateString(),

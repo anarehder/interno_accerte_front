@@ -5,7 +5,7 @@ import { GiMegaphone } from "react-icons/gi";
 import ReactPlayer from 'react-player';
 
 function UpdatesPage() {
-    const videos = [{"nome":"Programa Panorama Goiás (PUC TV) 06/03/2025", "video": "https://www.youtube-nocookie.com/embed/HH8K0MYqZnU?si=7zvXk45DSzBmgD2U"},{"nome":"Programa Panorama Goiás (PUC TV) 20/03/2025", "video": "https://www.youtube-nocookie.com/embed/HsXLjxAG-ng?start=1223"}];
+    const videos = [{"nome": "Programa Jeito Goiano (TV Goiânia) 25/05/2025", "video":"https://www.youtube-nocookie.com/embed/b6fB971Ii7A?start=1294"},{"nome":"Programa Panorama Goiás (PUC TV) 06/03/2025", "video": "https://www.youtube-nocookie.com/embed/HH8K0MYqZnU?si=7zvXk45DSzBmgD2U"},{"nome":"Programa Panorama Goiás (PUC TV) 20/03/2025", "video": "https://www.youtube-nocookie.com/embed/HsXLjxAG-ng?start=1223"}];
     
     const videosPapoReto = [{"nome":"Maio/25", "video": "https://www.youtube.com/watch?v=dd1bsHYYqjg"},{"nome":"Abril/25", "video": "https://youtu.be/hEtOEyRs6dg?si=6tyfq0pazh3zqySQ"},{'nome': "Março/25", "video":"https://www.youtube.com/watch?v=Er05a6jmn1w"},{"nome":"Fevereiro/25", "video": "https://www.youtube.com/watch?v=cr8sLxde1m8"},{"nome":"Fevereiro/25", "video": "https://youtu.be/9DgIMkcvW4A?si=W_FzYEG9VoGzXSJO"},{"nome":"Janeiro/25", "video": "https://www.youtube.com/watch?v=lg48Bi9DA54&ab_channel=TEDxTalks"}];
 
