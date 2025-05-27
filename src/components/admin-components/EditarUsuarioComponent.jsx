@@ -35,7 +35,7 @@ function EditarUsuarioComponent({info, setUpdated}){
             [id]: newValue
         }));
     };
-    console.log(form);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.nome || !form.sobrenome || !form.email || !form.tipoContratoId || !form.admissao || !form.aniversario || !form.areaId || !form.jornadaId || !form.cargo) {
@@ -68,7 +68,6 @@ function EditarUsuarioComponent({info, setUpdated}){
         }
     };
 
-    console.log(info.listaJornadas[0].id);
     return (
         <>
             {info.listaFuncionarios &&
