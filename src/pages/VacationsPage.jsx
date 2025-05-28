@@ -62,7 +62,7 @@ function VacationsPage() {
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
         return `${dia}/${mes}/${ano}`;
     }
-    console.log(editarFerias.length !== 0 && vacationInfo && selectedPeriod && feriasDisponiveis);
+
     return (
         <PageContainer>
             <HeaderGGComponent pageTitle={"Férias"} />
