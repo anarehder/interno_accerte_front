@@ -111,6 +111,18 @@ function buscarInfoCriarFunc(){
     return axios.get(`${BASE_URL}/funcionarios/criarinfo`)
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc }
+function editarVacation(body){
+    return axios.post(`${BASE_URL}/ferias/editar`, body)
+}
+
+function approveVacation(body){
+    return axios.post(`${BASE_URL}/ferias/aprovar`, body)
+}
+
+function deleteVacation(body){
+    return axios.delete(`${BASE_URL}/ferias/deletar`, body)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation }
 
 export default apiService;

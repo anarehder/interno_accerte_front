@@ -5,6 +5,9 @@ import HeaderGGComponent from '../components/HeaderGGComponent';
 import { useAuth } from '../contexts/AuthContext';
 import apiService from '../services/apiService';
 import gerarFerias from "../services/vacationGenerate";
+import { FaEdit } from "react-icons/fa";
+import { MdLockOutline } from "react-icons/md";
+import CriarFeriasComponent from '../components/vacations-components/CriarFeriasComponent';
 
 function VacationsPage() {
     const { user, carregando } = useAuth();
@@ -13,7 +16,16 @@ function VacationsPage() {
     const [feriasSelecionadas, setFeriasSelecionadas] = useState([]);
     const [admissao, setAdmissao] = useState(null);
     const [selectedPeriod, setSelectedPeriod] = useState(-1);
+    const [agendarFerias, setAgendarFerias] = useState(false);
+    const [editarFerias, setEditarFerias] = useState([]);
+    const [diasAgendados, setDiasAgendados] = useState(0);
+    const [updated, setUpdated] = useState(false);
+    const [diasConcluidos, setDiasConcluidos] = useState(0);
+    console.log(agendarFerias);
+    console.log(feriasDisponiveis);
 
+    // console.log(feriasDisponiveis[selectedPeriod]);
+    const hoje = new Date();
     useEffect(() => {
         async function fetchData() {
             if (!carregando) {
@@ -26,96 +38,100 @@ function VacationsPage() {
                 const feriasDatas = gerarFerias(admissao);
                 setFeriasDisponiveis(feriasDatas);
                 setSelectedPeriod(-1);
+                setUpdated(false);
             }
         }
         fetchData();
-    }, [user, carregando]);
+    }, [user, carregando, updated]);
 
     const selecionarFeriasPorInicio = (dataRef, index) => {
         const feriasFiltradas = vacationInfo.Ferias.filter((f) => {
             return formatarDataBR(f.referenteInicio) === dataRef;
         });
         setSelectedPeriod(index);
-        setFeriasSelecionadas(feriasFiltradas);
+        setFeriasSelecionadas(feriasFiltradas)
+        const totalDiasSomados = feriasFiltradas.reduce((acc, item) => acc + item.totalDias, 0);
+        setDiasAgendados(totalDiasSomados);
+        const totalDiasAnterioresHoje = feriasFiltradas
+            .filter(f => new Date(f.inicio) < hoje)
+            .reduce((acc, f) => acc + f.totalDias, 0);
+        setDiasConcluidos(totalDiasAnterioresHoje);
     };
-
     function formatarDataBR(dataIso) {
         const data = new Date(dataIso);
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
         return `${dia}/${mes}/${ano}`;
     }
+    console.log(vacationInfo);
     // console.log(selectedPeriod, feriasSelecionadas, feriasDisponiveis[selectedPeriod].inicio);
     return (
         <PageContainer>
             <HeaderGGComponent pageTitle={"Férias"} />
-            {
-                (user?.mail === 'maria.silva@accerte.com.br' || user?.mail ==='ana.rehder@accerte.com.br') && <AdminButton><Link to="/admin">Painel Admin</Link></AdminButton>
-            }
-            {
-                vacationInfo && 
+            {vacationInfo &&
                 <>
                     <EmployeeInfo>
-                    <h2>
-                        <span>Início: {admissao}</span> •
-                        <span>Tipo Contrato: {vacationInfo?.Contratos?.tipo}</span> •
-                        <span>Total Anual: {vacationInfo?.Contratos?.diasFerias}</span>
-                    </h2>
+                        <h2>
+                            <span>Início: {admissao}</span> •
+                            <span>Tipo Contrato: {vacationInfo?.Contratos?.tipo}</span> •
+                            <span>Total Anual: {vacationInfo?.Contratos?.diasFerias}</span>
+                        </h2>
                     </EmployeeInfo>
-                    <VacationContiner>
-                        <Periodos>
-                            <h2>Períodos Aquisitivos <br />de Férias:</h2>
-                            <ButtonsContainer>
-                                {feriasDisponiveis?.map((periodo, index) => (
-                                    <PeriodButton key={index} onClick={() => selecionarFeriasPorInicio(periodo.inicio, index)} active={feriasDisponiveis[selectedPeriod]?.inicio === periodo.inicio && 'show'}>
-                                        {`${periodo.inicio} - ${periodo.fim}`} {feriasDisponiveis[selectedPeriod]?.inicio === periodo.inicio && '•'}
-                                    </PeriodButton>
-                                ))}
-                            </ButtonsContainer>
-                        </Periodos>
-                                {
-                                    selectedPeriod >= 0 && feriasSelecionadas.length === 0 && vacationInfo &&
-                                    <>
-                                        <VacationPeriod>
-                                            <h2>Não há períodos de férias agendados</h2>
-                                        <button> Data Limite Para Férias No Período - {feriasDisponiveis[selectedPeriod].limite} </button>
-                                        </VacationPeriod>
-                                        <TotalContainer>
-                                            <h2>Dias Agendados ou Finalizados:<br /> 0 dias </h2>
-                                            <h2> / </h2>
-                                            <h2>Dias Restantes no Período: <br />{vacationInfo?.Contratos?.diasFerias} dias</h2>
-                                        </TotalContainer>
-                                    </>
-                                }
-                                {feriasDisponiveis && selectedPeriod >= 0 && feriasSelecionadas.length !== 0 &&
-                                    <>
-                                        <VacationPeriod>
-                                            <VacationTable>
-                                                <div>
-                                                    <p><span>Início</span></p>
-                                                    <p><span>Fim</span></p>
-                                                    <p><span>Total</span></p>
-                                                </div>
-                                                {feriasSelecionadas?.map((f, i) => (
-                                                    <div key={i}>
-                                                        <p>{formatarDataBR(f.inicio)}</p>
-                                                        <p>{formatarDataBR(f.fim)}</p>
-                                                        <p>{f.totalDias}</p>
-                                                    </div>
-                                                ))}
-                                            </VacationTable>
-                                            <button> Data Limite Para Férias No Período - {feriasDisponiveis[selectedPeriod].limite} </button>
-                                        </VacationPeriod>
-                                        <TotalContainer>
-                                            <h2>Dias Agendados ou Finalizados:<br /> {feriasSelecionadas.map(v => v.totalDias).reduce((acc, val) => acc + val, 0)} dias </h2>
-                                            <h2> / </h2>
-                                            <h2>Dias Restantes no Período: <br />{vacationInfo?.Contratos?.diasFerias - feriasSelecionadas.map(v => v.totalDias).reduce((acc, val) => acc + val, 0)} dias</h2>
-                                        </TotalContainer>
-                                    </>
-                                }
-                        
-                </VacationContiner>
+                    <Periodos>
+                        <h2>Períodos Aquisitivos:</h2>
+                        <ButtonsContainer>
+                            {feriasDisponiveis?.map((periodo, index) => (
+                                <PeriodButton key={index} onClick={() => selecionarFeriasPorInicio(periodo.inicio, index)} $active={[selectedPeriod]?.inicio === periodo.inicio && 'show'}>
+                                    {`${periodo.inicio} - ${periodo.fim}`} {feriasDisponiveis[selectedPeriod]?.inicio === periodo.inicio && '•'}
+                                </PeriodButton>
+                            ))}
+                        </ButtonsContainer>
+                    </Periodos>
                 </>
             }
+            <VacationContiner>
+                {agendarFerias && <CriarFeriasComponent selected={feriasDisponiveis[selectedPeriod]} info={vacationInfo} setUpdated={setUpdated} setAgendarFerias={setAgendarFerias}/> }
+                {feriasDisponiveis && selectedPeriod >= 0 && editarFerias.length === 0 && 
+                    <>
+                        <VacationPeriod>
+                            {feriasSelecionadas.length === 0 && <h2>Não há períodos de férias agendados</h2>}
+                            {feriasSelecionadas.length !== 0 &&
+                                <VacationTable>
+                                    <div>
+                                        <p><span>Início</span></p>
+                                        <p><span>Fim</span></p>
+                                        <p><span>Total</span></p>
+                                        <p><span>Status</span></p>
+                                        <p><span>Ação</span></p>
+                                    </div>
+                                    {feriasSelecionadas?.map((f, i) => (
+                                        <div key={i}>
+                                            <p>{formatarDataBR(f.inicio)}</p>
+                                            <p>{formatarDataBR(f.fim)}</p>
+                                            <p>{f.totalDias}</p>
+                                            <p>{f.status}</p>
+                                            {/* onClick={()=>setEditarFerias(f)} */}
+                                            <p >{new Date(f.inicio) > hoje ? <FaEdit /> : <MdLockOutline />}</p>
+                                        </div>
+                                    ))}
+                                </VacationTable>
+                            }
+                            <ButtonsCreateContainer>
+                                {diasAgendados < vacationInfo?.Contratos?.diasFerias && <PeriodButton onClick={()=>setAgendarFerias(true)}> Nova Solicitação</PeriodButton>}
+                                <PeriodButton> Data Limite Para Agendamento - {feriasDisponiveis[selectedPeriod].limite} </PeriodButton>
+                                
+                            </ButtonsCreateContainer>
+                        </VacationPeriod>
+
+                    </>
+                }
+                {selectedPeriod >= 0 &&
+                    <TotalContainer>
+                        <div>Agendados <br/> {diasAgendados-diasConcluidos}</div>
+                        <div>Concluídos <br/> {diasConcluidos}</div>
+                        <div>Restantes <br/> {vacationInfo?.Contratos?.diasFerias - diasAgendados}</div>
+                    </TotalContainer>
+                }
+            </VacationContiner>
         </PageContainer>
     )
 }
@@ -131,21 +147,12 @@ const PageContainer = styled.div`
     gap: 20px;
 `
 
-const AdminButton = styled.button`
-    top: 20px;
-    right: 2%;
-    position: absolute;
-    font-size: 16px;
-    justify-content: center;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #ED1F4C;
-    color: white;
-    &:hover {
-        background-color: #ED1F4C;
-    }
-`;
+const ButtonsCreateContainer = styled.div`
+    flex-direction: column;
+    width: 300px;
+    height: 100%;
+    align-items: center;
+`
 
 const EmployeeInfo = styled.div`
     flex-direction: column;
@@ -159,34 +166,14 @@ const EmployeeInfo = styled.div`
     }
 `
 
-const VacationContiner = styled.div`
-    width: 65%;
-    min-width: 700px;
-    flex-direction: column;
-    gap: 30px;
-    margin-bottom: 40px;
-    div {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        
-    }
-    button {
-        background-color: #ff5843;
-        border: 2px solid #ff5843;
-        &:hover {
-            background-color: white;
-            color: #ff5843;
-            border: 2px solid #ff5843;
-    };
-    }
-`
-
 const Periodos = styled.div`
-    align-items: flex-end;
+    width: 80%;
+    align-items: center;
+    justify-content: center;
     margin: 10px 0 15px 0;
     h2{
         color: #ED1F4C;
+        width: 150px;
     }
     div{
         width: 65%;      
@@ -196,41 +183,47 @@ const Periodos = styled.div`
         flex-wrap: wrap;
         justify-content: center;
     }
-        button{
+    button{
         background-color: ${({ active }) => (active  === 'show' ? "transparent" : "#ff5843")};
         color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")};
-        // &:hover {
-        //     background-color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")
-        // }
+    }
+`
+
+const VacationContiner = styled.div`
+    width: 75%;
+    min-width: 700px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    div {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+    }
+    button {
+        background-color: #ff5843;
+        border: 2px solid #ff5843;
     }
 `
 
 const VacationPeriod = styled.div`
     width: 100%;
-    gap: 8% !important;
-    margin-bottom: 20px;
-    align-items: center;
-    justify-content: center;
+    height: 200px;
+    margin-top: 30px;
+    gap: 15px;
+    align-items: flex-start;
     h2{
         color: grey;
-    }
-    div {
-        margin-bottom: 0 !important;
-    }
-    button{
-        height: 70px;
-        font-size: 17px;
-        width: 180px;
-        cursor: default;
-        background-color:transparent;
-        color: #ff5843;
+        width: 120px;
+        margin: 0;
     }
 `
 
 const VacationTable = styled.div`
-    width:  70%;  
+    width: 60%;  
     flex-direction: column;
-    justify-content: space-between;
     gap: 10px;
     color: #ff5843;
     div {
@@ -248,7 +241,6 @@ const VacationTable = styled.div`
     }
 `
 const ButtonsContainer = styled.div`
-    justify-content: center;
     gap: 50px;
 `
 
@@ -258,18 +250,26 @@ const PeriodButton = styled.button`
     justify-content: center;
     font-weight: 700;
     font-size: 15px;
-    background-color: ${({ active }) => (active  === 'show' ? "#ff5843" : "transparent")};
-    color: ${({ active }) => (active === 'show' ? "white" : "#ff5843")};
-    border: ${({ active }) => (active === 'show' ? "3px solid #ff5843" : "3px solid #ff5843")};
-    &:hover {
-        background-color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")
-    };
+    border: ${({ $active }) => ($active === 'show' ? "3px solid #555" : "3px solid #ff5843")};
+    
 `;
 
 const TotalContainer = styled.div`
-        color: gray;
-        h2{
-            font-size: 18px;
-            font-weight: 500;
-        }
+    width: 800px;
+    div{
+        width: 30%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        font-size: 18px;
+        line-height: 25px;
+        align-items: center;
+        text-align: center;
+        box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.2);
+    }
+    color: gray;
+    h2{
+        font-size: 18px;
+        font-weight: 500;
+    }
 `
