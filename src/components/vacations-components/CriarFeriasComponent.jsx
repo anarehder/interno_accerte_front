@@ -114,6 +114,8 @@ function CriarFeriasComponent({ selected, info, setUpdated, setAgendarFerias }) 
                     </Form>
                 </SelectContainer>
             }
+            <p>Para PJs e Cooperados atentem-se aos 6 meses após o início do período aquisitivo para iniciar nova pausa.</p>
+            <p>Para CLTs e Estagiários atentem-se aos 12 meses após o início do período aquisitivo para iniciar um período de férias.</p>
         </Container>
     );
 };
@@ -130,6 +132,9 @@ const Container = styled.div`
   margin-bottom: 50px;
   align-items: center;
   flex-direction: column;
+  p{
+    font-size:15px;
+  }
 `;
 
 const Header = styled.h2`

@@ -62,79 +62,84 @@ function VacationsPage() {
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
         return `${dia}/${mes}/${ano}`;
     }
-
+    console.log(editarFerias.length !== 0 && vacationInfo && selectedPeriod && feriasDisponiveis);
     return (
         <PageContainer>
             <HeaderGGComponent pageTitle={"Férias"} />
             {vacationInfo &&
-                <EmployeeInfo>
-                    <h2>
-                        <span>Início: {admissao}</span> •
-                        <span>Tipo Contrato: {vacationInfo?.Contratos?.tipo}</span> •
-                        <span>Total Anual: {vacationInfo?.Contratos?.diasFerias}</span>
-                    </h2>
-                </EmployeeInfo>
-            }
-            {(agendarFerias && vacationInfo && selectedPeriod && feriasDisponiveis) && 
-                <CriarFeriasComponent selected={feriasDisponiveis[selectedPeriod]} info={vacationInfo} setUpdated={setUpdated} setAgendarFerias={setAgendarFerias} />
-            }
-            {(editarFerias.length !== 0 && vacationInfo && selectedPeriod && feriasDisponiveis) &&
-                <VacationContiner>
-                    <EditarFeriasComponent selected={feriasDisponiveis[selectedPeriod]} toEdit={editarFerias} info={vacationInfo} setUpdated={setUpdated} setEditarFerias={setEditarFerias} />
-                </VacationContiner>
-            }
-            {(vacationInfo && editarFerias.length === 0 && !agendarFerias) &&
-                <Periodos>
-                    <h2>Períodos Aquisitivos:</h2>
-                    <ButtonsContainer>
-                        {feriasDisponiveis?.map((periodo, index) => (
-                            <PeriodButton key={index} onClick={() => selecionarFeriasPorInicio(periodo.inicio, index)} $active={[selectedPeriod]?.inicio === periodo.inicio && 'show'}>
-                                {`${periodo.inicio} - ${periodo.fim}`} {feriasDisponiveis[selectedPeriod]?.inicio === periodo.inicio && '•'}
-                            </PeriodButton>
-                        ))}
-                    </ButtonsContainer>
-                </Periodos>
-            }
-            {(vacationInfo && editarFerias.length === 0 && !agendarFerias) &&
-                <VacationContiner>
-                    {feriasDisponiveis && selectedPeriod >= 0 &&
-                        <VacationPeriod>
-                            {feriasSelecionadas.length === 0 && <h2>Não há períodos de férias agendados</h2>}
-                            {feriasSelecionadas.length !== 0 &&
-                                <VacationTable>
-                                    <div>
-                                        <p><span>Início</span></p>
-                                        <p><span>Fim</span></p>
-                                        <p><span>Total</span></p>
-                                        <p><span>Status</span></p>
-                                        <p><span>Ação</span></p>
-                                    </div>
-                                    {feriasSelecionadas?.map((f, i) => (
-                                        <div key={i}>
-                                            <p>{formatarDataBR(f.inicio)}</p>
-                                            <p>{formatarDataBR(f.fim)}</p>
-                                            <p>{f.totalDias}</p>
-                                            <p>{f.status}</p>
-                                            {new Date(f.inicio) > hoje ? <p onClick={() => setEditarFerias(f)} ><FaEdit /> </p> : <p><MdLockOutline style={{ cursor: 'default' }}/></p>}
-                                        </div>
-                                    ))}
-                                </VacationTable>
-                            }
-                            <ButtonsCreateContainer>
-                                {diasAgendados < vacationInfo?.Contratos?.diasFerias && <PeriodButton onClick={() => setAgendarFerias(true)}> Nova Solicitação</PeriodButton>}
-                                <PeriodButton> Data Limite Para Agendamento - {feriasDisponiveis[selectedPeriod].limite} </PeriodButton>
+                <>
+                    <EmployeeInfo>
+                        <h2>
+                            <span>Início: {admissao}</span> •
+                            <span>Tipo Contrato: {vacationInfo?.Contratos?.tipo}</span> •
+                            <span>Total Anual: {vacationInfo?.Contratos?.diasFerias}</span>
+                        </h2>
+                    </EmployeeInfo>
 
-                            </ButtonsCreateContainer>
-                        </VacationPeriod>
+                    {agendarFerias &&
+                        <VacationContiner>
+                            <CriarFeriasComponent selected={feriasDisponiveis[selectedPeriod]} info={vacationInfo} setUpdated={setUpdated} setAgendarFerias={setAgendarFerias} />
+                        </VacationContiner>
                     }
-                    {selectedPeriod >= 0 &&
-                        <TotalContainer>
-                            <div>Agendados <br /> {diasAgendados - diasConcluidos}</div>
-                            <div>Concluídos <br /> {diasConcluidos}</div>
-                            <div>Restantes <br /> {vacationInfo?.Contratos?.diasFerias - diasAgendados}</div>
-                        </TotalContainer>
+                    {editarFerias.length !== 0 &&
+                        <VacationContiner>
+                            <EditarFeriasComponent selected={feriasDisponiveis[selectedPeriod]} toEdit={editarFerias} info={vacationInfo} setUpdated={setUpdated} setEditarFerias={setEditarFerias} />
+                        </VacationContiner>
                     }
-                </VacationContiner>
+                    {(editarFerias.length === 0 && !agendarFerias) &&
+                        <Periodos>
+                            <h2>Períodos Aquisitivos:</h2>
+                            <ButtonsContainer>
+                                {feriasDisponiveis?.map((periodo, index) => (
+                                    <PeriodButton key={index} onClick={() => selecionarFeriasPorInicio(periodo.inicio, index)} $active={[selectedPeriod]?.inicio === periodo.inicio && 'show'}>
+                                        {`${periodo.inicio} - ${periodo.fim}`} {feriasDisponiveis[selectedPeriod]?.inicio === periodo.inicio && '•'}
+                                    </PeriodButton>
+                                ))}
+                            </ButtonsContainer>
+                        </Periodos>
+                    }
+                    {(editarFerias.length === 0 && !agendarFerias) &&
+                        <VacationContiner>
+                            {feriasDisponiveis && selectedPeriod >= 0 &&
+                                <VacationPeriod>
+                                    {feriasSelecionadas.length === 0 && <h2>Não há períodos de férias agendados</h2>}
+                                    {feriasSelecionadas.length !== 0 &&
+                                        <VacationTable>
+                                            <div>
+                                                <p><span>Início</span></p>
+                                                <p><span>Fim</span></p>
+                                                <p><span>Total</span></p>
+                                                <p><span>Status</span></p>
+                                                <p><span>Ação</span></p>
+                                            </div>
+                                            {feriasSelecionadas?.map((f, i) => (
+                                                <div key={i}>
+                                                    <p>{formatarDataBR(f.inicio)}</p>
+                                                    <p>{formatarDataBR(f.fim)}</p>
+                                                    <p>{f.totalDias}</p>
+                                                    <p>{f.status}</p>
+                                                    {new Date(f.inicio) > hoje ? <p onClick={() => setEditarFerias(f)} ><FaEdit /> </p> : <p onClick={() => setEditarFerias([])}><MdLockOutline style={{ cursor: 'default' }} /></p>}
+                                                </div>
+                                            ))}
+                                        </VacationTable>
+                                    }
+                                    <ButtonsCreateContainer>
+                                        {diasAgendados < vacationInfo?.Contratos?.diasFerias && <PeriodButton onClick={() => setAgendarFerias(true)}> Nova Solicitação</PeriodButton>}
+                                        <PeriodButton> Data Limite Para Agendamento - {feriasDisponiveis[selectedPeriod].limite} </PeriodButton>
+
+                                    </ButtonsCreateContainer>
+                                </VacationPeriod>
+                            }
+                            {selectedPeriod >= 0 &&
+                                <TotalContainer>
+                                    <div>Agendados <br /> {diasAgendados - diasConcluidos}</div>
+                                    <div>Concluídos <br /> {diasConcluidos}</div>
+                                    <div>Restantes <br /> {vacationInfo?.Contratos?.diasFerias - diasAgendados}</div>
+                                </TotalContainer>
+                            }
+                        </VacationContiner>
+                    }
+                </>
             }
         </PageContainer>
     )
