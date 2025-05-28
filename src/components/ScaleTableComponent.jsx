@@ -167,6 +167,7 @@ const PageContainer = styled.div`
     gap: 20px;
     margin-bottom: 35px;
     position: relative;
+    background-color: #FFFFFF;
 `
 
 const ButtonsContainer = styled.div`
@@ -251,7 +252,7 @@ const ImageContainer = styled.div`
     align-items: center;
     gap: 20px;
     padding: 25px 0;
-    background-color: #F0F5F9;
+    background-color: #FFFFFF;
 `;
 
 const DepartmentContainer = styled.div`

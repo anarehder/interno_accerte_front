@@ -33,7 +33,6 @@ function EditarFeriasComponent({ selected, info, toEdit, setUpdated, setEditarFe
 
         return (
             dataInicio < dataFim &&
-            totalDays >= 10 &&
             dataFim <= limite
         );
     };
@@ -60,7 +59,8 @@ function EditarFeriasComponent({ selected, info, toEdit, setUpdated, setEditarFe
                 "fim": `${date.end}T00:00:00Z`,
                 "totalDias": totalDays,
                 "referenteInicio": toEdit.referenteInicio,
-                "referenteFim": toEdit.referenteFim
+                "referenteFim": toEdit.referenteFim,
+                "status": "Solicitado"
             }
         }
         try {
@@ -91,7 +91,6 @@ function EditarFeriasComponent({ selected, info, toEdit, setUpdated, setEditarFe
                             <br /><br /><br />
                             Data Limite: {selected?.limite}
                         </div>
-
                         <Button onClick={() => setEditarFerias([])}> Fechar Edição </Button>
                     </Header>
                     <Form>
@@ -125,7 +124,7 @@ export default EditarFeriasComponent;
 const Container = styled.div`
   max-width: 90%;
   margin: auto;
-  height: 350px;
+  height: 500px;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -139,7 +138,7 @@ const Container = styled.div`
 `;
 
 const Header = styled.h2`
-    height: 350px;
+    height: 400px;
     margin-bottom: 20px;
     font-size: 18px;
     color: #333;
@@ -173,6 +172,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 8px;
+  font-size: 18px;
   border: 1px solid #ccc;
   border-radius: 5px;
   height: 30px;

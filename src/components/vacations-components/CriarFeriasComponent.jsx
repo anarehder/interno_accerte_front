@@ -7,6 +7,15 @@ function CriarFeriasComponent({ selected, info, setUpdated, setAgendarFerias }) 
     const { user } = useAuth();
     const [date, setDate] = useState({ start: "", end: "" });
     const [totalDays, setTotalDays] = useState(0);
+    const minDate = formatDateToInput(new Date(Date.now() + 45 * 24 * 60 * 60 * 1000));
+    const minDatePJ = formatDateToInput(new Date(Date.now() + 1 * 24 * 60 * 60 * 1000));
+
+    function formatDateToInput(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // meses começam em 0
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
     const handleDateChange = (field, value) => {
         const newDate = { ...date, [field]: value };
@@ -33,7 +42,6 @@ function CriarFeriasComponent({ selected, info, setUpdated, setAgendarFerias }) 
 
         return (
             dataInicio < dataFim &&
-            totalDays >= 10 &&
             dataFim <= limite
         );
     };
@@ -45,7 +53,26 @@ function CriarFeriasComponent({ selected, info, setUpdated, setAgendarFerias }) 
     }
 
     const handleConfirm = async () => {
+        if (info.Contratos.tipo === "CLT" || info.Contratos.tipo === "ESTÁGIO") {
+            if (new Date(date.start) < new Date(minDate)) {
+                alert("A data de início das férias deve ser selecionada com um intervalo de 45 dias.");
+                return;
+            }
+        }
 
+        if (new Date(date.start) < new Date()) {
+                alert("A data de início das férias deve ser posterior ao dia de hoje.");
+                return;
+            }
+
+        const min6mon = new Date(dataISO(selected.inicio));
+        min6mon.setMonth(min6mon.getMonth() + 6);
+
+        if (new Date(date.start) < new Date(min6mon)) {
+            alert("Você pode agendar férias/pausas a partir de 6 meses da vigência do período aquisitivo.");
+            return;
+        }
+        
         const confirmed = window.confirm(
             `Funcionário: ${info.nome} ${info.sobrenome}\n` +
             `Período Aquisitivo: de ${selected.inicio} até ${selected.fim} \n` +
@@ -86,13 +113,12 @@ function CriarFeriasComponent({ selected, info, setUpdated, setAgendarFerias }) 
         <Container>
             {info &&
                 <SelectContainer>
-                    <Header>Nome:<br /> {info.nome}
-                        <br /><br /><br />
-                        E-mail: {info.email}
-                        <br /><br /><br />
-                        Período Aquisitivo: <br />de {selected?.inicio} até {selected?.fim}
-                        <br /><br /><br />
-                        Data Limite: {selected?.limite}
+                    <Header>
+                        <div>Nome: {info.nome}</div>
+                        <div>E-mail: {info.email}</div>
+                        <div>Período Aquisitivo: <br />de {selected?.inicio} até {selected?.fim}</div>
+                        <div>Data Limite: {selected?.limite}</div>                        
+                        <Button onClick={() => setAgendarFerias(false)}> Fechar Solicitação </Button>
                     </Header>
                     <Form>
                         <Label>Início das Férias:</Label>
@@ -100,15 +126,14 @@ function CriarFeriasComponent({ selected, info, setUpdated, setAgendarFerias }) 
                             type="date"
                             value={date.start}
                             onChange={(e) => handleDateChange("start", e.target.value)}
+                            min={(info.Contratos.tipo === "CLT" || info.Contratos.tipo === "ESTÁGIO")  ? minDate : minDatePJ }
                         />
-
                         <Label>Fim das Férias:</Label>
                         <Input
                             type="date"
                             value={date.end}
                             onChange={(e) => handleDateChange("end", e.target.value)}
                         />
-
                         {totalDays > 0 && <TotalDias>Total de dias: {totalDays}</TotalDias>}
                         <Button disabled={!isValid()} onClick={handleConfirm}> Confirmar</Button>
                     </Form>
@@ -137,37 +162,51 @@ const Container = styled.div`
   }
 `;
 
-const Header = styled.h2`
-  margin-bottom: 20px;
-  font-size: 18px;
-  color: #333;
-  text-align: left;
-  width: 55%;
+const Header = styled.div`
+    font-size: 18px;
+    color: #333;
+    text-align: left;
+    width: 55%;
+    height: 350px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: space-between;
+    div{
+        justify-content: flex-start;
+        height: 22%;
+    }
+    span{
+        font-weight: 700;
+    }
 `;
 
 const SelectContainer = styled.div`
-  justify-content: space-between;
-  width: 600px;
+    justify-content: space-between;
+    width: 700px;
+    height: 400px;
+    align-items: center;
 `
 
 const Form = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 40%;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    height: 400px;
+    justify-content: center;
 `;
 
 const Label = styled.label`
   font-weight: bold;
   color: #555;
   text-align: left;
+  font-size: 16px;
 `;
 
 const Input = styled.input`
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-size: 18px;
   height: 30px;
 `;
 
@@ -175,7 +214,7 @@ const TotalDias = styled.p`
   font-size: 16px;
   font-weight: bold;
   color: #007bff;
-  margin: 10px 0;
+//   margin: 10px 0;
 `;
 
 const Button = styled.button`

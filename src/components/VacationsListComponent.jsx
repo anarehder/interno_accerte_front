@@ -1,10 +1,26 @@
 import styled from 'styled-components';
+import { RiDeleteBin6Line } from "react-icons/ri";
+import apiService from '../services/apiService';
+import { useAuth } from '../contexts/AuthContext';
 
-function VacationsListComponent({filteredData, activeButton}) {
+function VacationsListComponent({filteredData, activeButton, handleSubmit}) {
+    const { user } = useAuth();
     function formatarDataBR(dataIso) {
         const data = new Date(dataIso);
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
         return `${dia}/${mes}/${ano}`;
+    }
+
+    async function handleDelete (id) {
+        try {
+            const body = {adminEmail: user.mail, id: id};
+            const response = await apiService.deleteVacation(body);
+            if(response.status === 200 ) {
+                handleSubmit();
+            }
+        } catch (error) {
+            console.error(error.response.data);
+        }
     }
 
     return (
@@ -20,6 +36,8 @@ function VacationsListComponent({filteredData, activeButton}) {
                             <p><span>Total</span></p>
                             <p><span>Referente Início</span></p>
                             <p><span>Referente Fim</span></p>
+                            <p><span>Status</span></p>
+                            <p><span>Deletar</span></p>
                         </div>
                         {filteredData?.map((d, i) => (
                             d.Ferias?.map((f, j) => (
@@ -30,6 +48,8 @@ function VacationsListComponent({filteredData, activeButton}) {
                                     <p>{f.totalDias}</p>
                                     <p>{formatarDataBR(f.referenteInicio)}</p>
                                     <p>{formatarDataBR(f.referenteFim)}</p>
+                                    <p>{f.status}</p>
+                                    <p onClick={() => handleDelete(f.id)}><RiDeleteBin6Line /></p>
                                 </div>
                             ))
                         ))}
@@ -79,6 +99,7 @@ const PageContainer = styled.div`
 `
 
 const VacationTable = styled.div` 
+
     flex-direction: column;
     justify-content: space-between;
     gap: 10px;
@@ -88,6 +109,7 @@ const VacationTable = styled.div`
         align-items: center;
         min-height: 40px;
         border-bottom: 1px solid #80808F;
+        padding-bottom: 7px;
     }
     p{
         text-align: center;

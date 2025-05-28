@@ -11,9 +11,12 @@ function EditarUsuarioComponent({info, setUpdated}){
     const handleSelect = (id) => {
         const funcionario = info.listaFuncionarios.filter((f) => f.id === Number(id));
         if (funcionario[0]) {
-            const { createdAt, updatedAt, ...rest } = funcionario[0];
-            setSelectedFunc(rest);
-            setForm(rest);
+            const { createdAt, updatedAt, id, ...rest } = funcionario[0];
+            const cleanedRest = Object.fromEntries(
+                Object.entries(rest).map(([key, value]) => [key, value ?? ""])
+            );
+            setSelectedFunc(cleanedRest);
+            setForm(cleanedRest);
         }
     };
 

@@ -18,6 +18,7 @@ function VacationsFilterComponent(){
         1: "CLT",
         2: "ESTÁGIO",
         3: "PJ",
+        4: "COOPERADO"
     };
 
     const handleSelect = async (email) => {
@@ -43,7 +44,6 @@ function VacationsFilterComponent(){
         setDate(newDate);
 
     };
-
     const handleSubmit = async () => {
         //2025-07-01 formato do inicio e fim
         if(activeButton === 'Funcionário'){
@@ -160,8 +160,16 @@ function VacationsFilterComponent(){
                             </ConfirmButton>
                         }
                     </OpContainer>
-                    {filteredData.length > 0 && <VacationsListComponent filteredData={filteredData} activeButton={activeButton} />}
-                    
+                    {filteredData.length > 0 && (
+                        <VacationsListComponent
+                            filteredData={filteredData.map(item => ({
+                                ...item,
+                                Ferias: item.Ferias.filter(f => f.status !== "Concluído")
+                            }))}
+                            activeButton={activeButton} handleSubmit={handleSubmit}
+                        />
+                    )}
+
                     {noData === true && <h2>Sem resultados para a pesquisa </h2>}
                 </Container>
             }

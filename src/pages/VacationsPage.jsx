@@ -122,6 +122,7 @@ function VacationsPage() {
                                                 </div>
                                             ))}
                                         </VacationTable>
+                                        
                                     }
                                     <ButtonsCreateContainer>
                                         {diasAgendados < vacationInfo?.Contratos?.diasFerias && <PeriodButton onClick={() => setAgendarFerias(true)}> Nova Solicitação</PeriodButton>}
@@ -132,8 +133,8 @@ function VacationsPage() {
                             }
                             {selectedPeriod >= 0 &&
                                 <TotalContainer>
-                                    <div>Agendados <br /> {diasAgendados - diasConcluidos}</div>
-                                    <div>Concluídos <br /> {diasConcluidos}</div>
+                                    <div>Agendados/Solicitados <br /> {diasAgendados - diasConcluidos}</div>
+                                    <div>Concluídos/Finalizados <br /> {diasConcluidos}</div>
                                     <div>Restantes <br /> {vacationInfo?.Contratos?.diasFerias - diasAgendados}</div>
                                 </TotalContainer>
                             }
@@ -202,14 +203,17 @@ const VacationContiner = styled.div`
     width: 75%;
     min-width: 700px;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     gap: 30px;
     margin-bottom: 40px;
     div {
         display: flex;
         justify-content: center;
+        align-items: center;
         gap: 30px;
+        padding-bottom: 7px;
+        line-height: 25px;
     }
     button {
         background-color: #ff5843;
@@ -238,7 +242,8 @@ const VacationTable = styled.div`
     div {
         margin-bottom: 0 !important;
         align-items: center;
-        min-height: 40px;
+        min-height: 45px;
+        height: 45px;
         border-bottom: 1px solid #80808F;
     }
     p{
@@ -265,9 +270,8 @@ const PeriodButton = styled.button`
 `;
 
 const TotalContainer = styled.div`
-    width: 800px;
     div{
-        width: 30%;
+        width: 25%;
         flex-wrap: wrap;
         justify-content: center;
         gap: 10px;

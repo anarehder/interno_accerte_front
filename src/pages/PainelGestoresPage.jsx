@@ -8,11 +8,13 @@ import BuscarVagasComponent from '../components/BuscarVagasComponent';
 import HumorGestoresComponent from '../components/HumorGestoresComponent';
 import apiService from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext';
+import AprovarFeriasComponent from '../components/vacations-components/AprovarFeriasComponent';
 
 function PainelGestoresPage() {
     const { user } = useAuth();
     const [selectedItem, setSelectedItem] = useState("");
     const [allowed, setAllowed] = useState(false);
+    const [carregando, setCarregando] = useState(true);
 
     useEffect(() => {
         if (!user) return;
@@ -52,11 +54,16 @@ function PainelGestoresPage() {
                             {selectedItem === "Humor" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
                             Termômetro de Humor
                         </button>
+                        <button onClick={() => setSelectedItem("Ferias")}>
+                            {selectedItem === "Ferias" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
+                            Aprovar Férias
+                        </button>
                     </SideBar>
                     <div>
                         {selectedItem === "ReqVaga" && <CriarVagaComponent setSelectedItem={setSelectedItem} />}
                         {selectedItem === "ListarVagas" && <BuscarVagasComponent />}
                         {selectedItem === "Humor" && <HumorGestoresComponent />}
+                        {selectedItem === "Ferias" && <AprovarFeriasComponent type={"Gestor"}/>}
                     </div>
                 </div>
                 :
