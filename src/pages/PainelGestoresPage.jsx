@@ -18,12 +18,11 @@ function PainelGestoresPage() {
 
     useEffect(() => {
         if (!user) return;
-
         const fetchScale = async () => {
             try {
                 const response = await apiService.buscarGestoresInfo();
-                const gestorConf = response.data.some(item => item.Funcionarios?.email === user.mail);
-                if (gestorConf){
+                const gestorConf = response.data.filter(item => item.Funcionarios?.email?.toLowerCase() == user.mail?.toLowerCase());
+                if (gestorConf.length>0){
                     setAllowed(true);
                 }
                 setCarregando(false);
@@ -80,6 +79,10 @@ function PainelGestoresPage() {
                         <button disabled={true}>
                             <MdOutlineRadioButtonUnchecked size={16} />
                             Termômetro de Humor
+                        </button>
+                        <button disabled={true}>
+                            <MdOutlineRadioButtonUnchecked size={16} />
+                            Aprovar Férias
                         </button>
                     </SideBar>
                     <PageRightContainer><h2> Área destinada a gestores </h2> </PageRightContainer>

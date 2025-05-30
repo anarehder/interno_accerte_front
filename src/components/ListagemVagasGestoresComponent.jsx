@@ -67,12 +67,12 @@ function ListagemVagasGestoresComponent({vaga, setUpdated}) {
                     <SubTitle>Criada em {new Date(vaga.createdAt).toLocaleDateString()}</SubTitle>
                 </Title>
                 <HeaderItems>
-                    <Status status={vaga.status}>
+                    <Status $status={vaga.status}>
                         <PiDotsThreeCircleFill size={40} />
                         {vaga.status}
                     </Status>
                     <ProgressContainer>
-                        <Progress status={vaga.status} percent={progress} />
+                        <Progress $status={vaga.status} $percent={progress} />
                     </ProgressContainer>
                     <ToggleButton onClick={() => setExpanded(!expanded)}>
                         {expanded ? <FaChevronUp /> : <FaChevronDown />}
@@ -270,8 +270,8 @@ const Status = styled.div`
     margin-left: 15px;
     align-items: center;
     font-weight: bold;
-    color: ${({ status }) => {
-    switch (status) {
+    color: ${({ $status }) => {
+    switch ($status) {
       case 'Cancelada': return '#dc2626'; // vermelho
       case 'Solicitado': return '#F9933C';
       case 'Stand By': return '#f59e0b'; // amarelo escuro
@@ -299,11 +299,11 @@ const ProgressContainer = styled.div`
 
 const Progress = styled.div`
   border-radius: 12px;
-  background: ${({ status }) =>
-    status === 'Cancelada'
+  background: ${({ $status }) =>
+    $status === 'Cancelada'
       ? '#dc2626'
       : 'linear-gradient(to right, #fb923c, #22c55e)'};
-  width: ${({ percent }) => percent}%;
+  width: ${({ $percent }) => $percent}%;
   transition: width 0.3s ease;
 `;
 
