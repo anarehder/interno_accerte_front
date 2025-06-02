@@ -30,11 +30,11 @@ function BannerSlideComponent() {
     <SliderContainer>
       <PrevNextButton onClick={prevSlide}>&#10094;</PrevNextButton>
       <SlideWrapper style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
-        <Slide>
+        {/* <Slide>
           <SlideLink href="https://tinyurl.com/37razdyb" target="_blank" >
             <SlideImage src={ipog} alt="IPOG" />
           </SlideLink>
-        </Slide>
+        </Slide> */}
         <Slide>
           {images.map((image, index) => (
             <SlideImage key={index} src={image.url} alt={`Slide ${image.name}`} />

@@ -6,7 +6,7 @@ import apiService from '../services/apiService';
 
 function HumorComponent() {
     const { user } = useAuth();
-    const [humor, setHumor] = useState("");
+    const [humor, setHumor] = useState(" ");
     const [savedHumor, setSavedHumor] = useState([]);
     const [mensagem, setMensagem] = useState('');
     const [carregando, setCarregando] = useState(true);
