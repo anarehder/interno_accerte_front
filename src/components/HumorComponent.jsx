@@ -6,22 +6,25 @@ import apiService from '../services/apiService';
 
 function HumorComponent() {
     const { user } = useAuth();
-    const [humor, setHumor] = useState(" ");
+    const [humor, setHumor] = useState("");
     const [savedHumor, setSavedHumor] = useState([]);
-    const [mensagem, setMensagem] = useState('');
+    const [mensagem, setMensagem] = useState('-');
     const [carregando, setCarregando] = useState(true);
+    const [updated, setUpdated] = useState(false);
     const today = new Date().toISOString().slice(0, 10);
-    // console.log(humor);
+
     useEffect(() => {
         if (!user) return;
         const fetchScale = async () => {
             try {
+                setCarregando(true);
                 const body = { email: user.mail, data: today };
                 const response = await apiService.buscarHumorFuncionario(body);
                 if (response.data.length === 1){
                     setSavedHumor(response.data);
                     setHumor(response.data[0].humor);
-                    // setMensagem(response.data[0].mensagem);
+                    setUpdated(false);
+                    setMensagem(response.data[0].mensagem);
                 }
                 setCarregando(false);
             } catch (error) {
@@ -32,7 +35,7 @@ function HumorComponent() {
 
         fetchScale();
 
-    }, [user, savedHumor]);
+    }, [user, updated]);
 
     const handleSelect = (number) =>{
         if(savedHumor.length === 0){
@@ -44,11 +47,10 @@ function HumorComponent() {
         const body = { email: user.mail, humor, mensagem };
         try {
             const response = await apiService.criarHumor(body);
-            let array = [];
-            array.push(response);
-            setSavedHumor(array);
-            setCarregando(false);
-            alert("Enviado com sucesso!");
+            if(response.status === 200){
+                setUpdated(true);
+                alert("Enviado com sucesso!");
+            }
         } catch (error) {
             console.error(error.response.data.message);
             setCarregando(false);
@@ -81,7 +83,6 @@ function HumorComponent() {
 
                 <textarea
                     placeholder={savedHumor.length === 0 ? 'Gostaria de nos contar porque se sente assim?' : 'Você já enviou seu humor hoje.'}
-                    value={mensagem}
                     onChange={(e) => setMensagem(e.target.value)}
                     rows="5"
                     disabled={savedHumor.length !== 0}
