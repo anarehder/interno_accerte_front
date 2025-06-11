@@ -8,7 +8,7 @@ function CriarUsuarioComponent({info, setUpdated}){
     const { user, dados } = useAuth();
     const agenda = dados?.agenda;
     const [selectedFunc, setSelectedFunc] = useState(null);
-    const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: "", isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:""});
+    const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:""});
 
     const handleSelect = (email) => {
       const funcionario = agenda.find((f) => f.mail === email);
@@ -25,8 +25,6 @@ function CriarUsuarioComponent({info, setUpdated}){
 
         if (id === "areaId" || id === "jornadaId" || id === "tipoContratoId") {
             newValue = Number(value);
-        } else if (id === "admissao" || id === "demissao" || id === "aniversario") {
-            newValue = value ? new Date(value).toISOString() : "";
         } else {
             newValue = value;
         }
@@ -43,11 +41,17 @@ function CriarUsuarioComponent({info, setUpdated}){
             alert("Todos os campos obrigatórios devem ser preenchidos.");
             return;
         }
+        const formComDatasFormatadas = {
+            ...form,
+            admissao: form.admissao ? new Date(form.admissao).toISOString() : "",
+            aniversario: form.aniversario ? new Date(form.aniversario).toISOString() : "",
+        };
+
         const body = {
             adminEmail: user.mail,
-            funcionario: form,
+            funcionario: formComDatasFormatadas,
         };
-        
+
         confirm(
             `Solicitante: ${body.adminEmail}\n` +
             `Deseja alterar os dados de:\n` +
@@ -59,7 +63,7 @@ function CriarUsuarioComponent({info, setUpdated}){
             const response = await apiService.createUser(body);
             if (response.status === 200) {
                 alert("Usuário editado com sucesso!");
-                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: "", isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:""});
+                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:""});
                 setSelectedFunc(null);
                 setUpdated(true);
             }
@@ -185,7 +189,7 @@ function CriarUsuarioComponent({info, setUpdated}){
                             </div>
 
                             <ButtonContainer>
-                                <Button onClick={() => handleSubmit}>Criar Usuário</Button>
+                                <Button onClick={handleSubmit}>Criar Usuário</Button>
                             </ButtonContainer>
                         </>
                     )}

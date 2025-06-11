@@ -6,7 +6,7 @@ import apiService from "../../services/apiService";
 function EditarUsuarioComponent({info, setUpdated}){
     const { user } = useAuth();
     const [selectedFunc, setSelectedFunc] = useState(null);
-    const [form, setForm] = useState({ nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: "", isAdmin: false, aniversario: "", areaId: "", jornadaId: "", cargo: "" });
+    const [form, setForm] = useState({ nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario: "", areaId: "", jornadaId: "", cargo: "" });
 
     const handleSelect = (id) => {
         const funcionario = info.listaFuncionarios.filter((f) => f.id === Number(id));
@@ -27,8 +27,6 @@ function EditarUsuarioComponent({info, setUpdated}){
 
         if (id === "areaId" || id === "jornadaId" || id === "tipoContratoId") {
             newValue = Number(value);
-        } else if (id === "admissao" || id === "demissao" || id === "aniversario") {
-            newValue = value ? new Date(value).toISOString() : "";
         } else {
             newValue = value;
         }
@@ -45,9 +43,16 @@ function EditarUsuarioComponent({info, setUpdated}){
             alert("Todos os campos obrigatórios devem ser preenchidos.");
             return;
         }
+        const formComDatasFormatadas = {
+            ...form,
+            admissao: form.admissao ? new Date(form.admissao).toISOString() : "",
+            demissao: form.demissao ? new Date(form.demissao).toISOString() : null,
+            aniversario: form.aniversario ? new Date(form.aniversario).toISOString() : "",
+        };
+
         const body = {
             adminEmail: user.mail,
-            funcionario: form,
+            funcionario: formComDatasFormatadas,
         };
         
         confirm(
@@ -61,7 +66,7 @@ function EditarUsuarioComponent({info, setUpdated}){
             const response = await apiService.editUser(body);
             if (response.status === 200) {
                 alert("Usuário editado com sucesso!");
-                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: "", isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:""});
+                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:""});
                 setSelectedFunc(null);
                 setUpdated(true);
             }
