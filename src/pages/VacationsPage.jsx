@@ -7,8 +7,8 @@ import apiService from '../services/apiService';
 import gerarFerias from "../services/vacationGenerate";
 import { FaEdit } from "react-icons/fa";
 import { MdLockOutline } from "react-icons/md";
-import CriarFeriasComponent from '../components/vacations-components/CriarFeriasComponent';
-import EditarFeriasComponent from '../components/vacations-components/EditarFeriasComponent';
+import CriarFeriasComponent from '../components/vacations/CriarFeriasComponent';
+import EditarFeriasComponent from '../components/vacations/EditarFeriasComponent';
 
 function VacationsPage() {
     const { user, carregando } = useAuth();

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 // import apiService from "../services/apiService";
 import { useAuth } from "../../contexts/AuthContext";
 import VacationsFilterComponent from "../VacationsFilterComponent";
-import AprovarFeriasComponent from "../vacations-components/AprovarFeriasComponent";
+import AprovarFeriasComponent from "../vacations/AprovarFeriasComponent";
 import NewVacationComponent from "../NewVacationComponent";
 import NewLicenseComponent from "../NewLicenseComponent";
 

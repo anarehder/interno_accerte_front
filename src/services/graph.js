@@ -2,7 +2,7 @@
 import { loginRequest } from "./authConfig";
 import moment from 'moment';
 
-async function getToken(instance, accounts) {
+export async function getToken(instance, accounts) {
   if (accounts.length === 0) {
     console.warn("Nenhuma conta encontrada.");
     return null;
@@ -29,8 +29,10 @@ export async function getUserProfile(instance, accounts) {
         Authorization: `Bearer ${response.accessToken}`,
       },
     });
-    const user = await graphResponse.json();
-     
+    
+    const details = await graphResponse.json();
+    const user = {...details, 'token': response.accessToken};
+
     sessionStorage.setItem("userMSAL", JSON.stringify(user));
     return user;
   } catch (error) {
@@ -127,6 +129,20 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
+  const teste = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value",
+      {
+        headers: {
+          Authorization: `Bearer ${response.accessToken}`,
+        },
+      });
+  // const buffer = await teste.buffer();
+  // const testee = await teste.json();
+  // const base64 = buffer.toString("base64");
+  const blob = await teste.blob();
+  const imageUrl = URL.createObjectURL(blob);
+  console.log(imageUrl);
+  
+  // console.log(testee);
   const hoje = new Date();
   const diaHoje = hoje.toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -147,7 +163,7 @@ export async function getSharePointData(instance, accounts) {
       });
       
   const files5 = await agenda.json();
-
+      
   const fileList5 = await Promise.all(
     files5.value
     .filter(f => f.officeLocation !== "NA" && f.officeLocation !== "OFF" && f.mail)
@@ -184,7 +200,7 @@ export async function getSharePointData(instance, accounts) {
       };
     })
   );
-  
+
   const ano = new Date().getFullYear();
   const calendario = await fetch(
     `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/CALENDARIOS/${ano}:/children`,
@@ -265,7 +281,7 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10, 'vagas': fileList11};
+  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10, 'vagas': fileList11, 'imageUrl': imageUrl};
   sessionStorage.setItem("sharePoint", JSON.stringify(responseObject));
   return responseObject;    
 

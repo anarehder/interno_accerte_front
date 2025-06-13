@@ -1,17 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import HeaderGGComponent from "../components/HeaderGGComponent";
-import UserComponent from "../components/UserComponent";
-import apiService from "../services/apiService";
-import NewVacationComponent from "../components/NewVacationComponent";
-import NewLicenseComponent from "../components/NewLicenseComponent";
-import VacationsFilterComponent from "../components/VacationsFilterComponent";
-import ScalePage from "./ScalePage";
-import ScaleTableComponent from "../components/ScaleTableComponent";
-import UsuariosAdminComponent from "../components/admin-components/UsuariosAdminComponent";
-import FeriasAdminComponent from "../components/admin-components/FeriasAdminComponent";
-import EscalasAdminComponent from "../components/admin-components/EscalasAdminComponent";
+import UsuariosAdminComponent from "../components/admin/UsuariosAdminComponent";
+import FeriasAdminComponent from "../components/admin/FeriasAdminComponent";
+import EscalasAdminComponent from "../components/admin/EscalasAdminComponent";
 
 const AdminPage = () => {{
     const { dados, user, carregando, getData } = useAuth();

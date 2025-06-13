@@ -8,22 +8,25 @@ import { useNavigate  } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi"; 
 import { useAuth } from "../contexts/AuthContext";
 import { useIsAuthenticated } from '@azure/msal-react';
-import { useMsal } from "@azure/msal-react";
 import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
 import HeaderComponent from "../components/HeaderComponent";
 import BirthdayPopUpComponent from "../components/BirthdayPopUpComponent";
 import ContactsComponent from "../components/ContactsComponent";
 import SugestoesComponent from "../components/SugestoesComponent";
 import IndicAccerteComponent from "../components/IndicAccerteComponent";
-import HumorComponent from "../components/HumorComponent";
+import HumorComponent from "../components/homepage/HumorComponent";
+import { getToken } from "../services/graph";
+import HomePageHeaderComponent from "../components/basic/HomePageHeaderComponent";
+import MenuBarComponent from "../components/basic/MenuBarComponent";
 
 const IntranetHomePage = () => {
     const { user, dados, getData } = useAuth();
-    const { instance } = useMsal();
     const navigate = useNavigate();
     const [searchBar, setSearchBar] = useState("");
     const isAuthenticated = useIsAuthenticated();
     const [filteredContacts, setFilteredContacts] = useState([]);
+    const [imageUrl, setImageUrl] = useState(null);
+    console.log(user);
 
     useEffect(() => {
         async function fetchData() {
@@ -32,7 +35,7 @@ const IntranetHomePage = () => {
             }
             if (!isAuthenticated) {
                 navigate("/");
-            }
+            }    
         }
     
         fetchData();
@@ -64,71 +67,21 @@ const IntranetHomePage = () => {
     };
 
     // console.log(filteredContacts);
-    const handleLogout = () => {
-        instance.logoutPopup({
-            postLogoutRedirectUri: "/",
-            mainWindowRedirectUri: "/"
-        });
-        sessionStorage.removeItem("posts");
-        sessionStorage.removeItem("sharePoint");
-        sessionStorage.removeItem("userMSAL");
-    }
+   
+
+    
 
     return (
         <Container>
             {!user ? <h1> Carregando dados...</h1> :
                 <>
-                    <LogoutButton onClick={handleLogout}>
+                    {/* <LogoutButton onClick={handleLogout}>
                         <FiLogOut size={20} />
-                    </LogoutButton>
+                    </LogoutButton> */}
                     <BirthdayPopUpComponent />
-                    <HeaderComponent pageTitle={user?.givenName} type={"homepage"} />
-                    <MenuContainer>
-                        <MenuItem><Link to={"/sobre"}> <h1>SOBRE <br /><span> NÓS</span></h1></Link></MenuItem>
-                        <MenuItem>
-                            <div> <h1>GENTE <br /><span> E GESTÃO </span></h1></div>
-                            <Dropdown>
-                                <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
-                                {/* <DropdownItem><Link to={"/beneficios"}>Benefícios</Link></DropdownItem> */}
-                                <DropdownItem><Link to={"/calendario"}>Calendário Accerte</Link></DropdownItem>
-                                <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
-                                <DropdownItem><Link to={"/faqs"}>FAQs</Link></DropdownItem>
-                                <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
-                                <DropdownItem><Link to={"/parceriaeducacional"}>IPOG</Link></DropdownItem>
-                                <DropdownItem><Link to={"/vagasemaberto"}>Vagas em Aberto</Link></DropdownItem>
-                            </Dropdown>
-                        </MenuItem>
-                        <MenuItem> <Link to="/contatos"><h1>NOSSA <br/><span> AGENDA </span></h1></Link></MenuItem>
-                        <MenuItem> <Link to="/links"><h1>LINKS <br /><span> RÁPIDOS</span></h1></Link></MenuItem>
-                        <MenuItem> <Link to="/fiquepordentro"><h1>FIQUE <br /><span>POR DENTRO </span> </h1></Link></MenuItem>
-                        <MenuItem>
-                            <div> <h1>GESTÃO <br /><span> DE TI </span></h1></div>
-                            <Dropdown>
-                                <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
-                                <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem>
-                            </Dropdown>
-                        </MenuItem>
-                        <MenuItem>
-                            <div> <h1>GESTÃO <br /><span>À VISTA</span></h1> </div>
-                            <Dropdown>
-                                <DropdownItem> <Link to="/painelgestores">Painel de Gestores</Link></DropdownItem>
-                                {
-                                    (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br') && 
-                                    <DropdownItem> <Link to="/admin">Painel Admin</Link></DropdownItem>
-                                }
-                            </Dropdown>
-                        </MenuItem>
-                        
-                        <form onSubmit={handleSearchSubmit}>
-                            <input
-                                type="text"
-                                placeholder=" Pesquise aqui um contato"
-                                value={searchBar}
-                                onChange={handleSearch}
-                            />
-                            <button type="submit"><FiSearch size={25} /></button>
-                        </form>
-                    </MenuContainer>
+                    <HomePageHeaderComponent />
+                    {/* <HeaderComponent pageTitle={user?.givenName} type={"homepage"} /> */}
+                    <MenuBarComponent searchBar={searchBar} setSearchBar={setSearchBar} setFilteredContacts={setFilteredContacts} />
                     <HumorComponent />
                     {filteredContacts.length > 0 ?
                         <>
@@ -164,6 +117,8 @@ const IntranetHomePage = () => {
                             </BannerContainer>
                         </>
                     }
+                    {imageUrl && <img src={imageUrl} alt={"teste"} />}
+                    
                     {/* <HumorComponent /> */}
                     <LinkedinPostsComponent />
                     <SugestoesComponent email={user.mail} />
@@ -188,8 +143,6 @@ const Container = styled.div`
     position: relative;
     font-family: "Poppins", serif;
     h1 {
-        font-weight: 400;
-        font-size: 15px;
         font-family: "Poppins", serif;
     }
     span{

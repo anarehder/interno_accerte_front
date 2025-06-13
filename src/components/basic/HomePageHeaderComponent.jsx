@@ -1,14 +1,13 @@
-import { Link } from 'react-router-dom';
-import Header from "../assets/header/header2.png"
-import Alert from "../assets/header/alert.png"
-import styled from 'styled-components';
-import { useAuth } from '../contexts/AuthContext';
+import Header from "../../assets/header/header2.png";
+import Alert from "../../assets/header/alert.png";
+import { useAuth } from '../../contexts/AuthContext';
+import { getToken } from '../../services/graph';
 import { useEffect, useState } from 'react';
 import { FiLogOut } from "react-icons/fi"; 
 import { useMsal } from "@azure/msal-react";
-import { getToken } from '../services/graph';
+import styled from 'styled-components';
 
-function HeaderComponent({pageTitle, type}) {
+function HomePageHeaderComponent() {
     const { user } = useAuth();
     const [imageUrl, setImageUrl] = useState(null);
     const [iniciais, setIniciais] = useState("");
@@ -58,11 +57,6 @@ function HeaderComponent({pageTitle, type}) {
     
     return (
         <PageContainer>
-            {type !== "homepage" &&
-                <Link to="/homepage">
-                    <ReturnButton> Voltar </ReturnButton>
-                </Link>
-            }
             <HeaderContainer>
                 <Block>
                     <Photo>
@@ -84,20 +78,12 @@ function HeaderComponent({pageTitle, type}) {
                         <img src={Alert} alt={'notificacao'} />
                     </Alerta>
                 </Block>
-                {/* <div>
-                    {type === "homepage" ? 
-                    <h1>Olá, <span> {user.givenName} {iniciais} </span><br /> Seja Bem-Vindo(a)!</h1> :
-                    <h1>{pageTitle} {iniciais}</h1>
-                    
-                    }
-                    {imageUrl && <img src={imageUrl} alt={"teste"} />}
-                </div> */}
             </HeaderContainer>
         </PageContainer>
     )
 }
 
-export default HeaderComponent;
+export default HomePageHeaderComponent;
 
 const PageContainer = styled.div`
     width: 100%;
@@ -106,10 +92,10 @@ const PageContainer = styled.div`
 `
 
 const HeaderContainer = styled.div`
-    background-color: #00357e;
+    background-color: red;
     height: 200px;
     background: url(${Header}) no-repeat right center;
-    background-size: contain;
+    background-size: cover;
     align-items: center;
     justify-content: space-between;
     background-color: #001143;
@@ -146,11 +132,9 @@ const Texto = styled.div`
     color: white;
     justify-content: center;
     h1{
-        font-size: 30px;
         line-height: 45px;
     }  
     h2{
-        font-size: 18px;
         line-height: 45px;
     }   
     span{
@@ -164,12 +148,11 @@ const Mensagem = styled.div`
     align-items: center;
     width: 100%;
     height: 160px;
-    font-size: 30px;
     font-weight: 400;
     border-left: 1px solid white;
     h1{
-        font-size: 25px;
         line-height: 45px;
+        font-size: 25px;
         font-weight: 300;
     }  
 `
@@ -187,19 +170,3 @@ const Alerta = styled.div`
         background-color: #001143;
     }
 `
-
-const ReturnButton = styled.button`
-    top: 10%;
-    left: 2%;
-    position: absolute;
-    font-size: 16px;
-    justify-content: center;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    &:hover {
-        background-color: #0056b3;
-    }
-`;

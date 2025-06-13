@@ -8,7 +8,7 @@ import BuscarVagasComponent from '../components/BuscarVagasComponent';
 import HumorGestoresComponent from '../components/HumorGestoresComponent';
 import apiService from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext';
-import AprovarFeriasComponent from '../components/vacations-components/AprovarFeriasComponent';
+import AprovarFeriasComponent from '../components/vacations/AprovarFeriasComponent';
 
 function PainelGestoresPage() {
     const { user } = useAuth();
