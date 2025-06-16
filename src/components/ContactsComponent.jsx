@@ -52,37 +52,54 @@ const ContactCard = styled.div`
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 95%;
+    max-width: 1550px;
     height: 50px;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     &:nth-of-type(1) {
-        background-color: #001F3F;
+        background-color: #1a4cae;
     }
 `;
 
 const Info = styled.p`
     color: #555;
-    width: 18%;
     text-align: center;
     word-break: break-word;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0 15px;
+    font-size: 15px;
     height: 50px;
+    border-radius: 8px;
+    line-height: 22px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); // sombra suave
+    &:nth-of-type(1) {
+        width: 300px;
+    }
     &:nth-of-type(2) {
-        width: 28%;
+        width: 300px;
+    }
+    &:nth-of-type(3) {
+        width: 160px;
+    }
+    &:nth-of-type(4) {
+        width: 180px;
+    }
+    &:nth-of-type(5) {
+        width: 300px;
     }
     span{
         width: 100%;
         height: 100%;
         font-weight: bold;
-        background-color: #001F3F;
+        background-color:#1a4cae;
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1); 
     }
 `;
   

@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
+import Banner1 from "../../assets/basic/banner-test.jpg"
 
 function BannerSlideComponent() {
     const { dados } = useAuth();
-    const images = dados?.banners?.length > 0 ? dados.banners : [{ name: "Default", url: banner1 }];
+    const images = dados?.banners?.length > 0 ? dados.banners : [{ name: "Default", url: Banner1 }];
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
@@ -96,7 +97,7 @@ const PrevNextButton = styled.button`
   cursor: pointer;
   font-size: 10px;
   border-radius: 5px;
-  z-index: 10;
+  z-index: 5;
   &:first-of-type{
     left: 10px;
   }

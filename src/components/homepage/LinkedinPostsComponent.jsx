@@ -82,6 +82,7 @@ const LinkedinContainer = styled.div`
 
 const Title = styled.div`
     background: linear-gradient(to right,#1A4CAF, #0B2049);
+    background: linear-gradient(to right,#205fdd, #001143);
     border-radius: 8px;
     box-shadow: 0px 4px 4px 0px #00000040;
     height: 60px;

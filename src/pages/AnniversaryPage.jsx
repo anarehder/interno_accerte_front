@@ -2,6 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import HeaderGGComponent from "../components/HeaderGGComponent";
+import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
+import MenuBarComponent from "../components/basic/MenuBarComponent";
+import MenuBarGGComponent from "../components/gentegestao/MenuBarGGComponent";
 
 const AnniversaryPage = () => {
     const { dados } = useAuth();
@@ -9,7 +12,9 @@ const AnniversaryPage = () => {
     const mesFormatado = mes.charAt(0).toUpperCase() + mes.slice(1).toLowerCase();
     return (
         <Container>
-            <HeaderGGComponent pageTitle={`Aniversários - ${mesFormatado}`} />
+            <HeaderGGNewComponent  pageTitle={`Aniversários`}  subtitle={` | ${mesFormatado}`}/>
+            <MenuBarGGComponent />
+            {/* <HeaderGGComponent pageTitle={`Aniversários - ${mesFormatado}`} /> */}
             <List>
                 {dados?.aniversarios?.map((file, index) => (
                     <Image key={index} src={file.url} alt={`Aniversário ${file.name}`} />
@@ -34,7 +39,7 @@ const Container = styled.div`
 const List = styled.div`
     display: flex;
     gap: 50px;
-    width: 90%;
+    width: 95%;
     margin-top: 30px;
     flex-wrap: wrap;
     justify-content: center;

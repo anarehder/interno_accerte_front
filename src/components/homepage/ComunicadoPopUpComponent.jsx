@@ -2,14 +2,16 @@ import styled from 'styled-components';
 import { useEffect, useState } from "react";
 import apiService from '../../services/apiService';
 import { useAuth } from '../../contexts/AuthContext';
-import MensagemAniversaio from '../../assets/ANIVERSARIANTE_DIA.jpeg';
+import Comunicado from '../../assets/teste-comunicado.jpeg';
 
 function ComunicadoPopUpComponent() {
     const { user, carregando } = useAuth();
-    const [closed, setClosed] = useState(true);
-    const [temComunicado, setTemComunicado] = useState(false);
+    const [closed, setClosed] = useState(false);
+    const [temComunicado, setTemComunicado] = useState(true);
+    const texto = `🧑🏻‍🌾Ô trem bão, sô! Vem aí o Arraiá da Accerte!👩🏻‍🌾 Eita que esse ano o nosso Arraiá vai sê danado de bão! Vai tê muita alegria, quitute gostoso, música pra arrastá o pé e aquele clima bão de festa junina que só a turma da Accerte sabe fazer! Agora escuta bem: capricha no traje, uai! Os homi: pega aquele chapéu de palha, pinta o dente, ajeita a camisa xadrez e as muié: tira a saia do armário, separa as bota e a maria chiquinha e vamo mode ficar bem caipirado mermo! Vai tê premiação pros cabra e as muié mais caracterizado da festa! Num vai moscá, não! Vem proseá, dançá, cumê e se divertê com a gente! Vem pro Arraiá da Accerte, sô! Vai sê bão demais da conta!`;
 
     useEffect(() => {
+        setTemComunicado(true);
         const fetchScale = async () => {
             try {
                 //busca se tem comunicado hoje e se ele ja foi lido pela pessoa
@@ -34,7 +36,6 @@ function ComunicadoPopUpComponent() {
 
     const fecharPopup = () => {
         setClosed(true);
-        localStorage.setItem("popupFechado", Date.now().toString());
     };
 
     const leituraPopup = () => {
@@ -42,17 +43,23 @@ function ComunicadoPopUpComponent() {
         setClosed(true);
     };
 
-    if (closed || !isMyBDay) return null;
+    // if (closed || !temComunicado) return null;
+     if (closed) return null;
 
     return (
         <Overlay>
             <CloseButton onClick={fecharPopup}>✖</CloseButton>
             <Modal>
-                <AniversarianteImagem
-                        src={MensagemAniversaio}
+                <h1>Arraiá da Accerte</h1>
+                <div>
+                    <Imagem
+                        src={Comunicado}
                         alt={"Mensagem"}
                     />
-                
+                    <Texto>{texto}</Texto>
+                </div>
+
+                <button>Confirmar Leitura</button>
             </Modal>
         </Overlay>
     )
@@ -70,41 +77,61 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 9;
 `;
 
 const Modal = styled.div`
-  
-  background-color: transparent;
-  width: 900px;
+  background-color: white;
+  position: relative;
+  width: 60%;
+  height: 85%;
   padding: 20px;
-  min-width: 400px;
   border-radius: 12px;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  color: #001143;
+  div{
+    height: 85%;
+    text-align: center;
+    align-items: center;
+    gap: 7%;
+    justify-content: center;
+  }
+  button{
+    background: linear-gradient(to right,#205fdd, #001143);
+  }
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 2%;
-  right: 25%;
+  top: 8%;
+  right: 21%;
   background: transparent;
-  font-size: 25px;
+  font-size: 20px;
   padding: 10px;
   cursor: pointer;
-  color: white;
-  border: 2px solid white;
+  color: #001143;
+  border: 2px solid #001143;;
   z-index: 10;
-
   &:hover {
     cursor: pointer;
-    background: white;
-    color: #FF5843;
+    background:  #001143;
+    color: white;
     }
 `;
 
-const AniversarianteImagem = styled.img`
-  width: 450px;
+const Imagem = styled.img`
+  width: 40%;
   border-radius: 10px;
-  position: relative;
+`;
+
+
+const Texto = styled.div`
+  width: 40%;
+  border-radius: 10px;
+  overflow-y: auto;
+  line-height: 25px;
+  padding: 10px;
+  border: 1px solid gray;
 `;

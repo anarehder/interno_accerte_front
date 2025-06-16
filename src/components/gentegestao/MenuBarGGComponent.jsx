@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Link } from "react-router-dom";
 import { useAuth } from '../../contexts/AuthContext';
 
-function MenuBarComponent() {
+function MenuBarGGComponent() {
     const { user, dados } = useAuth();
 
     return (
@@ -52,7 +52,7 @@ function MenuBarComponent() {
     )
 }
 
-export default MenuBarComponent;
+export default MenuBarGGComponent;
 
 const PageContainer = styled.div`
     width: 100%;
@@ -80,15 +80,15 @@ const ItemsBar = styled.div`
 const MenuItem = styled.div`
     max-width: 150px;
     height: 50px;
-    color: #082764;
-    border-right: 1px solid #082764;
+    color: #E40D5C;
+    border-right: 1px solid #E40D5C;
     flex-wrap: wrap;
     position: relative;
     cursor: pointer;
     justify-content: center;
     align-items: center;
     &:first-of-type {
-        border-left: 1px solid #082764;
+        border-left: 1px solid #E40D5C;
     }
     &:hover div {
         display: block;
@@ -108,7 +108,7 @@ const Dropdown = styled.div`
     color: white;
     text-indent: 10px;
     line-height: 30px;
-    background: linear-gradient(to bottom,#00348E, #001143);
+    background: linear-gradient(to bottom, #F1314D,rgb(152, 8, 61));
     box-shadow: 2px 4px 3px 5px rgba(0, 0, 0, 0.2);
     display: none;
     z-index: 2;

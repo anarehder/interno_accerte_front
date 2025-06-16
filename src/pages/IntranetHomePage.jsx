@@ -4,21 +4,20 @@ import { Link } from "react-router-dom";
 import { useNavigate  } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useIsAuthenticated } from '@azure/msal-react';
-
-import MenuBarComponent from "../components/basic/MenuBarComponent";
 import FooterComponent from "../components/basic/FooterComponent";
-
+import Background from "../assets/basic/background.png"
+import ButtonBackground from "../assets/basic/button-background.png"
+import ComunicadoPopUpComponent from "../components/homepage/ComunicadoPopUpComponent";
 import HomePageHeaderComponent from "../components/homepage/HomePageHeaderComponent";
 import LinkedinPostsComponent from "../components/homepage/LinkedinPostsComponent";
 import BirthdayPopUpComponent from "../components/homepage/BirthdayPopUpComponent";
 import IndicAccerteComponent from "../components/homepage/IndicAccerteComponent";
 import BannerSlideComponent from "../components/homepage/BannerSlideComponent";
+import MenuBarHomeComponent from "../components/homepage/MenuBarHomeComponent";
 import SugestoesComponent from "../components/homepage/SugestoesComponent";
 import HumorComponent from "../components/homepage/HumorComponent";
 import ContactsComponent from "../components/ContactsComponent";
 
-import Background from "../assets/basic/background.png"
-import ButtonBackground from "../assets/basic/button-background.png"
 
 const IntranetHomePage = () => {
     const navigate = useNavigate();
@@ -53,8 +52,9 @@ const IntranetHomePage = () => {
             {!user ? <h1> Carregando dados...</h1> :
                 <>
                     <BirthdayPopUpComponent />
+                    <ComunicadoPopUpComponent />
                     <HomePageHeaderComponent temNotificacao={temNotificacao}/>
-                    <MenuBarComponent searchBar={searchBar} setSearchBar={setSearchBar} setFilteredContacts={setFilteredContacts} />
+                    <MenuBarHomeComponent searchBar={searchBar} setSearchBar={setSearchBar} setFilteredContacts={setFilteredContacts} />
                     <HumorComponent />
                     {filteredContacts.length > 0 ?
                         <SearchResponse>
@@ -155,15 +155,17 @@ const BannerButton = styled.div`
 `
 
 const SearchResponse = styled.div`
-    margin: 35px 0;
+    margin: 75px 0;
     width: 95%;
-    color: #067DD1;
+    color: #1a4cae;
     flex-direction: column;
     position: relative;
     button {
         position: absolute;
         justify-content: center;
-        right: 50px;
+        background-color: #1a4cae;
+        background: linear-gradient(to right,#205fdd, #001143);
+        right: 150px;
         top:-5px;
     }
 `

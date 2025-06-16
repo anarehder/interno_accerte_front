@@ -1,9 +1,35 @@
-import styled from 'styled-components';
-import { Link } from "react-router-dom";
 import { useAuth } from '../../contexts/AuthContext';
+import { FiSearch } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import styled from 'styled-components';
 
-function MenuBarComponent() {
+function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
     const { user, dados } = useAuth();
+
+    const handleSearch = (e) => {
+        setSearchBar(e.target.value);
+    };
+    function removeAcentos(text) {
+        return text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    }
+
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        const filtered = dados.agenda.filter(contato =>
+            removeAcentos(contato.name.toLowerCase())
+            .includes(searchBar.toLowerCase())
+        );
+        setFilteredContacts(filtered);
+        if (filtered.length === 0){
+            alert("Nenhum resultado encontrado.")
+            setSearchBar("");
+        }
+    };
+
+    const clearSearch = () => {
+        setFilteredContacts([]);
+        setSearchBar("");
+    };
 
     return (
         <PageContainer>
@@ -46,13 +72,24 @@ function MenuBarComponent() {
                     </Dropdown>
                 </MenuItem>
                 </ItemsBar>
+                <SearchItem>
+                    <form onSubmit={handleSearchSubmit}>
+                    <input
+                        type="text"
+                        placeholder=" Pesquise aqui um contato"
+                        value={searchBar}
+                        onChange={handleSearch}
+                    />
+                    <button type="submit"><FiSearch size={25} /></button>
+                    </form>
+                </SearchItem>
                 
             </MenuContainer>
         </PageContainer>
     )
 }
 
-export default MenuBarComponent;
+export default MenuBarHomeComponent;
 
 const PageContainer = styled.div`
     width: 100%;
@@ -63,18 +100,17 @@ const PageContainer = styled.div`
 `
 
 const MenuContainer = styled.div`
-    background-color: white;
-    height: 50px;
-    width: 100%;
+    background-color: #e7e7e7;
+    height: 60px;
+    width: 90%;
     align-items: center;
-    justify-content: center;
-    border-radius: 2px;
-    box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.2);
+    justify-content: space-between;
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.4);
 `
 
 const ItemsBar = styled.div`
-    width: 100%;
-    justify-content: center;
+    width: 70%;
 }`
 
 const MenuItem = styled.div`
@@ -87,9 +123,6 @@ const MenuItem = styled.div`
     cursor: pointer;
     justify-content: center;
     align-items: center;
-    &:first-of-type {
-        border-left: 1px solid #082764;
-    }
     &:hover div {
         display: block;
         justify-content: center;
@@ -98,6 +131,44 @@ const MenuItem = styled.div`
         font-size: 14px !important;
     }
 `;
+
+const SearchItem = styled.div`
+    width: 25%;
+    margin-right: 10px;
+    border-radius: 10px;
+    background-color:  #E7E7E7;
+    form {
+        width: 90%;
+        margin-left: 20px;
+        height: 45px;
+        display: flex;
+        justify-content: space-between;
+        background: linear-gradient(to right,#205fdd, #001143);
+        border-radius: 10px;
+        input {
+            width: 90%;
+            color: white;
+            font-size: 15px;
+            border-right: 1px solid white;
+            padding-left: 5px;
+            text-indent: 15px;   
+            &::placeholder {
+                color: white;
+                padding-left: 5px;
+                text-indent: 15px;             
+            }
+        }
+        button {
+            width: 55px;
+            background-color: transparent;
+            justify-content: center;
+            color: white;
+            padding: 0;
+            margin-left: 5px;
+            border: none;
+        }
+    }
+`
 
 const Dropdown = styled.div`
     position: absolute;
