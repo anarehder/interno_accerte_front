@@ -110,7 +110,7 @@ const MenuContainer = styled.div`
 `
 
 const ItemsBar = styled.div`
-    width: 70%;
+    width: 74%;
 }`
 
 const MenuItem = styled.div`
@@ -129,11 +129,15 @@ const MenuItem = styled.div`
     }
     h1{
         font-size: 14px !important;
+        font-weight: 400;
+    }
+    span {
+        font-weight: 600;
     }
 `;
 
 const SearchItem = styled.div`
-    width: 25%;
+    width: 24%;
     margin-right: 10px;
     border-radius: 10px;
     background-color:  #E7E7E7;
