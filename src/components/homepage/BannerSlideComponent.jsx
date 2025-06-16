@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useAuth } from "../contexts/AuthContext";
-import banner1 from "../assets/BANNER1.png"; 
-import ipog from "../assets/3---PARCERIA-IPOG.png"; 
+import { useAuth } from "../../contexts/AuthContext";
 
 function BannerSlideComponent() {
     const { dados } = useAuth();
@@ -63,8 +61,6 @@ const SlideWrapper = styled.div`
   transition: transform 0.5s ease-in-out;
   width: 100%; 
   a{
-    // background-color: red;
-    // min-width: 100% !important;
     height: 500px !important;
     margin: 0;
     padding:0;
@@ -75,7 +71,6 @@ const Slide = styled.div`
   min-width: 100%;
   min-height: 100%;
   box-sizing: border-box;
-  // width: 300%;
 `
 
 const SlideLink = styled.a`

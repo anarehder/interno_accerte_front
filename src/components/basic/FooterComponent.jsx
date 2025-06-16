@@ -1,9 +1,9 @@
 import styled from 'styled-components';
+import Background from "../../assets/basic/component-background-blue.png"
+import Logo from "../../assets/basic/logo-completa-branca.png";
 import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
 import { TfiEmail } from "react-icons/tfi";
-import Logo from "../assets/LOGO-INTRANET-BRANCO.png";
-import Fundo from "../assets/FUNDO_HOME.png";
 
 function FooterComponent() {
 
@@ -54,9 +54,9 @@ const PageContainer = styled.div`
 `
 
 const FooterContainer = styled.div`
-    background: url(${Fundo}) no-repeat bottom center;
-    filter: brightness(85%); /* Escurece a imagem */
-    background-size: cover; 
+    background: url(${Background}) no-repeat center;
+    background-size: cover;
+    background-size: 120%;
     gap: 50px;
     height: 140px;
     justify-content: center;
@@ -81,7 +81,7 @@ const FooterContainer = styled.div`
         border-left: 2px solid white;
         border-right: 2px solid white;
         img{
-            width: 40%;
+            width: 30%;
         }
     }
 

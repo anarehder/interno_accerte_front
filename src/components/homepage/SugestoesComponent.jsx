@@ -1,8 +1,9 @@
 // SugestoesComponent.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from "styled-components";
-import apiService from '../services/apiService';
-import { FcIdea } from "react-icons/fc";
+import apiService from '../../services/apiService';
+import Background from "../../assets/basic/component-background-blue.png"
+import IdeaIcon from "../../assets/basic/idea-icon.png"
 
 function SugestoesComponent({email}) {
     const [tipo, setTipo] = useState('Melhoria');
@@ -29,13 +30,9 @@ function SugestoesComponent({email}) {
 
   return (
       <Container>
-          <h2><FcIdea size={24} /> Compartilhe suas ideias para a Intranet</h2>
+          <Title><img src={IdeaIcon} alt={"Ideia"} /> COMPARTILHE <span> SUAS IDEIAS </span> PARA A INTRANET</Title>
           <form onSubmit={handleSubmit}>
               <ItensContainer>
-                  <label>
-                      Tipo:
-
-                  </label>
                   <select
                       value={tipo}
                       onChange={(e) => setTipo(e.target.value)}
@@ -46,11 +43,8 @@ function SugestoesComponent({email}) {
                   </select>
               </ItensContainer>
               <ItensContainer>
-                  <label>
-                      Texto:
-
-                  </label>
                   <textarea
+                      placeholder='Descreva aqui sua ideia/sugestão'
                       value={texto}
                       onChange={(e) => s(e.target.value)}
                       rows="5"
@@ -59,7 +53,7 @@ function SugestoesComponent({email}) {
               </ItensContainer>
 
               <Button type="submit">
-                  Enviar
+                  ENVIAR
               </Button>
           </form>
           {/* {mensagem && <p className="mt-4 text-green-700">{mensagem}</p>} */}
@@ -71,50 +65,77 @@ export default SugestoesComponent;
 
 const Container = styled.div`
     width:90%;
-    color: #555;
+    color: white;
+    border-radius: 8px;
+    background: url(${Background}) no-repeat center;
+    background-size: cover;
+    background-size: 120%;
+    box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.3);
     flex-direction: column;
     justify-content: flex-start;
     margin-bottom: 50px;
-    h2{
-        color:#067DD1;
-        font-size: 26px;
-        text-align: left;
-        margin: 15px 0;
-        margin-bottom: 35px;
-    }
+    padding: 15px 0;    
     form{
         display: flex;
-        justify-content: flex-start;
+        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        gap: 100px;
-        div:first-of-type{
-            width: 30%;
-        }
     }
 
-
 `
+
+const Title = styled.div`
+    height: 60px;   
+    font-size: 30px;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 10px;
+    line-height: 45px;
+    margin-bottom: 20px;
+    img{
+        height: 60px;
+    }
+`
+
 const ItensContainer = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     font-size: 20px;
     gap: 20px;
-    height: 160px;
-    max-width: 50%;
+    margin: 15px 0;
+    // height: 160px;
+    width: 80%;
     textarea {
         color: #555;
         font-family: "Poppins", serif;
+        font-size: 15px;
         padding: 5px;
-        border-radius: 10px;
+        border-radius: 8px;
+        text-indent: 10px;
+        box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.3);
+    }
+    label{
+    }
+    select{
+        color: #002972;
+        // background-color: red;
+        border-radius: 8px;
+        box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.3);
     }
 `
 
 
 const Button = styled.button`
-    width: 100px;
     height: 50px;
     justify-content: center;
     border: none;
+    margin: 10px 0;
     border-radius: 10px;
     cursor: pointer;
+    color: #002972;
+    box-shadow: 0px 4px 4px 0px #00000040;
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 14px;
+    background: linear-gradient(111.16deg, #FFFFFF 36.05%, #BDBCBC 109.97%);
 `;

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useEffect, useState } from "react";
-import { useAuth } from '../contexts/AuthContext';
-import MensagemAniversaio from '../assets//ANIVERSARIANTE_DIA.jpeg';
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
+import { useAuth } from '../../contexts/AuthContext';
+import MensagemAniversaio from '../../assets/ANIVERSARIANTE_DIA.jpeg';
 
 function BirthdayPopUpComponent() {
     const { user, carregando } = useAuth();
@@ -17,6 +17,7 @@ function BirthdayPopUpComponent() {
                 if(isMyBirthday){
                     setIsMyBDay(true);
                 }
+                //pegar se é aniversario de alguém
                 else {
                     return;
                 }

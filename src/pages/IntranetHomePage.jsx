@@ -1,32 +1,32 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FiSearch } from "react-icons/fi";
-import FooterComponent from "../components/FooterComponent";
-import BannerSlideComponent from "../components/BannerSlideComponent";
 import { useNavigate  } from "react-router-dom";
-import { FiLogOut } from "react-icons/fi"; 
 import { useAuth } from "../contexts/AuthContext";
 import { useIsAuthenticated } from '@azure/msal-react';
-import LinkedinPostsComponent from "../components/LinkedinPostsComponent";
-import HeaderComponent from "../components/HeaderComponent";
-import BirthdayPopUpComponent from "../components/BirthdayPopUpComponent";
-import ContactsComponent from "../components/ContactsComponent";
-import SugestoesComponent from "../components/SugestoesComponent";
-import IndicAccerteComponent from "../components/IndicAccerteComponent";
-import HumorComponent from "../components/homepage/HumorComponent";
-import { getToken } from "../services/graph";
-import HomePageHeaderComponent from "../components/basic/HomePageHeaderComponent";
+
 import MenuBarComponent from "../components/basic/MenuBarComponent";
+import FooterComponent from "../components/basic/FooterComponent";
+
+import HomePageHeaderComponent from "../components/homepage/HomePageHeaderComponent";
+import LinkedinPostsComponent from "../components/homepage/LinkedinPostsComponent";
+import BirthdayPopUpComponent from "../components/homepage/BirthdayPopUpComponent";
+import IndicAccerteComponent from "../components/homepage/IndicAccerteComponent";
+import BannerSlideComponent from "../components/homepage/BannerSlideComponent";
+import SugestoesComponent from "../components/homepage/SugestoesComponent";
+import HumorComponent from "../components/homepage/HumorComponent";
+import ContactsComponent from "../components/ContactsComponent";
+
+import Background from "../assets/basic/background.png"
+import ButtonBackground from "../assets/basic/button-background.png"
 
 const IntranetHomePage = () => {
-    const { user, dados, getData } = useAuth();
     const navigate = useNavigate();
+    const { user, dados, getData } = useAuth();
     const [searchBar, setSearchBar] = useState("");
     const isAuthenticated = useIsAuthenticated();
+    const [temNotificacao, setTemNotificacao] = useState([{tipo: "Férias", titulo: "Férias"},{tipo: "Comunicado", titulo: "Comunicado"},{tipo: "Vaga", titulo: "Vaga"}]);
     const [filteredContacts, setFilteredContacts] = useState([]);
-    const [imageUrl, setImageUrl] = useState(null);
-    console.log(user);
 
     useEffect(() => {
         async function fetchData() {
@@ -36,93 +36,59 @@ const IntranetHomePage = () => {
             if (!isAuthenticated) {
                 navigate("/");
             }    
+            //buscar notificações
+            //se for admin pegar nova vaga ferias para aprovar e 
         }
     
         fetchData();
     }, [isAuthenticated, navigate]);
 
-    const handleSearch = (e) => {
-        setSearchBar(e.target.value);
-    };
-    function removeAcentos(text) {
-        return text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-    }
-
-    const handleSearchSubmit = (e) => {
-        e.preventDefault();
-        const filtered = dados.agenda.filter(contato =>
-            removeAcentos(contato.name.toLowerCase())
-            .includes(searchBar.toLowerCase())
-        );
-        setFilteredContacts(filtered);
-        if (filtered.length === 0){
-            alert("Nenhum resultado encontrado.")
-            setSearchBar("");
-        }
-    };
-
     const clearSearch = () => {
         setFilteredContacts([]);
         setSearchBar("");
-    };
-
-    // console.log(filteredContacts);
-   
-
+    }
     
-
     return (
         <Container>
             {!user ? <h1> Carregando dados...</h1> :
                 <>
-                    {/* <LogoutButton onClick={handleLogout}>
-                        <FiLogOut size={20} />
-                    </LogoutButton> */}
                     <BirthdayPopUpComponent />
-                    <HomePageHeaderComponent />
-                    {/* <HeaderComponent pageTitle={user?.givenName} type={"homepage"} /> */}
+                    <HomePageHeaderComponent temNotificacao={temNotificacao}/>
                     <MenuBarComponent searchBar={searchBar} setSearchBar={setSearchBar} setFilteredContacts={setFilteredContacts} />
                     <HumorComponent />
                     {filteredContacts.length > 0 ?
-                        <>
-                            <SearchResponse>
-                                <h2> Resultados da busca...</h2>
-                                <ContactsComponent contatos={filteredContacts} />
-                                <button onClick={clearSearch}> Limpar pesquisa</button>
-                            </SearchResponse>
-                        </>
+                        <SearchResponse>
+                            <h2> Resultados da busca...</h2>
+                            <ContactsComponent contatos={filteredContacts} />
+                            <button onClick={clearSearch}> Limpar pesquisa</button>
+                        </SearchResponse>
                         :
-                        <>
-                            <BannerContainer>
-                                <BannerSlideComponent />
-                                <BannerMenu>
-                                <div> <Link to="/assinatura"><h1>ASSINATURA <br /> <span> DE E-MAIL</span></h1></Link></div>
-                                    <div>
+                        <BannerContainer>
+                            <BannerSlideComponent />
+                            <BannerMenu>
+                                <BannerButton>
+                                    <Link to="/assinatura">ASSINATURA DE E-MAIL</Link>
+                                </BannerButton>
+                                <BannerButton>
                                     <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
-                                </div>
-                                <div>
+                                </BannerButton>
+                                <BannerButton>
                                     <Link to="/compliance">COMPLIANCE </Link>
-                                </div>
-                                
-                                <div>
+                                </BannerButton>
+                                <BannerButton>
                                     <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
-                                        ESCRITÓRIO <br /> DE PROCESSOS
+                                        ESCRITÓRIO DE PROCESSOS
                                     </a>
-                                </div>
-                                <div>
+                                </BannerButton>
+                                <BannerButton>
                                     <Link to={"/politicas"}>POLÍTICAS </Link>
-                                </div>
-                                
-                                </BannerMenu>
-                            </BannerContainer>
-                        </>
+                                </BannerButton>
+                            </BannerMenu>
+                        </BannerContainer>
                     }
-                    {imageUrl && <img src={imageUrl} alt={"teste"} />}
-                    
-                    {/* <HumorComponent /> */}
                     <LinkedinPostsComponent />
                     <SugestoesComponent email={user.mail} />
-                    <IndicAccerteComponent user={user}/>
+                    <IndicAccerteComponent user={user} />
                     <FooterComponent />
                 </>
             }
@@ -138,8 +104,8 @@ const Container = styled.div`
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    // background: #D9D9D9;
-    background-color: white;
+    background: url(${Background}) no-repeat right center;
+    background-size: cover;
     position: relative;
     font-family: "Poppins", serif;
     h1 {
@@ -150,155 +116,43 @@ const Container = styled.div`
     }
 `;
 
-const LogoutButton = styled.button`
-    position: absolute;
-    top: 25px;
-    right: 20px;
-    font-size: 10px;
-    z-index: 2;
-`
-
-const MenuContainer = styled.div`
-    width: 90%;
-    background-color: #067DD1;
-    align-items: center;
-    justify-content: space-between;
-    color: white;
-    padding: 0 15px;
-    div {
-        justify-content: center;
-        text-align: center;
-        min-width: 8%;
-        line-height: 20px;
-        width: fit-content;
-        margin: 5px;
-    }
-    form {
-        width: 20%;
-        margin-left: 30px;
-        height: 40px;
-        display: flex;
-        background-color: white;
-        border-radius: 10px;
-        input {
-            width: 80%;
-            color: #067DD1;
-            font-size: 15px;
-            border-right: 2px solid #067DD1;
-            padding-left: 5px;
-            &::placeholder {
-                color: #067DD1;
-                padding-left: 5px;
-                opacity: 0.7;               
-            }
-        }
-        button {
-            width:15%;
-            background-color: transparent;
-            color: #067DD1;
-            padding: 0;
-            margin-left: 5px;
-            border: none;
-        }
-    }
-`
 
 const BannerContainer = styled.div`
     width: 90%;
-    justify-content: space-between;
+    justify-content: center;
     margin: 50px 0;
     gap: 50px;
     align-items: center;
 `
 
 const BannerMenu = styled.div`
-    width: 30%;
+    width: 350px;
     border-left: 1px solid #555;
     flex-direction: column;
-    padding: 30px;
+    padding:  30px 50px;
     gap: 30px;
-    div{
-        background-color: #1c8ad9;
-        padding: 0 10px;
-        color: white;
-        height: 75px;
-        border-radius: 15px;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        box-shadow: 2px -2px 2px 2px rgba(0, 0, 0, 0.2);
-        a {
-            height: 100%;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 }
 `
 
-const ButtonsContainer = styled.div`
-    font-size: 22px;
-    width: 90%;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    // gap: 30px;
-    margin-bottom: 20px;
+const BannerButton = styled.div`
+    background: url(${ButtonBackground}) no-repeat center;
+    background-size: cover;
+    background-size: 120%;
+    box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.3);
+    height: 70px;
     color: white;
-    div{
-        background-color: #1c8ad9;
-        width: 20%;
-        padding: 0 10px;
-        height: 100px;
-        border-radius: 15px;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        box-shadow: 2px -2px 3px 5px rgba(0, 0, 0, 0.2);
-        a {
-            height: 100%;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    }
-`
-
-const MenuItem = styled.div`
-    position: relative;
-    cursor: pointer;
+    border-radius: 15px;
     justify-content: center;
     align-items: center;
-    height: 60px;
-    &:hover div {
-        display: block;
+    font-size: 16px;
+    a {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-`;
-
-const Dropdown = styled.div`
-  position: absolute;
-  top: 95%;
-  left: 0;
-  background: #4493dc;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  box-shadow: 2px 4px 3px 5px rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  border-top-left-radius: 0;
-  padding: 5px;
-  display: none;
-  width: 190px !important;
-  z-index: 2;
-`;
-
-const DropdownItem = styled.div`
-  padding: 4px 2px;
-  cursor: pointer;
-  &:hover {
-    color: black;
-  }
-`;
+`
 
 const SearchResponse = styled.div`
     margin: 35px 0;

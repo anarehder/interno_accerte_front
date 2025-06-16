@@ -1,9 +1,9 @@
 // SugestoesComponent.jsx
 import { useState } from 'react';
 import styled from "styled-components";
-import { BsPersonVcardFill } from "react-icons/bs";
-import { postVagaIndicada } from "../services/graph";
+import { postVagaIndicada } from "../../services/graph";
 import { useMsal } from "@azure/msal-react";
+import IndicaIcon from "../../assets/basic/indica-icon.png"
 
 
 function IndicAccerteComponent({user}) {
@@ -43,17 +43,11 @@ function IndicAccerteComponent({user}) {
 
     return (
         <Container>
-            <h2><BsPersonVcardFill size={30} /> IndicAccerte</h2>
+            <Title><img src={IndicaIcon} alt={"Ideia"} /> Indic<span>Accerte</span> </Title>
             <form>
                 <ItensContainer>
-                    <label>
-                        Área:
-                    </label>
-                    <select
-                        value={area}
-                        onChange={(e) => setArea(e.target.value)}
-                    >
-                        <option value={""}>Selecione uma área</option>
+                    <select value={area} onChange={(e) => setArea(e.target.value)}>
+                        <option value={""}>Área</option>
                         {areas.map((area) => (
                             <option key={area} value={area}>
                                 {area}
@@ -64,12 +58,12 @@ function IndicAccerteComponent({user}) {
 
                 <ItensContainer>
                     <label>
-                        Indique alguém para o banco de talentos. <br/>(extensões permitidas PDF ou DOC):
+                        Indique alguém para o banco de talentos. (extensões permitidas PDF ou DOC):
                     </label>
                     <input type="file" accept=".pdf,.doc,.docx" onChange={handleArquivoChange} />
                 </ItensContainer>
                 <Button onClick={handleIndicar}>
-                    Indicar
+                    ENVIAR
                 </Button>
             </form>
         </Container>
@@ -79,67 +73,79 @@ function IndicAccerteComponent({user}) {
 export default IndicAccerteComponent;
 
 const Container = styled.div`
-    width:90%;
-    color: #555;
+    width: 90%;
+    color: #002972;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: flex-start;
     margin-bottom: 50px;
-    h2{
-        color:#067DD1;
-        text-align: left;
-        font-size: 26px;
-        margin: 15px 0;
-        margin-bottom: 35px;
-        display: flex;
-        align-items: center;
-        svg {
-            margin-right: 10px;
-        }
-    }
     form{
+        width: 100%;
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        div:first-of-type{
-            width: 30%;
-        }
-        div:nth-of-type(2){
-            min-width: 40%;
-        }
     }
 }
 `
 
-const ItensContainer = styled.div`
-    flex-direction: column;
+const Title = styled.div`
+    height: 60px;   
+    font-size: 30px;
+    align-items: center;
     justify-content: flex-start;
-    font-size: 20px;
-    gap: 20px;
-    height: 160px;
-    max-width: 50%;
+    line-height: 45px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 30px;
+    img{
+        height: 60px;
+    }
+`
+
+const ItensContainer = styled.div`
+    width: 90%;
+    align-items: center;
+    margin: 10px 0;
     label{
         text-align: left;
         width: 100%;
     }
     input{
-        width: 90%;
+        width: 650px;
         flex-wrap: wrap;
         cursor: pointer;
         margin-top: 10px;
-        font-size: 18px;
-        gap: 15x;
+        font-size: 16px;
+        gap: 20x;
         padding: 4px;
+    }
+    select{
+        width: 100%;
+        height: 50px;
+        color: #002972;
+        border-radius: 8px;
+        box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.3);
     }
     ::-webkit-file-upload-button {
         color: #555;
+        border-radius: 8px;
+        padding: 4px 10px;
+        margin-right: 10px;
     }
 `
 
 const Button = styled.button`
-    width: 100px;
     height: 50px;
     justify-content: center;
     border: none;
+    margin: 10px 0;
     border-radius: 10px;
     cursor: pointer;
+    color: white;
+    box-shadow: 0px 4px 4px 0px #00000040;
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 14px;
+    background: linear-gradient(to right,#205fdd, #001143);
 `;

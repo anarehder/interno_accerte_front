@@ -3,7 +3,7 @@ import axios from "axios";
 import { IoIosArrowDropright } from "react-icons/io";
 import { FaLinkedin } from "react-icons/fa";
 import { useEffect, useState } from 'react';
-import apiService from '../services/apiService';
+import apiService from '../../services/apiService';
 
 function LinkedinPostsComponent() {
     const [posts, setPosts] = useState([]);
@@ -39,9 +39,10 @@ function LinkedinPostsComponent() {
     return (
         <PageContainer>
             <LinkedinContainer>
-                <h2>
-                    <FaLinkedin size={27} color="#067DD1" /> Acompanhe nas redes sociais
-                </h2>
+                <Title>
+                        <FaLinkedin size={27}/> O que está rolando nas redes sociais
+                </Title>
+                
                 {loading && <div> <br />Carregando posts... </div>}
                 {error && <div> <br />{error} </div>}
                 {!loading && posts.length === 0 && <FalhaContainer> <br />Falha ao carregar os posts... </FalhaContainer>}
@@ -71,35 +72,46 @@ const PageContainer = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     margin-bottom: 50px;
-    h2{
-        color:#067DD1;
-        font-size: 26px;
-        text-align: left;
-        margin: 15px 0;
-        display: flex;
-        margin-bottom: 35px;
-        align-items: flex-end !important;
-        svg {
-            margin-right: 10px;
-        }
-    }
 `
 
 
 const LinkedinContainer = styled.div`
     margin-top: 15px;
     flex-direction: column;
-    color: #067DD1;
 `;
+
+const Title = styled.div`
+    background: linear-gradient(to right,#1A4CAF, #0B2049);
+    border-radius: 8px;
+    box-shadow: 0px 4px 4px 0px #00000040;
+    height: 60px;
+    color: white;
+    align-items: center;
+    margin: 0 auto;
+    color: white;font-family: Poppins;
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 14px;
+    letter-spacing: 0%;
+    text-align: center;
+
+    svg {
+        margin: 0 10px;
+        padding-right: 10px;
+        border-right: 1px solid white;
+    }
+`
 
 const FalhaContainer = styled.div`
     height: 100px;
     font-weight: 500;
     font-size: 18px;
+    margin-top: 15px;
 `
 
 const PostsContainer = styled.div`
-.carousel {
+    margin-top: 15px;
+    .carousel {
         display: flex;
         gap: 25px;
         overflow-x: auto; /* Ativa o scroll horizontal */
@@ -117,7 +129,7 @@ const PostsContainer = styled.div`
     }
 
     .carousel::-webkit-scrollbar-thumb {
-        background: gray; /* Cor da barra de rolagem */
+        background: #082764; /* Cor da barra de rolagem */
         border-radius: 10px; /* Bordas arredondadas */
     }
 

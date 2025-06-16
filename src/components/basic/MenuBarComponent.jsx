@@ -99,6 +99,7 @@ const PageContainer = styled.div`
     position: relative;
     justify-content: center;
     margin-bottom: 10px;
+    z-index: 1;
 `
 
 const MenuContainer = styled.div`

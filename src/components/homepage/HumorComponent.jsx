@@ -75,7 +75,7 @@ function HumorComponent() {
                         </HumorDetails>
                         <HumorDetails>
                             <HumorDiv onClick={() => handleSelect(2)} $opacidade={humor === 2 ? 'nao' : 'sim'}>
-                            <div>🥹</div>
+                            <div>😢</div>
                             </HumorDiv>
                             triste
                         </HumorDetails>
@@ -98,7 +98,6 @@ function HumorComponent() {
                             muito feliz
                         </HumorDetails>
                     </HumorContainer>
-
                 </TextContainer>
 
                 <TextContainer>
@@ -192,7 +191,7 @@ const HumorDetails = styled.div`
 `
 
 const SubmitContainer = styled.div`
-
+    justify-content: center;
 `
 const TextContainer = styled.div`
     flex-direction: column;
