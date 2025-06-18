@@ -12,7 +12,7 @@ const ContactsPage = () => {{
         <Container>
             {/* <HeaderComponent pageTitle={"Contatos"} type={"page"}/> */}
             <HeaderNewComponent pageTitle={"Contatos"} />
-            <MenuBarComponent/>
+            {/* <MenuBarComponent/> */}
             {dados?.agenda && <ContactsComponent contatos={dados?.agenda} />}
         </Container>
     );

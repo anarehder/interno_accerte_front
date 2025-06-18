@@ -13,7 +13,7 @@ const AnniversaryPage = () => {
     return (
         <Container>
             <HeaderGGNewComponent  pageTitle={`Aniversários`}  subtitle={` | ${mesFormatado}`}/>
-            <MenuBarGGComponent />
+            {/* <MenuBarGGComponent /> */}
             {/* <HeaderGGComponent pageTitle={`Aniversários - ${mesFormatado}`} /> */}
             <List>
                 {dados?.aniversarios?.map((file, index) => (

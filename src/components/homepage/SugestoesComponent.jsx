@@ -2,14 +2,14 @@
 import { useState } from 'react';
 import styled from "styled-components";
 import apiService from '../../services/apiService';
-import Background from "../../assets/basic/component-background-blue.png"
+
 import IdeaIcon from "../../assets/basic/idea-icon.png"
 
 function SugestoesComponent({email}) {
     const [tipo, setTipo] = useState('Melhoria');
     const [texto, setTexto] = useState('');
     const [mensagem, setMensagem] = useState('');
-
+    console.log(texto);
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -46,7 +46,7 @@ function SugestoesComponent({email}) {
                   <textarea
                       placeholder='Descreva aqui sua ideia/sugestão'
                       value={texto}
-                      onChange={(e) => s(e.target.value)}
+                      onChange={(e) => setTexto(e.target.value)}
                       rows="5"
                       required
                   />
@@ -65,12 +65,9 @@ export default SugestoesComponent;
 
 const Container = styled.div`
     width:90%;
-    color: white;
+    color: #002972;
     border-radius: 8px;
-    background: url(${Background}) no-repeat center;
-    background-size: cover;
-    background-size: 120%;
-    box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.2);
     flex-direction: column;
     justify-content: flex-start;
     margin-bottom: 50px;

@@ -5,10 +5,11 @@ import { useAuth } from '../../contexts/AuthContext';
 import MensagemAniversaio from '../../assets/ANIVERSARIANTE_DIA.jpeg';
 
 function BirthdayPopUpComponent() {
-    const { user, carregando } = useAuth();
+    const { user, dados, carregando } = useAuth();
     const [closed, setClosed] = useState(true);
     const [isMyBDay, setIsMyBDay] = useState(false);
 
+    console.log(dados);
     useEffect(() => {
         const fetchScale = async () => {
             try {
@@ -44,7 +45,7 @@ function BirthdayPopUpComponent() {
             setClosed(false);
         }
 
-    }, [carregando, user]);
+    }, [carregando, user, dados]);
 
     const fecharPopup = () => {
         setClosed(true);
@@ -55,13 +56,12 @@ function BirthdayPopUpComponent() {
 
     return (
         <Overlay>
-            <CloseButton onClick={fecharPopup}>✖</CloseButton>
             <Modal>
-                <AniversarianteImagem
+                <MyBDayImagem
                         src={MensagemAniversaio}
                         alt={"Mensagem"}
                     />
-                
+                <CloseButton onClick={fecharPopup}>✖</CloseButton>
             </Modal>
         </Overlay>
     )
@@ -79,41 +79,52 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 15;
 `;
 
 const Modal = styled.div`
-  
   background-color: transparent;
-  width: 900px;
+  position: relative;
+  flex-wrap: wrap;
+  width: 80%;
+  height: 90%;
   padding: 20px;
-  min-width: 400px;
   border-radius: 12px;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  color: #E40D5C;
+  button{
+    background: linear-gradient(to bottom, #F1314D,rgb(152, 8, 61));
+  }
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 2%;
-  right: 25%;
+  top: 8%;
+  right: 21%;
   background: transparent;
-  font-size: 25px;
+  font-size: 20px;
   padding: 10px;
   cursor: pointer;
   color: white;
-  border: 2px solid white;
-  z-index: 10;
+  border: 2px solid #E40D5C;
+  z-index: 20;
 
   &:hover {
     cursor: pointer;
     background: white;
-    color: #FF5843;
+    color: #E40D5C;
+    border: 2px solid #E40D5C;
     }
 `;
 
 const AniversarianteImagem = styled.img`
-  width: 450px;
+  height: 70%;
   border-radius: 10px;
-  position: relative;
+`;
+
+const MyBDayImagem = styled.img`
+  height: 99%;
+  border-radius: 10px;
 `;

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { postVagaIndicada } from "../../services/graph";
 import { useMsal } from "@azure/msal-react";
 import IndicaIcon from "../../assets/basic/indica-icon.png"
-
+import Background from "../../assets/basic/component-background-blue.png"
 
 function IndicAccerteComponent({user}) {
     const { instance, accounts } = useMsal();
@@ -74,7 +74,13 @@ export default IndicAccerteComponent;
 
 const Container = styled.div`
     width: 90%;
-    color: #002972;
+    color: white;
+    background: url(${Background}) no-repeat center;
+    background-size: cover;
+    background-size: 120%;
+    border-radius: 8px;
+    padding: 15px 0;    
+    box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.3);
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
@@ -93,9 +99,9 @@ const Title = styled.div`
     height: 60px;   
     font-size: 30px;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     line-height: 45px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     font-weight: 500;
     font-size: 30px;
     img{
@@ -110,13 +116,14 @@ const ItensContainer = styled.div`
     label{
         text-align: left;
         width: 100%;
+        font-size: 18px;
     }
     input{
         width: 650px;
         flex-wrap: wrap;
         cursor: pointer;
         margin-top: 10px;
-        font-size: 16px;
+        font-size: 18px;
         gap: 20x;
         padding: 4px;
     }

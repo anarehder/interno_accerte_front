@@ -11,10 +11,6 @@ function FooterComponent() {
         <PageContainer>
             <FooterContainer>
                 <div className="left">
-                    Accerte Tecnologia
-                    <a href="https://www.accerte.com.br" target="_blank">
-                        www.accerte.com.br
-                    </a>
                     <div className="icons">
                         <a href="https://www.instagram.com/accertetecnologia/" target="_blank">
                             <FaInstagram size={30} color="#FFFFFF" />
@@ -35,10 +31,16 @@ function FooterComponent() {
                     <img src={Logo} alt="ACCERTE" />
                 </div>
                 <div className="right">
+                    Accerte Tecnologia
+                    <a href="https://www.accerte.com.br" target="_blank">
+                            www.accerte.com.br
+                    </a>
+                </div>
+                 {/* <div className="right">
                 <h1>R. 128-A, nº 34, Qd. F29 Lt. 11 
                 <br/>  St. Sul -  74093-110
                     <br/> <span>Goiânia | GO </span> </h1>
-                </div>
+                </div> */}
             </FooterContainer>
         </PageContainer>
     )
@@ -84,14 +86,21 @@ const FooterContainer = styled.div`
             width: 30%;
         }
     }
-
     .right{
         width: 35%;
-        text-align: center;
         padding-right: 5%;
-        h1{
-            line-height: 28px;
-            font-size: 17px;
-        }
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        font-size: 17px;
     }
+    // .right{
+    //     width: 35%;
+    //     text-align: center;
+    //     padding-right: 5%;
+    //     h1{
+    //         line-height: 28px;
+    //         font-size: 17px;
+    //     }
+    // }
 `

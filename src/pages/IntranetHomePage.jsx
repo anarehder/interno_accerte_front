@@ -87,8 +87,9 @@ const IntranetHomePage = () => {
                         </BannerContainer>
                     }
                     <LinkedinPostsComponent />
-                    <SugestoesComponent email={user.mail} />
                     <IndicAccerteComponent user={user} />
+                    <SugestoesComponent email={user.mail} />
+                    
                     <FooterComponent />
                 </>
             }

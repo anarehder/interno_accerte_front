@@ -6,6 +6,7 @@ import { useNavigate  } from "react-router-dom";
 import { FaMicrosoft } from "react-icons/fa";
 import Logo from "../assets/LOGO_HOME.png";
 import { loginRequest } from "../services/authConfig";
+import Background from "../assets/basic/pagina-inicial.png"
 import ImgFundo from "../assets/FUNDO_HOME.png"
 import Accerte from "../assets/ACCERTE_HOME.png"
 
@@ -36,12 +37,13 @@ function IntranetLoginPage() {
     return (
         <PageContainer>
             <LogoContainer>
-                <img src={Logo} alt="ACCERTE" />
+                {/* <img src={Logo} alt="ACCERTE" /> */}
                 {/* <h1>INTRANET</h1> */}
             </LogoContainer>
             <LoginBox>
-                <Title>Intra<span>net</span></Title>
-                <img src={Accerte} alt="ACCERTE" />
+                <Title><span>Intra</span>net</Title>
+                <SubTitle>accerte</SubTitle>
+                {/* <img src={Accerte} alt="ACCERTE" /> */}
                 {/* <OAuthButton onClick={() => handleLogin("popup")}>
                     <FaMicrosoft /> Entrar com Microsoft - PopUp
                 </OAuthButton> */}
@@ -58,23 +60,21 @@ export default IntranetLoginPage;
 // 🎨 Estilização com Styled Components
 const PageContainer = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   height: 100vh;
-  background: url(${ImgFundo}) no-repeat center center;
+  // background-size: auto 105%;
+  background: #0056BF url(${Background}) no-repeat top center;
   background-size: cover;
-  gap: 50px;
 `;
 
 const LogoContainer = styled.div`
   flex-direction: column;
   height: 75vh;
   width: 40%;
-  border-right: 3px solid WHITE;
   justify-content: center;
   align-items: flex-end;
   gap: 15px;
-  // background-color: red;
   img{
     width: 35vw;
   }
@@ -87,15 +87,17 @@ const LogoContainer = styled.div`
 
 const LoginBox = styled.div`
   width: 30%;
-  border-radius: 8px;
+  // border-radius: 8px;
+  border-left: 1px solid white;
+  margin-bottom: 5%;
   // background-color: red;
-  height: 55vh;
+  height: 250px;
   width: 600px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  justify-content: center;
-  gap: 50px;
+  justify-content: flex-end;
+  gap: 20px;
   img {
     width: 418px;
   }
@@ -105,8 +107,20 @@ const Title = styled.h2`
   color: white;
   line-height: 30px;
   font-family: "Poppins", serif;
+  font-weight:  400;
+  font-size: 110px;
+  font-style: normal;
+  span {
+    font-weight:  700;
+  }
+`;
+
+const SubTitle = styled.h2`
+  color: white;
+  line-height: 30px;
+  font-family: "Conthrax";
   font-weight:  300;
-  font-size: 120px;
+  font-size: 65px;
   font-style: normal;
   margin-top: 25px;
   span {
@@ -115,7 +129,7 @@ const Title = styled.h2`
 `;
 
 const OAuthButton = styled.button`
-  width: 85%;
+  width: 250px;
   height: 70px;
   border: none;
   border-radius: 5px;
@@ -123,12 +137,15 @@ const OAuthButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  margin-top: 45px;
+  font-weight: 700;
+  font-size: 30px;
   gap: 8px;
   font-family: "Poppins", serif;
-  background: white;
-      color: #067DD1;
-      &:hover {
-        background: #1a1a1a;
-  }
+  background: linear-gradient(109.11deg, #FFFFFF 37.13%, #BABABA 100.91%);
+  color:  #082764;
+    &:hover {
+      background: linear-gradient(to right,#205fdd, #001143);
+      color: white;
+    }
 `;

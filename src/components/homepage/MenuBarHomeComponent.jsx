@@ -51,7 +51,15 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 </MenuItem>
                 <MenuItem> <Link to="/contatos"><h1>NOSSA<span> AGENDA </span></h1></Link></MenuItem>
                 <MenuItem> <Link to="/links"><h1>LINKS <span> RÁPIDOS</span></h1></Link></MenuItem>
-                <MenuItem> <Link to="/fiquepordentro"><h1>FIQUE<span> POR DENTRO </span> </h1></Link></MenuItem>
+                {/* <MenuItem> <Link to="/fiquepordentro"><h1>FIQUE<span> POR DENTRO </span> </h1></Link></MenuItem> */}
+                <MenuItem>
+                    <h1>FIQUE  <span> POR DENTRO </span></h1>
+                    <Dropdown>
+                        <DropdownItem><h1>FIQUE <span> POR DENTRO </span></h1></DropdownItem>
+                        <DropdownItem><Link to={"/fiquepordentro"}>Comunicados</Link></DropdownItem>
+                        <DropdownItem><Link to={"/fiquepordentro"}>Vídeos</Link></DropdownItem>
+                    </Dropdown>
+                </MenuItem>
                 <MenuItem>
                     <h1>GESTÃO <span> DE TI </span></h1>
                     <Dropdown>

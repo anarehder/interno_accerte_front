@@ -4,7 +4,7 @@ import apiService from '../../services/apiService';
 import { useAuth } from '../../contexts/AuthContext';
 import Comunicado from '../../assets/teste-comunicado.jpeg';
 
-function ComunicadoPopUpComponent() {
+function ComunicadoPopUpComponent({setUpdated}) {
     const { user, carregando } = useAuth();
     const [closed, setClosed] = useState(false);
     const [temComunicado, setTemComunicado] = useState(true);
@@ -40,7 +40,8 @@ function ComunicadoPopUpComponent() {
 
     const leituraPopup = () => {
         //enviar notificacao de lido, se for ok fecho o popup
-        setClosed(true);
+        setUpdated(true);
+        setClosed(true);        
     };
 
     // if (closed || !temComunicado) return null;
