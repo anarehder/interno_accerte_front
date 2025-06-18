@@ -27,6 +27,8 @@ import FAQPage from "./components/FAQPage";
 import ParceriaEducacionalPage from "./pages/ParceriaEducacionalPage";
 import VagasAbertasPage from "./pages/VagasAbertasPage";
 import PlantoesTIPage from "./pages/PlantoesTIPage";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
 
 function App() {
 
@@ -36,8 +38,10 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<IntranetLoginPage />} />
-              <Route path="/homepage" element={<IntranetHomePage />} />
+              {/* <Route path="/" element={<IntranetLoginPage />} /> */}
+              {/* <Route path="/homepage" element={<IntranetHomePage />} /> */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/sobre" element={<AboutUsPage />} /> 
               <Route path="/equipamentos" element={<EquipmentsPage />} />

@@ -7,7 +7,7 @@ function HeaderNewComponent({pageTitle, subtitle}) {
     
     return (
         <PageContainer>
-            <Link to="/homepage">
+            <Link to="/">
                 <ReturnButton> voltar </ReturnButton>
             </Link>
             <HeaderContainer>

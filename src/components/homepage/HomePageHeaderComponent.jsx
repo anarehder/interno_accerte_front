@@ -49,8 +49,8 @@ function HomePageHeaderComponent({temNotificacao}) {
 
      const handleLogout = () => {
         instance.logoutPopup({
-            postLogoutRedirectUri: "/",
-            mainWindowRedirectUri: "/"
+            postLogoutRedirectUri: "/login",
+            mainWindowRedirectUri: "/login"
         });
         sessionStorage.removeItem("posts");
         sessionStorage.removeItem("sharePoint");
