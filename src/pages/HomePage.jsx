@@ -17,18 +17,19 @@ import MenuBarHomeComponent from "../components/homepage/MenuBarHomeComponent";
 import SugestoesComponent from "../components/homepage/SugestoesComponent";
 import HumorComponent from "../components/homepage/HumorComponent";
 import ContactsComponent from "../components/ContactsComponent";
+import apiService from "../services/apiService";
 
 
 const HomePage = () => {
     const navigate = useNavigate();
     const { user, dados, getData } = useAuth();
     const [searchBar, setSearchBar] = useState("");
+    const [updated, setUpdated] = useState(false);
     const isAuthenticated = useIsAuthenticated();
-    const [temNotificacao, setTemNotificacao] = useState([{tipo: "Férias", titulo: "Férias"},{tipo: "Comunicado", titulo: "Comunicado"},{tipo: "🥳 Hoje é dia de festa!", titulo: "🥳 Hoje é dia de festa!"},{tipo: "Vaga", titulo: "Vaga"}]);
+    const [notificacoes, setNotificacoes] = useState({"ferias": false,"vagas": false,"aniversario": false, "comunicados": false});
     const [filteredContacts, setFilteredContacts] = useState([]);
 
     useEffect(() => {
-        console.log(isAuthenticated);
         async function fetchData() {
             if (!user || !dados) {
                 await getData();
@@ -43,6 +44,18 @@ const HomePage = () => {
         fetchData();
     }, [isAuthenticated, navigate]);
 
+
+    useEffect(() => {
+        async function fetchData() {
+            if(user){
+                const body = {"email": user.mail};
+                const response = await apiService.buscarNotificacoes(body);
+                setNotificacoes(response.data);
+            }
+        }
+        fetchData();
+    }, [user, updated]);
+
     const clearSearch = () => {
         setFilteredContacts([]);
         setSearchBar("");
@@ -53,8 +66,8 @@ const HomePage = () => {
             {!user ? <h1> Carregando dados...</h1> :
                 <>
                     <BirthdayPopUpComponent />
-                    <ComunicadoPopUpComponent />
-                    <HomePageHeaderComponent temNotificacao={temNotificacao}/>
+                    <ComunicadoPopUpComponent setUpdated={setUpdated}/>
+                    <HomePageHeaderComponent notificacoes={notificacoes}/>
                     <MenuBarHomeComponent searchBar={searchBar} setSearchBar={setSearchBar} setFilteredContacts={setFilteredContacts} />
                     <HumorComponent />
                     {filteredContacts.length > 0 ?

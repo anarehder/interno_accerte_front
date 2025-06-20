@@ -6,15 +6,15 @@ import { useEffect, useState } from 'react';
 import { FiLogOut } from "react-icons/fi"; 
 import { useMsal } from "@azure/msal-react";
 import styled from 'styled-components';
-import { FaRegBell } from "react-icons/fa";
 
-function HomePageHeaderComponent({temNotificacao}) {
+function HomePageHeaderComponent({notificacoes}) {
     const { user } = useAuth();
     const [imageUrl, setImageUrl] = useState(null);
     const [iniciais, setIniciais] = useState("");
     const [open, setOpen] = useState(false);
     const { instance, accounts } = useMsal();
-    console.log(temNotificacao);
+    const notificacoesAtivas = Object.keys(notificacoes).filter((key) => notificacoes[key]);
+
     function getIniciais(nome) {
         const palavras = nome.trim().split(/\s+/); // separa por espaços
         const iniciais = palavras.map(p => p[0].toUpperCase()).join(""); // pega todas as iniciais
@@ -62,10 +62,10 @@ function HomePageHeaderComponent({temNotificacao}) {
             <HeaderContainer>
                 <Block>
                     <Photo>
-                        {imageUrl ? <img src={imageUrl} alt={"teste"} /> : <div>{iniciais}</div>}
+                        {imageUrl ? <img src={imageUrl} alt={"teste"} /> : <div>{iniciais}</div> }
                     </Photo>
                     <Texto>
-                        {user ? <h1>Olá, <span> {user.givenName} </span><br /> <h2>Seja Bem-Vindo(a)!</h2></h1>
+                        {user ? <h1>Olá, <span> {user.givenName} </span><br /> <p>Seja Bem-Vindo(a)!</p></h1>
                             : <h1>Olá, <span> </span><br /> Seja Bem-Vindo(a)!</h1>}
                     </Texto>
                 </Block>
@@ -77,37 +77,32 @@ function HomePageHeaderComponent({temNotificacao}) {
                 <Block>
                     <Alerta>
                         <button onClick={handleLogout}> <FiLogOut size={20} /> </button>
-                        {temNotificacao.length === 0 ?
+                        {notificacoesAtivas.length === 0 ? (
                             <BellWrapper>
-                                <img src={Alert} alt={'notificacao'} />
-                            </BellWrapper> :
+                                <img src={Alert} alt={'notificacoes'} />
+                            </BellWrapper>
+                        ) : (
                             <BellWrapper onClick={() => setOpen(!open)}>
-                                <img src={Alert} alt={'notificacao'} />
+                                <img src={Alert} alt={'notificacoes'} />
                                 <RedDot />
                                 {open && (
                                     <Dropdown>
-                                        {temNotificacao.map((tip, index) => (
+                                        {notificacoesAtivas.map((tip, index) => (
                                             <TipItem key={index}>
-                                                <span>{tip.tipo}</span>
+                                                <span>
+                                                    {{
+                                                        aniversario: '🎂 Hoje tem aniversário!',
+                                                        comunicados: 'Comunicados',
+                                                        ferias: 'Férias',
+                                                        vagas: 'Vagas',
+                                                    }[tip]}
+                                                </span>
                                             </TipItem>
                                         ))}
                                     </Dropdown>
-                                )} </BellWrapper>}
-                        {/* {temNotificacao.length > 0 && } */}
-
-                        {/* <BellWrapper >
-                            <img src={Alert} alt={'notificacao'} onClick={() => setOpen(!open)}/>
-                            {temNotificacao.length > 0 && <RedDot />}
-                            {open && (
-                                <Dropdown>
-                                    {temNotificacao.map((tip, index) => (
-                                        <TipItem key={index}>
-                                            <span>{tip.tipo}</span>
-                                        </TipItem>
-                                    ))}
-                                </Dropdown>
-                            )}
-                        </BellWrapper> */}
+                                )}
+                            </BellWrapper>
+                        )}
                     </Alerta>
                 </Block>
             </HeaderContainer>
@@ -151,6 +146,8 @@ const Photo = styled.div`
     div{
         font-size: 70px;
         line-height: 140px;
+        width: 140px;
+        height: 140px;
         justify-content: center;
     }
     img{
@@ -166,8 +163,9 @@ const Texto = styled.div`
     h1{
         line-height: 45px;
     }  
-    h2{
+    p{
         line-height: 45px;
+        font-size: 20px;
     }   
     span{
         color: #81cdff;    
@@ -231,7 +229,7 @@ const Dropdown = styled.div`
     right: 40px;
     justify-content: flex-start;
     background-color: #fff;
-    width: 150px;
+    width: 220px;
     max-height: 200px;
     overflow-y: auto;
     overflow-x: hidden;

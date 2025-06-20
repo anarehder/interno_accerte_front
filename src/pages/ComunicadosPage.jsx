@@ -9,7 +9,7 @@ const ComunicadosPage = () => {{
     const { user } = useAuth();
     const [comunicados, setComunicados] = useState([]);
     const [updated, setUpdated] = useState(false);
-    console.log(comunicados);
+    // console.log(comunicados);
     useEffect(() => {
             if (!user) return;
             const fetchScale = async () => {

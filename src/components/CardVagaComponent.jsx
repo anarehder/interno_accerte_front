@@ -25,7 +25,7 @@ function CardVagaComponent({ file }) {
         });
 
         const response = await postVagaIndicada(instance, accounts, local, novoArquivo);
-        console.log(response.webUrl);
+        // console.log(response.webUrl);
         alert(`Indicação Finalizada com Sucesso! Obrigada!`)
     };
 

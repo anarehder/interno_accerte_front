@@ -9,7 +9,6 @@ function BirthdayPopUpComponent() {
     const [closed, setClosed] = useState(true);
     const [isMyBDay, setIsMyBDay] = useState(false);
 
-    console.log(dados);
     useEffect(() => {
         const fetchScale = async () => {
             try {

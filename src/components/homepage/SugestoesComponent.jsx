@@ -9,15 +9,13 @@ function SugestoesComponent({email}) {
     const [tipo, setTipo] = useState('Melhoria');
     const [texto, setTexto] = useState('');
     const [mensagem, setMensagem] = useState('');
-    console.log(texto);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             const body = { tipo, texto, email, avaliado: false };
-            console.log(body);
             const response = await apiService.criarSugestoes(body);
-            console.log(response);
             alert("Sugestão enviada com sucesso!");
             setMensagem('');
             setTexto('');

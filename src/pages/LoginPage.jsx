@@ -11,10 +11,8 @@ function LoginPage() {
     const { instance } = useMsal();
     const isAuthenticated = useIsAuthenticated();
     const navigate = useNavigate(); 
-    // console.log(import.meta.env.VITE_APP_CLIENT);
-    // console.log(import.meta.env.VITE_API_URL);
+
     useEffect(() => {
-      console.log(isAuthenticated);
       if (isAuthenticated) {
         navigate("/");
       }
@@ -23,11 +21,11 @@ function LoginPage() {
   const handleLogin = async (loginType) => {
     if (loginType === "popup") {
       await instance.loginPopup(loginRequest).catch(e => {
-        console.log(e);
+        // console.log(e);
       });
     } else if (loginType === "redirect") {
       await instance.loginRedirect(loginRequest).catch(e => {
-        console.log(e);
+        // console.log(e);
       });
     }
   }

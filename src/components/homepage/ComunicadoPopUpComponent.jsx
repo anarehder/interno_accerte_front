@@ -2,28 +2,29 @@ import styled from 'styled-components';
 import { useEffect, useState } from "react";
 import apiService from '../../services/apiService';
 import { useAuth } from '../../contexts/AuthContext';
-import Comunicado from '../../assets/teste-comunicado.jpeg';
 
 function ComunicadoPopUpComponent({setUpdated}) {
     const { user, carregando } = useAuth();
     const [closed, setClosed] = useState(false);
-    const [comunicado, setComunicado] = useState({texto: "teste"});
-    // const texto = `🧑🏻‍🌾Ô trem bão, sô! Vem aí o Arraiá da Accerte!👩🏻‍🌾 Eita que esse ano o nosso Arraiá vai sê danado de bão! Vai tê muita alegria, quitute gostoso, música pra arrastá o pé e aquele clima bão de festa junina que só a turma da Accerte sabe fazer! Agora escuta bem: capricha no traje, uai! Os homi: pega aquele chapéu de palha, pinta o dente, ajeita a camisa xadrez e as muié: tira a saia do armário, separa as bota e a maria chiquinha e vamo mode ficar bem caipirado mermo! Vai tê premiação pros cabra e as muié mais caracterizado da festa! Num vai moscá, não! Vem proseá, dançá, cumê e se divertê com a gente! Vem pro Arraiá da Accerte, sô! Vai sê bão demais da conta!`;
-    const texto = null;
-    useEffect(() => {
-        setComunicado({texto: "teste"});
-        // const fetchScale = async () => {
-        //     try {
-        //         const body = {email: user.email};
-        //         const response = await apiService.buscarComunicadosHoje(body);
-        //         setComunicado(response.data);
-        //     } catch (error) {
-        //         console.error("Erro ao buscar informacoes vagas:", error);
-        //         return;
-        //     }
-        // };
+    const [comunicado, setComunicado] = useState(null);
+    const [leitura, setLeitura] = useState(false);
 
-        // fetchScale();
+    useEffect(() => {
+        const fetchScale = async () => {
+            try {
+                const body = {email: user.mail};
+                const response = await apiService.buscarComunicadosHoje(body);
+                setComunicado(response.data[0]);
+                if(response.data[0].LeituraComunicados[0].confLeitura === true){
+                    setLeitura(true);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar informacoes vagas:", error);
+                return;
+            }
+        };
+
+        fetchScale();
 
     }, [carregando, user]);
 
@@ -33,30 +34,43 @@ function ComunicadoPopUpComponent({setUpdated}) {
 
     const leituraPopup = async () => {
         try {
-            const body = { email: user.email, comunicadoId: comunicado.id };
+            const body = { email: user.mail, comunicadoId: comunicado.id };
             const response = await apiService.confirmarLeituraComunicado(body);
-            setUpdated(true);
-            setClosed(true);
+            if(response.status = 200){
+              setClosed(true);
+              setUpdated(true);
+            }
         } catch (error) {
             console.error("Erro ao buscar informacoes vagas:", error);
             return;
         }
     };
 
-    if (closed) return null;
+    if (closed || leitura) return null;
 
     return (
         <Overlay>
             <CloseButton onClick={fecharPopup}>✖</CloseButton>
             <Modal>
-                <h1>Arraiá da Accerte</h1>
+                <h1>{comunicado?.titulo}</h1>
                 <div>
+                  <a href={comunicado?.linkExterno ? comunicado.linkExterno : '-'} target="_blank">
                     <Imagem
-                        src={Comunicado}
-                        alt={"Mensagem"}
-                    />
-                    {comunicado?.texto && <Texto>{comunicado.texto}</Texto>}
-                </div>
+                        src={comunicado?.imagemUrl}
+                alt={"Mensagem"}
+              />
+            </a>
+            {comunicado?.legenda && (
+              <Texto>
+                {comunicado?.legenda}
+                {/* {comunicado.legenda.split('\n').map((linha, index) => (
+                  <p key={index}>
+                    {linha}
+                  </p>
+                ))} */}
+              </Texto>
+            )}
+          </div>
 
                 <button onClick={leituraPopup}>Confirmar Leitura</button>
             </Modal>
@@ -97,6 +111,10 @@ const Modal = styled.div`
     gap: 7%;
     justify-content: center;
   }
+  a{
+    width: 40%;
+    border-radius: 10px;
+  }
   button{
     background: linear-gradient(to right,#205fdd, #001143);
   }
@@ -121,7 +139,7 @@ const CloseButton = styled.button`
 `;
 
 const Imagem = styled.img`
-  width: 40%;
+  width: 100%;
   border-radius: 10px;
 `;
 
@@ -133,4 +151,5 @@ const Texto = styled.div`
   line-height: 25px;
   padding: 10px;
   border: 1px solid gray;
+  flex-direction: column;
 `;
