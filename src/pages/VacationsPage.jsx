@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
-import HeaderGGComponent from '../components/HeaderGGComponent';
 import { useAuth } from '../contexts/AuthContext';
 import apiService from '../services/apiService';
 import gerarFerias from "../services/vacationGenerate";
@@ -9,6 +7,7 @@ import { FaEdit } from "react-icons/fa";
 import { MdLockOutline } from "react-icons/md";
 import CriarFeriasComponent from '../components/vacations/CriarFeriasComponent';
 import EditarFeriasComponent from '../components/vacations/EditarFeriasComponent';
+import HeaderGGNewComponent from '../components/gentegestao/HeaderGGNewComponent';
 
 function VacationsPage() {
     const { user, carregando } = useAuth();
@@ -65,7 +64,7 @@ function VacationsPage() {
 
     return (
         <PageContainer>
-            <HeaderGGComponent pageTitle={"Férias"} />
+            <HeaderGGNewComponent  pageTitle={`Férias`} />
             {vacationInfo &&
                 <>
                     <EmployeeInfo>

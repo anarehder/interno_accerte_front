@@ -1,10 +1,6 @@
-import React from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
-import HeaderGGComponent from "../components/HeaderGGComponent";
 import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
-import MenuBarComponent from "../components/basic/MenuBarComponent";
-import MenuBarGGComponent from "../components/gentegestao/MenuBarGGComponent";
 
 const AnniversaryPage = () => {
     const { dados } = useAuth();
@@ -13,8 +9,6 @@ const AnniversaryPage = () => {
     return (
         <Container>
             <HeaderGGNewComponent  pageTitle={`Aniversários`}  subtitle={` | ${mesFormatado}`}/>
-            {/* <MenuBarGGComponent /> */}
-            {/* <HeaderGGComponent pageTitle={`Aniversários - ${mesFormatado}`} /> */}
             <List>
                 {dados?.aniversarios?.map((file, index) => (
                     <Image key={index} src={file.url} alt={`Aniversário ${file.name}`} />

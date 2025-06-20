@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
-import HeaderGGComponent from "../components/HeaderGGComponent";
 import UsuariosAdminComponent from "../components/admin/UsuariosAdminComponent";
 import FeriasAdminComponent from "../components/admin/FeriasAdminComponent";
 import EscalasAdminComponent from "../components/admin/EscalasAdminComponent";
+import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
 
 const AdminPage = () => {{
     const { dados, user, carregando, getData } = useAuth();
@@ -15,7 +15,7 @@ const AdminPage = () => {{
 
     return (
         <Container>
-            <HeaderGGComponent pageTitle={"RH  Painel Admin"} />
+            <HeaderGGNewComponent  pageTitle={`Painel Admin | RH`} />    
             <ButtonsContainer>
                 <Button onClick={() => setActiveButton("Usuarios")} $active={activeButton === "User" ? "show" : ""}>Usuários</Button>
                 <Button onClick={() => setActiveButton("Ferias")} $active={activeButton === "Filtrar" ? "show" : ""}>Férias</Button>

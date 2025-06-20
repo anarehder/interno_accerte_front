@@ -1,15 +1,15 @@
 import styled from 'styled-components';
-import HeaderGGComponent from '../components/HeaderGGComponent';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from "react-router-dom";
 import ScaleTableComponent from '../components/ScaleTableComponent';
+import HeaderGGNewComponent from '../components/gentegestao/HeaderGGNewComponent';
 
 function ScalePage() {
     const { user } = useAuth();
     
     return (
         <PageContainer>
-            <HeaderGGComponent pageTitle={"Escala Semanal"} />
+            <HeaderGGNewComponent  pageTitle={`Escala Semanal`} />
             {
                 (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br') && <AdminButton><Link to="/admin">Painel Admin</Link></AdminButton>
             }

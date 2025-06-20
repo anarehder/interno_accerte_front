@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import HeaderGGComponent from '../components/HeaderGGComponent';
-import { MdOutlineRadioButtonChecked } from "react-icons/md";
-import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import styled from 'styled-components';
 import ParceriaEducacionalComponent from '../components/ParceriaEducacionalComponent';
+import HeaderGGNewComponent from '../components/gentegestao/HeaderGGNewComponent';
 
 function ParceriaEducacionalPage() {
     const [selectedItem, setSelectedItem] = useState("IPOG");
@@ -13,7 +11,7 @@ function ParceriaEducacionalPage() {
 
     return (
         <PageContainer>
-            <HeaderGGComponent pageTitle={"Parceria Educacional"} />
+            <HeaderGGNewComponent  pageTitle={`Parceria Educacional`} />
             <Container>
                 {/* <MenuLateral>
                     {options.map((item) => (
