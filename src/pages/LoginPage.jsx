@@ -14,6 +14,7 @@ function LoginPage() {
     // console.log(import.meta.env.VITE_APP_CLIENT);
     // console.log(import.meta.env.VITE_API_URL);
     useEffect(() => {
+      console.log(isAuthenticated);
       if (isAuthenticated) {
         navigate("/");
       }

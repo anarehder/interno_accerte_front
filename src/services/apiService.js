@@ -135,8 +135,26 @@ function concluirFerias(id){
     return axios.get(`${BASE_URL}/ferias/concluir/${id}`)
 }
 
+function buscarNotificacoes(body){
+    return axios.post(`${BASE_URL}/notificacoes`, body)
+}
 
+function buscarComunicadosHoje(body){
+    return axios.post(`${BASE_URL}/comunicados/hoje`, body)
+}
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias }
+function buscarComunicadosEmail(body){
+    return axios.post(`${BASE_URL}/comunicados`, body)
+}
+
+function criarComunicados(body){
+    return axios.post(`${BASE_URL}/comunicados/criar`, body)
+}
+
+function confirmarLeituraComunicado(body){
+    return axios.post(`${BASE_URL}/comunicados/confirmar/`, body)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado }
 
 export default apiService;

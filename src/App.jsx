@@ -2,8 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MsalProvider } from '@azure/msal-react';
 import styled from 'styled-components'
 import VacationsPage from "./pages/VacationsPage";
-import IntranetHomePage from "./pages/IntranetHomePage";
-import IntranetLoginPage from "./pages/IntranetLoginPage";
 import EquipmentsPage from "./pages/EquipmentsPage";
 import SignatureEmailPage from "./pages/SignatureEmailPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -29,6 +27,7 @@ import VagasAbertasPage from "./pages/VagasAbertasPage";
 import PlantoesTIPage from "./pages/PlantoesTIPage";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
+import ComunicadosPage from "./pages/ComunicadosPage";
 
 function App() {
 
@@ -38,8 +37,6 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
-              {/* <Route path="/" element={<IntranetLoginPage />} /> */}
-              {/* <Route path="/homepage" element={<IntranetHomePage />} /> */}
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/admin" element={<AdminPage />} />
@@ -63,6 +60,7 @@ function App() {
               <Route path="/beneficios" element={<BeneficiosPage/>} />
               <Route path="/vagasemaberto" element={<VagasAbertasPage />} />
               <Route path="/plantoes" element={<PlantoesTIPage />} />
+              <Route path="/comunicados" element={<ComunicadosPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

@@ -28,6 +28,7 @@ const HomePage = () => {
     const [filteredContacts, setFilteredContacts] = useState([]);
 
     useEffect(() => {
+        console.log(isAuthenticated);
         async function fetchData() {
             if (!user || !dados) {
                 await getData();

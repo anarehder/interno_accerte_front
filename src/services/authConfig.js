@@ -5,8 +5,8 @@ const msalConfig = {
   auth: {
     clientId: import.meta.env.VITE_APP_CLIENT,
     authority: import.meta.env.VITE_API_URL,
-    redirectUri: window.location.origin,
-    postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
+    redirectUri: `${window.location.origin}/login`,
+    postLogoutRedirectUri: '/login', // Indicates the page to navigate after logout.
   },
   cache: {
     cacheLocation: "sessionStorage",

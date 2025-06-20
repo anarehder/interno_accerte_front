@@ -56,7 +56,7 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                     <h1>FIQUE  <span> POR DENTRO </span></h1>
                     <Dropdown>
                         <DropdownItem><h1>FIQUE <span> POR DENTRO </span></h1></DropdownItem>
-                        <DropdownItem><Link to={"/fiquepordentro"}>Comunicados</Link></DropdownItem>
+                        <DropdownItem><Link to={"/comunicados"}>Comunicados</Link></DropdownItem>
                         <DropdownItem><Link to={"/fiquepordentro"}>Vídeos</Link></DropdownItem>
                     </Dropdown>
                 </MenuItem>

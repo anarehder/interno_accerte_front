@@ -1,10 +1,8 @@
 import styled from 'styled-components';
-import HeaderComponent from '../components/HeaderComponent';
-import Logo from '../assets/LOGO-PNG.png';
-import { GiMegaphone } from "react-icons/gi";
 import ReactPlayer from 'react-player';
 import { GiConversation } from "react-icons/gi";
 import { PiMonitorPlayBold } from "react-icons/pi";
+import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 
 function UpdatesPage() {
     const videos = [{"nome": "Programa Jeito Goiano (TV Goiânia) 25/05/2025", "video":"https://www.youtube-nocookie.com/embed/b6fB971Ii7A?start=1294"},{"nome":"Programa Panorama Goiás (PUC TV) 06/03/2025", "video": "https://www.youtube-nocookie.com/embed/HH8K0MYqZnU?si=7zvXk45DSzBmgD2U"},{"nome":"Programa Panorama Goiás (PUC TV) 20/03/2025", "video": "https://www.youtube-nocookie.com/embed/HsXLjxAG-ng?start=1223"}];
@@ -14,7 +12,7 @@ function UpdatesPage() {
 
     return (
         <PageContainer>
-            <HeaderComponent pageTitle={"Fique Por Dentro"} type={"page"} />
+            <HeaderNewComponent pageTitle={"Fique Por Dentro"}/>
             <Title><PiMonitorPlayBold size={40}/>  na mídia </Title>
             <Videos>
                 {videos.map((v, index) => (
