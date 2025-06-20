@@ -1,19 +1,20 @@
-import { Link } from 'react-router-dom';
-import Header from "../assets/header/header2.png"
-import Alert from "../assets/header/alert.png"
-import styled from 'styled-components';
-import { useAuth } from '../contexts/AuthContext';
+import Header from "../../assets/header/header2.png";
+import Alert from "../../assets/header/alert.png";
+import { useAuth } from '../../contexts/AuthContext';
+import { getToken } from '../../services/graph';
 import { useEffect, useState } from 'react';
 import { FiLogOut } from "react-icons/fi"; 
 import { useMsal } from "@azure/msal-react";
-import { getToken } from '../services/graph';
+import styled from 'styled-components';
 
-function HeaderComponent({pageTitle, type}) {
+function HomePageHeaderComponent({notificacoes}) {
     const { user } = useAuth();
     const [imageUrl, setImageUrl] = useState(null);
     const [iniciais, setIniciais] = useState("");
+    const [open, setOpen] = useState(false);
     const { instance, accounts } = useMsal();
-    
+    const notificacoesAtivas = Object.keys(notificacoes).filter((key) => notificacoes[key]);
+
     function getIniciais(nome) {
         const palavras = nome.trim().split(/\s+/); // separa por espaços
         const iniciais = palavras.map(p => p[0].toUpperCase()).join(""); // pega todas as iniciais
@@ -58,18 +59,13 @@ function HeaderComponent({pageTitle, type}) {
     
     return (
         <PageContainer>
-            {type !== "homepage" &&
-                <Link to="/homepage">
-                    <ReturnButton> Voltar </ReturnButton>
-                </Link>
-            }
             <HeaderContainer>
                 <Block>
                     <Photo>
-                        {imageUrl ? <img src={imageUrl} alt={"teste"} /> : <div>{iniciais}</div>}
+                        {imageUrl ? <img src={imageUrl} alt={"teste"} /> : <div>{iniciais}</div> }
                     </Photo>
                     <Texto>
-                        {user ? <h1>Olá, <span> {user.givenName} </span><br /> <h2>Seja Bem-Vindo(a)!</h2></h1>
+                        {user ? <h1>Olá, <span> {user.givenName} </span><br /> <p>Seja Bem-Vindo(a)!</p></h1>
                             : <h1>Olá, <span> </span><br /> Seja Bem-Vindo(a)!</h1>}
                     </Texto>
                 </Block>
@@ -81,40 +77,57 @@ function HeaderComponent({pageTitle, type}) {
                 <Block>
                     <Alerta>
                         <button onClick={handleLogout}> <FiLogOut size={20} /> </button>
-                        <img src={Alert} alt={'notificacao'} />
+                        {notificacoesAtivas.length === 0 ? (
+                            <BellWrapper>
+                                <img src={Alert} alt={'notificacoes'} />
+                            </BellWrapper>
+                        ) : (
+                            <BellWrapper onClick={() => setOpen(!open)}>
+                                <img src={Alert} alt={'notificacoes'} />
+                                <RedDot />
+                                {open && (
+                                    <Dropdown>
+                                        {notificacoesAtivas.map((tip, index) => (
+                                            <TipItem key={index}>
+                                                <span>
+                                                    {{
+                                                        aniversario: '🎂 Hoje tem aniversário!',
+                                                        comunicados: 'Comunicados',
+                                                        ferias: 'Férias',
+                                                        vagas: 'Vagas',
+                                                    }[tip]}
+                                                </span>
+                                            </TipItem>
+                                        ))}
+                                    </Dropdown>
+                                )}
+                            </BellWrapper>
+                        )}
                     </Alerta>
                 </Block>
-                {/* <div>
-                    {type === "homepage" ? 
-                    <h1>Olá, <span> {user.givenName} {iniciais} </span><br /> Seja Bem-Vindo(a)!</h1> :
-                    <h1>{pageTitle} {iniciais}</h1>
-                    
-                    }
-                    {imageUrl && <img src={imageUrl} alt={"teste"} />}
-                </div> */}
             </HeaderContainer>
         </PageContainer>
     )
 }
 
-export default HeaderComponent;
+export default HomePageHeaderComponent;
 
 const PageContainer = styled.div`
     width: 100%;
     position: relative;
     justify-content: center;
+    z-index: 4;
+    overflow-y: show;
 `
 
 const HeaderContainer = styled.div`
-    background-color: #00357e;
     height: 200px;
     background: url(${Header}) no-repeat right center;
-    background-size: contain;
+    background-size: cover;
     align-items: center;
     justify-content: space-between;
     background-color: #001143;
     padding: 0 5%;
-    overflow: hidden;
 `
 const Block = styled.div`
     width: 30%;
@@ -133,6 +146,8 @@ const Photo = styled.div`
     div{
         font-size: 70px;
         line-height: 140px;
+        width: 140px;
+        height: 140px;
         justify-content: center;
     }
     img{
@@ -146,12 +161,11 @@ const Texto = styled.div`
     color: white;
     justify-content: center;
     h1{
-        font-size: 30px;
         line-height: 45px;
     }  
-    h2{
-        font-size: 18px;
+    p{
         line-height: 45px;
+        font-size: 20px;
     }   
     span{
         color: #81cdff;    
@@ -164,12 +178,11 @@ const Mensagem = styled.div`
     align-items: center;
     width: 100%;
     height: 160px;
-    font-size: 30px;
     font-weight: 400;
     border-left: 1px solid white;
     h1{
-        font-size: 25px;
         line-height: 45px;
+        font-size: 25px;
         font-weight: 300;
     }  
 `
@@ -180,26 +193,70 @@ const Alerta = styled.div`
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
+    z-index: 4;
     img { 
         height: 60px;
+        width: 55px;
     }
     button{
         background-color: #001143;
     }
 `
 
-const ReturnButton = styled.button`
-    top: 10%;
-    left: 2%;
+const BellWrapper = styled.div`
+    width: 100%;
+    position: relative;
+    justify-content: flex-end;
+`;
+
+const RedDot = styled.div`
     position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 15px;
+    height: 15px;
+    background-color: red;
+    border-radius: 50%;
+    border: 2px solid white;
+    z-index: 5;
+`;
+
+const Dropdown = styled.div`
+    position: absolute;
+    flex-direction: column;
+    padding: 10px;
+    top: 40px;
+    right: 40px;
+    justify-content: flex-start;
+    background-color: #fff;
+    width: 220px;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 5;
+`;
+
+const TipItem = styled.div`
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  width: 95%;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  span {
+    font-weight: 700;
     font-size: 16px;
-    justify-content: center;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    &:hover {
-        background-color: #0056b3;
-    }
+    color: #021121;
+    min-width: 95px;
+  }
+
+  p {
+    margin: 4px 0 0;
+    font-size: 15px;
+
+  }
 `;

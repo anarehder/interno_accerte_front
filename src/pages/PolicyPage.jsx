@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
-import HeaderComponent from "../components/HeaderComponent";
+import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
 const PolicyPage = () => {{
     const { dados } = useAuth();
@@ -12,7 +12,7 @@ const PolicyPage = () => {{
 
     return (
         <Container>
-            <HeaderComponent pageTitle={"Políticas"} type={"page"} />
+            <HeaderNewComponent pageTitle={"Políticas"}/>
             <List>
                 {dados?.politicas?.map((file, index) => (
                 <Card key={index}>

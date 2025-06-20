@@ -3,7 +3,7 @@ import { toPng } from "html-to-image";
 import download from "downloadjs";
 import styled from 'styled-components';
 import backgroundSignature from "../assets/FUNDO_SIGNATURE.png";
-import HeaderComponent from '../components/HeaderComponent';
+import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 import { useAuth } from '../contexts/AuthContext';
 
 function SignatureEmailPage() {
@@ -35,7 +35,7 @@ function SignatureEmailPage() {
 
     return (
         <PageContainer>
-            <HeaderComponent pageTitle={"Assinatura de E-mail"} type={"page"} />
+            <HeaderNewComponent pageTitle={"Assinatura de E-mail"}/>
             <FormContainer>
                 <h2>Nome de exibição da Assinatura</h2>
                 <form>

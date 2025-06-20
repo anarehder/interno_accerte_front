@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
-import HeaderComponent from '../components/HeaderComponent';
 import CriarVagaComponent from '../components/CriarVagaComponent';
 import BuscarVagasComponent from '../components/BuscarVagasComponent';
 import HumorGestoresComponent from '../components/HumorGestoresComponent';
 import apiService from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext';
-import AprovarFeriasComponent from '../components/vacations-components/AprovarFeriasComponent';
+import AprovarFeriasComponent from '../components/vacations/AprovarFeriasComponent';
+import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 
 function PainelGestoresPage() {
     const { user } = useAuth();
@@ -37,7 +37,7 @@ function PainelGestoresPage() {
     }, [user]);
     return (
         <PageContainer>
-            <HeaderComponent pageTitle={"Painel Gestores"} />
+            <HeaderNewComponent pageTitle={"Painel Gestores"} />
             {allowed ?
                 <div>
                     <SideBar>

@@ -1,14 +1,13 @@
-import React from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
-import HeaderGGComponent from "../components/HeaderGGComponent";
+import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
 
 const CalendarPage = () => {{
     const { dados } = useAuth();
 
     return (
         <Container>
-            <HeaderGGComponent pageTitle={"Calendários"} />
+            <HeaderGGNewComponent  pageTitle={`Calendários`} />
             <List>
                 {dados?.calendario?.map((file, index) => (
                     <div key={index}>

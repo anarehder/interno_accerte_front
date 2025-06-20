@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
-import HeaderGGComponent from "../components/HeaderGGComponent";
 import { useEffect } from "react";
 import CardVagaComponent from "../components/CardVagaComponent";
+import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
 
 
 const VagasAbertasPage = () => {
@@ -14,7 +14,7 @@ const VagasAbertasPage = () => {
 
     return (
         <Container>
-            <HeaderGGComponent pageTitle={`Vagas em aberto`} />
+            <HeaderGGNewComponent  pageTitle={`Vagas Abertas`} />    
             {
                 !dados ?
                 <List>Carregando dados...</List> :

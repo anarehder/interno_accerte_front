@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import HeaderGGComponent from '../components/HeaderGGComponent';
 import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import styled from 'styled-components';
 import FAQComponent from './FAQComponent';
+import HeaderGGNewComponent from './gentegestao/HeaderGGNewComponent';
 
 function FAQPage() {
     const [selectedItem, setSelectedItem] = useState("");
@@ -23,7 +23,7 @@ function FAQPage() {
 
     return (
         <PageContainer>
-            <HeaderGGComponent pageTitle={"FAQs"} />
+            <HeaderGGNewComponent  pageTitle={`FAQs`} />
             <Container>
                 <MenuLateral>
                     {options.map((item) => (
@@ -70,6 +70,7 @@ const MenuLateral = styled.div`
     padding-right: 50px;
     border-right: 1px solid #555;
     button {
+        background: linear-gradient(to bottom, #F1314D,rgb(152, 8, 61));
         text-align: left;
         justify-content: flex-start;
         gap: 15px;
