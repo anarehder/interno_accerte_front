@@ -7,30 +7,23 @@ import Comunicado from '../../assets/teste-comunicado.jpeg';
 function ComunicadoPopUpComponent({setUpdated}) {
     const { user, carregando } = useAuth();
     const [closed, setClosed] = useState(false);
-    const [temComunicado, setTemComunicado] = useState(true);
-    const texto = `🧑🏻‍🌾Ô trem bão, sô! Vem aí o Arraiá da Accerte!👩🏻‍🌾 Eita que esse ano o nosso Arraiá vai sê danado de bão! Vai tê muita alegria, quitute gostoso, música pra arrastá o pé e aquele clima bão de festa junina que só a turma da Accerte sabe fazer! Agora escuta bem: capricha no traje, uai! Os homi: pega aquele chapéu de palha, pinta o dente, ajeita a camisa xadrez e as muié: tira a saia do armário, separa as bota e a maria chiquinha e vamo mode ficar bem caipirado mermo! Vai tê premiação pros cabra e as muié mais caracterizado da festa! Num vai moscá, não! Vem proseá, dançá, cumê e se divertê com a gente! Vem pro Arraiá da Accerte, sô! Vai sê bão demais da conta!`;
-
+    const [comunicado, setComunicado] = useState({texto: "teste"});
+    // const texto = `🧑🏻‍🌾Ô trem bão, sô! Vem aí o Arraiá da Accerte!👩🏻‍🌾 Eita que esse ano o nosso Arraiá vai sê danado de bão! Vai tê muita alegria, quitute gostoso, música pra arrastá o pé e aquele clima bão de festa junina que só a turma da Accerte sabe fazer! Agora escuta bem: capricha no traje, uai! Os homi: pega aquele chapéu de palha, pinta o dente, ajeita a camisa xadrez e as muié: tira a saia do armário, separa as bota e a maria chiquinha e vamo mode ficar bem caipirado mermo! Vai tê premiação pros cabra e as muié mais caracterizado da festa! Num vai moscá, não! Vem proseá, dançá, cumê e se divertê com a gente! Vem pro Arraiá da Accerte, sô! Vai sê bão demais da conta!`;
+    const texto = null;
     useEffect(() => {
-        setTemComunicado(true);
-        const fetchScale = async () => {
-            try {
-                //busca se tem comunicado hoje e se ele ja foi lido pela pessoa
-                const response = await apiService.getAniversariosDia();
-                const isMyBirthday = response.data.some(item => item.email === user.mail);
-                if(isMyBirthday){
-                    setTemComunicado(true);
-                }
-                //pegar se é aniversario de alguém
-                else {
-                    return;
-                }
-            } catch (error) {
-                console.error("Erro ao buscar informacoes vagas:", error);
-                return;
-            }
-        };
+        setComunicado({texto: "teste"});
+        // const fetchScale = async () => {
+        //     try {
+        //         const body = {email: user.email};
+        //         const response = await apiService.buscarComunicadosHoje(body);
+        //         setComunicado(response.data);
+        //     } catch (error) {
+        //         console.error("Erro ao buscar informacoes vagas:", error);
+        //         return;
+        //     }
+        // };
 
-        fetchScale();
+        // fetchScale();
 
     }, [carregando, user]);
 
@@ -38,14 +31,19 @@ function ComunicadoPopUpComponent({setUpdated}) {
         setClosed(true);
     };
 
-    const leituraPopup = () => {
-        //enviar notificacao de lido, se for ok fecho o popup
-        setUpdated(true);
-        setClosed(true);        
+    const leituraPopup = async () => {
+        try {
+            const body = { email: user.email, comunicadoId: comunicado.id };
+            const response = await apiService.confirmarLeituraComunicado(body);
+            setUpdated(true);
+            setClosed(true);
+        } catch (error) {
+            console.error("Erro ao buscar informacoes vagas:", error);
+            return;
+        }
     };
 
-    // if (closed || !temComunicado) return null;
-     if (closed) return null;
+    if (closed) return null;
 
     return (
         <Overlay>
@@ -57,10 +55,10 @@ function ComunicadoPopUpComponent({setUpdated}) {
                         src={Comunicado}
                         alt={"Mensagem"}
                     />
-                    <Texto>{texto}</Texto>
+                    {comunicado?.texto && <Texto>{comunicado.texto}</Texto>}
                 </div>
 
-                <button>Confirmar Leitura</button>
+                <button onClick={leituraPopup}>Confirmar Leitura</button>
             </Modal>
         </Overlay>
     )

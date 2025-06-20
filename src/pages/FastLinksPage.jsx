@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
-import HeaderComponent from "../components/HeaderComponent";
 import AppleLogo from "../assets/logos-parceiros/apple_branco.png";
 import AndroidLogo from "../assets/logos-parceiros/google_play.png";
 import CajuLogo from "../assets/logos-parceiros/caju.png";  // Substitua pelos caminhos corretos
@@ -10,6 +9,7 @@ import GymratsLogo from "../assets/logos-parceiros/gymrats.png";
 import MarqpontoLogo from "../assets/logos-parceiros/marq.png"; 
 import ClickSignLogo from "../assets/logos-parceiros/clicksign.png"; 
 import WellhubLogo from "../assets/logos-parceiros/wellhub.png";
+import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
 const FastLinksPage = () => {{
     const { dados } = useAuth();
@@ -84,7 +84,7 @@ const FastLinksPage = () => {{
 
     return (
         <Container>
-            <HeaderComponent pageTitle={"Links Rápidos"} type={"page"} />
+            <HeaderNewComponent pageTitle={"Links Rápidos"} />
             {
                 dados &&
                 <>

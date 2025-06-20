@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import HeaderComponent from "../components/HeaderComponent";
 import PlantoesTIComponent from "../components/PlantoesTIComponent";
+import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 import { useRef } from 'react';
 import { toPng } from "html-to-image";
 import download from "downloadjs";
@@ -122,8 +122,7 @@ const PlantoesTIPage = () => {
         Baixar Escala
       </Button>
       <Container ref={imageRef}>
-        <HeaderComponent pageTitle={"Escala Plantões Sustentação"} type={"page"} />
-
+        <HeaderNewComponent pageTitle={"Escala Plantões Sustentação"} />
         <WeekHeader>
           {/* <div> */}
             {/* <button onClick={() => handleChangeDuration(3)}>Escala de 3 dias</button> */}

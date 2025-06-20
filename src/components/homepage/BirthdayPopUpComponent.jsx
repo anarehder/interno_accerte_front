@@ -56,12 +56,12 @@ function BirthdayPopUpComponent() {
 
     return (
         <Overlay>
+            <CloseButton onClick={fecharPopup}>✖</CloseButton>
             <Modal>
                 <MyBDayImagem
                         src={MensagemAniversaio}
                         alt={"Mensagem"}
                     />
-                <CloseButton onClick={fecharPopup}>✖</CloseButton>
             </Modal>
         </Overlay>
     )
@@ -79,52 +79,42 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 15;
+  z-index: 10;
 `;
 
 const Modal = styled.div`
-  background-color: transparent;
+  background-color: white;
   position: relative;
-  flex-wrap: wrap;
-  width: 80%;
-  height: 90%;
+  width: 60%;
+  height: 85%;
   padding: 20px;
   border-radius: 12px;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  color: #E40D5C;
-  button{
-    background: linear-gradient(to bottom, #F1314D,rgb(152, 8, 61));
-  }
+  color: #001143;
 `;
 
 const CloseButton = styled.button`
   position: absolute;
   top: 8%;
   right: 21%;
-  background: transparent;
+  background-color: white;
   font-size: 20px;
   padding: 10px;
   cursor: pointer;
-  color: white;
-  border: 2px solid #E40D5C;
-  z-index: 20;
-
+  color: #001143;
+  border: 2px solid #001143;;
+  z-index: 10;
   &:hover {
     cursor: pointer;
-    background: white;
-    color: #E40D5C;
-    border: 2px solid #E40D5C;
+    background:  #001143;
+    color: white;
     }
-`;
-
-const AniversarianteImagem = styled.img`
-  height: 70%;
-  border-radius: 10px;
 `;
 
 const MyBDayImagem = styled.img`
   height: 99%;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
