@@ -40,7 +40,7 @@ const HeaderContainer = styled.div`
 `
 
 const ImageContainer = styled.div`
-    width: 550px;
+    width: 600px;
     justify-content: center;
     align-items: center;
     img{

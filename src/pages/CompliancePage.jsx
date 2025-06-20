@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
-import HeaderComponent from "../components/HeaderComponent";
+import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
 const CompliancePage = () => {{
     const { dados } = useAuth();
@@ -12,7 +12,7 @@ const CompliancePage = () => {{
 
     return (
         <Container>
-            <HeaderComponent pageTitle={"Compliance"} type={"page"} />
+            <HeaderNewComponent pageTitle={"Compliance"}/>
             <List>
                 <h1>Canais de Denúncias
                     <div>

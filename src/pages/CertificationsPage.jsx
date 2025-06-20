@@ -3,7 +3,7 @@ import CertificationsValueComponent from '../components/CertificationsValuesComp
 import { useState } from 'react';
 import CertificationsLevelsComponent from '../components/CertificationsLevelsComponent';
 import CertificationsList from "../constants/CertificationsList";
-import HeaderComponent from '../components/HeaderComponent';
+import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 
 function CertificationsPage() {
     const partnersList = Object.keys(CertificationsList);
@@ -15,7 +15,7 @@ function CertificationsPage() {
 
     return (
         <PageContainer>
-            <HeaderComponent pageTitle={"Certificações"} type={"page"} />
+            <HeaderNewComponent pageTitle={"Certificações"}/>
             <ButtonsContainer>
                 {partnersList.map((label) => (
                     <Button
