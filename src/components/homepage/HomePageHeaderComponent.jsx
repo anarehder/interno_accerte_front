@@ -62,7 +62,7 @@ function HomePageHeaderComponent({notificacoes}) {
             <HeaderContainer>
                 <Block>
                     <Photo>
-                        {imageUrl ? <img src={imageUrl} alt={"teste"} /> : <div>{iniciais}</div> }
+                        {imageUrl ? <img src={imageUrl} alt={iniciais} /> : <div>{iniciais}</div> }
                     </Photo>
                     <Texto>
                         {user ? <h1>Olá, <span> {user.givenName} </span><br /> <p>Seja Bem-Vindo(a)!</p></h1>
