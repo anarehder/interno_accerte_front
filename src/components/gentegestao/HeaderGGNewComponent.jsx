@@ -7,7 +7,7 @@ function HeaderGGNewComponent({pageTitle, subtitle}) {
     
     return (
         <PageContainer>
-            <Link to="/">
+            <Link to="/homepage">
                 <ReturnButton> voltar </ReturnButton>
             </Link>
             <HeaderContainer>

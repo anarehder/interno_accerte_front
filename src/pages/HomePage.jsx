@@ -35,7 +35,7 @@ const HomePage = () => {
                 await getData();
             }
             if (!isAuthenticated) {
-                navigate("/login");
+                navigate("/");
             }    
             //buscar notificações
             //se for admin pegar nova vaga ferias para aprovar e 
