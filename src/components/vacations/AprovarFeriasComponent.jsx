@@ -79,7 +79,9 @@ function AprovarFeriasComponent({type}) {
                         <p><span>Aprovar</span></p>
                         <p><span>Reprovar</span></p>
                     </div>
-                    {ferias?.map((d, i) => (
+                    {ferias
+                    ?.filter((d) => !d.status.includes("Reprovado"))
+                    .map((d, i) => (
                         <div key={i}>
                             <p>{d.Funcionarios.nome} {d.Funcionarios.sobrenome}</p>
                             <p>{formatarDataBR(d.inicio)}</p>

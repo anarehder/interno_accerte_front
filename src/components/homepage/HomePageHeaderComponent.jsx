@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { FiLogOut } from "react-icons/fi"; 
 import { useMsal } from "@azure/msal-react";
 import styled from 'styled-components';
+import { Link } from "react-router-dom";
 
 function HomePageHeaderComponent({notificacoes}) {
     const { user } = useAuth();
@@ -87,7 +88,7 @@ function HomePageHeaderComponent({notificacoes}) {
                                 <RedDot />
                                 {open && (
                                     <Dropdown>
-                                        {notificacoesAtivas.map((tip, index) => (
+                                        {/* {notificacoesAtivas.map((tip, index) => (
                                             <TipItem key={index}>
                                                 <span>
                                                     {{
@@ -99,6 +100,30 @@ function HomePageHeaderComponent({notificacoes}) {
                                                 </span>
                                             </TipItem>
                                         ))}
+                                         */}
+                                        {notificacoesAtivas.map((tip, index) => {
+                                            const rotas = {
+                                                aniversario: '/aniversarios',
+                                                comunicados: '/homepage',
+                                                ferias: '/painelgestores',
+                                                vagas: '/painelgestores',
+                                            };
+
+                                            const textos = {
+                                                aniversario: '🎂 Hoje tem aniversário!',
+                                                comunicados: 'Comunicados',
+                                                ferias: 'Férias',
+                                                vagas: 'Vagas',
+                                            };
+
+                                            return (
+                                                <Link to={rotas[tip]} key={index}>
+                                                    <TipItem>
+                                                        <span>{textos[tip]}</span>
+                                                    </TipItem>
+                                                </Link>
+                                            );
+                                        })}
                                     </Dropdown>
                                 )}
                             </BellWrapper>
