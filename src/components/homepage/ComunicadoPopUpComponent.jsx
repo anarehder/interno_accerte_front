@@ -8,18 +8,21 @@ function ComunicadoPopUpComponent({setUpdated}) {
     const [closed, setClosed] = useState(false);
     const [comunicado, setComunicado] = useState(null);
     const [leitura, setLeitura] = useState(false);
-
+    const [buscando, setBuscando] = useState(true);
+  console.log(comunicado)
     useEffect(() => {
         const fetchScale = async () => {
             try {
                 const body = {email: user.mail};
                 const response = await apiService.buscarComunicadosHoje(body);
                 setComunicado(response.data[0]);
+                setBuscando(false);
                 if(response.data[0].LeituraComunicados[0].confLeitura === true){
                     setLeitura(true);
                 }
             } catch (error) {
                 console.error("Erro ao buscar informacoes vagas:", error);
+                setBuscando(false);
                 return;
             }
         };
@@ -47,7 +50,8 @@ function ComunicadoPopUpComponent({setUpdated}) {
     };
 
     if (closed || leitura) return null;
-
+    if (buscando) return null;
+    
     return (
         <Overlay>
             <CloseButton onClick={fecharPopup}>✖</CloseButton>

@@ -58,7 +58,6 @@ const ComunicadosPage = () => {
             }
         };
 
-        //listar comunicados, icone titulo e data comeco do texto... botao de abrir, no abrir marcar como lido
         return (
             <Container>
                 <HeaderNewComponent pageTitle={"Comunicados"} />
@@ -80,7 +79,7 @@ const ComunicadosPage = () => {
                                         {open === c.id ? <button>Fechar</button> : <button>Detalhes</button>}
                                         <button onClick={() => leituraComunicado(c.id)} disabled={c.LeituraComunicados[0].confLeitura === true}> Confirmar</button>
                                     </div>
-                                    
+
                                 </Info>
                                 {open === c.id &&
                                     <Details>
@@ -97,7 +96,7 @@ const ComunicadosPage = () => {
                 </List>
             </Container >
         );
-};
+    };
 }
 
 export default ComunicadosPage;
