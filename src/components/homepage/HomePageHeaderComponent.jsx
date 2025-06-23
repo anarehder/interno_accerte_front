@@ -104,7 +104,7 @@ function HomePageHeaderComponent({notificacoes}) {
                                         {notificacoesAtivas.map((tip, index) => {
                                             const rotas = {
                                                 aniversario: '/aniversarios',
-                                                comunicados: '/homepage',
+                                                comunicados: '/comunicados',
                                                 ferias: '/painelgestores',
                                                 vagas: '/painelgestores',
                                             };
