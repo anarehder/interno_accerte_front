@@ -5,6 +5,7 @@ import AppleLogo from "../assets/logos-parceiros/apple_branco.png";
 import AndroidLogo from "../assets/logos-parceiros/google_play.png";
 import CajuLogo from "../assets/logos-parceiros/caju.png";  // Substitua pelos caminhos corretos
 import OnflyLogo from "../assets/logos-parceiros/onfly.png";  // Substitua pelos caminhos corretos
+import AccerteConnect from "../assets/logos-parceiros/accerte-connect-logo.png";
 import GymratsLogo from "../assets/logos-parceiros/gymrats.png"; 
 import MarqpontoLogo from "../assets/logos-parceiros/marq.png"; 
 import ClickSignLogo from "../assets/logos-parceiros/clicksign.png"; 
@@ -104,7 +105,7 @@ const FastLinksPage = () => {{
                                         {dados?.background?.map((p, index) => (
                                             <div className="card" key={index} >
                                                 <a href={p.url} target="_blank">
-                                                    <img src={p.url} alt={"Post do Linkedin"} />
+                                                    <img src={p.url} alt={p.name} />
                                                 </a>
                                             </div>
                                         ))}
@@ -112,6 +113,24 @@ const FastLinksPage = () => {{
                                     
                                 </PostsContainer>
                                 <p>clique para acessar a imagem</p>
+                            </SmallList>
+                        }
+                        <Card >
+                            <Info><img src={AccerteConnect} alt={"Accerte Connect"} /></Info>
+                            <InfoButton>
+                                <button onClick={() => setDocuments(!documents)}>
+                                    {documents ? "Ocultar" : "Exibir"}
+                                </button>
+                            </InfoButton>
+                        </Card>
+                        {documents &&
+                            <SmallList>
+                                {dados?.accerteconnect?.map((file, index) => (
+                                    <Card key={index}>
+                                        <Info>{file.name.slice(0, -5)}</Info>
+                                        <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
+                                    </Card>
+                                ))}
                             </SmallList>
                         }
                         {fixedLinks.map((linkObj, ind) => (
