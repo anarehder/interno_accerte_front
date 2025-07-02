@@ -282,7 +282,7 @@ export async function getSharePointData(instance, accounts) {
   }));
 
   const accerteconnect = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/ACCERTE CONNECT - 2025.1:/children`,
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/ACCERTE CONNECT:/children`,
     {
       headers: { Authorization: `Bearer ${response.accessToken}` }
     }
