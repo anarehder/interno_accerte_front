@@ -64,7 +64,7 @@ function ComunicadoPopUpComponent({setUpdated}) {
                 alt={"Mensagem"}
               />
             </a>
-            {comunicado?.legenda && (
+            {comunicado?.legenda || comunicado?.legenda?.length < 2 && (
               <Texto>
                 {comunicado?.legenda}
                 {/* {comunicado.legenda.split('\n').map((linha, index) => (
@@ -101,7 +101,7 @@ const Modal = styled.div`
   background-color: white;
   position: relative;
   width: 60%;
-  height: 85%;
+  height: 89%;
   padding: 20px;
   border-radius: 12px;
   flex-direction: column;

@@ -87,7 +87,7 @@ const ComunicadosPage = () => {
                                             <img src={c.imagemUrl} alt={c.titulo} />
                                         </a> : <img src={c.imagemUrl} alt={c.titulo} />
                                         }
-                                        <p>{c.legenda}</p>
+                                        {c.legenda?.length > 3 && <p>{c.legenda}</p>}
                                     </Details>
                                 }
                             </Card>
@@ -106,7 +106,7 @@ const Container = styled.div`
     flex-direction: column;
     border-radius: 8px;
     align-items: center;
-
+    margin-bottom: 30px;
 `;
 
 
@@ -170,16 +170,18 @@ const Info = styled.div`
 `;
 
 const Details = styled.div`
-    min-height: 400px;
+    min-height: 550px;
     align-items: center;
+    justify-content: center;
     gap: 30px;
     color: #555;
-    p{
-        font-size: 20px;
+    p{  
+        width: 55%;
+        font-size: 18px;
         line-height: 25px;
         text-align: left;
     }
     a, img{
-        height: 350px;
+        height: 500px;
     }
 `
