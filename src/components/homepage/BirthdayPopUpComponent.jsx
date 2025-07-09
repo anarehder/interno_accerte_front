@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useEffect, useState } from "react";
 import apiService from '../../services/apiService';
 import { useAuth } from '../../contexts/AuthContext';
-import MensagemAniversaio from '../../assets/ANIVERSARIANTE_DIA.jpeg';
+import MensagemAniversaio from '../../assets/ANIVERSARIANTE_DIA.png';
 
 function BirthdayPopUpComponent() {
     const { user, dados, carregando } = useAuth();
@@ -84,7 +84,7 @@ const Overlay = styled.div`
 const Modal = styled.div`
   background-color: white;
   position: relative;
-  width: 60%;
+  width: 40%;
   height: 85%;
   padding: 20px;
   border-radius: 12px;
@@ -97,23 +97,23 @@ const Modal = styled.div`
 const CloseButton = styled.button`
   position: absolute;
   top: 8%;
-  right: 21%;
+  right: 30%;
   background-color: white;
   font-size: 20px;
-  padding: 10px;
+  padding: 7px;
   cursor: pointer;
-  color: #001143;
-  border: 2px solid #001143;;
+  color: #FF455E;
+  border: 2px solid #FF455E;;
   z-index: 10;
   &:hover {
     cursor: pointer;
-    background:  #001143;
+    background: #FF455E;
     color: white;
     }
 `;
 
 const MyBDayImagem = styled.img`
-  height: 99%;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: 95%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;

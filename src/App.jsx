@@ -28,6 +28,7 @@ import PlantoesTIPage from "./pages/PlantoesTIPage";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import ComunicadosPage from "./pages/ComunicadosPage";
+import CertificationsAdminPage from "./pages/CertificationsAdminPage";
 
 function App() {
 
@@ -44,6 +45,7 @@ function App() {
               <Route path="/equipamentos" element={<EquipmentsPage />} />
               <Route path="/assinatura" element={<SignatureEmailPage />} />
               <Route path="/certificacoes" element={<CertificationsPage />} />
+              <Route path="/certificacoes/admin" element={<CertificationsAdminPage />} />
               <Route path="/ferias" element={<VacationsPage />} />
               <Route path="/contatos" element={<ContactsPage />} />
               <Route path="/aniversarios" element={<AnniversaryPage />} />
