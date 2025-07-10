@@ -62,8 +62,8 @@ function SignatureEmail2025Page() {
                     <Name>{form?.nome} </Name> <Surname>{form?.sobrenome}</Surname>
                 </FullName>
                 <Position>
-                    <p>{user?.jobTitle}</p>
-                    {/* <p>Diretor de Comunicação, Marketing e Canais</p> */}
+                    {/* <p>{user?.jobTitle}</p> */}
+                    <p>Diretor de Comunicação, Marketing e Canais</p>
                 </Position>
                 <WhatsApp>   
                     <ImWhatsapp size={24}/> <strong>{user?.mobilePhone.slice(0, 4)}</strong> {user?.mobilePhone.slice(4, 15)}
@@ -166,7 +166,7 @@ const FullName = styled.div`
     border-bottom-left-radius: 15px;
     top: 20px;
     right: 0;
-    padding: 0 30px 0 40px;
+    padding: 0 20px 0 30px;
     justify-content: left;
     align-items: center;
     gap: 12px;    
@@ -196,10 +196,10 @@ const Position = styled.div`
     align-items: center;
     text-align: right;
     height: 60px;
-    width: 550px;
-    padding: 0 30px;
+    width: 600px;
+    padding: 0 20px;
     p{
-        font-size: 25px;
+        font-size: 24px;
     }
 `
 
@@ -211,7 +211,7 @@ const Mail = styled.div`
     font-size: 23px;
     gap: 7px;
     width: auto;
-    padding: 0 30px;
+    padding: 0 20px;
     align-items: center;
 ` 
 
@@ -224,5 +224,5 @@ const WhatsApp = styled.div`
     align-items: center;
     gap: 7px;
     width: auto;
-    padding: 0 30px;
+    padding: 0 20px;
 ` 
