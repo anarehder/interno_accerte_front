@@ -21,7 +21,7 @@ function ScaleTableComponent({type}) {
     console.log(selectedScale, scale);
     const setores = ["Presidência", "Administrativo", "Arquitetura de Soluções", "Comercial Público", "Comercial Privado", "Financeiro", "Gente e Gestão", "Governança de Dados", "Jurídico", 'Marketing', "Tecnologia da Informação"];
 
-    const cores = { "Home": "blue", "Presencial": "green", "Férias - CLT": "#f94860", "Feriado": "#f94860", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantão": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Viagem": "black","Licença Maternidade": "#f94860", "Licença Paternidade": "#f94860", "Day OFF":"purple", "Outros": "black" };
+    const cores = { "Home": "blue", "Presencial": "green", "Férias - CLT": "orange", "Recesso - Estágio": "orange", "Feriado": "#f94860", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantão": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Viagem": "black","Licença Maternidade": "#f94860", "Licença Paternidade": "#f94860", "Day OFF":"purple", "Outros": "black" };
 
     useEffect(() => {
         if (!dados) return;
