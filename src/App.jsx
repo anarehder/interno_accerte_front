@@ -3,7 +3,6 @@ import { MsalProvider } from '@azure/msal-react';
 import styled from 'styled-components'
 import VacationsPage from "./pages/VacationsPage";
 import EquipmentsPage from "./pages/EquipmentsPage";
-import SignatureEmailPage from "./pages/SignatureEmailPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { msalInstance } from "./services/authConfig";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -29,6 +28,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import ComunicadosPage from "./pages/ComunicadosPage";
 import CertificationsAdminPage from "./pages/CertificationsAdminPage";
+import SignatureEmail2025Page from "./pages/SignatureEmail2025Page";
 
 function App() {
 
@@ -43,7 +43,7 @@ function App() {
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/sobre" element={<AboutUsPage />} /> 
               <Route path="/equipamentos" element={<EquipmentsPage />} />
-              <Route path="/assinatura" element={<SignatureEmailPage />} />
+              <Route path="/assinatura" element={<SignatureEmail2025Page />} />
               <Route path="/certificacoes" element={<CertificationsPage />} />
               <Route path="/certificacoes/admin" element={<CertificationsAdminPage />} />
               <Route path="/ferias" element={<VacationsPage />} />
