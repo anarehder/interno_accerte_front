@@ -14,7 +14,7 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
     ];
 
     const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
-    
+    // console.log(schedule);
     useEffect(() => {
       const fetchEntries = async () => {
         try {
@@ -61,7 +61,7 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
                 <ScaleName>
                     <div>{info.name}</div>
                     <div>Cobertura: {schedule.rendered_coverage_percentage}%</div>
-                    <div>Agora ({formatDate(now)}): {oncall.user.summary}</div>
+                    <div>Agora ({formatDate(now)}): {oncall?.user?.summary}</div>
                 </ScaleName>}
             {(!carregando && users.length > 0) &&
                 <>
