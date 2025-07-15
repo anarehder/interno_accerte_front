@@ -4,15 +4,17 @@ import apiService from '../services/apiService';
 
 function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
     const [users, setUsers] = useState([]); // Usuários da escala
+    const [nameColor, setNameColor] = useState([]);
     const [schedule, setSchedule] = useState(null);
     const [info, setInfo] = useState({ "name": "", "time_zone": "", "id": "", "url": "" });
     const [carregando, setCarregando] = useState(true);
     const [weekMinutes, setWeekMinutes] = useState(duration * 24 * 60);
     const now = new Date();
     const colors = [
-        '#1F1FF5', '#B42F2F', '#F5A91F', '#3D3D3D', '#009595', '#FFFFFF', '#AF5F5F'
+        '#123e8c', '#c13232', '#F5A91F', '#3D3D3D', '#009595', '#FFFFFF', '#AF5F5F'
     ];
-
+    
+    // console.log(users);
     const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
     // console.log(schedule);
     useEffect(() => {
@@ -30,6 +32,11 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
           setInfo(dados);
             setUsers(response.data.schedule.users);
             setSchedule(response.data.schedule.final_schedule);
+            const corPorNome = {};
+            response.data.schedule.users.forEach((u, index) => {
+                corPorNome[u.summary] = colors[index % colors.length]; // repete cores se acabar
+            });
+            setNameColor(corPorNome);
             setCarregando(false);
         } catch (error) {
             console.error("Erro ao buscar escalas", error);
@@ -115,7 +122,7 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
                                     key={s.end}
                                     start={startPercent}
                                     width={width}
-                                    color={colors[index % users.length]}
+                                    color={nameColor[s.user.summary]}
                                     title={`${s.user.summary} de ${formatDate(start)} até ${formatDate(end)}`}
                                 >
                                     {s.user.summary}

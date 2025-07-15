@@ -20,8 +20,9 @@ const PlantoesTIPage = () => {
   const imageRef = useRef(null);
 
   const scales = [
-    "PCHC5N9",
     "PABNNC7",
+    "PCHC5N9",
+    "P0JOV6L",
     "PSWQJGP",
     "P9Y68SR",
     "PAHZ4GE",
