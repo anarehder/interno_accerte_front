@@ -38,48 +38,54 @@ function ComunicadoPopUpComponent({setUpdated}) {
     const leituraPopup = async () => {
         try {
             const body = { email: user.mail, comunicadoId: comunicado.id };
-            const response = await apiService.confirmarLeituraComunicado(body);
-            if(response.status = 200){
-              setClosed(true);
-              setUpdated(true);
-            }
-        } catch (error) {
-            console.error("Erro ao buscar informacoes vagas:", error);
-            return;
-        }
-    };
+      const response = await apiService.confirmarLeituraComunicado(body);
+      if (response.status = 200) {
+        setClosed(true);
+        setUpdated(true);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar informacoes vagas:", error);
+      return;
+    }
+  };
 
-    if (closed || leitura) return null;
-    if (buscando) return null;
-    
-    return (
-        <Overlay>
-            <CloseButton onClick={fecharPopup}>✖</CloseButton>
-            <Modal>
-                <h1>{comunicado?.titulo}</h1>
-                <div>
-                  <a href={comunicado?.linkExterno ? comunicado.linkExterno : '-'} target="_blank">
-                    <Imagem
-                        src={comunicado?.imagemUrl}
-                alt={"Mensagem"}
-              />
-            </a>
-            {comunicado?.legenda || comunicado?.legenda?.length < 2 && (
-              <Texto>
-                {comunicado?.legenda}
-                {/* {comunicado.legenda.split('\n').map((linha, index) => (
+  if (closed || leitura) return null;
+  if (buscando) return null;
+
+  return (
+    <Overlay>
+      <CloseButton onClick={fecharPopup}>✖</CloseButton>
+      <Modal>
+        <h1>{comunicado?.titulo}</h1>
+        {comunicado?.legenda || comunicado?.legenda?.length > 2 ?
+        <TextoImagem>
+            <a href={comunicado?.linkExterno ? comunicado.linkExterno : '-'} target="_blank">
+            <Imagem
+              src={comunicado?.imagemUrl}
+              alt={"Mensagem"}
+            />
+          </a>
+          <Texto>
+            {comunicado.legenda.split('\n').map((linha, index) => (
                   <p key={index}>
                     {linha}
-                  </p>
-                ))} */}
-              </Texto>
-            )}
-          </div>
-
-                <button onClick={leituraPopup}>Confirmar Leitura</button>
-            </Modal>
-        </Overlay>
-    )
+                  </p> ))}
+          </Texto>
+        </TextoImagem>
+        :
+        <SoImagem>
+          <a href={comunicado?.linkExterno ? comunicado.linkExterno : '-'} target="_blank">
+            <Imagem
+              src={comunicado?.imagemUrl}
+              alt={"Mensagem"}
+            />
+          </a>
+        </SoImagem>
+        }
+        <button onClick={leituraPopup}>Confirmar Leitura</button>
+      </Modal>
+    </Overlay>
+  )
 }
 
 export default ComunicadoPopUpComponent;
@@ -108,21 +114,34 @@ const Modal = styled.div`
   justify-content: space-around;
   align-items: center;
   color: #001143;
-  div{
-    height: 85%;
-    text-align: center;
-    align-items: center;
-    gap: 7%;
-    justify-content: center;
-  }
-  a{
-    width: 40%;
-    border-radius: 10px;
-  }
   button{
-    background: linear-gradient(to right,#205fdd, #001143);
+    background: linear-gradient(to right, #205fdd, #001143);
   }
 `;
+
+const TextoImagem = styled.div`
+  height: 85%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  a{
+    width: 50%;
+    // background-color: red;
+    display: flex;
+    justify-content: flex-start;
+  }
+`
+
+const SoImagem = styled.div`
+  justify-content: center;
+  align-items: center;
+  a{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+  }
+`
 
 const CloseButton = styled.button`
   position: absolute;
@@ -143,7 +162,8 @@ const CloseButton = styled.button`
 `;
 
 const Imagem = styled.img`
-  width: 100%;
+  width: 80%;
+  max-height: 80%;
   border-radius: 10px;
 `;
 
@@ -153,7 +173,7 @@ const Texto = styled.div`
   border-radius: 10px;
   overflow-y: auto;
   line-height: 25px;
-  padding: 10px;
+  padding: 15px 10px;
   border: 1px solid gray;
   flex-direction: column;
 `;

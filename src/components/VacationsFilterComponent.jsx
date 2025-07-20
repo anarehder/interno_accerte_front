@@ -180,7 +180,7 @@ function VacationsFilterComponent(){
 export default VacationsFilterComponent;
 
 const Container = styled.div`
-    width: 90%;
+    width: 95%;
     flex-direction: column;
     align-items: center;
     justify-content: center;

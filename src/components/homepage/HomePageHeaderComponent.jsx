@@ -50,8 +50,8 @@ function HomePageHeaderComponent({notificacoes}) {
 
      const handleLogout = () => {
         instance.logoutPopup({
-            postLogoutRedirectUri: "/login",
-            mainWindowRedirectUri: "/login"
+            postLogoutRedirectUri: "/",
+            mainWindowRedirectUri: "/"
         });
         sessionStorage.removeItem("posts");
         sessionStorage.removeItem("sharePoint");
@@ -105,15 +105,15 @@ function HomePageHeaderComponent({notificacoes}) {
                                             const rotas = {
                                                 aniversario: '/aniversarios',
                                                 comunicados: '/comunicados',
-                                                ferias: '/painelgestores',
+                                                ferias: user.mail === 'maria.silva@accerte.com.br' || 'ana.rehder@accerte.com.br' ? '/admin' : '/painelgestores',
                                                 vagas: '/painelgestores',
                                             };
 
                                             const textos = {
                                                 aniversario: '🎂 Hoje tem aniversário!',
-                                                comunicados: 'Comunicados',
-                                                ferias: 'Férias',
-                                                vagas: 'Vagas',
+                                                comunicados: '📢 Você tem comunicados não lidos.',
+                                                ferias: '🏖️ Você tem férias para aprovar!',
+                                                vagas: '🔖 Novo status de vaga.',
                                             };
 
                                             return (

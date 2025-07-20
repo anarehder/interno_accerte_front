@@ -84,7 +84,7 @@ function VacationsListComponent({filteredData, activeButton, handleSubmit}) {
 export default VacationsListComponent;
 
 const PageContainer = styled.div`
-    width: 90%;
+    width: 100%;
     flex-direction: column;
     align-items: center;
     gap: 20px; 
@@ -99,7 +99,6 @@ const PageContainer = styled.div`
 `
 
 const VacationTable = styled.div` 
-
     flex-direction: column;
     justify-content: space-between;
     gap: 10px;

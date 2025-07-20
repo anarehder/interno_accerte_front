@@ -82,10 +82,10 @@ const Info = styled.p`
         width: 300px;
     }
     &:nth-of-type(3) {
-        width: 160px;
+        width: 150px;
     }
     &:nth-of-type(4) {
-        width: 180px;
+        width: 200px;
     }
     &:nth-of-type(5) {
         width: 300px;
