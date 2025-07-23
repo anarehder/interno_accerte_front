@@ -9,11 +9,14 @@ import apiService from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext';
 import AprovarFeriasComponent from '../components/vacations/AprovarFeriasComponent';
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
+import VacationFilterGestorComponent from '../components/gestores/VacationFilterGestorComponent';
 
 function PainelGestoresPage() {
     const { user } = useAuth();
     const [selectedItem, setSelectedItem] = useState("");
     const [allowed, setAllowed] = useState(false);
+    const [allowedSub, setAllowedSub] = useState(false);
+
     const [carregando, setCarregando] = useState(true);
 
     useEffect(() => {
@@ -24,6 +27,9 @@ function PainelGestoresPage() {
                 const gestorConf = response.data.filter(item => item.Funcionarios?.email?.toLowerCase() == user.mail?.toLowerCase());
                 if (gestorConf.length>0){
                     setAllowed(true);
+                }
+                if (user.mail === 'daniel.guedes@accerte.com.br'){
+                    setAllowedSub(true);
                 }
                 setCarregando(false);
             } catch (error) {
@@ -57,12 +63,18 @@ function PainelGestoresPage() {
                             {selectedItem === "Ferias" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
                             Aprovar Férias
                         </button>
+                        <button onClick={() => setSelectedItem("FiltrarFerias")}>
+                            {selectedItem === "FiltrarFerias" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
+                            Filtrar Férias
+                        </button>
                     </SideBar>
                     <div>
                         {selectedItem === "ReqVaga" && <CriarVagaComponent setSelectedItem={setSelectedItem} />}
                         {selectedItem === "ListarVagas" && <BuscarVagasComponent />}
                         {selectedItem === "Humor" && <HumorGestoresComponent />}
                         {selectedItem === "Ferias" && <AprovarFeriasComponent type={"Gestor"}/>}
+                        {selectedItem === "FiltrarFerias" && <VacationFilterGestorComponent/>}
+                        
                     </div>
                 </div>
                 :
@@ -84,8 +96,19 @@ function PainelGestoresPage() {
                             <MdOutlineRadioButtonUnchecked size={16} />
                             Aprovar Férias
                         </button>
+                        {allowedSub &&
+                            <button onClick={() => setSelectedItem("FiltrarFerias")}>
+                            {selectedItem === "FiltrarFerias" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
+                            Filtrar Férias
+                            </button>
+                        }
                     </SideBar>
-                    <PageRightContainer><h2> Área destinada a gestores </h2> </PageRightContainer>
+                    {selectedItem === "FiltrarFerias" ?
+                        <div>
+                            <VacationFilterGestorComponent />
+                        </div> :
+                        <PageRightContainer><h2> Área destinada a gestores </h2> </PageRightContainer>
+                    }
                 </div>
             }
         </PageContainer>

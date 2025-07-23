@@ -47,6 +47,14 @@ function getVacationByEmail(email){
     return axios.get(`${BASE_URL}/ferias/filtros/email?email=${email}`)
 }
 
+function getVacationAreaByPeriod(inicio, fim, body){
+    return axios.post(`${BASE_URL}/ferias/filtros/periodo?inicio=${inicio}&fim=${fim}`, body)
+}
+
+function getVacationAreaByEmail(email, body){
+    return axios.post(`${BASE_URL}/ferias/filtros/email?email=${email}`, body)
+}
+
 function getVacationByContract(tipoContrato){
     return axios.get(`${BASE_URL}/ferias/filtros/contrato?contrato=${tipoContrato}`)
 }
@@ -155,6 +163,10 @@ function confirmarLeituraComunicado(body){
     return axios.post(`${BASE_URL}/comunicados/confirmar/`, body)
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado }
+function buscarFuncionarioPorArea(body){
+    return axios.post(`${BASE_URL}/funcionarios/atuais/area`, body)
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail }
 
 export default apiService;
