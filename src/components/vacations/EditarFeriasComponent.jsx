@@ -22,19 +22,29 @@ function EditarFeriasComponent({ selected, info, toEdit, setUpdated, setEditarFe
             setTotalDays(0);
         }
     };
-
     const isValid = () => {
         const dataInicio = new Date(date.start);
         const dataFim = new Date(date.end);
+        const hoje = new Date();
 
         const [dia, mes, ano] = selected.limite.split('/');
         const limite = new Date(`${ano}-${mes}-${dia}`);
         limite.setDate(limite.getDate() + 1);
 
-        return (
-            dataInicio < dataFim &&
-            dataFim <= limite
-        );
+        if (info.Contratos.tipo === "PJ" || info.Contratos.tipo === "COOPERADO") {
+            return (
+                dataInicio < dataFim &&
+                dataFim <= limite &&
+                dataInicio > hoje.setDate(hoje.getDate() + 10)
+            );
+        } else {
+            return (
+                dataInicio < dataFim &&
+                dataFim <= limite &&
+                dataInicio > hoje.setDate(hoje.getDate() + 45)
+            );
+        }
+
     };
 
     const handleConfirm = async () => {
@@ -113,8 +123,8 @@ function EditarFeriasComponent({ selected, info, toEdit, setUpdated, setEditarFe
                     </Form>
                 </SelectContainer>
             }
-            <p>Para PJs e Cooperados atentem-se aos 6 meses após o início do período aquisitivo para iniciar nova pausa.</p>
-            <p>Para CLTs e Estagiários atentem-se aos 12 meses após o início do período aquisitivo para iniciar um período de férias.</p>
+            <p>Para PJs e Cooperados atentem-se aos 6 meses após o início do período aquisitivo para iniciar nova pausa. <br/> A solicitação só pode ser realizada com mais de 10 dias de antecedência.</p>
+            <p>Para CLTs e Estagiários atentem-se aos 12 meses após o início do período aquisitivo para iniciar um período de férias.  <br/> A solicitação só pode ser realizada com mais de 45 dias de antecedência.</p>
         </Container>
     );
 };
@@ -122,7 +132,7 @@ function EditarFeriasComponent({ selected, info, toEdit, setUpdated, setEditarFe
 export default EditarFeriasComponent;
 
 const Container = styled.div`
-  max-width: 90%;
+  max-width: 95%;
   margin: auto;
   height: 500px;
   padding: 20px;

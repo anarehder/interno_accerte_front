@@ -14,7 +14,7 @@ function EditScaleComponent({scale, opcoes, setUpdatedScale, setEditScale, editS
         quinta: scale.quinta,
         sexta: scale.sexta,
       });
-
+    console.log(user);
     const handleChange = (dia, valor) => {
         setDiasSelecionados(prev => ({
             ...prev,
@@ -52,7 +52,9 @@ function EditScaleComponent({scale, opcoes, setUpdatedScale, setEditScale, editS
             {diasSemana.map(dia => (
                 <DropdownContainer key={dia}>
                     <Label>{dia.charAt(0).toUpperCase() + dia.slice(1)}:</Label>
-                    <Select onChange={e => handleChange(dia, e.target.value)}>
+                    <Select 
+                    onChange={e => handleChange(dia, e.target.value)}
+                    disabled={user?.mail !== 'maria.silva@accerte.com.br' && /Pausa|Recesso|Férias/i.test(scale[dia])}>
                         <option value="" hidden>{scale[dia]}</option>
                         {opcoes?.map((opcao, index) => (
                             <option key={index} value={opcao}>

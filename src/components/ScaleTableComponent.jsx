@@ -18,7 +18,7 @@ function ScaleTableComponent({type}) {
     const [editScale, setEditScale] = useState(false);
     const [scaleToEdit, setScaleToEdit] = useState(null);
     const [updatedScale, setUpdatedScale] = useState(false);
-    console.log(selectedScale, scale);
+    // console.log(selectedScale, scale);
     const setores = ["Presidência", "Administrativo", "Arquitetura de Soluções", "Comercial Público", "Comercial Privado", "Financeiro", "Gente e Gestão", "Governança de Dados", "Jurídico", 'Marketing', "Tecnologia da Informação"];
 
     const cores = { "Home": "blue", "Presencial": "green", "Férias - CLT": "orange", "Recesso - Estágio": "orange", "Feriado": "#f94860", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantão": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Viagem": "black","Licença Maternidade": "#f94860", "Licença Paternidade": "#f94860", "Day OFF":"purple", "Outros": "black" };

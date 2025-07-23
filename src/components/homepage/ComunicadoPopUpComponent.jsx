@@ -9,7 +9,7 @@ function ComunicadoPopUpComponent({setUpdated}) {
     const [comunicado, setComunicado] = useState(null);
     const [leitura, setLeitura] = useState(false);
     const [buscando, setBuscando] = useState(true);
-  console.log(comunicado)
+  // console.log(comunicado)
     useEffect(() => {
         const fetchScale = async () => {
             try {

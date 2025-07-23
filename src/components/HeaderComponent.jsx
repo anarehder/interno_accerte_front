@@ -48,8 +48,8 @@ function HeaderComponent({pageTitle, type}) {
 
      const handleLogout = () => {
         instance.logoutPopup({
-            postLogoutRedirectUri: "/login",
-            mainWindowRedirectUri: "/login"
+            postLogoutRedirectUri: "/",
+            mainWindowRedirectUri: "/"
         });
         sessionStorage.removeItem("posts");
         sessionStorage.removeItem("sharePoint");
