@@ -28,7 +28,7 @@ function VacationFilterGestorComponent(){
             if (!user) return;
             const fetchScale = async () => {
                 try {
-                    if(user.mail === "daniel.guedes@accerte.com.br" || user.mail === ("ana.rehder@accerte.com.br")){
+                    if(user.mail === "daniel.garcia@accerte.com.br" || user.mail === ("ana.rehder@accerte.com.br")){
                         const body = {"adminEmail": "rodrigo.mouzinho@accerte.com.br"};
                         const response = await apiService.buscarFuncionarioPorArea(body);
                         setFuncionarios(response.data);
@@ -78,7 +78,7 @@ function VacationFilterGestorComponent(){
             // console.log("filtro funcionario");
             try {
                 let body = { "adminEmail": "" }
-                if (user.mail === "daniel.guedes@accerte.com.br" || user.mail === ("ana.rehder@accerte.com.br")) {
+                if (user.mail === "daniel.garcia@accerte.com.br" || user.mail === ("ana.rehder@accerte.com.br")) {
                     body = { "adminEmail": "rodrigo.mouzinho@accerte.com.br" };
                 }
                 else {

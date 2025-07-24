@@ -28,7 +28,7 @@ function PainelGestoresPage() {
                 if (gestorConf.length>0){
                     setAllowed(true);
                 }
-                if (user.mail === 'daniel.guedes@accerte.com.br'){
+                if (user.mail === 'daniel.garcia@accerte.com.br'){
                     setAllowedSub(true);
                 }
                 setCarregando(false);
