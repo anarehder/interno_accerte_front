@@ -105,7 +105,7 @@ function VacationFilterGestorComponent(){
             }
             try {
                 let body = { "adminEmail": "" }
-                if (user.mail === "daniel.guedes@accerte.com.br" || user.mail === ("ana.rehder@accerte.com.br")) {
+                if (user.mail === "daniel.garcia@accerte.com.br" || user.mail === ("ana.rehder@accerte.com.br")) {
                     body = { "adminEmail": "rodrigo.mouzinho@accerte.com.br" };
                 }
                 else {
