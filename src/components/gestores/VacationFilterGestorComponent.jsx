@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import apiService from "../../services/apiService";
 import { useAuth } from "../../contexts/AuthContext";
 import VacationsListComponent from "./../VacationsListComponent";
+import VacationsListGestorComponent from "./VacationsListGestorComponent";
 
 function VacationFilterGestorComponent(){
     const { user, dados } = useAuth();
@@ -100,7 +101,7 @@ function VacationFilterGestorComponent(){
                 alert("Preencha corretamente as datas");
             }
             if (date.start >= date.end) {
-                alert("A data final das licença deve ser posterior à data inicial");
+                alert("A data final deve ser posterior à data inicial");
             }
             try {
                 let body = { "adminEmail": "" }
@@ -202,11 +203,8 @@ function VacationFilterGestorComponent(){
                         }
                     </OpContainer>
                     {filteredData.length > 0 && (
-                        <VacationsListComponent
-                            filteredData={filteredData.map(item => ({
-                                ...item,
-                                Ferias: item.Ferias.filter(f => f.status !== "Concluído")
-                            }))}
+                        <VacationsListGestorComponent
+                            filteredData={filteredData}
                             activeButton={activeButton} handleSubmit={handleSubmit}
                         />
                     )}
@@ -230,7 +228,7 @@ const Container = styled.div`
     color: #555;
     border: none;
     position: relative;
-    overflow-y: scroll;
+    // overflow-y: scroll;
     div { 
         select{
           width: 450px;   
@@ -241,7 +239,7 @@ const Container = styled.div`
 const OpContainer = styled.div`
     align-items: center;
     justify-content: space-between;
-    max-width: 650px;
+    max-width: 600px;
     min-height: 60px;
 `;
 
@@ -281,11 +279,11 @@ const Button = styled.button`
     width: 200px;
     justify-content: center;
     font-weight: 700;
-    background-color: ${({ active }) => (active  === 'show' ? "#ff5843" : "transparent")};
-    color: ${({ active }) => (active === 'show' ? "white" : "#ff5843")};
-    border: ${({ active }) => (active === 'show' ? "3px solid #ff5843" : "3px solid #ff5843")};
+    background-color: ${({ active }) => (active  === 'show' ? "#0057E1" : "transparent")};
+    color: ${({ active }) => (active === 'show' ? "white" : "#0057E1")};
+    border: ${({ active }) => (active === 'show' ? "3px solid #0057E1" : "3px solid #0057E1")};
     &:hover {
-        background-color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")
+        background-color: ${({ active }) => (active === 'show' ? "#0057E1" : "white")
     };
 `;
 

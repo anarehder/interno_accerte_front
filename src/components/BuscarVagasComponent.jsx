@@ -42,9 +42,7 @@ function BuscarVagasComponent() {
                         <ListagemVagasGestoresComponent key={index} vaga={v}  setUpdated={setUpdated}/>
                     ))}
                 </CardsContainer>
-            )}
-            
-            
+            )}   
         </PageContainer>
     )
 }
@@ -57,11 +55,11 @@ const PageContainer = styled.div`
     align-items: center;
     flex-direction: column;
     gap: 10px;
-    height: 60vh;
+    // height: 60vh;
     color: #555;
     border: none;
     position: relative;
-    overflow-y: scroll;
+    // overflow-y: scroll;
     h2 {
         margin: 10px 0;
     }

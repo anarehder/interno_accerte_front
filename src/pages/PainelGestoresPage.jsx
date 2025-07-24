@@ -119,7 +119,7 @@ export default PainelGestoresPage;
 
 const PageContainer = styled.div`
     width: 100%;
-    height: 60vh;
+    min-height: 100%;
     flex-direction: column;
     align-items: center;
     position: absolute;
@@ -128,7 +128,7 @@ const PageContainer = styled.div`
 `
 const SideBar = styled.div`
     width: 350px;
-    position: fixed;
+    position: absolute;
     padding: 15px 0;
     align-items: center;
     height: 60vh;
@@ -154,7 +154,7 @@ const PageRightContainer = styled.div`
     align-items: center;
     flex-direction: column;
     gap: 10px;
-    height: 60vh;
+    height: calc(100%-100px);
     color: #555;
     border: none;
     position: relative;
