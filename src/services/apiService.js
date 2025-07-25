@@ -167,6 +167,10 @@ function buscarFuncionarioPorArea(body){
     return axios.post(`${BASE_URL}/funcionarios/atuais/area`, body)
 }
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail }
+function buscarFuncionarioAtivo(){
+    return axios.get(`${BASE_URL}/funcionarios/atuais`, )
+}
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo }
 
 export default apiService;

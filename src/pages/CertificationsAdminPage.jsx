@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 import CriarDadosCertificacaoComponent from '../components/certifications/CriarDadosCertificacaoComponent';
+import CriarFunCertComponent from '../components/certifications/CriarFunCertComponent';
 
 function CertificationsAdminPage() {
     const [activeButton, setActiveButton] = useState("");
@@ -23,7 +24,7 @@ function CertificationsAdminPage() {
                 <Button onClick={() => handleClick("Filtrar")}>Filtrar Certificado Funcionário</Button>
             </ButtonsContainer>
             {activeButton === "Dados" && <CriarDadosCertificacaoComponent />}
-            {activeButton === "NovoCert" && <h1>NovoCert</h1>}
+            {activeButton === "NovoCert" && <CriarFunCertComponent />}
             {activeButton === "Filtrar" && <h1>Filtrar</h1>}
         </PageContainer>
     )

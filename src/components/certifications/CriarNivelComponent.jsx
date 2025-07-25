@@ -33,7 +33,7 @@ function CriarNivelComponent() {
         );
         if (confirmado) {
             try {
-                console.log(body);
+                // console.log(body);
                 const response = await apiServiceCertificacoes.criarNivel(body);
                 if (response.status === 200) {
                     alert("Nível criado com sucesso!");

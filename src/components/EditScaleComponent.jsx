@@ -14,7 +14,7 @@ function EditScaleComponent({scale, opcoes, setUpdatedScale, setEditScale, editS
         quinta: scale.quinta,
         sexta: scale.sexta,
       });
-    console.log(user);
+    // console.log(user);
     const handleChange = (dia, valor) => {
         setDiasSelecionados(prev => ({
             ...prev,

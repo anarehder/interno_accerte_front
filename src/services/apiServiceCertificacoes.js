@@ -30,6 +30,18 @@ function criarVersao(body){
     return axios.post(`${BASE_URL}/certificados/criar/versao`, body)
 }
 
-const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, criarVersao }
+function buscarCertificacaoPorEmissor(emissorId, body){
+    return axios.post(`${BASE_URL}/certificados/buscar/certificacao/${emissorId}`, body)
+}
+
+function buscarVersaoPorCertificacao(certId, body){
+    return axios.post(`${BASE_URL}/certificados/buscar/versao/${certId}`, body)
+}
+
+function criarCertFunc(body){
+    return axios.post(`${BASE_URL}/certificados/criar/funcionariocert`, body)
+}
+
+const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, criarVersao, buscarCertificacaoPorEmissor, buscarVersaoPorCertificacao, criarCertFunc }
 
 export default apiServiceCertificacoes;
