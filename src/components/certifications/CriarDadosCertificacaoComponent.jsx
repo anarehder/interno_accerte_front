@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import CriarEmissorComponent from './CriarEmissorComponent';
 import CriarNivelComponent from './CriarNivelComponent';
-
+import CriarCertificacaoComponent from './CriarCertificacaoComponent';
+import CriarVersaoCertComponent from './CriarVersaoCertComponent';
 
 function CriarDadosCertificacaoComponent() {
     const [activeButton, setActiveButton] = useState("");
@@ -25,8 +26,8 @@ function CriarDadosCertificacaoComponent() {
             </ButtonsContainer>
             {activeButton === "Emissor" && <CriarEmissorComponent />}
             {activeButton === "Nivel" && <CriarNivelComponent />}
-            {activeButton === "Certificacao" && <h1>Certificacao</h1>}
-            {activeButton === "Versao" && <h1>Versao</h1>}
+            {activeButton === "Certificacao" && <CriarCertificacaoComponent/>}
+            {activeButton === "Versao" && <CriarVersaoCertComponent /> }
         </PageContainer>
     )
 }
