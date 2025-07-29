@@ -17,17 +17,18 @@ function ListagemVagasGestoresComponent({vaga, setUpdated}) {
 
     const getProgressPercent = (status) => {
         switch (status) {
-            case "Cancelada": return 100;
             case "Solicitado": return 0;
-            case "Stand By": return 5;
-            case "Divulgação": return 15;
+            case "Stand By": return 10;
+            case "Divulgação": return 20;
             case "Triagem curricular": return 30;
-            case "Validação curricular": return 45;
-            case "Seleção em agendamento": return 55;
-            case "Entrevista com o Gestor": return 65;
-            case "Testes e referências": return 75;
-            case "Validação do perfil": return 85;
+            case "Validação curricular": return 40;
+            case "Seleção em agendamento": return 50;
+            case "Entrevista com o Gestor": return 60;
+            case "Entrega Documentos Admissão": return 70;
+            case "Testes e referências": return 80;
+            case "Validação do perfil": return 90;
             case "Concluída": return 100;
+            case "Cancelada": return 100;
             default: return 0;
         }
     };
@@ -179,16 +180,17 @@ function ListagemVagasGestoresComponent({vaga, setUpdated}) {
                                 <h2>Alterar Status: </h2>
                                 <select value={novoStatus} onChange={(e) => handleStatusChange(e.target.value)}>
                                     <option value="">{novoStatus}</option>
-                                    <option value="Cancelada">Cancelada</option>
                                     <option value="Stand By">Stand By</option>
                                     <option value="Divulgação">Divulgação</option>
                                     <option value="Triagem curricular">Triagem curricular</option>
                                     <option value="Validação curricular">Validação curricular</option>
                                     <option value="Seleção em agendamento">Seleção em agendamento</option>
                                     <option value="Entrevista com o Gestor">Entrevista com o Gestor</option>
+                                    <option value="Entrega Documentos Admissão">Entrega Documentos Admissão</option>
                                     <option value="Testes e referências">Testes e referências</option>
                                     <option value="Validação do perfil">Validação do perfil</option>
                                     <option value="Concluída">Concluída</option>
+                                    <option value="Cancelada">Cancelada</option>
                                 </select>
                             </div>
                             <button onClick={handleSubmit}>Alterar Status</button>
@@ -371,7 +373,7 @@ const EditRow = styled.div`
     }
     select {
         height: 40px;
-        width: 250px;
+        width: 280px;
         font-size: 14px;
         color: #555;
         border: 1px solid #555;
