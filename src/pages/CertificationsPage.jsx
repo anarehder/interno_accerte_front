@@ -4,6 +4,7 @@ import { useState } from 'react';
 import CertificationsLevelsComponent from '../components/CertificationsLevelsComponent';
 import CertificationsList from "../constants/CertificationsList";
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
+import CertificacoesListComponent from '../components/certifications/CertificacoesListComponent';
 
 function CertificationsPage() {
     const partnersList = Object.keys(CertificationsList);
@@ -16,6 +17,7 @@ function CertificationsPage() {
     return (
         <PageContainer>
             <HeaderNewComponent pageTitle={"Certificações"}/>
+            {/* <CertificacoesListComponent /> */}
             <ButtonsContainer>
                 {partnersList.map((label) => (
                     <Button
@@ -31,6 +33,7 @@ function CertificationsPage() {
             <a href={CertificationsList[activeButton]?.site_treinamentos} target="_blank">
                 <h1>{activeButton}</h1>
             </a>}
+            
             { activeButton === partnersList[0] && <CertificationsValueComponent /> }
             { (activeButton && activeButton !== partnersList[0]) && 
                 <CertificationsLevelsComponent list = {CertificationsList[activeButton]} />
