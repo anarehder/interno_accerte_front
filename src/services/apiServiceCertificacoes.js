@@ -26,22 +26,26 @@ function buscarCertificacao(body){
     return axios.post(`${BASE_URL}/certificados/buscar/certificacao`, body)
 }
 
-function criarVersao(body){
-    return axios.post(`${BASE_URL}/certificados/criar/versao`, body)
-}
-
 function buscarCertificacaoPorEmissor(emissorId, body){
     return axios.post(`${BASE_URL}/certificados/buscar/certificacao/${emissorId}`, body)
-}
-
-function buscarVersaoPorCertificacao(certId, body){
-    return axios.post(`${BASE_URL}/certificados/buscar/versao/${certId}`, body)
 }
 
 function criarCertFunc(body){
     return axios.post(`${BASE_URL}/certificados/criar/funcionariocert`, body)
 }
 
-const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, criarVersao, buscarCertificacaoPorEmissor, buscarVersaoPorCertificacao, criarCertFunc }
+function buscarListaCertsNiveis(body){
+    return axios.post(`${BASE_URL}/certificados/lista/niveis`, body)
+}
+
+function buscarListaCertsNiveisEmissor(body, emissorId){
+    return axios.post(`${BASE_URL}/certificados/lista/niveis/emissor/${emissorId}`, body)
+}
+
+function buscarTop3Geral(body){
+    return axios.post(`${BASE_URL}/certificados/top3/all`, body)
+}
+
+const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, buscarCertificacaoPorEmissor, criarCertFunc, buscarListaCertsNiveis, buscarListaCertsNiveisEmissor, buscarTop3Geral }
 
 export default apiServiceCertificacoes;

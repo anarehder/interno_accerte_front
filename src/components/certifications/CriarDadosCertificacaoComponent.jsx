@@ -3,7 +3,6 @@ import { useState } from 'react';
 import CriarEmissorComponent from './CriarEmissorComponent';
 import CriarNivelComponent from './CriarNivelComponent';
 import CriarCertificacaoComponent from './CriarCertificacaoComponent';
-import CriarVersaoCertComponent from './CriarVersaoCertComponent';
 
 function CriarDadosCertificacaoComponent() {
     const [activeButton, setActiveButton] = useState("");
@@ -22,12 +21,10 @@ function CriarDadosCertificacaoComponent() {
                 <Button onClick={() => handleClick("Emissor")}>Criar Emissor</Button>
                 <Button onClick={() => handleClick("Nivel")}>Criar Nivel</Button>
                 <Button onClick={() => handleClick("Certificacao")}>Criar Certificação</Button>
-                <Button onClick={() => handleClick("Versao")}>Criar Versão</Button>
             </ButtonsContainer>
             {activeButton === "Emissor" && <CriarEmissorComponent />}
             {activeButton === "Nivel" && <CriarNivelComponent />}
             {activeButton === "Certificacao" && <CriarCertificacaoComponent/>}
-            {activeButton === "Versao" && <CriarVersaoCertComponent /> }
         </PageContainer>
     )
 }

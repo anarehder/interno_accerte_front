@@ -17,7 +17,7 @@ function CertificationsPage() {
     return (
         <PageContainer>
             <HeaderNewComponent pageTitle={"Certificações"}/>
-            {/* <CertificacoesListComponent /> */}
+            <CertificacoesListComponent />
             <ButtonsContainer>
                 {partnersList.map((label) => (
                     <Button

@@ -1,81 +1,172 @@
 import styled from 'styled-components';
-import AppleLogo from "../../assets/logos-parceiros/apple_branco.png";
-import AndroidLogo from "../../assets/logos-parceiros/google_play.png";
-import CajuLogo from "../../assets/logos-parceiros/caju.png";  // Substitua pelos caminhos corretos
 import { PiDotsThreeCircleFill } from "react-icons/pi";
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { useState } from 'react';
+import { GoDotFill } from "react-icons/go";
+import { useEffect, useState } from 'react';
+import apiService from '../../services/apiService';
+import apiServiceCertificacoes from '../../services/apiServiceCertificacoes';
+import { useAuth } from '../../contexts/AuthContext';
+import { useMsal } from '@azure/msal-react';
+import CertificacoesCardComponent from './CertificacoesCardComponent';
+import UserPhotoComponent from './PerfilPhotoComponent';
+import { FaCrown } from "react-icons/fa";
+
 
 function CertificacoesListComponent() {
+    const { instance, accounts } = useMsal();
+    const { user } = useAuth();
     const [expanded, setExpanded] = useState(false);
+    const [selectedLevel, setSelectedLevel] = useState("");
+    const [niveis, setNiveis] = useState([]);
+    const [allowed, setAllowed] = useState(false);
+    const [emissores, setEmissores] = useState([]);
+    const [selectedEmissor, setSelectedEmissor] = useState("");
+    const [certifications, setCertifications] = useState([]);
+    const [filteredCertifications, setFilteredCertifications] = useState([]);
+    const [top3Geral, setTop3Geral] = useState([]);
+    // console.log(filteredCertifications[0].FuncionarioCerts?.length/filteredCertifications[0].limite);
+    console.log(top3Geral);
+    useEffect(() => {
+        if (!user) return;
+        const fetchData = async () => {
+            const body = { email: user.mail };
+            try {
+                const response2 = await apiServiceCertificacoes.buscarNivel(body);
+                setNiveis(response2.data);
+            } catch (error) {
+                console.error("Erro ao buscar informacoes de niveis:", error);
+            }
+            try {
+                const response = await apiServiceCertificacoes.buscarEmissor(body);
+                setEmissores(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar informacoes de emissores:", error);
+            }
+            try {
+                const response = await apiServiceCertificacoes.buscarCertificacao(body);
+                setCertifications(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar informacoes de certificações:", error);
+            }
+            try {
+                const response = await apiServiceCertificacoes.buscarListaCertsNiveis(body);
+                console.log(response.data);
+                const top3 = response.data
+                    .sort((a, b) => b['Total'] - a['Total']) // ordena do maior para o menor
+                    .slice(0, 3);
+                setTop3Geral(top3);
+            } catch (error) {
+                console.error("Erro ao buscar informacoes de certificações:", error);
+            }
+            
+        };
+
+        fetchData();
+
+    }, [user]);
+
+    useEffect(() => {
+            if (!user) return;
+            const fetchGestores = async () => {
+                try {
+                    const response = await apiService.buscarGestoresInfo();
+                    const gestorConf = response.data.filter(item => item.Funcionarios?.email?.toLowerCase() == user.mail?.toLowerCase());
+                    if (gestorConf.length>0){
+                        setAllowed(true);
+                    } else if (user.mail === 'daniel.garcia@accerte.com.br'){
+                        setAllowed(true);
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar informacoes de gestores:", error);
+                }
+            };
     
-    const imageMap = {
-            Apple: AppleLogo,
-            Android: AndroidLogo,
-            Caju: CajuLogo,
-            // Adicione outros rótulos e imagens conforme necessário
-          };
+            fetchGestores();
+    
+    }, [user]);
+
+
+    const handleSelectEmissor = (e) => {
+        const selectedId = e.target.value;
+        setSelectedEmissor(selectedId);
+        setSelectedLevel("");
+    };
+
+    const handleSelectLevel = (nivel) => {
+        setSelectedLevel(nivel);
+        if (selectedLevel === "Extra") {
+            const filteredEmissor = certifications.filter(cert => cert.emissorId === Number(selectedEmissor));
+            const filtered = filteredEmissor.filter(cert => cert.nivelId === null);
+
+            setFilteredCertifications(filtered);
+        } else {
+        // Filtra os certificados com base no emissor selecionado
+            const filteredEmissor = certifications.filter(cert => cert.emissorId === Number(selectedEmissor));
+            const filtered = filteredEmissor.filter(cert => cert.nivelId === nivel.id);
+
+            setFilteredCertifications(filtered);
+        }
+    };
 
     return (
         <PageContainer>
-            <div>TOP 3</div>
-            <div><strong>EMISSORES</strong></div>
-            <div>
-                <EmissorButton>
-                    {/* {options.map((opt, i) => ( */}
-                    {/* <img src={imageMap[opt.label]} alt={opt.label} /> */}
-                    {/* ))} */}
-                    <img src={imageMap['Apple']} alt={'Apple'} />
-
-                </EmissorButton>
-                <EmissorButton>
-                    <img src={imageMap['Apple']} alt={'Apple'} />
-                </EmissorButton>
-            </div>
-            <div>
-                <NivelButton color={"selected"}>Nível I </NivelButton>
-                <NivelButton color={"t"}>Nível II </NivelButton>
-                <NivelButton color={"t"}>Nível III </NivelButton>
-                <NivelButton color={"t"}>Nível IV </NivelButton>
-                <NivelButton color={"t"}>Nível V </NivelButton>
-                <NivelButton color={"t"}>Extras </NivelButton>
-            </div>
-            <div>
-                <ValorButton>VALOR DE BONIFICAÇÃO | RS 100,00</ValorButton>
+            {/* <CentralizedDiv>
                 TOP 3
-            </div>
+            </CentralizedDiv> */}
+            <Top3Block>
+                <h2>TOP 3 GERAL</h2>
+                {top3Geral?.length > 0 &&
+                    top3Geral.map((t, index) => (
+                        <Imagem key={index} > 
+                            <h2>{index+1}º</h2>
+                            <FaCrown size={24} style={{ transform: 'rotate(-25deg)',color: '#d1b217', position: 'absolute', top: '-18px' }}/>
+                            <UserPhotoComponent email={t.email} nome={t.nome} />
+                        </Imagem>
+                    ))}
+            </Top3Block>
+            <CentralizedDiv>
+                    <Label>Emissor:</Label>
+                    <select onChange={handleSelectEmissor}>
+                        <option value="">Selecione...</option>
+                        {emissores.map((c) => (
+                            <option key={c.id} value={c.id}>
+                                {c.nome}
+                            </option>
+                        ))}
+                    </select>
+            </CentralizedDiv>
+            <CentralizedDiv>
+                {niveis.length > 0 &&
+                niveis.map((n, index) => (
+                        <NivelButton key={index} $color={selectedLevel === n ? "yes" : "no"} onClick={()=>handleSelectLevel(n)}>Nível {n.nivel}</NivelButton>
+                    ))}
+                <NivelButton $color={selectedLevel === 'Extra' ? "yes" : "no"} onClick={()=>handleSelectLevel("Extra")}>Extra</NivelButton>
+            </CentralizedDiv>
             <div>
-                <HeaderRow>
-                    <Title>
-                        <Title>Azure Fundamentals - 2025</Title>
-                        <SubTitle> Inativa desde: 01/08/2025 </SubTitle>
-                    </Title>
-                    <HeaderItems>
-                        <Status $status={"Ativa"}>
-                            <PiDotsThreeCircleFill size={40} />
-                            Ativa
-                        </Status>
-                        <ProgressContainer>
-                            <Progress $status={"Ativa"} $percent={75} > 3 </Progress>
-                            <p>4</p>
-                        </ProgressContainer>
-                        <ToggleButton onClick={() => setExpanded(!expanded)}>
-                            {expanded ? <FaChevronUp /> : <FaChevronDown />}
-                        </ToggleButton>
-                    </HeaderItems>
-                </HeaderRow>
+                {selectedLevel?.valor &&
+                    <ValorButton>VALOR DE BONIFICAÇÃO | {Number(selectedLevel?.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</ValorButton>
+                }
+                {selectedLevel === "Extra" &&
+                    <ValorButton>SEM BONIFICAÇÃO | FORA DO PCA</ValorButton>
+                }
             </div>
-            {/* {list?.certificacoes?.map((c) => (
-                <LevelContainer key={c.nome}>
-                    <LevelRows>
-                        <div>{c.nome}</div>
-                        <div>{c.nivel}</div>
-                        <div>{prices[c.nivel].price}</div>
-                    </LevelRows>
-                </LevelContainer>
-            ))
-            } */}
-
+            {/* se selectedEmissor for '' nao mostro nada e tiver emissor uso o filtro */}
+            <CentralizedColumnDiv>
+                {filteredCertifications.length > 0 ?
+                filteredCertifications.map((c) => (
+                    <CertificacoesCardComponent key={c.id} certificacao={c} allowed={allowed} />
+                )):
+                <Label>
+                    Sem certificações para exibir.
+                </Label>
+                }
+            </CentralizedColumnDiv>
+            {filteredCertifications.length > 0 && selectedLevel !== "Extra" &&
+            <>
+            <p>Ativa PCA: apta para receber bonificação.</p>
+            <p>Bloqueada: certificações novas não estarão incluídas no PCA, apenas renovações.</p>
+            </>
+            }
         </PageContainer>
     )
 }
@@ -84,34 +175,43 @@ export default CertificacoesListComponent;
 
 const PageContainer = styled.div`
     width: 80%;
-    // min-height: 110vh;
-    justify-content: center;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     gap: 15px;
     font-size: 25px;
     margin-bottom: 20px;
     gap: 30px;
+    margin: 0 auto;    
 `
 
-const EmissorButton = styled.div`
-    width: 175px;
-    height: 65px;
-    border-radius: 25px;
+const CentralizedDiv = styled.div`
+    margin: 0 auto;
     justify-content: center;
-    align-items: center;
-    margin: 0 15px;
-    img{
-        height: 70%;
-    }
-    background-color: gray;
 `
+
+const CentralizedColumnDiv = styled.div`
+    margin: 0 auto;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+`
+
+const Label = styled.label`
+    display: block;
+    font-size: 20px;
+    display: flex;
+    margin-right: 15px;
+    justify-content: center;
+    height: 40px;
+    align-items: center;
+`;
 
 const NivelButton = styled.div`
-    width: 95px;
+    width: 100px;
     height: 40px;
-    color: ${({ $color }) => ($color  === 'selected' ? "#0046ba" : "white")};
-    background-color: ${({ $color }) => ($color  === 'selected' ? "white" : "#0046ba")};
+    color: ${({ $color }) => ($color  === 'yes' ? "#0046ba" : "white")};
+    background-color: ${({ $color }) => ($color  === 'yes' ? "white" : "#0046ba")};
     font-weight: 700;
     border-radius: 15px;
     font-size: 20px;
@@ -133,111 +233,44 @@ const ValorButton = styled.div`
     align-items: center;
     margin: 0 10px;
     box-shadow: 0px 4px 4px 0px #00000040;
+    margin: 0 auto;
 `
 
-
-const HeaderRow = styled.div`
+const Value = styled.div`
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-`;
-
-const Title = styled.div`
-    font-size: 22px;
-    font-weight: bold;
-    align-items: center;
-    justify-content: space-between;
-    text-align: center;
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
-    background-color: #007BFF;
-    color: white;
-    min-height: 50px;
-    text-indent: 15px;
-    p {
-        font-size: 15px;
-        line-height: 18px;
-        width: 150px;
-        margin-right: 15px;
-        text-align: right;
-    }
-`;
-
-const SubTitle = styled.div`
-    width: 40%;
-    font-size: 15px;
-    font-weight: 500;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 10px;
-`;
-
-const HeaderItems = styled.div`
-    justify-content: space-around;
-    margin: 10px 0;
-`;
-
-const Status = styled.div`
-    font-size: 16px;
-    width: 45%;
-    margin-left: 15px;
-    align-items: center;
-    font-weight: bold;
-    color: ${({ $status }) => {
-    switch ($status) {
-      case 'Inativa': return '#dc2626'; // vermelho
-      case 'Bloquada': return '#F9933C';;
-      case 'Ativa': return '#16a34a';
-      default: return '#6b7280'; // cinza
-    }
-  }};
-`;
-
-const ProgressContainer = styled.div`
-    width: 400px; 
-    background-color: #e5e7eb;
-    border-radius: 12px;
-    height: 22px;
-    margin: 12px 0;
-    border: 1px solid 555;
-    font-size: 18px;
-    position: relative;
-    margin-right: 30px;
+    max-width: 100px;
+    background-color: red;
     align-items: center;
     p{
-        position: absolute;
-        right: -15px;
+        margin-top: 10px;
+        font-size: 14px;
+        text-align: left;
     }
-
 `;
 
-const Progress = styled.div`
-    border-radius: 5px;
-    height: 100%;
-    background: ${({ $status }) =>
-        $status === 'Cancelada'
-        ? '#dc2626'
-        : 'linear-gradient(to left, #f74600, #22c55e)'};
-    width: ${({ $percent }) => $percent}%;
-    justify-content: flex-end;
-    transition: width 0.3s ease;
-    font-size: 18px;
+const Imagem = styled.div`
     position: relative;
-    padding-right: 10px;
-    color: white;
+    width: 100px;
     align-items: center;
-    text-indent: 10px;
-    text-align: right;
-`;
+    justify-content: center;
+    gap: 20px;
+`
 
-const ToggleButton = styled.button`
-    background: none;
-    margin-right: 15px;
-    width: 60px;
-    border: none;
-    color: #6b7280;
-    &:hover{
-        background: none;
-    }
-`;
+const Top3Block = styled.div`
+    position: fixed;
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    top: 30px;
+    right: 50px;
+    flex-direction: column;
+    min-height: 200px;
+    width: 145px;
+    border: 1px solid gray;
+    padding: 15px;
+    border-radius: 30px;
+`

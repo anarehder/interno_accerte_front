@@ -9,7 +9,11 @@ function CriarNivelComponent() {
 
     const handleForm = (e) => {
         const { id, value } = e.target;
-        setForm(prevForm => ({ ...prevForm, [id]: Number(value) }));
+        if (id === "valor") {
+            setForm(prevForm => ({ ...prevForm, [id]: Number(value) }));
+        } else {
+            setForm(prevForm => ({ ...prevForm, [id]: value }));
+        };
     };
 
     const handleSubmit = async (e) => {
@@ -54,12 +58,11 @@ function CriarNivelComponent() {
                 <div>
                     <Label>Nível:</Label>
                     <Input
-                        type="number"
+                        type="text"
                         value={form.nivel}
                         id="nivel"
                         autoComplete="nivel"
                         onChange={handleForm}
-                        min={1}
                     />
                 </div>
                 <div>
@@ -75,94 +78,6 @@ function CriarNivelComponent() {
                 </div>
                 <Button onClick={handleSubmit}>Criar Nível</Button>
             </Form>
-            <>
-                {/* <div>
-                                <Label>Sobrenome</Label>
-                                <Input
-                                    type="text"
-                                    value={form.sobrenome}
-                                    id="sobrenome"
-                                    autoComplete="sobrenome"
-                                    onChange={handleForm}
-                                />
-                            </div>
-                            <div>
-                                <Label>E-mail</Label>
-                                <Input
-                                    type="text"
-                                    value={selectedFunc.mail}
-                                    disabled='true'
-                                />
-                            </div>
-                            <div>
-                                <Label>Tipo de Contrato</Label>
-                                <Select id="tipoContratoId" value={form.tipoContratoId} onChange={handleForm}>
-                                    <option value="">Selecione...</option>
-                                    {info.listaContratos.map((c) => (
-                                        <option key={c.id} value={c.id}>
-                                            {c.tipo}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </div>
-                            <div>
-                                <Label>Cargo</Label>
-                                <Input
-                                    type="text"
-                                    id="cargo"
-                                    value={form.cargo}
-                                    onChange={handleForm}
-                                />
-                            </div>
-                            <div>
-                                <Label>Tipo de Jornada</Label>
-                                <Select id="jornadaId" value={form.jornadaId} onChange={handleForm}>
-                                    <option value="">Selecione...</option>
-                                    {info.listaJornadas.map((c) => (
-                                        <option key={c.id} value={c.id}>
-                                            {c.tipo}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </div>
-                            <div>
-                                <Label>Área</Label>
-                                <Select id="areaId" value={form.areaId} onChange={handleForm}>
-                                    <option value="">Selecione...</option>
-                                    {info.listaAreas.map((c) => (
-                                        <option key={c.id} value={c.id}>
-                                            {c.area}
-                                        </option>
-                                    ))}
-                                </Select>
-                            </div>
-                            <div>
-                                <Label>Data de Admissão</Label>
-                                <Input
-                                    type="date"
-                                    id="admissao"
-                                    value={form.admissao}
-                                    onChange={handleForm}
-                                />
-                            </div>
-                            <div>
-                                <Label>Aniversário</Label>
-                                <Input
-                                    type="date"
-                                    id="aniversario"
-                                    value={form.aniversario}
-                                    onChange={handleForm}
-                                />
-                            </div>
-                            <div>
-                                <Label>Administrador da Intranet?</Label>
-                                <Select id="isAdmin" value={form.isAdmin} onChange={handleForm}>
-                                    <option value="">Selecione</option>
-                                    <option value={true}>Sim</option>
-                                    <option value={false}>Não</option>
-                                </Select>
-                            </div> */}
-            </>
         </Container>
     );
 };

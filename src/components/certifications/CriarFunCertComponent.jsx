@@ -7,12 +7,12 @@ import apiService from '../../services/apiService';
 
 function CriarFunCertComponent() {
     const { user } = useAuth();
-    const [form, setForm] = useState({ funcionarioId: "", certificacaoId: "", certVersaoId: "", emissao: null, validade: null, url: null, validaPCA: false});
+    const [form, setForm] = useState({ funcionarioId: "", certificacaoId: "", emissao: null, validade: null, url: null, validaPCA: false});
     const [funcionarios, setFuncionarios] = useState([]);
     const [emissores, setEmissores] = useState([]);
     const [certificacoes, setCertificacoes] = useState([]);
     const [versoes, setVersoes] = useState([]);
-    // console.log(form);
+    console.log(form);
     useEffect(() => {
         if (!user) return;
         const fetchData = async () => {
@@ -40,7 +40,7 @@ function CriarFunCertComponent() {
 
         let newValue;
 
-        if (id === "funcionarioId" || id === "certVersaoId") {
+        if (id === "funcionarioId" || id === "certificacaoId") {
             newValue = Number(value);
         } else {
             newValue = value;
@@ -87,7 +87,7 @@ function CriarFunCertComponent() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.funcionarioId || !form.certificacaoId || !form.certVersaoId || !form.emissao) {
+        if (!form.funcionarioId || !form.certificacaoId || !form.emissao) {
             alert("Os campos funcionario, certificação, versão e emissão devem ser preenchido.");
             return;
         }
@@ -113,7 +113,7 @@ function CriarFunCertComponent() {
                 const response = await apiServiceCertificacoes.criarCertFunc(body);
                 if (response.status === 200) {
                     alert("Certificação inserida com sucesso!");
-                    setForm({ funcionarioId: "", certificacaoId: "", certVersaoId: "", emissao: null, validade: null, url: null, validaPCA: false});
+                    setForm({ funcionarioId: "", certificacaoId: "", emissao: null, validade: null, url: null, validaPCA: false});
                 }
             } catch (error) {
                 console.error("Erro ao enviar requisição:", error);
@@ -161,18 +161,7 @@ function CriarFunCertComponent() {
                     </Select>
                 </div>
                 <div>
-                    <Label>Versao:</Label>
-                    <Select id="certVersaoId" value={form.certVersaoId} onChange={handleForm} disabled={versoes.length===0}>
-                        <option value="">Selecione...</option>
-                        {versoes.map((c) => (
-                            <option key={c.id} value={c.id}>
-                                {c.versao}
-                            </option>
-                        ))}
-                    </Select>
-                </div>
-                <div>
-                    <Label>Certifição Atual no PCA?</Label>
+                    <Label>Certifição Válida no PCA?</Label>
                     <Select id="validaPCA" value={form.validaPCA} onChange={handleForm}>
                         <option value="">Selecione</option>
                         <option value={true}>Sim</option>
