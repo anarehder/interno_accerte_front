@@ -1,43 +1,19 @@
 import styled from 'styled-components';
-import CertificationsValueComponent from '../components/CertificationsValuesComponent';
-import { useState } from 'react';
-import CertificationsLevelsComponent from '../components/CertificationsLevelsComponent';
-import CertificationsList from "../constants/CertificationsList";
+import { useAuth } from '../contexts/AuthContext';
+import { Link } from "react-router-dom";
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 import CertificacoesListComponent from '../components/certifications/CertificacoesListComponent';
 
 function CertificationsPage() {
-    const partnersList = Object.keys(CertificationsList);
-    // const [activeButton, setActiveButton] = useState("");
-    
-    const handleClick = (label) => {
-      setActiveButton(label);
-    };
+    const { user } = useAuth();
 
     return (
         <PageContainer>
             <HeaderNewComponent pageTitle={"Certificações"}/>
+            {
+                (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br'|| user?.mail === 'daniel.garcia@accerte.com.br') && <AdminButton><Link to="/certificacoes/admin">Painel Admin</Link></AdminButton>
+            }
             <CertificacoesListComponent />
-            {/* <ButtonsContainer>
-                {partnersList.map((label) => (
-                    <Button
-                        key={label}
-                        active={activeButton === label ? true : false}
-                        onClick={() => handleClick(label)}
-                    >
-                        {label}
-                    </Button>
-                ))}
-            </ButtonsContainer> */}
-            {/* {activeButton && 
-            <a href={CertificationsList[activeButton]?.site_treinamentos} target="_blank">
-                <h1>{activeButton}</h1>
-            </a>}
-            
-            { activeButton === partnersList[0] && <CertificationsValueComponent /> }
-            { (activeButton && activeButton !== partnersList[0]) && 
-                <CertificationsLevelsComponent list = {CertificationsList[activeButton]} />
-            } */}
         </PageContainer>
     )
 }
@@ -54,20 +30,21 @@ const PageContainer = styled.div`
     color: rgb(75, 74, 75);
 `
 
-const Button = styled.button`
-    width: 100%;
+const AdminButton = styled.button`
+    top: 20px;
+    right: 250px;
+    position: absolute;
+    width: 150px;
     font-size: 16px;
     justify-content: center;
     border: none;
     border-radius: 5px;
-    background-color: ${({ active }) => (active ? "rgb(75, 74, 75)" : "#007bff")};
+    cursor: pointer;
+    background-color: white;
+    border: 2px solid #003289;
+    color: #003289;
     &:hover {
-        background-color: ${({ active }) => (active ? "#007bff" : "rgb(75, 74, 75)")
-    };
+        background-color: #003289;
+        color: white;
+    }
 `;
-
-const ButtonsContainer = styled.div`
-    width: 80%;
-    gap: 15px;
-    margin: 40px 0 20px 0;
-`

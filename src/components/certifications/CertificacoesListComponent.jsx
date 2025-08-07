@@ -1,21 +1,15 @@
 import styled from 'styled-components';
-import { PiDotsThreeCircleFill } from "react-icons/pi";
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { GoDotFill } from "react-icons/go";
 import { useEffect, useState } from 'react';
 import apiService from '../../services/apiService';
 import apiServiceCertificacoes from '../../services/apiServiceCertificacoes';
 import { useAuth } from '../../contexts/AuthContext';
-import { useMsal } from '@azure/msal-react';
 import CertificacoesCardComponent from './CertificacoesCardComponent';
 import UserPhotoComponent from './PerfilPhotoComponent';
 import { FaCrown } from "react-icons/fa";
 
 
 function CertificacoesListComponent() {
-    const { instance, accounts } = useMsal();
     const { user } = useAuth();
-    const [expanded, setExpanded] = useState(false);
     const [selectedLevel, setSelectedLevel] = useState("");
     const [niveis, setNiveis] = useState([]);
     const [allowed, setAllowed] = useState(false);
@@ -24,8 +18,8 @@ function CertificacoesListComponent() {
     const [certifications, setCertifications] = useState([]);
     const [filteredCertifications, setFilteredCertifications] = useState([]);
     const [top3Geral, setTop3Geral] = useState([]);
-    // console.log(filteredCertifications[0].FuncionarioCerts?.length/filteredCertifications[0].limite);
-    console.log(user);
+
+    // console.log(user);
     useEffect(() => {
         if (!user) return;
         const fetchData = async () => {
@@ -50,7 +44,7 @@ function CertificacoesListComponent() {
             }
             try {
                 const response = await apiServiceCertificacoes.buscarListaCertsNiveis(body);
-                console.log(response.data);
+                // console.log(response.data);
                 const top3 = response.data
                     .sort((a, b) => b['Total'] - a['Total']) // ordena do maior para o menor
                     .slice(0, 3);
@@ -115,8 +109,8 @@ function CertificacoesListComponent() {
                 <h2>TOP 3 GERAL</h2>
                 {top3Geral?.length > 0 &&
                     top3Geral.map((t, index) => (
-                        <Block>
-                        <Imagem key={index} > 
+                        <Block key={index}>
+                        <Imagem > 
                             <h2>{index+1}º</h2>
                             <FaCrown size={24} style={{ transform: 'rotate(-25deg)',color: '#d1b217', position: 'absolute', top: '-18px' }}/>
                             <UserPhotoComponent email={t.email} nome={t.nome} />
@@ -278,6 +272,7 @@ const Top3Block = styled.div`
     border: 1px solid gray;
     padding: 8px 15px;
     border-radius: 30px;
+    z-index: 10;
     p{
         font-size: 14px;
     }

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from "react-router-dom";
 import { useState } from 'react';
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 import CriarDadosCertificacaoComponent from '../components/certifications/CriarDadosCertificacaoComponent';
@@ -18,6 +19,7 @@ function CertificationsAdminPage() {
     return (
         <PageContainer>
             <HeaderNewComponent pageTitle={"Certificações - Administrador"}/>
+            <AdminButton><Link to="/certificacoes">Certificações</Link></AdminButton>
             <ButtonsContainer>
                 <Button onClick={() => handleClick("Dados")}>Criar Dados de Certificação</Button>
                 <Button onClick={() => handleClick("NovoCert")}>Inserir Certificado Funcionário</Button>
@@ -62,3 +64,22 @@ const ButtonsContainer = styled.div`
     align-items: center;
     justify-content: center;
 `
+
+const AdminButton = styled.button`
+    top: 20px;
+    right: 50px;
+    position: absolute;
+    width: 150px;
+    font-size: 16px;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: white;
+    border: 2px solid #003289;
+    color: #003289;
+    &:hover {
+        background-color: #003289;
+        color: white;
+    }
+`;

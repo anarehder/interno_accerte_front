@@ -7,7 +7,7 @@ import UserPhotoComponent from './PerfilPhotoComponent';
 
 
 function CertificacoesCardComponent({ certificacao, allowed }) {
-    console.log(certificacao);
+    // console.log(certificacao);
     const [expanded, setExpanded] = useState(false);
     
     return (
