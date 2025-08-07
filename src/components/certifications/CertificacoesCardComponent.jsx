@@ -20,13 +20,14 @@ function CertificacoesCardComponent({ certificacao, allowed }) {
                 <SubTitle>{certificacao.nome}</SubTitle>
             </Title>
             <HeaderItems>
-                <Status $status={certificacao.bloqueada === true ? "Inativa" : "Ativa"}>
+                <Status $status={(certificacao.bloqueada === true || certificacao?.FuncionarioCerts?.length > Number(certificacao?.limite))  ? "Inativa" : "Ativa"}>
                     <GoDotFill size={24} />
-                    {certificacao.bloqueada === true ? "Bloqueada Para Novas Certificações" : "Disponível Para Novas Certificações"}
+                    {(certificacao.bloqueada === true || certificacao?.FuncionarioCerts?.length > Number(certificacao?.limite)) ? "Bloqueada Para Novas Certificações" : "Disponível Para Novas Certificações"}
 
                 </Status>
                 <ProgressContainer>
                     <Progress $status={certificacao.bloqueada === true ? "Inativa" : "Ativa"} $percent={certificacao.limite !== 0 ? (certificacao.FuncionarioCerts?.length / Number(certificacao.limite)).toFixed(1) * 100 : 0} > {certificacao.FuncionarioCerts?.length} </Progress>
+                    {(certificacao.FuncionarioCerts?.length / Number(certificacao.limite)) === 0 && (certificacao.FuncionarioCerts?.length / Number(certificacao.limite)).toFixed(1) * 100}
                     <p>{certificacao.limite}</p>
                 </ProgressContainer>
                 {
@@ -45,8 +46,9 @@ function CertificacoesCardComponent({ certificacao, allowed }) {
                             {certificacao.FuncionarioCerts.length > 0 &&
                                 certificacao.FuncionarioCerts.map((f, index) => (
                                     <Value key={index} >
-                                        <p>{f.Funcionarios?.nome} {f.Funcionarios?.sobrenome}</p>
+                                        
                                     <UserPhotoComponent  email={f.Funcionarios.email} nome={f.Funcionarios.nome} url={f.url}/>
+                                    <p>{f.Funcionarios?.nome} {f.Funcionarios?.sobrenome}</p>
                                     </Value>
                                 ))}
                             </div>
@@ -116,13 +118,15 @@ const ProgressContainer = styled.div`
     height: 22px;
     margin: 12px 0;
     border: 1px solid 555;
-    font-size: 18px;
+    font-size: 15px;
     position: relative;
     margin-right: 30px;
     align-items: center;
+    font-weight: 700;
     p{
         position: absolute;
         right: -15px;
+        font-weight: 700;
     }
 
 `;
@@ -133,7 +137,7 @@ const Progress = styled.div`
     background: ${({ $status, $percent }) =>
         $status === 'Cancelada'
         ? '#dc2626'
-        :  $percent < 50 ? '#03c149ff' :  $percent > 75 ? '#f02906ff' : '#ee5609ff'};
+        : ($percent < 50 && $percent > 0) ? '#03c149ff' : $percent > 75 ? '#f02906ff' : ($percent >= 50 && $percent < 75) ? '#ee5609ff' : '#E5E7EB'};
     width: ${({ $percent }) => $percent}%;
     justify-content: flex-end;
     transition: width 0.3s ease;
@@ -144,6 +148,7 @@ const Progress = styled.div`
     align-items: center;
     text-indent: 10px;
     text-align: right;
+    font-weight: 700;
 `;
 
 const ToggleButton = styled.button`
@@ -175,6 +180,7 @@ const DetailCard = styled.div`
     line-height: 20px;
     div{    
         gap: 15px;
+        // justify-content: center;
     }
 `
 

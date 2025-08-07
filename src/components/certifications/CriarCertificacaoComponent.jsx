@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import apiServiceCertificacoes from '../../services/apiServiceCertificacoes';
 
-function CriarCertificacaoComponent() {
+function CriarCertificacaoComponent( {handleClick}) {
     const { user } = useAuth();
-    const [form, setForm] = useState({ nome: "", emissorId: "", limite: null, nivelId: null, ativaPCA: false, bloqueada: false, startDate: null, endDate: null});
+    const [form, setForm] = useState({ nome: "", emissorId: "", limite: 0, nivelId: null, ativaPCA: true, bloqueada: false, startDate: null, endDate: null});
     const [emissores, setEmissores] = useState([]);
     const [niveis, setNiveis] = useState([]);
-
+    // console.log(form);
 
     useEffect(() => {
         if (!user) return;
@@ -57,17 +57,17 @@ function CriarCertificacaoComponent() {
         }
         const formComDatasFormatadas = {
             ...form,
-            ativaPCA: "true" ? true : false,
-            bloqueada: "true" ? true : false,
+            ativaPCA: Boolean(form.ativaPCA),
+            bloqueada: Boolean(form.bloqueada),
             startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
             endDate: form.endDate ? new Date(form.endDate).toISOString() : null
         };
-
+        // console.log(formComDatasFormatadas);
         const body = {
             email: user.mail,
             certificacao: formComDatasFormatadas,
         };
-
+        // console.log(body);
         const confirmado = window.confirm(
             `Solicitante: ${body.email}\n` +
             `Deseja criar o certificado:\n` +
@@ -78,7 +78,8 @@ function CriarCertificacaoComponent() {
                 const response = await apiServiceCertificacoes.criarCertificacao(body);
                 if (response.status === 200) {
                     alert("Certificação criada com sucesso!");
-                    setForm({ nome: "", emissorId: "", limite: null, nivelId: null, ativaPCA: false, startDate: null, endDate: null});
+                    setForm({ nome: "", emissorId: "", limite: null, nivelId: null, ativaPCA: true, bloqueada: false, startDate: null, endDate: null});
+                    handleClick("");
                 }
             } catch (error) {
                 console.error("Erro ao enviar requisição:", error);
@@ -144,7 +145,7 @@ function CriarCertificacaoComponent() {
                 </div>
                 <div>
                     <Label>Bloqueada Para Novas Certificações?</Label>
-                    <Select id="ativaPCA" value={form.bloqueada} onChange={handleForm}>
+                    <Select id="bloqueada" value={form.bloqueada} onChange={handleForm}>
                         <option value="">Selecione</option>
                         <option value={true}>Sim</option>
                         <option value={false}>Não</option>

@@ -24,7 +24,7 @@ function CertificationsAdminPage() {
                 <Button onClick={() => handleClick("Filtrar")}>Filtrar Certificado Funcionário</Button>
             </ButtonsContainer>
             {activeButton === "Dados" && <CriarDadosCertificacaoComponent />}
-            {activeButton === "NovoCert" && <CriarFunCertComponent />}
+            {activeButton === "NovoCert" && <CriarFunCertComponent handleClick={handleClick}/>}
             {activeButton === "Filtrar" && <h1>Filtrar</h1>}
         </PageContainer>
     )

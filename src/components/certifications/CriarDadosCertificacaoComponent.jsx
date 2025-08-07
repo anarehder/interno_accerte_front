@@ -24,7 +24,7 @@ function CriarDadosCertificacaoComponent() {
             </ButtonsContainer>
             {activeButton === "Emissor" && <CriarEmissorComponent />}
             {activeButton === "Nivel" && <CriarNivelComponent />}
-            {activeButton === "Certificacao" && <CriarCertificacaoComponent/>}
+            {activeButton === "Certificacao" && <CriarCertificacaoComponent handleClick={handleClick}/>}
         </PageContainer>
     )
 }

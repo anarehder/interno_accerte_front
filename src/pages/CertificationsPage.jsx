@@ -8,8 +8,8 @@ import CertificacoesListComponent from '../components/certifications/Certificaco
 
 function CertificationsPage() {
     const partnersList = Object.keys(CertificationsList);
-    const [activeButton, setActiveButton] = useState("");
-
+    // const [activeButton, setActiveButton] = useState("");
+    
     const handleClick = (label) => {
       setActiveButton(label);
     };
@@ -18,18 +18,18 @@ function CertificationsPage() {
         <PageContainer>
             <HeaderNewComponent pageTitle={"Certificações"}/>
             <CertificacoesListComponent />
-            <ButtonsContainer>
+            {/* <ButtonsContainer>
                 {partnersList.map((label) => (
                     <Button
                         key={label}
-                        active={activeButton === label ? true : undefined}
+                        active={activeButton === label ? true : false}
                         onClick={() => handleClick(label)}
                     >
                         {label}
                     </Button>
                 ))}
-            </ButtonsContainer>
-            {activeButton && 
+            </ButtonsContainer> */}
+            {/* {activeButton && 
             <a href={CertificationsList[activeButton]?.site_treinamentos} target="_blank">
                 <h1>{activeButton}</h1>
             </a>}
@@ -37,7 +37,7 @@ function CertificationsPage() {
             { activeButton === partnersList[0] && <CertificationsValueComponent /> }
             { (activeButton && activeButton !== partnersList[0]) && 
                 <CertificationsLevelsComponent list = {CertificationsList[activeButton]} />
-            }
+            } */}
         </PageContainer>
     )
 }
@@ -47,7 +47,7 @@ export default CertificationsPage;
 const PageContainer = styled.div`
     width: 100%;
     height: 100%;
-    min-height: 100vh;
+    min-height: 101vh;
     flex-direction: column;
     align-items: center;
     gap: 20px;

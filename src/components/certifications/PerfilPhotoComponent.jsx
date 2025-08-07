@@ -73,6 +73,7 @@ function UserPhotoComponent({ email, nome, url }) {
             )
         } else {
             return (
+                <>
                 <img
                     src={photoUrl}
                     alt={`Foto de ${nome}`}
@@ -82,7 +83,9 @@ function UserPhotoComponent({ email, nome, url }) {
                         borderRadius: '50%',
                         objectFit: 'cover'
                     }}
-                />);
+                />
+                </>
+            );
         }
     }
 

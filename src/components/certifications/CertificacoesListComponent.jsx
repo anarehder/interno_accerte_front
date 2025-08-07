@@ -25,7 +25,7 @@ function CertificacoesListComponent() {
     const [filteredCertifications, setFilteredCertifications] = useState([]);
     const [top3Geral, setTop3Geral] = useState([]);
     // console.log(filteredCertifications[0].FuncionarioCerts?.length/filteredCertifications[0].limite);
-    console.log(top3Geral);
+    console.log(user);
     useEffect(() => {
         if (!user) return;
         const fetchData = async () => {
@@ -90,6 +90,7 @@ function CertificacoesListComponent() {
         const selectedId = e.target.value;
         setSelectedEmissor(selectedId);
         setSelectedLevel("");
+        setFilteredCertifications([]);
     };
 
     const handleSelectLevel = (nivel) => {
@@ -110,22 +111,22 @@ function CertificacoesListComponent() {
 
     return (
         <PageContainer>
-            {/* <CentralizedDiv>
-                TOP 3
-            </CentralizedDiv> */}
             <Top3Block>
                 <h2>TOP 3 GERAL</h2>
                 {top3Geral?.length > 0 &&
                     top3Geral.map((t, index) => (
+                        <Block>
                         <Imagem key={index} > 
                             <h2>{index+1}º</h2>
                             <FaCrown size={24} style={{ transform: 'rotate(-25deg)',color: '#d1b217', position: 'absolute', top: '-18px' }}/>
                             <UserPhotoComponent email={t.email} nome={t.nome} />
                         </Imagem>
+                        <p>{t.nome}</p>
+                        </Block>
                     ))}
             </Top3Block>
             <CentralizedDiv>
-                    <Label>Emissor:</Label>
+                    <Label>Emissor/Área:</Label>
                     <select onChange={handleSelectEmissor}>
                         <option value="">Selecione...</option>
                         {emissores.map((c) => (
@@ -152,10 +153,11 @@ function CertificacoesListComponent() {
             </div>
             {/* se selectedEmissor for '' nao mostro nada e tiver emissor uso o filtro */}
             <CentralizedColumnDiv>
-                {filteredCertifications.length > 0 ?
+                {filteredCertifications.length > 0  ? 
                 filteredCertifications.map((c) => (
                     <CertificacoesCardComponent key={c.id} certificacao={c} allowed={allowed} />
                 )):
+                selectedLevel !== "" &&
                 <Label>
                     Sem certificações para exibir.
                 </Label>
@@ -163,8 +165,10 @@ function CertificacoesListComponent() {
             </CentralizedColumnDiv>
             {filteredCertifications.length > 0 && selectedLevel !== "Extra" &&
             <>
-            <p>Ativa PCA: apta para receber bonificação.</p>
-            <p>Bloqueada: certificações novas não estarão incluídas no PCA, apenas renovações.</p>
+            <br/>
+            <p> <strong>Ativa PCA: apta para receber bonificação.</strong></p>
+            <p><strong>Bloqueada: certificações novas não estarão incluídas no PCA, apenas renovações.</strong></p>
+            <br/>
             </>
             }
         </PageContainer>
@@ -203,7 +207,8 @@ const Label = styled.label`
     display: flex;
     margin-right: 15px;
     justify-content: center;
-    height: 40px;
+    // background-color: red;
+    height: 45px;
     align-items: center;
 `;
 
@@ -265,12 +270,23 @@ const Top3Block = styled.div`
     justify-content: center;
     align-items: center;
     gap: 25px;
-    top: 30px;
+    top: 20px;
     right: 50px;
     flex-direction: column;
     min-height: 200px;
-    width: 145px;
+    width: 140px;
     border: 1px solid gray;
-    padding: 15px;
+    padding: 8px 15px;
     border-radius: 30px;
+    p{
+        font-size: 14px;
+    }
+`
+
+const Block = styled.div`
+    // background-color: red;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 5px;
 `

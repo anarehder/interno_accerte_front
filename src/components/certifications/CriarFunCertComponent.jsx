@@ -5,14 +5,13 @@ import apiServiceCertificacoes from '../../services/apiServiceCertificacoes';
 import apiService from '../../services/apiService';
 
 
-function CriarFunCertComponent() {
+function CriarFunCertComponent({handleClick}) {
     const { user } = useAuth();
     const [form, setForm] = useState({ funcionarioId: "", certificacaoId: "", emissao: null, validade: null, url: null, validaPCA: false});
     const [funcionarios, setFuncionarios] = useState([]);
     const [emissores, setEmissores] = useState([]);
     const [certificacoes, setCertificacoes] = useState([]);
-    const [versoes, setVersoes] = useState([]);
-    console.log(form);
+
     useEffect(() => {
         if (!user) return;
         const fetchData = async () => {
@@ -66,25 +65,6 @@ function CriarFunCertComponent() {
         }
     };
 
-    const handleCertChange = async (e) => {
-        const { id, value } = e.target;
-        const newValue = Number(value);
-        setForm(prevForm => ({
-            ...prevForm,
-            [id]: newValue
-        }));
-
-        const body = { email: user.mail };
-        try {
-            const response = await apiServiceCertificacoes.buscarVersaoPorCertificacao(value, body);
-            if (response.status === 200) {
-                setVersoes(response.data);
-            }
-        } catch (error) {
-            console.error("Erro ao enviar requisição:", error);
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.funcionarioId || !form.certificacaoId || !form.emissao) {
@@ -93,7 +73,7 @@ function CriarFunCertComponent() {
         }
         const formComDatasFormatadas = {
             ...form,
-            validaPCA: "true" ? true : false,
+            validaPCA: Boolean(form.validaPCA),
             emissao: form.emissao ? new Date(form.emissao).toISOString() : null,
             validade: form.validade ? new Date(form.validade).toISOString() : null
         };
@@ -114,6 +94,7 @@ function CriarFunCertComponent() {
                 if (response.status === 200) {
                     alert("Certificação inserida com sucesso!");
                     setForm({ funcionarioId: "", certificacaoId: "", emissao: null, validade: null, url: null, validaPCA: false});
+                    handleClick("");
                 }
             } catch (error) {
                 console.error("Erro ao enviar requisição:", error);
@@ -151,7 +132,7 @@ function CriarFunCertComponent() {
                 </div>
                 <div>
                     <Label>Certificação:</Label>
-                    <Select id="certificacaoId" value={form.certificacaoId} onChange={handleCertChange} disabled={certificacoes.length===0}>
+                    <Select id="certificacaoId" value={form.certificacaoId} disabled={certificacoes.length===0}>
                         <option value="">Selecione...</option>
                         {certificacoes.map((c) => (
                             <option key={c.id} value={c.id}>
