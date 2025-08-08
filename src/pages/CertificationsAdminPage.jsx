@@ -76,7 +76,7 @@ const AdminButton = styled.button`
     border-radius: 5px;
     cursor: pointer;
     background-color: white;
-    border: 2px solid #003289;
+    border: 2px solid #003289; 
     color: #003289;
     &:hover {
         background-color: #003289;
