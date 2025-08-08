@@ -20,9 +20,9 @@ function CertificacoesCardComponent({ certificacao, allowed }) {
                 <SubTitle>{certificacao.nome}</SubTitle>
             </Title>
             <HeaderItems>
-                <Status $status={(certificacao.bloqueada === true || certificacao?.FuncionarioCerts?.length > Number(certificacao?.limite))  ? "Inativa" : "Ativa"}>
+                <Status $status={(certificacao.bloqueada === true || certificacao?.FuncionarioCerts?.length >= Number(certificacao?.limite))  ? "Inativa" : "Ativa"}>
                     <GoDotFill size={24} />
-                    {(certificacao.bloqueada === true || certificacao?.FuncionarioCerts?.length > Number(certificacao?.limite)) ? "Bloqueada Para Novas Certificações" : "Disponível Para Novas Certificações"}
+                    {(certificacao.bloqueada === true || certificacao?.FuncionarioCerts?.length >= Number(certificacao?.limite)) ? "Bloqueada Para Novas Certificações" : "Disponível Para Novas Certificações"}
 
                 </Status>
                 <ProgressContainer>

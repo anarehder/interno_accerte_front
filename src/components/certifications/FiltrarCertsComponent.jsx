@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import ListarCertsAdminComponent from './ListarCertsAdminComponent';
+import ListarFuncCertsAdminComponent from './ListasFuncCertsAdminComponent';
 
 function FiltrarCertsComponent() {
     const [activeButton, setActiveButton] = useState("");
@@ -21,7 +22,7 @@ function FiltrarCertsComponent() {
                 <Button onClick={() => handleClick("Bonificacoes")}>Lista Bonificações</Button>
             </ButtonsContainer>
             {activeButton === "Certificacoes" && <ListarCertsAdminComponent />}
-            {activeButton === "Funcionarios" && <div> Funcionarios</div>}
+            {activeButton === "Funcionarios" && <ListarFuncCertsAdminComponent />}
             {activeButton === "Bonificacoes" && <div> Bonificacoes</div>}
             {/* {activeButton === "Emissor" && <CriarEmissorComponent />} */}
             {/* {activeButton === "Nivel" && <CriarNivelComponent />} */}
