@@ -140,7 +140,7 @@ export async function getSharePointData(instance, accounts) {
   // const base64 = buffer.toString("base64");
   const blob = await teste.blob();
   const imageUrl = URL.createObjectURL(blob);
-  console.log(imageUrl);
+  // console.log(imageUrl);
   
   // console.log(testee);
   const hoje = new Date();

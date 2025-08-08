@@ -46,6 +46,18 @@ function buscarTop3Geral(body){
     return axios.post(`${BASE_URL}/certificados/top3/all`, body)
 }
 
-const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, buscarCertificacaoPorEmissor, criarCertFunc, buscarListaCertsNiveis, buscarListaCertsNiveisEmissor, buscarTop3Geral }
+function buscarListaFuncCerts(body){
+    return axios.post(`${BASE_URL}/lista/funcionarios`, body)
+}
+
+function editarStatus(body){
+    return axios.post(`${BASE_URL}/editar/certificacao/status`, body)
+}
+
+function buscarListaValores(body){
+    return axios.post(`${BASE_URL}/lista/agrupada`, body)
+}
+
+const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, buscarCertificacaoPorEmissor, criarCertFunc, buscarListaCertsNiveis, buscarListaCertsNiveisEmissor, buscarTop3Geral, buscarListaFuncCerts, editarStatus, buscarListaValores }
 
 export default apiServiceCertificacoes;

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 import CriarDadosCertificacaoComponent from '../components/certifications/CriarDadosCertificacaoComponent';
 import CriarFunCertComponent from '../components/certifications/CriarFunCertComponent';
+import FiltrarCertsComponent from '../components/certifications/FiltrarCertsComponent';
 
 function CertificationsAdminPage() {
     const [activeButton, setActiveButton] = useState("");
@@ -27,7 +28,7 @@ function CertificationsAdminPage() {
             </ButtonsContainer>
             {activeButton === "Dados" && <CriarDadosCertificacaoComponent />}
             {activeButton === "NovoCert" && <CriarFunCertComponent handleClick={handleClick}/>}
-            {activeButton === "Filtrar" && <h1>Filtrar</h1>}
+            {activeButton === "Filtrar" && <FiltrarCertsComponent />}
         </PageContainer>
     )
 }
