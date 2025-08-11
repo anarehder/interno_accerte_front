@@ -10,7 +10,7 @@ function CriarVagaComponent({setSelectedItem}) {
     const [carregando, setCarregando] = useState(true);
     const [funcionarioSolicitante, setFuncionarioSolicitante] = useState(0);
     const [areaIdDoSolicitante, setAreaIdDoSolicitante] = useState([]);  
-
+    
     const reqDefault = {  
     solicitanteId: 0,
     areaId: 0,
@@ -31,16 +31,17 @@ function CriarVagaComponent({setSelectedItem}) {
     imediato: false,
     qtdeDeVagas: 1
     };
-
+    
     const [newReq, setNewReq] = useState(reqDefault);
+    // console.log(formularioInfo);
     // console.log(newReq);
     const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
 
-    setNewReq((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-    }));
+        setNewReq((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value,
+        }));
     };
 
     const handleSelectId = (e) => {
@@ -58,7 +59,7 @@ function CriarVagaComponent({setSelectedItem}) {
             try {
                 const response = await apiService.getVagasInfo();
                 setFormularioInfo(response.data);
-                const func = response.data.funcionarios.find((func) => func.email === user.mail);
+                const func = response.data.funcionarios.find((func) => func.email.toLowerCase() === user.mail.toLowerCase());
                 if (!func){
                     setCarregando(false);
                     return;
@@ -71,8 +72,12 @@ function CriarVagaComponent({setSelectedItem}) {
                 setAreaIdDoSolicitante(area);
                 setNewReq((prev) => ({
                     ...prev,
-                    solicitanteId: func.id,
-                    areaId: area.areaId
+                    solicitanteId: func.id
+                }));
+                area.length === 1 && 
+                setNewReq((prev) => ({
+                    ...prev,
+                    areaId: area[0].areaId
                 }));
                 setCarregando(false);
             } catch (error) {
@@ -93,6 +98,7 @@ function CriarVagaComponent({setSelectedItem}) {
                 adminEmail: user.mail,
                 vaga: newReq
             }
+            console.log(body);
             await apiService.createVagas(body);
             alert('Vaga criada com sucesso!');
             setNewReq(reqDefault);
@@ -125,13 +131,13 @@ function CriarVagaComponent({setSelectedItem}) {
                         {
                             areaIdDoSolicitante.length > 1 &&
                             <select name="areaId" onChange={handleSelectId}>
-                            <option value="">Selecione</option>
-                            {areaIdDoSolicitante.map((item) => (
-                                <option key={item.areaId} value={item.areaId}>
-                                    {formularioInfo? formularioInfo?.areas.find((area) => area.id === item.areaId)?.area : "Carregando..."}
-                                </option>
-                            ))}
-                        </select>
+                                <option value="">Selecione</option>
+                                {areaIdDoSolicitante.map((item) => (
+                                    <option key={item.areaId} value={item.areaId}>
+                                        {formularioInfo? formularioInfo?.areas.find((area) => area.id === item.areaId)?.area : "Carregando..."}
+                                    </option>
+                                ))}
+                            </select>
                         }
                         {
                             areaIdDoSolicitante.length === 1 &&
