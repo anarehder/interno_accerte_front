@@ -56,29 +56,32 @@ const FeedbackGestorPage = () => {
             <HeaderGGNewComponent pageTitle={`Feedback`} />
             <Form>
                 <label>Funcionário:
-                {
-                    funcionarios.length > 1 &&
-                    <select name="funcionario" onChange={handleSelectFuncionario}>
-                        <option value="">Selecione</option>
-                        {funcionarios.map((f) => (
-                            <option key={f.id} value={f.id}>
-                                {f.nome} {f.sobrenome}
-                            </option>
-                        ))}
-                    </select>
-                }
+                    {
+                        funcionarios.length > 1 &&
+                        <select name="funcionario" onChange={handleSelectFuncionario}>
+                            <option value="">Selecione</option>
+                            {funcionarios.map((f) => (
+                                <option key={f.id} value={f.id}>
+                                    {f.nome} {f.sobrenome}
+                                </option>
+                            ))}
+                        </select>
+                    }
                 </label>
-                <Button onClick={handleDownload}>
-                Baixar Arquivo
-            </Button>
+                {
+                    funcionarioSelecionado && 
+                    <Button onClick={handleDownload}>
+                        Baixar Arquivo
+                    </Button>
+                }
             </Form>
-            
+
             <DownloadArea ref={imageRef}>
                 {
-                funcionarioSelecionado && <TabelaFeedbackComponent funcionarioInfo={funcionarioSelecionado} />
+                    funcionarioSelecionado && <TabelaFeedbackComponent funcionarioInfo={funcionarioSelecionado} />
                 }
-            </DownloadArea>           
-            
+            </DownloadArea>
+
         </Container>
     )
 };
