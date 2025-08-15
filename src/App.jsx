@@ -29,6 +29,7 @@ import HomePage from "./pages/HomePage";
 import ComunicadosPage from "./pages/ComunicadosPage";
 import CertificationsAdminPage from "./pages/CertificationsAdminPage";
 import SignatureEmail2025Page from "./pages/SignatureEmail2025Page";
+import FeedbackGestorPage from "./pages/FeedbackGestorPage";
 
 function App() {
 
@@ -63,6 +64,7 @@ function App() {
               <Route path="/vagasemaberto" element={<VagasAbertasPage />} />
               <Route path="/plantoes" element={<PlantoesTIPage />} />
               <Route path="/comunicados" element={<ComunicadosPage />} />
+              <Route path="/feedback" element={<FeedbackGestorPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >
