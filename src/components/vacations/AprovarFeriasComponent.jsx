@@ -17,7 +17,7 @@ function AprovarFeriasComponent({type}) {
         if (!user) return;
         const fetchScale = async () => {
             try {
-                const body = {adminEmail: "carlos.rodrigo@accerte.com.br"};
+                const body = {adminEmail: user.mail};
                 if(type === "RH"){
                     const response = await apiService.buscarFeriasRH(body);
                     setFerias(response.data);
