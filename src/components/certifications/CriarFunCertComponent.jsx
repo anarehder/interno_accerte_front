@@ -104,7 +104,7 @@ function CriarFunCertComponent({handleClick}) {
             console.log('Ação cancelada.');
         }
     };
-
+    // console.log(form);
     return (
         <Container>
             <Form>
@@ -132,7 +132,7 @@ function CriarFunCertComponent({handleClick}) {
                 </div>
                 <div>
                     <Label>Certificação:</Label>
-                    <Select id="certificacaoId" value={form.certificacaoId} disabled={certificacoes.length===0}>
+                    <Select id="certificacaoId" value={form.certificacaoId} disabled={certificacoes.length===0} onChange={handleForm}>
                         <option value="">Selecione...</option>
                         {certificacoes.map((c) => (
                             <option key={c.id} value={c.id}>
