@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { CiCircleMinus } from "react-icons/ci";
 import { CiCirclePlus } from "react-icons/ci";
-import FAQS from "../constants/FAQS";
-import Afastamentos from "../assets/AFASTAMENTOS.png";
+import FAQS from "../../constants/FAQS";
+import Afastamentos from "../../assets/AFASTAMENTOS.png";
 
 function BeneficiosComponent({item}) {
     const [openIndex, setOpenIndex] = useState(null);
