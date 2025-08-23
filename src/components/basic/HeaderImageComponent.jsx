@@ -3,27 +3,30 @@ import Header from "../../assets/header/accerte-background.png";
 import Logo from "../../assets/header/logo-accerte.png";
 import styled from 'styled-components';
 
-function HeaderNewComponent({pageTitle, subtitle}) {
-    
+function HeaderImageComponent({ pageTitle, subtitle, lastPage, image }) {
+
     return (
         <PageContainer>
-            <Link to="/homepage">
+            <Link to={`/${lastPage}`}>
                 <ReturnButton> voltar </ReturnButton>
+            </Link>
+            <Link to={`/${lastPage}`}>
+                <LastPageButton> home page </LastPageButton>
             </Link>
             <HeaderContainer>
                 <ImageContainer>
-                    {/* <h1>accerte</h1> */}
                     <img src={Logo} alt={"accerte"} />
                 </ImageContainer>
                 <Title>
-                    <h1>{pageTitle}</h1><h2>{subtitle && subtitle}</h2>
+                    <h1>{pageTitle}</h1><h2>{subtitle && subtitle} |</h2>
+                    <img src={image} alt='ícone' />
                 </Title>
             </HeaderContainer>
         </PageContainer>
     )
 }
 
-export default HeaderNewComponent;
+export default HeaderImageComponent;
 
 const PageContainer = styled.div`
     width: 100%;
@@ -56,7 +59,9 @@ const ImageContainer = styled.div`
 `
 
 const Title = styled.div`
+    color: white;
     background: url(${Header}) no-repeat center;
+    gap: 12px;
     background-size: 120%;
     border-bottom-left-radius: 20px;
     border-top-left-radius: 20px;
@@ -76,11 +81,35 @@ const Title = styled.div`
         line-height: 50px;
         font-size: 36px;
     }
+    img{
+        height: 70px;
+        color: white;
+        filter: brightness(0) invert(1);
+    }
 `
 
 const ReturnButton = styled.button`
     top: 10%;
     left: 1%;
+    position: absolute;
+    font-size: 16px;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid #001143;
+    color: #001143;
+    &:hover {
+        background-color: #001143;
+        color:white;
+    }
+`;
+
+const LastPageButton = styled.button`
+    top: 10%;
+    right: 1%;
     position: absolute;
     font-size: 16px;
     justify-content: center;

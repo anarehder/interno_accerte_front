@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { MdOutlineRadioButtonChecked } from "react-icons/md";
-import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import CriarVagaComponent from '../components/CriarVagaComponent';
 import BuscarVagasComponent from '../components/BuscarVagasComponent';
 import HumorGestoresComponent from '../components/HumorGestoresComponent';
@@ -10,14 +9,16 @@ import { useAuth } from '../contexts/AuthContext';
 import AprovarFeriasComponent from '../components/vacations/AprovarFeriasComponent';
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 import VacationFilterGestorComponent from '../components/gestores/VacationFilterGestorComponent';
+import AprovarFerias from '../assets/painel-gestores/aprovar-ferias.png';
+import FiltrarFerias from '../assets/painel-gestores/filtrar-ferias.png';
+import MinhasVagas from '../assets/painel-gestores/minhas-vagas.png';
+import RequisicaoVaga from '../assets/painel-gestores/requisicao-vaga.png';
+import TermometroHumor from '../assets/painel-gestores/termometro-humor.png';
 
 function PainelGestoresPage() {
     const { user } = useAuth();
-    const [selectedItem, setSelectedItem] = useState("");
     const [allowed, setAllowed] = useState(false);
     const [allowedSub, setAllowedSub] = useState(false);
-
-    const [carregando, setCarregando] = useState(true);
 
     useEffect(() => {
         if (!user) return;
@@ -27,90 +28,56 @@ function PainelGestoresPage() {
                 const gestorConf = response.data.filter(item => item.Funcionarios?.email?.toLowerCase() == user.mail?.toLowerCase());
                 if (gestorConf.length>0){
                     setAllowed(true);
+                    setAllowedSub(true);
                 }
                 if (user.mail === 'daniel.garcia@accerte.com.br'){
                     setAllowedSub(true);
                 }
-                setCarregando(false);
             } catch (error) {
-                console.error("Erro ao buscar informacoes vagas:", error);
-                setCarregando(false);
+                console.error("Erro ao buscar informacoes gestores", error);
             }
         };
-
         fetchScale();
-
     }, [user]);
+
     return (
         <PageContainer>
             <HeaderNewComponent pageTitle={"Painel Gestores"} />
-            {allowed ?
-                <div>
-                    <SideBar>
-                        <button onClick={() => setSelectedItem("ReqVaga")}>
-                            {selectedItem === "ReqVaga" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                            Requisição de Vaga
-                        </button>
-                        <button onClick={() => setSelectedItem("ListarVagas")}>
-                            {selectedItem === "ListarVagas" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                            Minhas Vagas
-                        </button>
-                        <button onClick={() => setSelectedItem("Humor")}>
-                            {selectedItem === "Humor" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                            Termômetro de Humor
-                        </button>
-                        <button onClick={() => setSelectedItem("Ferias")}>
-                            {selectedItem === "Ferias" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                            Aprovar Férias
-                        </button>
-                        <button onClick={() => setSelectedItem("FiltrarFerias")}>
-                            {selectedItem === "FiltrarFerias" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                            Filtrar Férias
-                        </button>
-                    </SideBar>
-                    <div>
-                        {selectedItem === "ReqVaga" && <CriarVagaComponent setSelectedItem={setSelectedItem} />}
-                        {selectedItem === "ListarVagas" && <BuscarVagasComponent />}
-                        {selectedItem === "Humor" && <HumorGestoresComponent />}
-                        {selectedItem === "Ferias" && <AprovarFeriasComponent type={"Gestor"}/>}
-                        {selectedItem === "FiltrarFerias" && <VacationFilterGestorComponent/>}
-                        
-                    </div>
-                </div>
-                :
-                <div>
-                    <SideBar>
-                        <button disabled={true}>
-                            <MdOutlineRadioButtonUnchecked size={16} />
-                            Requisição de Vaga
-                        </button>
-                        <button disabled={true}>
-                            <MdOutlineRadioButtonUnchecked size={16} />
-                            Minhas Vagas
-                        </button>
-                        <button disabled={true}>
-                            <MdOutlineRadioButtonUnchecked size={16} />
-                            Termômetro de Humor
-                        </button>
-                        <button disabled={true}>
-                            <MdOutlineRadioButtonUnchecked size={16} />
-                            Aprovar Férias
-                        </button>
-                        {allowedSub &&
-                            <button onClick={() => setSelectedItem("FiltrarFerias")}>
-                            {selectedItem === "FiltrarFerias" ? <MdOutlineRadioButtonChecked size={16} /> : <MdOutlineRadioButtonUnchecked size={16} />}
-                            Filtrar Férias
-                            </button>
-                        }
-                    </SideBar>
-                    {selectedItem === "FiltrarFerias" ?
-                        <div>
-                            <VacationFilterGestorComponent />
-                        </div> :
-                        <PageRightContainer><h2> Área destinada a gestores </h2> </PageRightContainer>
-                    }
-                </div>
-            }
+            <ButtonContainer>
+                <Link to="/homepage">
+                    <NewButton disabled={!allowed && true}>
+                        <img src={RequisicaoVaga} alt='Requisição de Vagas' />
+                        <p>Requisição de <br/> <span>Vaga</span></p>
+                    </NewButton>
+                </Link>
+                <Link to="/homepage">
+                <NewButton disabled={!allowed && true}>
+                    <img src={MinhasVagas} alt='Minhas Vagas' />
+                    <p>Minhas <br/> <span>Vaga</span></p>
+                </NewButton>
+                </Link>
+                
+                <Link to="/humorequipe">
+                <NewButton disabled={!allowed && true}>
+                    <img src={TermometroHumor} alt='Termômetro Humor' />
+                    <p>Termômetro de <br/> <span>Humor</span></p>
+                </NewButton>
+                </Link>
+                
+                <Link to="/homepage">
+                <NewButton disabled={!allowed && true}>
+                    <img src={AprovarFerias} alt='Aprovar Férias' />
+                    <p>Aprovar <br/> <span>Férias</span></p>
+                </NewButton>
+                </Link>
+                
+                <Link to="/homepage">
+                    <NewButton disabled={(!allowedSub) && true}>
+                    <img src={FiltrarFerias} alt='Filtrar Férias' />
+                    <p>Filtrar <br/> <span>Férias</span></p>
+                    </NewButton>
+                </Link>
+            </ButtonContainer>
         </PageContainer>
     )
 }
@@ -126,6 +93,64 @@ const PageContainer = styled.div`
     gap: 20px;
     color:rgb(75, 74, 75);
 `
+
+const ButtonContainer = styled.div`
+    justify-content: center;
+    flex-wrap: wrap;
+    // padding: 20px 0;
+    gap: 30px;
+    width: 900px;
+    // background-color: red;
+`
+
+const NewButton = styled.button`
+    flex-direction: column;
+    justify-content: center;
+    width: 220px;
+    height: 220px;
+    gap: 7px;
+    border-radius: 28px;
+    color: #0057E1;
+    border: 1px solid #acaaaaff;
+    box-shadow: 0px 4px 4px 4px #00000040;
+    background: linear-gradient(94.61deg, #FFFFFF 3.73%, #E1E1E1 133.27%);
+    font-family: Poppins;
+    font-weight: 400;
+    font-size: 23px;
+    text-align: center;
+    p{
+        height: 80px;
+        font-size: 23px;
+    }
+    span{
+        font-weight: 700;
+        font-style: Bold;
+    }
+    img{
+        // width: 120px;
+        height: 110px;
+    }
+    &: hover {
+        cursor: pointer;
+        background: linear-gradient(94.61deg, #0057E1 3.73%, #00266D 133.27%);
+        color: white;
+        img{
+            filter: brightness(0) invert(1);
+        }
+    }
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        color: gray;
+        img{
+            filter: sepia(100%) saturate(10%) brightness(100%) contrast(100%) invert(100%);
+        }
+        &: hover {
+            background-color: #ccc;
+        }
+    }
+`
+
 const SideBar = styled.div`
     width: 350px;
     position: absolute;
