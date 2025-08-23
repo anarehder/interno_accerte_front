@@ -89,10 +89,10 @@ function ScaleTableComponent({type}) {
     return (
         <PageContainer>
             {type !== 'admin' && selectedScale.length > 0 && 
-                <EditScaleButton ativo={editScale} onClick={()=> setEditScale(!editScale)} >Editar Minha Escala</EditScaleButton>
+                <EditScaleButton $ativo={editScale} onClick={()=> setEditScale(!editScale)} >Editar Minha Escala</EditScaleButton>
             }
             {type === 'admin' && editScale && 
-                <EditScaleButton ativo={true} onClick={()=> setEditScale(false)} >Fechar Edição </EditScaleButton>
+                <EditScaleButton $ativo={true} onClick={()=> setEditScale(false)} >Fechar Edição </EditScaleButton>
             }
             {editScale &&
                 < EditScaleComponent scale={scaleToEdit} opcoes={Object.keys(cores)} setUpdatedScale={setUpdatedScale} setEditScale={setEditScale} editScale={editScale}/>
@@ -103,9 +103,9 @@ function ScaleTableComponent({type}) {
                 <ButtonsContainer>
                     <h3> Selecione uma escala:</h3>
                     <div>
-                    <Button onClick={() => handleSelect(scale.atual[0], "atual")} selecionado={selectedButton === "atual" ? 'show' : undefined}>{formatarDataBR(scale.atual[0].inicioSemana)} a {formatarDataBR(scale.atual[0].fimSemana)} </Button>
+                    <Button onClick={() => handleSelect(scale.atual[0], "atual")} $selecionado={selectedButton === "atual" ? 'show' : undefined}>{formatarDataBR(scale.atual[0].inicioSemana)} a {formatarDataBR(scale.atual[0].fimSemana)} </Button>
                     {scale.proxima &&
-                        <Button onClick={() => handleSelect(scale.proxima[0], "proximo")} selecionado={selectedButton === "proximo" ? 'show' : undefined}>{formatarDataBR(scale.proxima[0].inicioSemana)} a {formatarDataBR(scale.proxima[0].fimSemana)} </Button>
+                        <Button onClick={() => handleSelect(scale.proxima[0], "proximo")} $selecionado={selectedButton === "proximo" ? 'show' : undefined}>{formatarDataBR(scale.proxima[0].inicioSemana)} a {formatarDataBR(scale.proxima[0].fimSemana)} </Button>
                     }
                     </div>
                 </ButtonsContainer>
@@ -119,7 +119,7 @@ function ScaleTableComponent({type}) {
                 {selectedScale.length > 0 && 
                  <DepartmentContainer>
                     <h2>Escala Semanal {selectedDate}</h2>
-                    <Week cor={'#F94860'}>
+                    <Week $cor={'#F94860'}>
                         <Day>Nome</Day>
                         <Day >Segunda</Day>
                         <Day >Terça</Day>
@@ -184,9 +184,9 @@ const ButtonsContainer = styled.div`
 `
 
 const Button = styled.button`
-    background-color: ${({ selecionado }) => (selecionado === 'show'  ?  "#F94860 !important" : "white !important")};
+    background-color: ${({ $selecionado }) => ($selecionado === 'show'  ?  "#F94860 !important" : "white !important")};
     border: 2px solid #ED1F4C;
-    color: ${({ selecionado }) => (selecionado === 'show' ? "#fff" : "#ED1F4C")};
+    color: ${({ $selecionado }) => ($selecionado === 'show' ? "#fff" : "#ED1F4C")};
     max-height: 40px;
     &:nth-of-type(n + 3) {
   background-color: black;
@@ -206,9 +206,9 @@ const EditAdminScaleButton = styled.button`
 `
 
 const EditScaleButton = styled.button`
-    background-color: ${({ ativo }) => (ativo ?  "#F94860 " :"white")};
+    background-color: ${({ $ativo }) => ($ativo ?  "#F94860 " :"white")};
     border: 2px solid #F94860;
-    color: ${({ ativo }) => (ativo ? "white" : "#F94860 ")};
+    color: ${({ $ativo }) => ($ativo ? "white" : "#F94860 ")};
     top: 20px;
     left: 120px;
     position: absolute;
@@ -216,8 +216,8 @@ const EditScaleButton = styled.button`
     border-radius: 50px;
     height: 50px;
     &:hover {
-        background-color: ${({ ativo }) => (ativo ?  "white" : "#F94860 ")};
-        color: ${({ ativo }) => (ativo ?  "#F94860 " :"white")};
+        background-color: ${({ $ativo }) => ($ativo ?  "white" : "#F94860 ")};
+        color: ${({ $ativo }) => ($ativo ?  "#F94860 " :"white")};
     }
 `
 
