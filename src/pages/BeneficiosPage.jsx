@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import HeaderGGComponent from '../components/HeaderGGComponent';
 import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
-import { CiCircleMinus } from "react-icons/ci";
-import { CiCirclePlus } from "react-icons/ci";
 import styled from 'styled-components';
 import ParceriaEducacionalComponent from '../components/ParceriaEducacionalComponent';
-import BeneficiosComponent from '../components/BeneficiosComponent';
+import BeneficiosComponent from '../components/gentegestao/BeneficiosComponent';
+import HeaderGGNewComponent from '../components/gentegestao/HeaderGGNewComponent';
 
 function BeneficiosPage() {
     const [selectedItem, setSelectedItem] = useState("");
@@ -26,7 +24,7 @@ function BeneficiosPage() {
 
     return (
         <PageContainer>
-            <HeaderGGComponent pageTitle={"Benefícios"} />
+            <HeaderGGNewComponent pageTitle={"Benefícios"} />
             <Container>
                 <MenuLateral>
                     {options.map((item) => (

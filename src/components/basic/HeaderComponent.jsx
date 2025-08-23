@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 import Header from "../assets/header/header2.png"
 import Alert from "../assets/header/alert.png"
 import styled from 'styled-components';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { FiLogOut } from "react-icons/fi"; 
 import { useMsal } from "@azure/msal-react";
-import { getToken } from '../services/graph';
+import { getToken } from '../../services/graph';
 
 function HeaderComponent({pageTitle, type}) {
     const { user } = useAuth();

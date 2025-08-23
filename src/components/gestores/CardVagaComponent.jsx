@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
-import { postVagaIndicada } from "../services/graph";
+import { useAuth } from "../../contexts/AuthContext";
+import { postVagaIndicada } from "../../services/graph";
 import styled from "styled-components";
 import { useMsal } from "@azure/msal-react";
 

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from "styled-components";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useAuth } from '../../contexts/AuthContext';
-import ThermometerChart from '../../components/ThermometerChart';
+import ThermometerChart from '../../components/gestores/ThermometerChart';
 import apiService from '../../services/apiService';
 import HeaderImageComponent from '../../components/basic/HeaderImageComponent';
 import TermometroHumor from '../../assets/painel-gestores/termometro-humor.png';

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from 'styled-components';
-import apiService from "../services/apiService";
-import { useAuth } from "../contexts/AuthContext";
+import apiService from "../../services/apiService";
+import { useAuth } from "../../contexts/AuthContext";
 import VacationsListComponent from "./VacationsListComponent";
 
 function VacationsFilterComponent(){

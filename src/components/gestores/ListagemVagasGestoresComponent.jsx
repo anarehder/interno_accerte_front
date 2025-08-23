@@ -6,32 +6,15 @@ import { FaDotCircle } from "react-icons/fa";
 import { IoBowlingBall } from "react-icons/io5";
 import { SiPolkadot } from "react-icons/si";
 import { PiDotsThreeCircleFill } from "react-icons/pi";
-import { useAuth } from '../contexts/AuthContext';
-import apiService from '../services/apiService';
+import { useAuth } from '../../contexts/AuthContext';
+import apiService from '../../services/apiService';
 
 
-function ListagemVagasGestoresComponent({vaga, setUpdated}) {
+function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent}) {
     const {user} = useAuth();
     const [expanded, setExpanded] = useState(false);
     const [novoStatus, setNovoStatus] = useState(vaga.status);
-
-    const getProgressPercent = (status) => {
-        switch (status) {
-            case "Solicitado": return 0;
-            case "Stand By": return 10;
-            case "Divulgação": return 20;
-            case "Triagem curricular": return 30;
-            case "Validação curricular": return 40;
-            case "Seleção em agendamento": return 50;
-            case "Entrevista com o Gestor": return 60;
-            case "Entrega Documentos Admissão": return 70;
-            case "Testes e referências": return 80;
-            case "Validação do perfil": return 90;
-            case "Concluída": return 100;
-            case "Cancelada": return 100;
-            default: return 0;
-        }
-    };
+    
     const progress = getProgressPercent(vaga.status);
     // console.log(progress);
     const handleStatusChange = (novoStatus) => {

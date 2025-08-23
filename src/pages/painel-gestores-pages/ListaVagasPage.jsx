@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useAuth } from '../../contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import apiService from '../../services/apiService';
-import ListagemVagasGestoresComponent from '../../components/ListagemVagasGestoresComponent';
+import ListagemVagasGestoresComponent from '../../components/gestores/ListagemVagasGestoresComponent';
 import HeaderImageComponent from '../../components/basic/HeaderImageComponent';
 import MinhasVagas from '../../assets/painel-gestores/minhas-vagas.png';
 
@@ -12,6 +12,23 @@ function ListaVagasPage() {
     const [carregando, setCarregando] = useState(true);
     const [vagas, setVagas] = useState([]);
     const [updated, setUpdated] = useState(false);
+    const getProgressPercent = (status) => {
+        switch (status) {
+            case "Solicitado": return 0;
+            case "Stand By": return 10;
+            case "Divulgação": return 20;
+            case "Triagem curricular": return 30;
+            case "Validação curricular": return 40;
+            case "Seleção em agendamento": return 50;
+            case "Entrevista com o Gestor": return 60;
+            case "Entrega Documentos Admissão": return 70;
+            case "Testes e referências": return 80;
+            case "Validação do perfil": return 90;
+            case "Concluída": return 100;
+            case "Cancelada": return 100;
+            default: return 0;
+        }
+    };
 
     useEffect(() => {
         if (!user) return;
@@ -19,7 +36,9 @@ function ListaVagasPage() {
             try {
                 const body = {adminEmail: user.mail};
                 const response = await apiService.getVagas(body);
-                setVagas(response.data);
+                const v = response.data;
+                v.sort((a, b) => getProgressPercent(a.status) - getProgressPercent(b.status));
+                setVagas(v);
                 setCarregando(false);
                 setUpdated(false);
             } catch (error) {
@@ -31,7 +50,7 @@ function ListaVagasPage() {
         fetchScale();
 
     }, [user, updated]);
-
+    
     return (
         <PageContainer>
             <HeaderImageComponent pageTitle={"Minhas"} subtitle={"Vagas"} lastPage={"painelgestores"} image={MinhasVagas} />
@@ -43,7 +62,7 @@ function ListaVagasPage() {
             {vagas.length !== 0 && !carregando && (
                 <CardsContainer>
                     {vagas.map((v, index) => (
-                        <ListagemVagasGestoresComponent key={index} vaga={v}  setUpdated={setUpdated}/>
+                        <ListagemVagasGestoresComponent key={index} vaga={v}  setUpdated={setUpdated} getProgressPercent={getProgressPercent}/>
                     ))}
                 </CardsContainer>
             )}   

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect } from "react";
-import CardVagaComponent from "../components/CardVagaComponent";
+import CardVagaComponent from "../components/gestores/CardVagaComponent";
 import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
 
 

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { useAuth } from "../contexts/AuthContext";
-import apiService from "../services/apiService";
-import gerarFerias from "../services/vacationGenerate";
+import { useAuth } from "../../contexts/AuthContext";
+import apiService from "../../services/apiService";
+import gerarFerias from "../../services/vacationGenerate";
 
 function NewVacationComponent() {
   const { user, dados } = useAuth();

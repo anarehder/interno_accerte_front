@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MsalProvider } from '@azure/msal-react';
+import { msalInstance } from "./services/authConfig";
+import { AuthProvider } from "./contexts/AuthContext";
 import styled from 'styled-components'
 import VacationsPage from "./pages/VacationsPage";
 import EquipmentsPage from "./pages/EquipmentsPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import { msalInstance } from "./services/authConfig";
-import { AuthProvider } from "./contexts/AuthContext";
 import ContactsPage from "./pages/ContactsPage";
 import AnniversaryPage from "./pages/AnniversaryPage";
 import CalendarPage from "./pages/CalendarPage";
@@ -20,7 +20,7 @@ import UpdatesPage from "./pages/UpdatesPage";
 import PowerBIDashs from "./pages/PowerBIDashs";
 import PainelGestoresPage from "./pages/PainelGestoresPage";
 import BeneficiosPage from "./pages/BeneficiosPage";
-import FAQPage from "./components/FAQPage";
+import FAQPage from "./pages/FAQPage";
 import ParceriaEducacionalPage from "./pages/ParceriaEducacionalPage";
 import VagasAbertasPage from "./pages/VagasAbertasPage";
 import PlantoesTIPage from "./pages/PlantoesTIPage";

@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { MdOutlineRadioButtonChecked } from "react-icons/md";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import styled from 'styled-components';
-import FAQComponent from './FAQComponent';
-import HeaderGGNewComponent from './gentegestao/HeaderGGNewComponent';
+import FAQComponent from '../components/FAQComponent';
+import HeaderGGNewComponent from '../components/gentegestao/HeaderGGNewComponent';
 
 function FAQPage() {
     const [selectedItem, setSelectedItem] = useState("");
