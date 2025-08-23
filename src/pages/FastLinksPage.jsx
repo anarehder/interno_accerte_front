@@ -66,7 +66,7 @@ const FastLinksPage = () => {{
                 <InfoButton key={links[index].url}>
                     <button>
                         {options.map((opt, i) => (
-                            <a href={opt.url} target="_blank"> <img src={imageMap[opt.label]} alt={opt.label} /> </a>
+                            <a href={opt.url} target="_blank" key={opt.url}> <img src={imageMap[opt.label]} alt={opt.label} /> </a>
                         ))}
                     </button>
                 </InfoButton>
@@ -103,7 +103,7 @@ const FastLinksPage = () => {{
                                 <PostsContainer>
                                     <div className="carousel" >
                                         {dados?.background?.map((p, index) => (
-                                            <div className="card" key={index} >
+                                            <div className="card" key={p.url} >
                                                 <a href={p.url} target="_blank">
                                                     <img src={p.url} alt={p.name} />
                                                 </a>
@@ -125,16 +125,16 @@ const FastLinksPage = () => {{
                         </Card>
                         {documents &&
                             <SmallList>
-                                {dados?.accerteconnect?.map((file, index) => (
-                                    <Card key={index}>
+                                {dados?.accerteconnect?.map((file) => (
+                                    <Card key={file.url}>
                                         <Info>{file.name.slice(0, -5)}</Info>
                                         <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
                                     </Card>
                                 ))}
                             </SmallList>
                         }
-                        {fixedLinks.map((linkObj, ind) => (
-                            <Card key={Object.keys(linkObj) || ind}>
+                        {fixedLinks.map((linkObj) => (
+                            <Card key={Object.keys(linkObj)}>
                                 <Info><img src={imageMap[Object.keys(linkObj)]} alt={Object.keys(linkObj)} /> </Info>
                                 {Object.values(linkObj).map((links, index) => (
                                     <>
@@ -153,8 +153,8 @@ const FastLinksPage = () => {{
                         </Card>
                         {documents &&
                             <SmallList>
-                                {dados?.docs?.map((file, index) => (
-                                    <Card key={index}>
+                                {dados?.docs?.map((file) => (
+                                    <Card key={file.url}>
                                         <Info>{file.name.slice(0, -4)}</Info>
                                         <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
                                     </Card>

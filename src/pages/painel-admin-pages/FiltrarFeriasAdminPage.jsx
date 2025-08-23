@@ -105,9 +105,9 @@ function FiltrarFeriasAdminPage(){
             {dados &&
                 <Container>
                     <OpContainer>
-                            <Button onClick={() => {setActiveButton("Funcionário"); setFilteredData([]);}} active={activeButton === "Funcionário" ? "show" : ""}>Funcionário</Button>
-                            <Button onClick={() => {setActiveButton("Período"); setFilteredData([]);}} active={activeButton === "Período" ? "show" : ""}>Período</Button>
-                            <Button onClick={() => {setActiveButton("Tipo de Contrato"); setFilteredData([]);}} active={activeButton === "Tipo de Contrato" ? "show" : ""}>Tipo de Contrato</Button>
+                            <Button onClick={() => {setActiveButton("Funcionário"); setFilteredData([])}} >Funcionário</Button>
+                            <Button onClick={() => {setActiveButton("Período"); setFilteredData([])}} >Período</Button>
+                            <Button onClick={() => {setActiveButton("Tipo de Contrato"); setFilteredData([])}} >Tipo de Contrato</Button>
                     </OpContainer>
                     <OpContainer>
                         {activeButton === "Funcionário" &&

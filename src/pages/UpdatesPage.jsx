@@ -15,10 +15,10 @@ function UpdatesPage() {
             <HeaderNewComponent pageTitle={"Fique Por Dentro"}/>
             <Title><PiMonitorPlayBold size={40}/>  na mídia </Title>
             <Videos>
-                {videos.map((v, index) => (
-                    <div>
+                {videos.map((v) => (
+                    <div key={v.video}>
                         <h3>{v.nome}</h3>
-                        <ReactPlayer key={index}
+                        <ReactPlayer 
                             url={v.video}
                             controls
                             width="500px"
@@ -29,10 +29,10 @@ function UpdatesPage() {
             </Videos>
             <Title><GiConversation size={40} /> papo reto </Title>
             <Videos>
-                {videosPapoReto.map((v, index) => (
-                    <div>
+                {videosPapoReto.map((v) => (
+                    <div key={v.video}>
                         <h3>{v.nome}</h3>
-                        <ReactPlayer key={index}
+                        <ReactPlayer 
                             url={v.video}
                             controls
                             width="500px"
