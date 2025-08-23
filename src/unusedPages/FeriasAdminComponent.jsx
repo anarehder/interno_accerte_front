@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styled from 'styled-components';
 // import apiService from "../services/apiService";
-import { useAuth } from "../../contexts/AuthContext";
-import VacationsFilterComponent from "../vacations/VacationsFilterComponent";
-import AprovarFeriasComponent from "../vacations/AprovarFeriasComponent";
-import NewVacationComponent from "../vacations/NewVacationComponent";
+import { useAuth } from "../contexts/AuthContext";
+import VacationsFilterComponent from "../components/vacations/VacationsFilterComponent";
+import AprovarFeriasComponent from "../components/vacations/AprovarFeriasComponent";
+import NewVacationComponent from "../components/vacations/NewVacationComponent";
 import NewLicenseComponent from "../NewLicenseComponent";
 
 function FeriasAdminComponent() {

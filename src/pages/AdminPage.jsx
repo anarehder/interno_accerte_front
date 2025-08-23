@@ -2,11 +2,11 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import { FaUsersGear } from "react-icons/fa6";
+import { AiOutlineSchedule } from "react-icons/ai";
 import { FaCalendarWeek } from "react-icons/fa6";
 import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
 import AprovarFerias from '../assets/painel-gestores/aprovar-ferias.png';
 import FiltrarFerias from '../assets/painel-gestores/filtrar-ferias.png';
-import MinhasVagas from '../assets/painel-gestores/minhas-vagas.png';
 import { Link } from 'react-router-dom';
 
 const AdminPage = () => {
@@ -40,16 +40,16 @@ const AdminPage = () => {
                     </NewButton>
                 </Link>
 
-                <Link to="/filtrarferias">
+                <Link to="/filtrarferias/admin">
                     <NewButton>
                         <img src={FiltrarFerias} alt='Filtrar Férias' />
                         <p>Filtrar <br /> <span>Férias</span></p>
                     </NewButton>
                 </Link>
 
-                <Link to="/filtrarferias">
+                <Link to="/criarferias/admin">
                     <NewButton>
-                        <img src={FiltrarFerias} alt='Filtrar Férias' />
+                        <AiOutlineSchedule size={115}/>
                         <p>Criar <br /> <span>Férias</span></p>
                     </NewButton>
                 </Link>
@@ -59,9 +59,6 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
-//   {activeButton === "Usuarios" && !carregando && <UsuariosAdminComponent />}
-//             {activeButton === "Ferias" && !carregando && <FeriasAdminComponent />}
-//             {activeButton === "Escalas" && !carregando && <EscalasAdminComponent />}
 
 const PageContainer = styled.div`
     width: 100%;

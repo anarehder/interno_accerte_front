@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import styled from 'styled-components';
 // import apiService from "../services/apiService";
-import { useAuth } from "../../contexts/AuthContext";
-import apiService from "../../services/apiService";
-import CriarUsuarioComponent from "./CriarUsuarioComponent";
-import EditarUsuarioComponent from "./EditarUsuarioComponent";
-import EditScaleComponent from "../EditScaleComponent";
-import EditarEscalaComponent from "./EditarEscalaComponent";
-import CriarEscalaComponent from "./CriarEscalaComponent";
-import ScaleTableComponent from "../ScaleTableComponent";
+import { useAuth } from "../contexts/AuthContext";
+import apiService from "../services/apiService";
+import CriarUsuarioComponent from "../components/admin/CriarUsuarioComponent";
+import EditarUsuarioComponent from "../components/admin/EditarUsuarioComponent";
+import EditScaleComponent from "../components/EditScaleComponent";
+import EditarEscalaComponent from "../components/admin/EditarEscalaComponent";
+import CriarEscalaComponent from "../components/admin/CriarEscalaComponent";
+import ScaleTableComponent from "../components/ScaleTableComponent";
 
 function EscalasAdminComponent(){
     const { user, dados } = useAuth();
