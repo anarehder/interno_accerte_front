@@ -10,7 +10,7 @@ function HeaderImageComponent({ pageTitle, subtitle, lastPage, image }) {
             <Link to={`/${lastPage}`}>
                 <ReturnButton> voltar </ReturnButton>
             </Link>
-            <Link to={`/${lastPage}`}>
+            <Link to="/homepage">
                 <LastPageButton> home page </LastPageButton>
             </Link>
             <HeaderContainer>

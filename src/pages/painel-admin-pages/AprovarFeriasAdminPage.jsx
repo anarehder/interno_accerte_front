@@ -7,10 +7,10 @@ import apiService from '../../services/apiService';
 import { FaCheck } from "react-icons/fa";
 import { MdBlock } from "react-icons/md";
 import HeaderImageComponent from '../../components/basic/HeaderImageComponent';
+import HeaderGGNewComponent from '../../components/gentegestao/HeaderGGNewComponent';
 
-function AprovarFeriasPage() {
-    //buscar a lista dos items que o tipo nao aprovou, se for Rh ou Gestor
-    const type = "Gestor";
+function AprovarFeriasAdminPage() {
+    const type = "RH";
     const { user } = useAuth();
     const [ferias, setFerias] = useState([]);
     const [updated, setUpdated] = useState(false);
@@ -20,12 +20,11 @@ function AprovarFeriasPage() {
         const fetchScale = async () => {
             try {
                 const body = { adminEmail: user.mail };
-                const response = await apiService.buscarFeriasGestor(body);
+                const response = await apiService.buscarFeriasRH(body);
                 setFerias(response.data);
                 setCarregando(false);
                 setUpdated(false);
             } catch (error) {
-                // setErrorMessage(error.response.data.message);
                 console.error(error);
                 setCarregando(false);
             }
@@ -58,7 +57,7 @@ function AprovarFeriasPage() {
 
     return (
         <PageContainer>
-            <HeaderImageComponent pageTitle={"Aprovar"} subtitle={"Férias"} lastPage={"painelgestores"} image={AprovarFerias} />
+            <HeaderGGNewComponent pageTitle={"Aprovar Férias"} lastPage={"admin"}/>
             <Container>
                 <h2>Aprovação de Férias</h2>
                 {ferias.length !== 0 &&
@@ -100,7 +99,7 @@ function AprovarFeriasPage() {
     );
 };
 
-export default AprovarFeriasPage;
+export default AprovarFeriasAdminPage;
 
 const PageContainer = styled.div`
     width: 100%;
@@ -132,7 +131,7 @@ const VacationTable = styled.div`
     flex-direction: column;
     justify-content: space-between;
     gap: 10px;
-    color: #0057E1;
+    color: #ff5843;
     margin-bottom: 50px;
     div {
         align-items: center;

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import styled from 'styled-components';
-// import apiService from "../services/apiService";
 import { useAuth } from "../../contexts/AuthContext";
 import apiService from "../../services/apiService";
-import CriarUsuarioComponent from "./CriarUsuarioComponent";
-import EditarUsuarioComponent from "./EditarUsuarioComponent";
+import CriarUsuarioComponent from "../../components/admin/CriarUsuarioComponent";
+import EditarUsuarioComponent from "../../components/admin/EditarUsuarioComponent";
+import HeaderGGNewComponent from "../../components/gentegestao/HeaderGGNewComponent";
 
-function UsuariosAdminComponent(){
+function UsuariosAdminPage(){
     const { user, dados } = useAuth();
     const [info, setInfo] = useState([]);
     const [carregando, setCarregando] = useState(true);
@@ -32,6 +32,8 @@ function UsuariosAdminComponent(){
     }, [user, updated]);
 
     return (
+        <PageContainer>
+         <HeaderGGNewComponent pageTitle={"Painel Usuários | Admin"} lastPage={"admin"} />
         <Container>
             {dados && !carregando &&
                 <ButtonsContainer>
@@ -46,18 +48,32 @@ function UsuariosAdminComponent(){
             {action === "Criar" && <CriarUsuarioComponent info={info} setUpdated={setUpdated} />}  
             {action === "Editar" && <EditarUsuarioComponent info={info} setUpdated={setUpdated} />}            
         </Container>
+        </PageContainer>
     );
 };
 
-export default UsuariosAdminComponent;
+export default UsuariosAdminPage;
 
-const Container = styled.div`
-    width: 60%;
+const PageContainer = styled.div`
+    width: 100%;
+    min-height: 100%;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 50px;
-    gap: 25px;
-    padding: 20px;
+    position: absolute;
+    gap: 20px;
+    color:rgb(75, 74, 75);
+`
+
+const Container = styled.div`
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    color: #555;
+    border: none;
+    h2 {
+        margin: 10px 0;
+    }
 `
 
 const ButtonsContainer = styled.div`
@@ -67,11 +83,11 @@ const ButtonsContainer = styled.div`
 `
 
 const Button = styled.button`
-    background-color: #F94A5F;
-    border: ${({ $active }) => ($active === 'show' ? "3px solid #555" : "3px solid #ff5843")};
+    background: linear-gradient(94.61deg, #E7185A 3.73%, #aa1041ff 133.27%);
+    height: 50px;
     &:hover {
-        background-color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")};
-        color: ${({ active }) => (active === 'show' ?"white" : '#ff5843')};
+        background-color: ${({ $active }) => ($active === 'show' ? "#ff5843" : "white")};
+        color: ${({ $active }) => ($active === 'show' ?"white" : '#ff5843')};
         border: 3px solid #ff5843;
     };
 `

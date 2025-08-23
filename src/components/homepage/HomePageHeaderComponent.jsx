@@ -107,7 +107,7 @@ function HomePageHeaderComponent({notificacoes}) {
                                                 comunicados: '/comunicados',
                                                 ferias: '/aprovarferias',
                                                 vagas: '/listavagas',
-                                                feriasRH: '/aprovarferias',
+                                                feriasRH: '/aprovarferias/admin',
                                                 vagasRH: '/listavagas',
                                             };
 

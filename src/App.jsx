@@ -35,6 +35,8 @@ import CriarVagaPage from "./pages/painel-gestores-pages/CriarVagaPage";
 import ListaVagasPage from "./pages/painel-gestores-pages/ListaVagasPage";
 import AprovarFeriasPage from "./pages/painel-gestores-pages/AprovarFeriasPage";
 import FiltrarFeriasPage from "./pages/painel-gestores-pages/FiltrarFeriasPage";
+import UsuariosAdminPage from "./pages/painel-admin-pages/UsuariosAdminPage";
+import AprovarFeriasAdminPage from "./pages/painel-admin-pages/AprovarFeriasAdminPage";
 
 function App() {
 
@@ -75,6 +77,8 @@ function App() {
               <Route path="/listavagas" element={<ListaVagasPage />} />
               <Route path="/aprovarferias" element={<AprovarFeriasPage />} />
               <Route path="/filtrarferias" element={<FiltrarFeriasPage />} />
+              <Route path="/usuariosadmin" element={<UsuariosAdminPage />} />
+              <Route path="/aprovarferias/admin" element={<AprovarFeriasAdminPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

@@ -206,7 +206,7 @@ const Container = styled.div`
     align-items: center;
     margin-bottom: 50px;
     gap: 25px;
-    padding: 20px;
+    padding: 20px 0;
     div { 
         justify-content: center;
         align-items: center;

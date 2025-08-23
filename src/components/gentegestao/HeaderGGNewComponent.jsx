@@ -3,13 +3,23 @@ import Header from "../../assets/header/gentegestao-background.png";
 import Logo from "../../assets/header/logo-gentegestao.png";
 import styled from 'styled-components';
 
-function HeaderGGNewComponent({pageTitle, subtitle}) {
+function HeaderGGNewComponent({pageTitle, subtitle, lastPage}) {
     
     return (
         <PageContainer>
-            <Link to="/homepage">
-                <ReturnButton> voltar </ReturnButton>
-            </Link>
+            {lastPage ?
+                <>
+                    <Link to={`/${lastPage}`}>
+                        <ReturnButton> voltar </ReturnButton>
+                    </Link>
+                    <Link to="/homepage">
+                        <LastPageButton> home page </LastPageButton>
+                    </Link>
+                </> :
+                <Link to="/homepage">
+                    <ReturnButton> voltar </ReturnButton>
+                </Link>
+            }
             <HeaderContainer>
                 <ImageContainer>
                     <img src={Logo} alt={"gente e gestao"} />
@@ -74,6 +84,26 @@ const Title = styled.div`
 const ReturnButton = styled.button`
     top: 10%;
     left: 1%;
+    position: absolute;
+    font-size: 16px;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid #ED1F4C;
+    color: #ED1F4C;
+    &:hover {
+        background-color: #ED1F4C;
+        color:white;
+    }
+`;
+
+
+const LastPageButton = styled.button`
+    top: 10%;
+    right: 1%;
     position: absolute;
     font-size: 16px;
     justify-content: center;

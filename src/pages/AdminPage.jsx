@@ -1,12 +1,14 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
-import UsuariosAdminComponent from "../components/admin/UsuariosAdminComponent";
-import FeriasAdminComponent from "../components/admin/FeriasAdminComponent";
-import EscalasAdminComponent from "../components/admin/EscalasAdminComponent";
+import { FaUsersGear } from "react-icons/fa6";
 import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
+import AprovarFerias from '../assets/painel-gestores/aprovar-ferias.png';
+import FiltrarFerias from '../assets/painel-gestores/filtrar-ferias.png';
+import MinhasVagas from '../assets/painel-gestores/minhas-vagas.png';
+import { Link } from 'react-router-dom';
 
-const AdminPage = () => {{
+const AdminPage = () => {
     const { dados, user, carregando, getData } = useAuth();
     const [activeButton, setActiveButton] = useState("");
     const [inicioSemana, setInicioSemana] = useState('');
@@ -14,64 +16,116 @@ const AdminPage = () => {{
     const [type, setType] = useState("");
 
     return (
-        <Container>
-            <HeaderGGNewComponent  pageTitle={`Painel Admin | RH`} />    
-            <ButtonsContainer>
-                <Button onClick={() => setActiveButton("Usuarios")} $active={activeButton === "User" ? "show" : ""}>Usuários</Button>
-                <Button onClick={() => setActiveButton("Ferias")} $active={activeButton === "Filtrar" ? "show" : ""}>Férias</Button>
-                <Button onClick={() => setActiveButton("Escalas")} $active={activeButton === "Escala" ? "show" : ""}>Escalas</Button>
-            </ButtonsContainer>
+        <PageContainer>
+            <HeaderGGNewComponent pageTitle={"Painel Admin | Intranet"} />
+            <ButtonContainer>
+                <Link to="/usuariosadmin">
+                    <NewButton>
+                        <FaUsersGear size={100}/>
+                        <p>Painel de <br /> <span>Usuários</span></p>
+                    </NewButton>
+                </Link>
+                <Link to="/listavagas">
+                    <NewButton>
+                        <img src={MinhasVagas} alt='Minhas Vagas' />
+                        <p>Painel de <br /> <span>Escalas</span></p>
+                    </NewButton>
+                </Link>
 
-            {activeButton === "Usuarios" && !carregando && <UsuariosAdminComponent />}
-            {activeButton === "Ferias" && !carregando && <FeriasAdminComponent />}
-            {activeButton === "Escalas" && !carregando && <EscalasAdminComponent />}
-        </Container>
+                <Link to="/aprovarferias/admin">
+                    <NewButton>
+                        <img src={AprovarFerias} alt='Aprovar Férias' />
+                        <p>Aprovar <br /> <span>Férias</span></p>
+                    </NewButton>
+                </Link>
+
+                <Link to="/filtrarferias">
+                    <NewButton>
+                        <img src={FiltrarFerias} alt='Filtrar Férias' />
+                        <p>Filtrar <br /> <span>Férias</span></p>
+                    </NewButton>
+                </Link>
+
+                <Link to="/filtrarferias">
+                    <NewButton>
+                        <img src={FiltrarFerias} alt='Filtrar Férias' />
+                        <p>Criar <br /> <span>Férias</span></p>
+                    </NewButton>
+                </Link>
+            </ButtonContainer>
+        </PageContainer>
     );
-  };
-}
+};
 
 export default AdminPage;
-  
+//   {activeButton === "Usuarios" && !carregando && <UsuariosAdminComponent />}
+//             {activeButton === "Ferias" && !carregando && <FeriasAdminComponent />}
+//             {activeButton === "Escalas" && !carregando && <EscalasAdminComponent />}
 
-const Container = styled.div`
+const PageContainer = styled.div`
+    width: 100%;
+    min-height: 100%;
     flex-direction: column;
-    border-radius: 8px;
     align-items: center;
-    
-`;
+    position: absolute;
+    gap: 20px;
+    color:rgb(75, 74, 75);
+`
 
-const ButtonsContainer = styled.div`
+const ButtonContainer = styled.div`
     justify-content: center;
     flex-wrap: wrap;
-    margin: 30px 0 40px 0;
-    gap: 50px;
-`
-  
-const Button = styled.button`
-    text-align: center;
-    width: 150px;
-    justify-content: center;
-    font-weight: 700;
-    background-color: ${({ $active }) => ($active  === 'show' ? "#ff5843" : "transparent")};
-    color: ${({ $active }) => ($active === 'show' ? "white" : "#ff5843")};
-    border: ${({ $active }) => ($active === 'show' ? "3px solid #ff5843" : "3px solid #ff5843")};
-    &:hover {
-        background-color: ${({ active }) => (active === 'show' ? "#ff5843" : "white")
-    };
-`;
-
-const EscalaContainer = styled.div`
-    width: 750px;
-    margin-top: 20px;
-    justify-content: space-between;
-    align-items: center;
-    justify-content: center;
+    // padding: 20px 0;
     gap: 30px;
-    height: 100px;
-    div{
-        width: 40%;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    width: 900px;
+    // background-color: red;
+`
+
+const NewButton = styled.button`
+    flex-direction: column;
+    justify-content: center;
+    width: 220px;
+    height: 220px;
+    gap: 7px;
+    border-radius: 28px;
+    color: #FE2626;
+    border: 1px solid #acaaaaff;
+    box-shadow: 0px 4px 4px 4px #00000040;
+    background: linear-gradient(94.61deg, #FFFFFF 3.73%, #E1E1E1 133.27%);
+    font-family: Poppins;
+    font-weight: 400;
+    font-size: 23px;
+    text-align: center;
+    p{
+        height: 80px;
+        font-size: 23px;
+    }
+    span{
+        font-weight: 700;
+        font-style: Bold;
+    }
+    img{
+        // width: 120px;
+        height: 110px;
+        filter: brightness(100) invert(1) hue-rotate(350deg) contrast(250%) opacity(85%);
+    }
+    &: hover {
+        cursor: pointer;
+        background: linear-gradient(94.61deg, #E7185A 3.73%, #aa1041ff 133.27%);
+        color: white;
+        img{
+            filter: brightness(0) invert(1);
+        }
+    }
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        color: gray;
+        img{
+            filter: sepia(100%) saturate(10%) brightness(100%) contrast(100%) invert(100%);
+        }
+        &: hover {
+            background-color: #ccc;
+        }
     }
 `
