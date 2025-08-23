@@ -34,6 +34,7 @@ import HumorGestoresPage from "./pages/painel-gestores-pages/HumorGestoresPage";
 import CriarVagaPage from "./pages/painel-gestores-pages/CriarVagaPage";
 import ListaVagasPage from "./pages/painel-gestores-pages/ListaVagasPage";
 import AprovarFeriasPage from "./pages/painel-gestores-pages/AprovarFeriasPage";
+import FiltrarFeriasPage from "./pages/painel-gestores-pages/FiltrarFeriasPage";
 
 function App() {
 
@@ -73,6 +74,7 @@ function App() {
               <Route path="/criarvaga" element={<CriarVagaPage />} />
               <Route path="/listavagas" element={<ListaVagasPage />} />
               <Route path="/aprovarferias" element={<AprovarFeriasPage />} />
+              <Route path="/filtrarferias" element={<FiltrarFeriasPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

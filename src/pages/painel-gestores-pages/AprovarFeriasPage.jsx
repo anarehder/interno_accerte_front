@@ -132,7 +132,7 @@ const VacationTable = styled.div`
     flex-direction: column;
     justify-content: space-between;
     gap: 10px;
-    color: #ff5843;
+    color: #0057E1;
     margin-bottom: 50px;
     div {
         align-items: center;

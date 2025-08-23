@@ -66,7 +66,7 @@ function PainelGestoresPage() {
                 </NewButton>
                 </Link>
                 
-                <Link to="/homepage">
+                <Link to="/filtrarferias">
                     <NewButton disabled={(!allowedSub) && true}>
                     <img src={FiltrarFerias} alt='Filtrar Férias' />
                     <p>Filtrar <br/> <span>Férias</span></p>

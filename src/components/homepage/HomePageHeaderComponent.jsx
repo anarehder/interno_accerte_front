@@ -105,14 +105,18 @@ function HomePageHeaderComponent({notificacoes}) {
                                             const rotas = {
                                                 aniversario: '/aniversarios',
                                                 comunicados: '/comunicados',
-                                                ferias: user.mail === 'maria.silva@accerte.com.br' || 'ana.rehder@accerte.com.br' ? '/admin' : '/painelgestores',
-                                                vagas: '/painelgestores',
+                                                ferias: '/aprovarferias',
+                                                vagas: '/listavagas',
+                                                feriasRH: '/aprovarferias',
+                                                vagasRH: '/listavagas',
                                             };
 
                                             const textos = {
                                                 aniversario: '🎂 Hoje tem aniversário!',
                                                 comunicados: '📢 Você tem comunicados não lidos.',
                                                 ferias: '🏖️ Você tem férias para aprovar!',
+                                                feriasRH: '🏖️ O RH férias para aprovar!',
+                                                vagasRH: '🔖 Nova vaga solicitada;',
                                                 vagas: '🔖 Novo status de vaga.',
                                             };
 
