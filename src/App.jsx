@@ -37,6 +37,7 @@ import AprovarFeriasPage from "./pages/painel-gestores-pages/AprovarFeriasPage";
 import FiltrarFeriasPage from "./pages/painel-gestores-pages/FiltrarFeriasPage";
 import UsuariosAdminPage from "./pages/painel-admin-pages/UsuariosAdminPage";
 import AprovarFeriasAdminPage from "./pages/painel-admin-pages/AprovarFeriasAdminPage";
+import EscalasAdminPage from "./pages/painel-admin-pages/EscalasAdminPage";
 
 function App() {
 
@@ -79,6 +80,7 @@ function App() {
               <Route path="/filtrarferias" element={<FiltrarFeriasPage />} />
               <Route path="/usuariosadmin" element={<UsuariosAdminPage />} />
               <Route path="/aprovarferias/admin" element={<AprovarFeriasAdminPage />} />
+              <Route path="/escalas/admin" element={<EscalasAdminPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >

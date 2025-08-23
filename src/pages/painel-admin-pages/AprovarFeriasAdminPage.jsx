@@ -1,12 +1,10 @@
 // SugestoesComponent.jsx
 import { useEffect, useState } from 'react';
 import styled from "styled-components";
-import AprovarFerias from '../../assets/painel-gestores/aprovar-ferias.png';
 import { useAuth } from '../../contexts/AuthContext';
 import apiService from '../../services/apiService';
 import { FaCheck } from "react-icons/fa";
 import { MdBlock } from "react-icons/md";
-import HeaderImageComponent from '../../components/basic/HeaderImageComponent';
 import HeaderGGNewComponent from '../../components/gentegestao/HeaderGGNewComponent';
 
 function AprovarFeriasAdminPage() {

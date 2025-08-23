@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import { FaUsersGear } from "react-icons/fa6";
+import { FaCalendarWeek } from "react-icons/fa6";
 import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
 import AprovarFerias from '../assets/painel-gestores/aprovar-ferias.png';
 import FiltrarFerias from '../assets/painel-gestores/filtrar-ferias.png';
@@ -25,9 +26,9 @@ const AdminPage = () => {
                         <p>Painel de <br /> <span>Usuários</span></p>
                     </NewButton>
                 </Link>
-                <Link to="/listavagas">
+                <Link to="/escalas/admin">
                     <NewButton>
-                        <img src={MinhasVagas} alt='Minhas Vagas' />
+                        <FaCalendarWeek size={80}/>
                         <p>Painel de <br /> <span>Escalas</span></p>
                     </NewButton>
                 </Link>
@@ -103,6 +104,9 @@ const NewButton = styled.button`
     span{
         font-weight: 700;
         font-style: Bold;
+    }
+    svg{
+        height: 110px;
     }
     img{
         // width: 120px;

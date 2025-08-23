@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import styled from 'styled-components';
 import { useAuth } from "../../contexts/AuthContext";
 import apiService from "../../services/apiService";
-import CriarUsuarioComponent from "../../components/admin/CriarUsuarioComponent";
-import EditarUsuarioComponent from "../../components/admin/EditarUsuarioComponent";
+import CriarEscalaComponent from "../../components/admin/CriarEscalaComponent";
+import ScaleTableComponent from "../../components/ScaleTableComponent";
 import HeaderGGNewComponent from "../../components/gentegestao/HeaderGGNewComponent";
 
-function UsuariosAdminPage(){
+function EscalasAdminPage(){
     const { user, dados } = useAuth();
     const [info, setInfo] = useState([]);
     const [carregando, setCarregando] = useState(true);
@@ -33,26 +33,26 @@ function UsuariosAdminPage(){
 
     return (
         <PageContainer>
-         <HeaderGGNewComponent pageTitle={"Painel Usuários | Admin"} lastPage={"admin"} />
+                 <HeaderGGNewComponent pageTitle={"Painel Escalas | Admin"} lastPage={"admin"} />
         <Container>
             {dados && !carregando &&
                 <ButtonsContainer>
                     <Button onClick={() => setAction("Criar")}>
-                        Criar Usuario
+                        Criar Escala
                     </Button>
                     <Button onClick={() => setAction("Editar")}>
-                        Editar Usuario
+                        Editar Escala
                     </Button>
                 </ButtonsContainer>
             }
-            {action === "Criar" && <CriarUsuarioComponent info={info} setUpdated={setUpdated} />}  
-            {action === "Editar" && <EditarUsuarioComponent info={info} setUpdated={setUpdated} />}            
+            {action === "Criar" && <CriarEscalaComponent info={info} setUpdated={setUpdated} />}  
+            {action === "Editar" && !carregando && <ScaleTableComponent type={"admin"} />}
         </Container>
         </PageContainer>
     );
 };
 
-export default UsuariosAdminPage;
+export default EscalasAdminPage;
 
 const PageContainer = styled.div`
     width: 100%;
@@ -75,7 +75,6 @@ const Container = styled.div`
         margin: 10px 0;
     }
 `
-
 const ButtonsContainer = styled.div`
     width: 50%;
     justify-content: center;
