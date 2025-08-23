@@ -35,8 +35,7 @@ function CriarVagaPage({setSelectedItem}) {
     };
     
     const [newReq, setNewReq] = useState(reqDefault);
-    // console.log(formularioInfo);
-    // console.log(newReq);
+
     const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
 
