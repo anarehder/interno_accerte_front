@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import CriarVagaComponent from '../components/CriarVagaComponent';
-import BuscarVagasComponent from '../components/BuscarVagasComponent';
-import HumorGestoresComponent from '../components/HumorGestoresComponent';
 import apiService from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext';
-import AprovarFeriasComponent from '../components/vacations/AprovarFeriasComponent';
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
-import VacationFilterGestorComponent from '../components/gestores/VacationFilterGestorComponent';
 import AprovarFerias from '../assets/painel-gestores/aprovar-ferias.png';
 import FiltrarFerias from '../assets/painel-gestores/filtrar-ferias.png';
 import MinhasVagas from '../assets/painel-gestores/minhas-vagas.png';
@@ -44,7 +39,7 @@ function PainelGestoresPage() {
         <PageContainer>
             <HeaderNewComponent pageTitle={"Painel Gestores"} />
             <ButtonContainer>
-                <Link to="/homepage">
+                <Link to="/criarvaga">
                     <NewButton disabled={!allowed && true}>
                         <img src={RequisicaoVaga} alt='Requisição de Vagas' />
                         <p>Requisição de <br/> <span>Vaga</span></p>

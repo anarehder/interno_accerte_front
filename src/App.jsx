@@ -31,6 +31,7 @@ import CertificationsAdminPage from "./pages/CertificationsAdminPage";
 import SignatureEmail2025Page from "./pages/SignatureEmail2025Page";
 import FeedbackGestorPage from "./pages/FeedbackGestorPage";
 import HumorGestoresPage from "./pages/painel-gestores-pages/HumorGestoresPage";
+import CriarVagaPage from "./pages/painel-gestores-pages/CriarVagaPage";
 
 function App() {
 
@@ -67,6 +68,7 @@ function App() {
               <Route path="/comunicados" element={<ComunicadosPage />} />
               <Route path="/feedback" element={<FeedbackGestorPage />} />
               <Route path="/humorequipe" element={<HumorGestoresPage />} />
+              <Route path="/criarvaga" element={<CriarVagaPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter >
