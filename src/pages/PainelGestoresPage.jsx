@@ -45,10 +45,10 @@ function PainelGestoresPage() {
                         <p>Requisição de <br/> <span>Vaga</span></p>
                     </NewButton>
                 </Link>
-                <Link to="/homepage">
+                <Link to="/listavagas">
                 <NewButton disabled={!allowed && true}>
                     <img src={MinhasVagas} alt='Minhas Vagas' />
-                    <p>Minhas <br/> <span>Vaga</span></p>
+                    <p>Minhas <br/> <span>Vagas</span></p>
                 </NewButton>
                 </Link>
                 
