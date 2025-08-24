@@ -50,7 +50,7 @@ const AdminPage = () => {
                 <Link to="/criarferias/admin">
                     <NewButton>
                         <AiOutlineSchedule size={115}/>
-                        <p>Criar <br /> <span>Férias</span></p>
+                        <p>Criar Licenças <br /> <span> / Férias</span></p>
                     </NewButton>
                 </Link>
             </ButtonContainer>

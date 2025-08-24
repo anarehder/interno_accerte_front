@@ -29,20 +29,20 @@ const HomePage = () => {
     const [notificacoes, setNotificacoes] = useState({"ferias": false,"vagas": false,"aniversario": false, "comunicados": false});
     const [filteredContacts, setFilteredContacts] = useState([]);
 
-    useEffect(() => {
-        async function fetchData() {
-            if (!user || !dados) {
-                await getData();
-            }
-            if (!isAuthenticated) {
-                navigate("/");
-            }    
-            //buscar notificações
-            //se for admin pegar nova vaga ferias para aprovar e 
-        }
+    // useEffect(() => {
+    //     async function fetchData() {
+    //         if (!user || !dados) {
+    //             await getData();
+    //         }
+    //         if (!isAuthenticated) {
+    //             navigate("/");
+    //         }    
+    //         //buscar notificações
+    //         //se for admin pegar nova vaga ferias para aprovar e 
+    //     }
     
-        fetchData();
-    }, [isAuthenticated, navigate]);
+    //     fetchData();
+    // }, [isAuthenticated, navigate]);
 
 
     useEffect(() => {

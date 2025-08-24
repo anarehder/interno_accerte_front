@@ -40,6 +40,7 @@ import AprovarFeriasAdminPage from "./pages/painel-admin-pages/AprovarFeriasAdmi
 import EscalasAdminPage from "./pages/painel-admin-pages/EscalasAdminPage";
 import CriarFeriasLicAdminPage from "./pages/painel-admin-pages/CriarFeriasLicAdminPage";
 import FiltrarFeriasAdminPage from "./pages/painel-admin-pages/FiltrarFeriasAdminPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
 
@@ -50,42 +51,44 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<LoginPage />} />
-              <Route path="/homepage" element={<HomePage />} />
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/sobre" element={<AboutUsPage />} /> 
-              <Route path="/equipamentos" element={<EquipmentsPage />} />
-              <Route path="/assinatura" element={<SignatureEmail2025Page />} />
-              <Route path="/certificacoes" element={<CertificationsPage />} />
-              <Route path="/certificacoes/admin" element={<CertificationsAdminPage />} />
-              <Route path="/ferias" element={<VacationsPage />} />
-              <Route path="/contatos" element={<ContactsPage />} />
-              <Route path="/aniversarios" element={<AnniversaryPage />} />
-              <Route path="/calendario" element={<CalendarPage />} />
-              <Route path="/politicas" element={<PolicyPage />} />
-              <Route path="/compliance" element={<CompliancePage />} />
-              <Route path="/escala" element={<ScalePage />} />
-              <Route path="/links" element={<FastLinksPage />} />
-              <Route path="/fiquepordentro" element={<UpdatesPage/>}/>
-              <Route path="/gestaoavista" element={<PowerBIDashs />} />
-              <Route path="/painelgestores" element={<PainelGestoresPage />} />
-              <Route path="/faqs" element={<FAQPage />}/>
-              <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />
-              <Route path="/beneficios" element={<BeneficiosPage/>} />
-              <Route path="/vagasemaberto" element={<VagasAbertasPage />} />
-              <Route path="/plantoes" element={<PlantoesTIPage />} />
-              <Route path="/comunicados" element={<ComunicadosPage />} />
-              <Route path="/feedback" element={<FeedbackGestorPage />} />
-              <Route path="/humorequipe" element={<HumorGestoresPage />} />
-              <Route path="/criarvaga" element={<CriarVagaPage />} />
-              <Route path="/listavagas" element={<ListaVagasPage />} />
-              <Route path="/aprovarferias" element={<AprovarFeriasPage />} />
-              <Route path="/filtrarferias" element={<FiltrarFeriasPage />} />
-              <Route path="/usuariosadmin" element={<UsuariosAdminPage />} />
-              <Route path="/aprovarferias/admin" element={<AprovarFeriasAdminPage />} />
-              <Route path="/escalas/admin" element={<EscalasAdminPage />} />
-              <Route path="/criarferias/admin" element={<CriarFeriasLicAdminPage />} />
-              <Route path="/filtrarferias/admin" element={<FiltrarFeriasAdminPage />} />
-              <Route path="*" element={<NotFoundPage />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/homepage" element={<HomePage />} />
+                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/sobre" element={<AboutUsPage />} />
+                <Route path="/equipamentos" element={<EquipmentsPage />} />
+                <Route path="/assinatura" element={<SignatureEmail2025Page />} />
+                <Route path="/certificacoes" element={<CertificationsPage />} />
+                <Route path="/certificacoes/admin" element={<CertificationsAdminPage />} />
+                <Route path="/ferias" element={<VacationsPage />} />
+                <Route path="/contatos" element={<ContactsPage />} />
+                <Route path="/aniversarios" element={<AnniversaryPage />} />
+                <Route path="/calendario" element={<CalendarPage />} />
+                <Route path="/politicas" element={<PolicyPage />} />
+                <Route path="/compliance" element={<CompliancePage />} />
+                <Route path="/escala" element={<ScalePage />} />
+                <Route path="/links" element={<FastLinksPage />} />
+                <Route path="/fiquepordentro" element={<UpdatesPage />} />
+                <Route path="/gestaoavista" element={<PowerBIDashs />} />
+                <Route path="/painelgestores" element={<PainelGestoresPage />} />
+                <Route path="/faqs" element={<FAQPage />} />
+                <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />
+                <Route path="/beneficios" element={<BeneficiosPage />} />
+                <Route path="/vagasemaberto" element={<VagasAbertasPage />} />
+                <Route path="/plantoes" element={<PlantoesTIPage />} />
+                <Route path="/comunicados" element={<ComunicadosPage />} />
+                <Route path="/feedback" element={<FeedbackGestorPage />} />
+                <Route path="/humorequipe" element={<HumorGestoresPage />} />
+                <Route path="/criarvaga" element={<CriarVagaPage />} />
+                <Route path="/listavagas" element={<ListaVagasPage />} />
+                <Route path="/aprovarferias" element={<AprovarFeriasPage />} />
+                <Route path="/filtrarferias" element={<FiltrarFeriasPage />} />
+                <Route path="/usuariosadmin" element={<UsuariosAdminPage />} />
+                <Route path="/aprovarferias/admin" element={<AprovarFeriasAdminPage />} />
+                <Route path="/escalas/admin" element={<EscalasAdminPage />} />
+                <Route path="/criarferias/admin" element={<CriarFeriasLicAdminPage />} />
+                <Route path="/filtrarferias/admin" element={<FiltrarFeriasAdminPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
             </Routes>
           </BrowserRouter >
         </AuthProvider>
