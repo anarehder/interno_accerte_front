@@ -1,12 +1,13 @@
 {
+  "$schema": "https://staticwebapps.azureedge.net/schemas/route.json",
+  "navigationFallback": 
+    {
+      "rewrite": "/index.html",
+      "exclude": ["/assets/*", "/favicon.ico"]
+    },
   "routes": [
     {
       "route": "/homepage",
-      "serve": "/index.html",
-      "statusCode": 200
-    },
-    {
-      "route": "/intranet/*",
       "serve": "/index.html",
       "statusCode": 200
     },
