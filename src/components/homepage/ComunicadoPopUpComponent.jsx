@@ -59,7 +59,7 @@ function ComunicadoPopUpComponent({setUpdated}) {
         <h1>{comunicado?.titulo}</h1>
         {comunicado?.legenda || comunicado?.legenda?.length > 2 ?
         <TextoImagem>
-            <a href={comunicado?.linkExterno ? comunicado.linkExterno : '-'} target="_blank">
+            <a href={(comunicado?.linkExterno && comunicado?.linkExterno !== '-') ? comunicado.linkExterno : undefined} target="_blank"   style={{ pointerEvents: comunicado?.linkExterno === '-' ? 'none' : 'auto'}}>
             <Imagem
               src={comunicado?.imagemUrl}
               alt={"Mensagem"}
@@ -74,7 +74,7 @@ function ComunicadoPopUpComponent({setUpdated}) {
         </TextoImagem>
         :
         <SoImagem>
-          <a href={comunicado?.linkExterno ? comunicado.linkExterno : '-'} target="_blank">
+          <a href={(comunicado?.linkExterno && comunicado?.linkExterno !== '-') ? comunicado.linkExterno : undefined} target="_blank"   style={{ pointerEvents: comunicado?.linkExterno === '-' ? 'none' : 'auto'}}>
             <Imagem
               src={comunicado?.imagemUrl}
               alt={"Mensagem"}
