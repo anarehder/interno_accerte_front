@@ -83,7 +83,7 @@ const ComunicadosPage = () => {
                                 </Info>
                                 {open === c.id &&
                                     <Details>
-                                        {c.linkExterno ? <a href={c.linkExterno} target="_blank">
+                                        {(c?.linkExterno && c?.linkExterno !== '-') ? <a href={c.linkExterno} target="_blank">
                                             <img src={c.imagemUrl} alt={c.titulo} />
                                         </a> : <img src={c.imagemUrl} alt={c.titulo} />
                                         }
