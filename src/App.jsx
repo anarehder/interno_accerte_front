@@ -41,6 +41,7 @@ import EscalasAdminPage from "./pages/painel-admin-pages/EscalasAdminPage";
 import CriarFeriasLicAdminPage from "./pages/painel-admin-pages/CriarFeriasLicAdminPage";
 import FiltrarFeriasAdminPage from "./pages/painel-admin-pages/FiltrarFeriasAdminPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NovoComunicadoPage from "./pages/NovoComunicadoPage";
 
 function App() {
 
@@ -87,6 +88,7 @@ function App() {
                 <Route path="/escalas/admin" element={<EscalasAdminPage />} />
                 <Route path="/criarferias/admin" element={<CriarFeriasLicAdminPage />} />
                 <Route path="/filtrarferias/admin" element={<FiltrarFeriasAdminPage />} />
+                <Route path="/criarcomunicado" element={<NovoComunicadoPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
