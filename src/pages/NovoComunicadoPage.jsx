@@ -44,7 +44,7 @@ function NovoComunicadoPage() {
         };
 
         const confirmado = confirm(
-            `Solicitante: ${body.adminEmail}\n` +
+            `Solicitante: ${body.email}\n` +
             `Deseja criar o comunicado:\n` +
             `Nome: ${body.comunicado.titulo}\n` +
             `Imagem: ${body.comunicado.imagemUrl}\n`+
