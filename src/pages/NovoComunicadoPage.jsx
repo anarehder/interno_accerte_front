@@ -39,7 +39,7 @@ function NovoComunicadoPage() {
         };
 
         const body = {
-            adminEmail: user.mail,
+            email: user.mail,
             comunicado: formComDatasFormatadas,
         };
 
