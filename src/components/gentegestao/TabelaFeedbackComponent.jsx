@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import apiService from '../../services/apiService';
 
-function TabelaFeedbackComponent({funcionarioInfo}) {
+function TabelaFeedbackComponent({funcionarioInfo, responsavel, setFuncionarioSelecionado}) {
     const [dias, setDias] = useState(0);
     const [acao, setAcao] = useState(null);
-    const [sugestoes, setSugestoes] = useState('');
+    const [sugestoes, setSugestoes] = useState('-');
     const [planoAcao, setPlanoAcao] = useState({ que: null, porque: null, como: null, quem: null, quando: null });
-
     const [notas, setNotas] = useState({item1: 0, item2: 0, item3: 0, item4: 0, item5: 0, item6: 0, item7:0, item8: 0, item9: 0, item10: 0, item11: 0, item12: 0, item13: 0});
 
     const itens = [{ id: 'item1', peso: 4 }, { id: 'item2', peso: 5 }, { id: 'item3', peso: 4 }, { id: 'item4', peso: 5 }, { id: 'item5', peso: 5 }, { id: 'item6', peso: 4 }, { id: 'item7', peso: 4 }, { id: 'item8', peso: 5 }, { id: 'item9', peso: 4 }, { id: 'item10', peso: 5 }, { id: 'item11', peso: 5 }, { id: 'item12', peso: 5 }, { id: 'item13', peso: 5 }];
@@ -15,7 +15,7 @@ function TabelaFeedbackComponent({funcionarioInfo}) {
         const nota = notas[id] || 0;
         return acc + (nota * peso);
     }, 0) / 6000) * 100);
-
+    
     const perguntas = [
         {item: 'Senso de Urgência', subitem:"Capacidade de reconhecer situações que demandam uma ação imediata e agir rapidamente para resolver o problema."},
         {item: 'Trabalho em Equipe', subitem:"Mostra comportamento cooperativo para atingir resultados em grupo. Desenvolve trabalhos em equipe, com postura participativa e colaborativa."},
@@ -32,6 +32,8 @@ function TabelaFeedbackComponent({funcionarioInfo}) {
         {item: 'Conhecimento Técnico', subitem:"Demonstra domínio e ou segurança para aplicação de habilidades e conhecimentos específicos necessários para realizar as tarefas e resolver problemas da área ou função específica."}
     ];
 
+    const items = JSON.stringify(perguntas);
+    // console.log(items);
     function formatarDataBR(dataIso) {
         const data = new Date(dataIso);
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
@@ -44,6 +46,33 @@ function TabelaFeedbackComponent({funcionarioInfo}) {
         const formatada = formatarDataBR(admissao);
         return formatada;
     }
+
+    function somarDataISO(dias) {
+        const admissao = new Date(funcionarioInfo.admissao);
+        admissao.setDate(admissao.getDate() + Number(dias));
+        const data = admissao.toISOString();
+        return data;
+    }
+
+    const handleClick = async () => {
+        const body = {responsavelId: responsavel.id, funcionarioId: funcionarioInfo.id, areaId: funcionarioInfo.areaId, periodo: dias, dataAvaliacao: new Date().toISOString(), dataReferencia: somarDataISO(dias), competencias: items, respostas: JSON.stringify(notas), plano: JSON.stringify(planoAcao), sugestoes: sugestoes, nota: Number(total.toFixed(0)), decisao: acao, avaliacao: total<40 ? "Insatisfatório" : total < 58 ? "Abaixo do esperado" : total < 70 ? "Em desenvolvimento" : total < 89 ? "Apresenta o esperado": "Supera o esperado"};
+
+        // console.log(body);
+        if (total > 0 && dias !== 0 && acao !== null) {
+            try {
+                const response = await apiService.criarFeedbackOnboarding(body);
+                if (response.status === 200) {
+                    alert("Feedback criado com sucesso!");
+                    setFuncionarioSelecionado(null);
+                }
+            } catch (error) {
+                console.error("Erro ao enviar requisição:", error);
+                // alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
+            }
+        } else {
+            alert("Preencha os campos, a avaliação e a ação final");
+        }
+    };
 
     return (
         <PageContainer>
@@ -59,8 +88,8 @@ function TabelaFeedbackComponent({funcionarioInfo}) {
                 <div>Setor: {funcionarioInfo.Areas?.area}</div>
             </FormLine>
             <FormLine>
+                <div>Responsável: {responsavel.nome} {responsavel.sobrenome}</div>
                 <div>Data Avaliação: {formatarDataBR(new Date())}</div>
-                <div></div>
             </FormLine>
             <FormLine>
                 <div>
@@ -93,23 +122,12 @@ function TabelaFeedbackComponent({funcionarioInfo}) {
                 <Competencias key={index}>
                     <Item><div>{i.item}</div> <div> {i.subitem} </div></Item>
                     <div>
-                        <label>Supera o Esperado
+                        <label>Abaixo do Esperado
                             <input
                                 type="radio"
                                 name={`item${index+1}`}
-                                value={100}
-                                checked={notas[`item${index+1}`] === 100}
-                                onChange={(e) =>
-                                    setNotas(prev => ({ ...prev, [`item${index+1}`]: Number(e.target.value) }))
-                                }
-                            />
-                        </label>
-                        <label>Apresenta o Esperado
-                            <input
-                                type="radio"
-                                name={`item${index+1}`}
-                                value={75}
-                                checked={notas[`item${index+1}`] === 75}
+                                value={25}
+                                checked={notas[`item${index+1}`] === 25}
                                 onChange={(e) =>
                                     setNotas(prev => ({ ...prev, [`item${index+1}`]: Number(e.target.value) }))
                                 }
@@ -126,12 +144,24 @@ function TabelaFeedbackComponent({funcionarioInfo}) {
                                 }
                             />
                         </label>
-                        <label>Abaixo do Esperado
+                        <label>Apresenta o Esperado
                             <input
                                 type="radio"
                                 name={`item${index+1}`}
-                                value={25}
-                                checked={notas[`item${index+1}`] === 25}
+                                value={75}
+                                checked={notas[`item${index+1}`] === 75}
+                                onChange={(e) =>
+                                    setNotas(prev => ({ ...prev, [`item${index+1}`]: Number(e.target.value) }))
+                                }
+                            />
+                        </label>
+
+                        <label>Supera o Esperado
+                            <input
+                                type="radio"
+                                name={`item${index+1}`}
+                                value={100}
+                                checked={notas[`item${index+1}`] === 100}
                                 onChange={(e) =>
                                     setNotas(prev => ({ ...prev, [`item${index+1}`]: Number(e.target.value) }))
                                 }
@@ -144,7 +174,7 @@ function TabelaFeedbackComponent({funcionarioInfo}) {
             <Competencias>
                 <Item>Avaliação Final: <span>{total<40 ? " Insatisfatório" : total < 58 ? " Abaixo do esperado" : total < 70 ? " Em desenvolvimento" : total<89 ? " Apresenta o esperado": " Supera o esperado"} </span></Item>
                 <div>
-                    Nota Final = {total.toFixed(1)} %
+                    Nota Final = {total.toFixed(0)} %
                 </div>
             </Competencias>
             <SubTitulo>
@@ -276,7 +306,14 @@ function TabelaFeedbackComponent({funcionarioInfo}) {
                             onChange={acao === "Encerrar" ? () => setAcao(null) : () => setAcao("Encerrar")}
                             style={{ transform: 'scale(1.8)' }}
                         />
-                    </div>                
+                        <label> Continuar </label>
+                        <input
+                            type="checkbox"
+                            checked={acao==="Continuar"}
+                            onChange={acao === "Continuar" ? () => setAcao(null) : () => setAcao("Continuar")}
+                            style={{ transform: 'scale(1.8)' }}
+                        />
+                    </div>             
                 : dias === 45  ? 
                     <div>
                         <label> Prorrogar </label>
@@ -313,6 +350,9 @@ function TabelaFeedbackComponent({funcionarioInfo}) {
                     </div> 
                 : <div>Ação:</div>}
             </FormLine>
+            <Button onClick={handleClick}>
+                        Finalizar Feedback
+                    </Button>
         </PageContainer>
     )
 }
@@ -444,3 +484,11 @@ const PlanoAcao = styled.div`
         text-align: center;
     }
 `
+
+const Button = styled.button`
+    width: 170px;
+    font-size: 16px;
+    justify-content: center;
+    background-color: #EE2B51;
+    margin-top: 50px;
+`;

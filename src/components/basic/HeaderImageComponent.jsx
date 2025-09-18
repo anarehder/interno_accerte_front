@@ -19,7 +19,7 @@ function HeaderImageComponent({ pageTitle, subtitle, lastPage, image }) {
                 </ImageContainer>
                 <Title>
                     <h1>{pageTitle}</h1><h2>{subtitle && subtitle} |</h2>
-                    <img src={image} alt='ícone' />
+                    {image && <img src={image} alt='ícone' /> }
                 </Title>
             </HeaderContainer>
         </PageContainer>

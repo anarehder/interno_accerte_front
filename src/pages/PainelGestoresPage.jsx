@@ -9,6 +9,8 @@ import FiltrarFerias from '../assets/painel-gestores/filtrar-ferias.png';
 import MinhasVagas from '../assets/painel-gestores/minhas-vagas.png';
 import RequisicaoVaga from '../assets/painel-gestores/requisicao-vaga.png';
 import TermometroHumor from '../assets/painel-gestores/termometro-humor.png';
+import { VscFeedback } from "react-icons/vsc";
+
 
 function PainelGestoresPage() {
     const { user } = useAuth();
@@ -70,6 +72,12 @@ function PainelGestoresPage() {
                     <NewButton disabled={(!allowedSub) && true}>
                     <img src={FiltrarFerias} alt='Filtrar Férias' />
                     <p>Filtrar <br/> <span>Férias</span></p>
+                    </NewButton>
+                </Link>
+                <Link to="/feedback/onboarding">
+                    <NewButton disabled={!allowed && true}>
+                        <VscFeedback size={115}/>
+                        <p>Feedback <br/> <span>Onboarding</span></p>
                     </NewButton>
                 </Link>
             </ButtonContainer>

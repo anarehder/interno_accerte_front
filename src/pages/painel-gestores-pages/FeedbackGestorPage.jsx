@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
 import { useRef, useEffect, useState } from "react";
-import apiService from "../services/apiService";
-import { useAuth } from "../contexts/AuthContext";
-import TabelaFeedbackComponent from "../components/gentegestao/TabelaFeedbackComponent";
+import apiService from "../../services/apiService";
+import { useAuth } from "../../contexts/AuthContext";
+import TabelaFeedbackComponent from "../../components/gentegestao/TabelaFeedbackComponent";
+import HeaderImageComponent from "../../components/basic/HeaderImageComponent";
 
 
 const FeedbackGestorPage = () => {
@@ -13,8 +13,8 @@ const FeedbackGestorPage = () => {
     const imageRef = useRef(null);
 
     const [funcionarios, setFuncionarios] = useState([]);
+    const [responsavel, setResponsavel] = useState([]);
     const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
-    // console.log(funcionarios);
 
     useEffect(() => {
         if (!user) return;
@@ -35,7 +35,9 @@ const FeedbackGestorPage = () => {
     const handleSelectFuncionario = (e) => {
         const id = parseInt(e.target.value, 10); // pega o id do select
         const func = funcionarios.find(f => f.id === id); // acha o funcionário
+        const resp = funcionarios.find(f => f.email === user.mail); 
         setFuncionarioSelecionado(func || null); // salva no estado
+        setResponsavel(resp || null); // salva no estado
     };
 
 
@@ -53,7 +55,7 @@ const FeedbackGestorPage = () => {
 
     return (
         <Container>
-            <HeaderGGNewComponent pageTitle={`Feedback`} />
+            <HeaderImageComponent pageTitle={"Feedback"} subtitle={"Onboarding"} lastPage={"painelgestores"} />
             <Form>
                 <label>Funcionário:
                     {
@@ -78,9 +80,10 @@ const FeedbackGestorPage = () => {
 
             <DownloadArea ref={imageRef}>
                 {
-                    funcionarioSelecionado && <TabelaFeedbackComponent funcionarioInfo={funcionarioSelecionado} />
+                    funcionarioSelecionado && <TabelaFeedbackComponent funcionarioInfo={funcionarioSelecionado}  responsavel={responsavel} setFuncionarioSelecionado={setFuncionarioSelecionado}/>
                 }
             </DownloadArea>
+            
 
         </Container>
     )
@@ -94,6 +97,7 @@ const Container = styled.div`
     align-items: center;
     min-height: 100vh;
     font-family: "Poppins", serif;
+    margin-bottom: 50px;
 `;
 
 const Form = styled.div`
