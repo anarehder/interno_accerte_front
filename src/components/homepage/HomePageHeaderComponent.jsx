@@ -109,6 +109,7 @@ function HomePageHeaderComponent({notificacoes}) {
                                                 vagas: '/listavagas',
                                                 feriasRH: '/aprovarferias/admin',
                                                 vagasRH: '/listavagas',
+                                                novoFeedback: '/feedback/onboarding/lista',
                                             };
 
                                             const textos = {
@@ -118,6 +119,7 @@ function HomePageHeaderComponent({notificacoes}) {
                                                 feriasRH: '🏖️ O RH férias para aprovar!',
                                                 vagasRH: '🔖 Nova vaga solicitada;',
                                                 vagas: '🔖 Novo status de vaga.',
+                                                novoFeedback: '🔄 Novo Feedback Onboarding'
                                             };
 
                                             return (

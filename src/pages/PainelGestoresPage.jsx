@@ -10,7 +10,7 @@ import MinhasVagas from '../assets/painel-gestores/minhas-vagas.png';
 import RequisicaoVaga from '../assets/painel-gestores/requisicao-vaga.png';
 import TermometroHumor from '../assets/painel-gestores/termometro-humor.png';
 import { VscFeedback } from "react-icons/vsc";
-
+import { LiaListAlt } from "react-icons/lia";
 
 function PainelGestoresPage() {
     const { user } = useAuth();
@@ -77,7 +77,13 @@ function PainelGestoresPage() {
                 <Link to="/feedback/onboarding">
                     <NewButton disabled={!allowed && true}>
                         <VscFeedback size={115}/>
-                        <p>Feedback <br/> <span>Onboarding</span></p>
+                        <p>Criar Feedback <br/> <span>Onboarding</span></p>
+                    </NewButton>
+                </Link>
+                <Link to="/feedback/onboarding/lista">
+                    <NewButton disabled={!allowed && true}>
+                        <LiaListAlt  size={115}/>
+                        <p>Lista Feedbacks <br/> <span>Onboarding</span></p>
                     </NewButton>
                 </Link>
             </ButtonContainer>
@@ -102,7 +108,7 @@ const ButtonContainer = styled.div`
     flex-wrap: wrap;
     // padding: 20px 0;
     gap: 30px;
-    width: 900px;
+    width: 1200px;
     // background-color: red;
 `
 

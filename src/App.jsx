@@ -42,6 +42,7 @@ import FiltrarFeriasAdminPage from "./pages/painel-admin-pages/FiltrarFeriasAdmi
 import ProtectedRoute from "./components/ProtectedRoute";
 import NovoComunicadoPage from "./pages/NovoComunicadoPage";
 import FeedbackGestorPage from "./pages/painel-gestores-pages/FeedbackGestorPage";
+import ListaFeedbackGestorPage from "./pages/painel-gestores-pages/ListaFeedbackGestorPage";
 
 function App() {
 
@@ -78,6 +79,7 @@ function App() {
                 <Route path="/plantoes" element={<PlantoesTIPage />} />
                 <Route path="/comunicados" element={<ComunicadosPage />} />
                 <Route path="/feedback/onboarding" element={<FeedbackGestorPage />} />
+                <Route path="/feedback/onboarding/lista" element={<ListaFeedbackGestorPage />} />
                 <Route path="/humorequipe" element={<HumorGestoresPage />} />
                 <Route path="/criarvaga" element={<CriarVagaPage />} />
                 <Route path="/listavagas" element={<ListaVagasPage />} />
