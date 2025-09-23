@@ -34,10 +34,6 @@ const FastLinksPage = () => {{
             {Apple: "https://apps.apple.com/br/app/caju-benef%C3%ADcios-por-inteiro/id1483671427" },
             {Android: "https://play.google.com/store/apps/details?id=com.caju.employeeApp&pcampaignid=web_share" }
         ]},
-        {Gympass: [
-            {Apple: "https://apps.apple.com/br/app/wellhub-gympass/id703761434" },
-            {Android: "https://play.google.com/store/apps/details?id=com.gympass&hl=pt_BR" }
-        ]},
         {MarqPonto: [
             {Apple: "https://apps.apple.com/br/app/marqponto/id1379890385" },
             {Android: "https://play.google.com/store/apps/details?id=br.com.marqponto" }
