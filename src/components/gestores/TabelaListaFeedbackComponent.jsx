@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import PapelTimbrado from "../../assets/PAPEL_TIMBRADO_ACCERTE.png";
 
-function TabelaListaFeedbackComponent({feedback}) {
+function TabelaListaFeedbackComponent({feedback, imageRef1, imageRef2 }) {
     const respostas = JSON.parse(feedback.respostas);
     const planoAcao = JSON.parse(feedback.plano);
     const perguntas = JSON.parse(feedback.competencias); 
@@ -12,25 +13,28 @@ function TabelaListaFeedbackComponent({feedback}) {
     }
 
     return (
-        <PageContainer>
+        <Container>
+        
+        <PageContainer ref={imageRef1}>
             <Titulo>
                 {feedback.Funcionario.tipoContratoId === 1 ? "Avaliação de Experiência" : "Feedback Onboarding"}
             </Titulo>
             <FormLine>
-                <div>Nome: {feedback.Funcionario.nome} {feedback.Funcionario.sobrenome}</div>
-                <div>Admissão: {formatarDataBR(feedback.Funcionario.admissao)}</div>
+                <div><span>Nome:</span> {feedback.Funcionario.nome} {feedback.Funcionario.sobrenome}</div>
+                <div><span>Admissão:</span>{formatarDataBR(feedback.Funcionario.admissao)}</div>
+                
             </FormLine>
             <FormLine>
-                <div>Empresa: Accerte Tecnologia</div>
-                <div>Setor: {feedback.Areas.area}</div>
+                <div><span>Empresa:</span> Accerte Tecnologia</div>
+                <div><span>Setor:</span> {feedback.Areas.area}</div>
             </FormLine>
             <FormLine>
-                <div>Responsável: {feedback.Responsavel.nome} {feedback.Responsavel.sobrenome}</div>
-                <div>Data Avaliação: {formatarDataBR(feedback.dataAvaliacao)}</div>
+                <div><span>Responsável:</span>{feedback.Responsavel.nome} {feedback.Responsavel.sobrenome}</div>
+                <div><span>Data Avaliação:</span> {formatarDataBR(feedback.dataAvaliacao)}</div>
             </FormLine>
             <FormLine>
                 <div>
-                    Período:
+                    <span>Período:</span>
                     <label> 45 Dias </label>
                     <input
                         type="checkbox"
@@ -46,41 +50,49 @@ function TabelaListaFeedbackComponent({feedback}) {
                         style={{ transform: 'scale(1.8)' }}
                     />
                 </div>
-                <div>Data Referência: {formatarDataBR(feedback.dataReferencia)} </div>
+                <div><span>Data Referência:</span> {formatarDataBR(feedback.dataReferencia)} </div>
+                
             </FormLine>
             <SubTitulo>
                 Avaliação de desempenho do colaborador de acordo com cada competência.
             </SubTitulo>
             <Competencias>
-                <Item>Competências</Item>
-                <Respostas>{feedback.periodo} dias</Respostas>
+               <div>AB - Abaixo do Esperado</div> |  
+               <div>PE - Processo de Evolução</div>|  
+               <div>AE - Apresenta o Esperado</div>| 
+               <div>SE - Supera o Esperado</div>
             </Competencias>
+            <Competencias>
+                <Item><span>Competências</span></Item>
+                <Respostas><span>{feedback.periodo} dias</span></Respostas>
+            </Competencias>
+            
             {perguntas.map((i, index) => (
                 <Competencias key={index}>
                     <Item><div>{i.item}</div> <div> {i.subitem} </div></Item>
                     <Respostas>
-                        <label>Abaixo do Esperado
+                        <label>AB
                             <input
                                 type="radio"
                                 readOnly
                                 checked={respostas[`item${index+1}`] === 25}
                             />
                         </label>
-                        <label>Processo de Evolução
+                        <label>PE
                             <input
                                 type="radio"
                                 readOnly
                                 checked={respostas[`item${index+1}`] === 50}
                             />
                         </label>
-                        <label>Apresenta o Esperado
+                        <label>AE
                             <input
                                 type="radio"
                                 readOnly
                                 checked={respostas[`item${index+1}`] === 75}
                             />
                         </label>
-                        <label>Supera o Esperado
+                        <label>SE
                             <input
                                 type="radio"
                                 readOnly
@@ -93,210 +105,210 @@ function TabelaListaFeedbackComponent({feedback}) {
             <Competencias>
                 <Item>Avaliação Final: <span>{feedback.avaliacao} </span></Item>
                 <Respostas>
-                    Nota Final = {feedback.nota} %
+                    <span>Nota Final = {feedback.nota} %</span>
                 </Respostas>
             </Competencias>
+           
+        </PageContainer>
+        <PageContainer ref={imageRef2}>
+            <Titulo>
+                {feedback.Funcionario.tipoContratoId === 1 ? "Avaliação de Experiência" : "Feedback Onboarding"}
+            </Titulo>
+            <br/>
+            <br/>
             <SubTitulo>
                 Plano de Ação (Desenvolver/Melhorar):
             </SubTitulo>
             <PlanoAcao>
-                <div>
-                    <div>
-                        O que?
-                    </div>
-                    <div>
-                        Por quê?
-                    </div>
-                    <div>
-                        Como?
-                    </div>
-                    <div>
-                        Quem?
-                    </div>
-                    <div>
-                        Quando?
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <textarea
-                            readOnly
-                            value={planoAcao.que || ""}
-                            rows="8"
-                        />
-                    </div>
-                    <div>
-                        <textarea
-                            value={planoAcao.porque || ""}
-                            readOnly
-                            rows="8"
-                        />
-                    </div>
-                    <div>
-                        <textarea
-                            value={planoAcao.como || ""}
-                            readOnly
-                            rows="8"
-                        />
-                    </div>
-                    <div>
-                        <textarea
-                            value={planoAcao.quem || ""}
-                            readOnly
-                            rows="8"
-                        />
-                    </div>
-                    <div>
-                        <textarea
-                            value={planoAcao.quando || ""}
-                            readOnly
-                            rows="8"
-                        />
-                    </div>
-                </div>
-            </PlanoAcao>
+                    <div>O que?</div>
+                    <textarea
+                        readOnly
+                        value={planoAcao.que || ""}
+                        rows="4"
+                    />
+                    <div>Por quê?</div>
+                    <textarea
+                        readOnly
+                        value={planoAcao.porque || ""}
+                        rows="4"
+                    />
+                    <div>Como?</div>
+                    <textarea
+                        readOnly
+                        value={planoAcao.como || ""}
+                        rows="4"
+                    />
+                    <div>Quem?</div>
+                    <textarea
+                        readOnly
+                        value={planoAcao.quem || ""}
+                        rows="4"
+                    />
+                    <div>Quando?</div>
+                    <textarea
+                        readOnly
+                        value={planoAcao.quando || ""}
+                        rows="4"
+                    />
+            </PlanoAcao>          
             <SubTitulo>
                 Sugestões de Treinamentos:
             </SubTitulo>
-            <FormLine>
+            <PlanoAcao>
                 <textarea
                       value={feedback.sugestoes.slice(1)}
                       readOnly
-                      rows="3"
+                      rows="4"
                   />
-                </FormLine>
+            </PlanoAcao>
             <SubTitulo>
-                Assinaturas:
-            </SubTitulo>
-            <FormLine>
-                <Assinatura>Gestor:</Assinatura>
-                <Assinatura>Colaborador:</Assinatura>
-            </FormLine>
-            <FormLine>
-                <Assinatura>Gente & Gestão:</Assinatura>
-                {feedback.Funcionario.tipoContratoId !== 1 ? 
+                Decisão do Gestor:
+                {feedback.Funcionario.tipoContratoId !== 1 ?
                     <div>
                         <label> Encerrar </label>
                         <input
                             type="checkbox"
                             readOnly
-                            checked={feedback.decisao ==="Encerrar"}
+                            checked={feedback.decisao === "Encerrar"}
                             style={{ transform: 'scale(1.8)' }}
                         />
                         <label> Continuar </label>
                         <input
                             type="checkbox"
                             readOnly
-                            checked={feedback.decisao==="Continuar"}
+                            checked={feedback.decisao === "Continuar"}
                             style={{ transform: 'scale(1.8)' }}
                         />
-                    </div>             
-                : feedback.periodo === 45  ? 
-                    <div>
-                        <label> Prorrogar </label>
-                        <input
-                            type="checkbox"
-                            readOnly
-                            checked={feedback.decisao==="Prorrogar"}
-                            style={{ transform: 'scale(1.8)' }}
-                        />
-                        <label> Encerrar </label>
-                        <input
-                            type="checkbox"
-                            readOnly
-                            checked={feedback.decisao==="Encerrar"}
-                            style={{ transform: 'scale(1.8)' }}
-                        />
-                    </div> 
-                : feedback.periodo === 90 ?
-                <div>
-                        <label> Efetivar </label>
-                        <input
-                            type="checkbox"
-                            readOnly
-                            checked={feedback.decisao==="Efetivar"}
-                            style={{ transform: 'scale(1.8)' }}
-                        />
-                        <label> Encerrar </label>
-                        <input
-                            type="checkbox"
-                            readOnly
-                            checked={feedback.decisao==="Encerrar"}
-                            style={{ transform: 'scale(1.8)' }}
-                        />
-                    </div> 
+                    </div>
+                    : feedback.periodo === 45 ?
+                        <div>
+                            <label> Prorrogar </label>
+                            <input
+                                type="checkbox"
+                                readOnly
+                                checked={feedback.decisao === "Prorrogar"}
+                                style={{ transform: 'scale(1.8)' }}
+                            />
+                            <label> Encerrar </label>
+                            <input
+                                type="checkbox"
+                                readOnly
+                                checked={feedback.decisao === "Encerrar"}
+                                style={{ transform: 'scale(1.8)' }}
+                            />
+                        </div>
+                        : feedback.periodo === 90 ?
+                            <div>
+                                <label> Efetivar </label>
+                                <input
+                                    type="checkbox"
+                                    readOnly
+                                    checked={feedback.decisao === "Efetivar"}
+                                    style={{ transform: 'scale(1.8)' }}
+                                />
+                                <label> Encerrar </label>
+                                <input
+                                    type="checkbox"
+                                    readOnly
+                                    checked={feedback.decisao === "Encerrar"}
+                                    style={{ transform: 'scale(1.8)' }}
+                                />
+                            </div>
                             : <div>Ação:</div>}
-            </FormLine>
+            </SubTitulo>
+            <SubTitulo>
+                Assinaturas:
+            </SubTitulo>
+            <Assinatura>
+                <div>Gestor: </div>
+                <div>Colaborador:</div>
+                <div>Gente & Gestão:</div>
+            </Assinatura>
 
         </PageContainer>
+        </Container>
     )
 }
 
 export default TabelaListaFeedbackComponent;
 
+const Container = styled.div`
+    flex-direction: column;
+    gap: 10px;
+`
+
 const PageContainer = styled.div`
     width: 1350px;
-    border-radius: 15px;
+    height: 1909px;
+    background: url(${PapelTimbrado}) no-repeat top center;
+    background-size: 100% 100%;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.2);
     background-color: white;
-    line-height: 25px;
-    padding-bottom: 15px;
-    // margin: 30px 0;
+    line-height: 22px;
     textarea {
-        width: 90%;
+        width: 95%;
         color: black;
         font-family: "Poppins", serif;
-        font-size: 14px;
+        font-size: 16px;
         padding: 5px;
         border-radius: 8px;
-        text-indent: 10px;
-        box-shadow: 2px 2px 3px 2px rgba(0, 0, 0, 0.1);
+        box-shadow: 2px 2px 3px 2px rgba(215, 213, 213, 0.4);
     }
 `
 
 const Titulo = styled.div`
-    background-color: #EE2B51;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    color: white;
-    font-weight: 500;
-    font-size: 20px;
+    margin-top: 170px;
+    margin-bottom: 50px;
+    color: #002266;
+    font-weight: 600;
+    font-size: 22px;
     align-items: center;
     justify-content: center;
     padding: 5px 0;
 `
 
 const SubTitulo = styled.div`
-    background-color: #EE2B51;
+    background-color: #002266;
     color: white;
-    font-size: 16px;
+    font-size: 20px;
     align-items: center;
     justify-content: center;
     padding: 5px 0;
-    margin-top: 15px;
+    margin: 15px 0;
+    div{
+        width: 280px;
+        // background-color: red;
+        justify-content: flex-end;
+        label{
+            // background-color: red;
+            margin-left: 35px;
+            margin-right: 5px;
+        }
+    }
 `
 
 const FormLine = styled.div`
-    gap: 15px;
-    text-indent: 15px;
+    gap: 40px;
+    width: 80%;
+    font-size: 18px;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid #bebbbbff;
-    padding: 5px 0;
-    label{
-        // margin-left: 10px;
-    }
+    padding: 5px 10px;
     div{
+        border-bottom: 1px solid #bebbbbff;
         justify-content: flex-start;
         align-items: center;
-        width: 700px;
-        gap: 15px;
+        width: 380px;
+        gap: 10px;
     }
-    div: nth-child(2){
-        width: 450px;
+    div: nth-child(1){
+        width: 580px;
+    }
+    span{
+        font-weight: 500;
     }
     textarea{
         text-indent: 0;
@@ -305,77 +317,90 @@ const FormLine = styled.div`
 `
 
 const Assinatura = styled.div`
-    line-height: 120px;
+    flex-direction: column;
+    align-items: center;
+    line-height: 40px;
+    font-size: 18px;
+    margin: 0 auto;
+    gap: 10px;
+    width: 70%;
+    div{
+        justify-content: flex-start;
+        border: 1px solid #b6b2b2ff;
+        padding: 10px;
+        border-radius: 5px;
+    }
 `
 
 const Competencias = styled.div`
-    gap: 10px;
+    margin: 8px 0;
+    width: 1300px;
     justify-content: center;
     align-items: center;
     border-bottom: 1px solid #bebbbbff;
-    padding: 5px 0;
-    font-size: 15px;
-    // 
+    padding: 5px 0 10px 0;
+    font-size: 18px;
+    // background-color: red;
     label{
         justify-content: center;
         display: flex;
-        font-size: 13px;
         text-align: center;
         width: 100px;
         line-height: 15px;
         flex-direction: column;
         align-items: center;
-        
     }
     span{
         font-weight: 600;
         margin-left: 5px;
-        padding: 10px 0;
+        padding: 4px 0;
+        color: #002266;
     }
+    div{
+        justify-content: center;
+    }
+
 `
 
 const Respostas = styled.div`
     gap: 5px;
     justify-content: center;
-    width: 450px;
+    width: 300px;
 `
 
 const Item = styled.div`
     justify-content: center;
     align-items: center;
-    width: 900px;
+    width: 980px;
+    gap: 10px;
     div: nth-child(1){
-        width: 175px;
-        font-size: 13.5px;
+        width: 200px;
         justify-content: center;
         text-align: center;
+        padding: 0 5px;
     }
     div: nth-child(2){
-        width: 700px;
+        width: 750px;
         justify-content: flex-start;
         text-align: center;
         border-right: 1px solid #bebbbbff;
+        border-left: 1px solid #bebbbbff;
         text-align: justify;
-        padding: 0 10px;
+        padding: 0 25px;
     }
 `
 
 const PlanoAcao = styled.div`
     flex-direction: column;
     margin-top: 10px;
+    align-items: center;
     div{
-        justify-content: center;
+        width: 95%;
+        justify-content: flex-start;
         text-align: center;
+        padding: 0 2px;
     }
     textarea{
-        text-indent: 0;
+        margin: 10px 0;
     }
 `
-
-const Button = styled.button`
-    width: 170px;
-    font-size: 16px;
-    justify-content: center;
-    background-color: #EE2B51;
-    margin-top: 50px;
-`;

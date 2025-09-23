@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { toPng } from "html-to-image";
 import { jsPDF } from "jspdf";
 import download from "downloadjs";
@@ -12,10 +12,13 @@ import TabelaListaFeedbackComponent from "../../components/gestores/TabelaListaF
 const ListaFeedbackGestorPage = () => {
     const { user } = useAuth();
     const imageRef = useRef(null);
+    const imageRef1 = useRef(null);
+    const imageRef2 = useRef(null);
     const [feedbacks, setFeedbacks] = useState([]);
     const [selectedFeedback, setSelectedFeedback] = useState(null);
     const [feedbackId, setFeedbackId] = useState("");
     const [updated, setUpdated] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (!user) return;
@@ -41,24 +44,38 @@ const ListaFeedbackGestorPage = () => {
 
     }, [user, updated]);
 
-    const handleDownload = () => {
-        if (imageRef.current) {
-            toPng(imageRef.current, { quality: 1 })
-                .then((dataUrl) => {
-                    const pdf = new jsPDF("p", "mm", "a4"); // formato A4
-                    const imgProps = pdf.getImageProperties(dataUrl);
+    const handleDownload = async () => {
+        setLoading(true);
+        try {
+            const pdf = new jsPDF("p", "mm", "a4");
 
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            // captura primeira página
+            if (imageRef1.current) {
+                const dataUrl1 = await toPng(imageRef1.current, { quality: 1, pixelRatio: 3 });
+                const imgProps1 = pdf.getImageProperties(dataUrl1);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps1.height * pdfWidth) / imgProps1.width;
+                pdf.addImage(dataUrl1, "PNG", 0, 0, pdfWidth, pdfHeight);
+            }
 
-                    pdf.addImage(dataUrl, "PNG", 0, 0, pdfWidth, pdfHeight);
-                    pdf.save("Avaliacao-Feedback.pdf"); // <-- baixa como PDF
-                })
-                .catch((error) => {
-                    console.error("Erro ao gerar o PDF:", error);
-                });
+            // captura segunda página (nova página no PDF)
+            if (imageRef2.current) {
+                const dataUrl2 = await toPng(imageRef2.current, { quality: 1, pixelRatio: 3 });
+                const imgProps2 = pdf.getImageProperties(dataUrl2);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps2.height * pdfWidth) / imgProps2.width;
+                pdf.addPage();
+                pdf.addImage(dataUrl2, "PNG", 0, 0, pdfWidth, pdfHeight);
+            }
+
+            pdf.save(`Avaliacao-Feedback-${selectedFeedback.Funcionario.nome}-${selectedFeedback.periodo}.pdf`);
+        } catch (error) {
+            console.error("Erro ao gerar o PDF:", error);
+        } finally {
+            setLoading(false); // desativa loading
         }
     };
+
 
     const handleClick = async () => {
         try {
@@ -72,7 +89,7 @@ const ListaFeedbackGestorPage = () => {
         }
     };
 
-    console.log(feedbacks);
+    // console.log(feedbacks);
     return (
         <Container>
             <HeaderImageComponent pageTitle={"Feedback"} subtitle={"Onboarding"} lastPage={"painelgestores"} />
@@ -94,8 +111,8 @@ const ListaFeedbackGestorPage = () => {
                                     }}> Detalhes </Button>}
                                 {
                                     selectedFeedback &&
-                                    <Button onClick={handleDownload}>
-                                        Baixar Arquivo
+                                    <Button onClick={handleDownload} disabled={loading}>
+                                        {loading ? "Preparando arquivo..." : "Baixar PDF"}
                                     </Button>
                                 }
                                 {selectedFeedback && (user.mail === 'maria.silva@accerte.com.br' || 'ana.reher@accerte.com.br') && selectedFeedback.okRH === false &&
@@ -106,9 +123,9 @@ const ListaFeedbackGestorPage = () => {
                                 </div>
                         </Titulo>
                         {feedbackId === f.id &&
-                            <DownloadArea ref={imageRef}>
+                            <DownloadArea>
                                 {
-                                    selectedFeedback && <TabelaListaFeedbackComponent feedback={selectedFeedback} />
+                                    selectedFeedback && <TabelaListaFeedbackComponent feedback={selectedFeedback} imageRef1={imageRef1} imageRef2={imageRef2}/>
                                 }
                             </DownloadArea>
                         }
@@ -117,9 +134,20 @@ const ListaFeedbackGestorPage = () => {
                 :
                 <Item>
                     <p>Sem feedbacks para exibir.</p>
-                </Item>
-            }
+                    </Item>
+                }
             </List>
+            {loading && (
+                <Overlay>
+                    <div>
+                        <Spinner />
+                        <p style={{ color: "#fff", textAlign: "center", marginTop: "8px" }}>
+                            Gerando PDF, aguarde...
+                        </p>
+                    </div>
+                </Overlay>
+            )}
+
         </Container>
     )
 };
@@ -185,11 +213,44 @@ const Button = styled.button`
     width: 170px;
     font-size: 16px;
     justify-content: center;
-    background-color: #EE2B51;
+    background-color: #002266;
 `;
 
 const DownloadArea = styled.div`
     width: 1350px;
     background-color: white;
-    padding: 15px;
 `
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+// styled do spinner
+const Spinner = styled.div`
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: ${spin} 1s linear infinite;
+  margin: 12px auto;
+`;
+
+// overlay opcional (fundo escuro transparente)
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  div{
+    flex-direction: column;
+    align-items: center; 
+  }
+`;
