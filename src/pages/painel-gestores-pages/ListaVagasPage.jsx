@@ -25,7 +25,7 @@ function ListaVagasPage() {
             case "Testes e referências": return 80;
             case "Validação do perfil": return 90;
             case "Concluída": return 100;
-            case "Cancelada": return 100;
+            case "Cancelada": return 101;
             default: return 0;
         }
     };
@@ -37,7 +37,7 @@ function ListaVagasPage() {
                 const body = {adminEmail: user.mail};
                 const response = await apiService.getVagas(body);
                 const v = response.data;
-                v.sort((a, b) => getProgressPercent(a.status) - getProgressPercent(b.status));
+                v.sort((a, b) => getProgressPercent(a.status) - getProgressPercent(b.status) || a.cargo.localeCompare(b.cargo));
                 setVagas(v);
                 setCarregando(false);
                 setUpdated(false);
