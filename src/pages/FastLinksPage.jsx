@@ -16,6 +16,7 @@ const FastLinksPage = () => {{
     const { dados } = useAuth();
     const [wallpaper, setWallpaper] = useState(false);
     const [documents, setDocuments] = useState(false);
+    const [acConnect1, setAcConnect1] = useState(false);
     const imageMap = {
         Apple: AppleLogo,
         Android: AndroidLogo,
@@ -118,12 +119,12 @@ const FastLinksPage = () => {{
                         <Card >
                             <Info><img src={AccerteConnect} alt={"Accerte Connect"} /></Info>
                             <InfoButton>
-                                <button onClick={() => setDocuments(!documents)}>
-                                    {documents ? "Ocultar" : "Exibir"}
+                                <button onClick={() => setAcConnect1(!acConnect1)}>
+                                    {acConnect1 ? "Ocultar" : "Exibir"}
                                 </button>
                             </InfoButton>
                         </Card>
-                        {documents &&
+                        {acConnect1 &&
                             <SmallList>
                                 {dados?.accerteconnect?.map((file) => (
                                     <Card key={file.url}>
