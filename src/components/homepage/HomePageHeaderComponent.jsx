@@ -259,12 +259,13 @@ const Dropdown = styled.div`
     top: 40px;
     right: 40px;
     justify-content: flex-start;
-    background-color: #fff;
-    width: 220px;
+    background-color: #f3f0f0ff;
+    width: 340px;
     max-height: 200px;
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 8px;
+    border-top-right-radius: 0px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     z-index: 5;
 `;
