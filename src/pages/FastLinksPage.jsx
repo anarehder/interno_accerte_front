@@ -156,7 +156,7 @@ const FastLinksPage = () => {{
                             <SmallList>
                                 {dados?.docs?.map((file) => (
                                     <Card key={file.url}>
-                                        <Info>{file.name.slice(0, -4)}</Info>
+                                        <Info>{file.name.slice(0, -5)}</Info>
                                         <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
                                     </Card>
                                 ))}
