@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import ListarCertsAdminComponent from './ListarCertsAdminComponent';
 import ListarFuncCertsAdminComponent from './ListasFuncCertsAdminComponent';
+import ListaBonificacoesComponent from './ListaBonificacaoesComponent';
 
 function FiltrarCertsComponent() {
     const [activeButton, setActiveButton] = useState("");
@@ -23,10 +24,7 @@ function FiltrarCertsComponent() {
             </ButtonsContainer>
             {activeButton === "Certificacoes" && <ListarCertsAdminComponent />}
             {activeButton === "Funcionarios" && <ListarFuncCertsAdminComponent />}
-            {activeButton === "Bonificacoes" && <div> Bonificacoes</div>}
-            {/* {activeButton === "Emissor" && <CriarEmissorComponent />} */}
-            {/* {activeButton === "Nivel" && <CriarNivelComponent />} */}
-            {/* {activeButton === "Certificacao" && <CriarCertificacaoComponent handleClick={handleClick}/>} */}
+            {activeButton === "Bonificacoes" && <ListaBonificacoesComponent />}
         </PageContainer>
     )
 }

@@ -3,12 +3,15 @@ import { useEffect, useState } from 'react';
 import apiServiceCertificacoes from '../../services/apiServiceCertificacoes';
 import { useAuth } from '../../contexts/AuthContext';
 import apiService from '../../services/apiService';
+import { GrValidate } from "react-icons/gr";
+import { ImBlocked } from "react-icons/im";
 
 
 function ListarFuncCertsAdminComponent() {
     const { user } = useAuth();
     const [funcCerts, setFuncCerts] = useState([]);
     const [funcionarios, setFuncionarios] = useState([]);
+    const [updated, setUpdated] = useState(false);
 
     function formatarDataBR(dataIso) {
         const data = new Date(dataIso);
@@ -23,6 +26,7 @@ function ListarFuncCertsAdminComponent() {
             try {
                 const response = await apiServiceCertificacoes.buscarListaFuncCerts(body);
                 setFuncCerts(response.data);
+                setUpdated(false);
             } catch (error) {
                 console.error("Erro ao buscar informacoes de certificações:", error);
             }   
@@ -37,16 +41,31 @@ function ListarFuncCertsAdminComponent() {
 
         fetchData();
 
-    }, [user]);
+    }, [user, updated]);
+
+    const handleClick = async (id, status) => {
+        const body = { email: user.mail, id: id, campo: "validaPCA", status: status };
+        try {
+            const response = await apiServiceCertificacoes.editarStatus(body);
+            if (response.status === 200) {
+                alert(`Certificação alterada com sucesso!`);
+                setUpdated(true);
+            }
+        } catch (error) {
+            console.error("Erro ao enviar requisição:", error);
+            // alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
+        }
+    };
+
     return (
         <PageContainer>
             <EmissorBlock>
                 <Titulo>
-                    <h3>Emissor/Área</h3>
+                    <h3>Funcionário</h3>
                 </Titulo>
                 <Certificacoes>
                     <CertificacaoInfo>
-                        <div>Nome</div>
+                        <div>Nome Certificação</div>
                         <div>Emissão</div>
                         <div>Validade</div>
                         <div>Válida PCA</div>
@@ -54,6 +73,7 @@ function ListarFuncCertsAdminComponent() {
                         <div>Emissor</div>
                         <div>Nivel</div>
                         <div>Valor</div>
+                        <div>Ação</div>
                     </CertificacaoInfo>
                 </Certificacoes>
 
@@ -78,6 +98,7 @@ function ListarFuncCertsAdminComponent() {
                                     <div>{c.Certificacoes?.Emissor?.nome}</div>
                                     <div>{c.Certificacoes?.NiveisBonificacao?.nivel}</div>
                                     <div>{Number(c.Certificacoes?.NiveisBonificacao?.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                                    <div onClick={() => handleClick(c.id, !c.validaPCA)} style={{ cursor: "pointer" }}>{c.validaPCA ? <ImBlocked size={20}/> :<GrValidate size={24}/>}</div>
                                 </CertificacaoInfo>
                             ))}
                         </Certificacoes>
