@@ -43,6 +43,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NovoComunicadoPage from "./pages/NovoComunicadoPage";
 import FeedbackGestorPage from "./pages/painel-gestores-pages/FeedbackGestorPage";
 import ListaFeedbackGestorPage from "./pages/painel-gestores-pages/ListaFeedbackGestorPage";
+import OrganogramaPage from "./pages/OrganogramaPage";
 
 function App() {
 
@@ -91,6 +92,7 @@ function App() {
                 <Route path="/criarferias/admin" element={<CriarFeriasLicAdminPage />} />
                 <Route path="/filtrarferias/admin" element={<FiltrarFeriasAdminPage />} />
                 <Route path="/criarcomunicado" element={<NovoComunicadoPage />} />
+                <Route path="/organograma" element={<OrganogramaPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
