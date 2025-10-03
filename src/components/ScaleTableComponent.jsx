@@ -18,8 +18,7 @@ function ScaleTableComponent({type}) {
     const [editScale, setEditScale] = useState(false);
     const [scaleToEdit, setScaleToEdit] = useState(null);
     const [updatedScale, setUpdatedScale] = useState(false);
-    // console.log(selectedScale, scale);
-    const setores = ["Presidência", "Administrativo", "Arquitetura de Soluções", "Comercial Público", "Comercial Privado", "Financeiro", "Gente e Gestão", "Governança de Dados", "Jurídico", 'Marketing', "Tecnologia da Informação"];
+    const [areas, setAreas] = useState([]);
 
     const cores = { "Home": "blue", "Presencial": "green", "Férias - CLT": "orange", "Recesso - Estágio": "orange", "Feriado": "#f94860", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantão": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Viagem": "#fc7e00","Licença Maternidade": "#f94860", "Licença Paternidade": "#f94860", "Day OFF":"purple", "Outros": "black" };
 
@@ -28,7 +27,16 @@ function ScaleTableComponent({type}) {
         const fetchScale = async () => {
             try {
                 const response = await apiService.getEscala();
+                const response2 = await apiService.buscarAreas();
                 setScale(response.data);
+                const areaFormatada = response2.data
+                    .filter(item => item.area !== "Admin-Intranet")
+                    .sort((a, b) => {
+                        if (a.area === "Presidência") return -1; // vai pro topo
+                        if (b.area === "Presidência") return 1;
+                        return 0;
+                    });
+                setAreas(areaFormatada);
                 setLoading(false);
 
                 if(updatedScale && selectedButton){
@@ -39,29 +47,20 @@ function ScaleTableComponent({type}) {
                 console.error("Erro ao buscar a escala:", error);
                 setLoading(false);
             }
+
         };
 
         fetchScale();
     
     }, [updatedScale, dados]);
-    // console.log(scaleToEdit);
+
     const handleSelect = (escalas, tipo) => {
         
-        const escalasComDados = escalas.Escalas.map(escala => {
-            const email = escala.Funcionarios.email;
-            const agendaFinder =  dados?.agenda.find(f => f.mail === email);
-
-            return {
-                ...escala,
-                name: agendaFinder.name || null,
-                department: agendaFinder.department || null,
-            };
-        });
-        setSelectedScale(escalasComDados);
+        setSelectedScale(escalas.Escalas);
         const date = `${formatarDataBR(escalas.inicioSemana)} a ${formatarDataBR(escalas.fimSemana)}`;
         setSelectedDate(date);
         if(type !== 'admin'){
-            const toEdit =  escalasComDados.find(f => f.Funcionarios.email === user.mail);
+            const toEdit =  escalas.Escalas.find(f => f.Funcionarios.email === user.mail);
             setScaleToEdit(toEdit);
         }
         setSelectedButton(tipo);
@@ -72,7 +71,6 @@ function ScaleTableComponent({type}) {
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
         return `${dia}/${mes}/${ano}`;
     }
-    // console.log('to edit', editScale);
 
     const handleDownload = () => {
         if (imageRef.current) {
@@ -128,17 +126,17 @@ function ScaleTableComponent({type}) {
                         <Day >Sexta</Day>
                     </Week>
                 </DepartmentContainer>}
-            {selectedScale.length > 0 && setores.map((setor) => {
-                const scaleBySector = selectedScale.filter(item => item.department.trim() === setor);
+            {selectedScale.length > 0 && areas.map((a) => {
+                const scaleBySector = selectedScale.filter(item => item.Funcionarios.Areas.area === a.area);
                 return (
-                    <DepartmentContainer key={setor}>
+                    <DepartmentContainer key={a.area}>
                         <Title>
-                            <h3>{setor}</h3>
+                            <h3>{a.area}</h3>
                         </Title>
                         
                         {scaleBySector.map((scale, index) => (
                             <Week key={index}>
-                                <Day>{scale.name}</Day>
+                                <Day>{scale.Funcionarios.nome} {scale.Funcionarios.sobrenome}</Day>
                                 <Day $cor={cores[scale.segunda]}>{scale.segunda}</Day>
                                 <Day $cor={cores[scale.terca]}>{scale.terca}</Day>
                                 <Day $cor={cores[scale.quarta]}>{scale.quarta}</Day>
