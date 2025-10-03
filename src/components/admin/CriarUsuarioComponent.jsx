@@ -62,7 +62,7 @@ function CriarUsuarioComponent({info, setUpdated}){
         try {
             const response = await apiService.createUser(body);
             if (response.status === 200) {
-                alert("Usuário editado com sucesso!");
+                alert("Usuário criado com sucesso!");
                 setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:""});
                 setSelectedFunc(null);
                 setUpdated(true);
