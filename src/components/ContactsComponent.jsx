@@ -11,6 +11,7 @@ function ContactsComponent({contatos}){
                     <Info><span>E-mail</span></Info>
                     <Info><span>Telefone</span></Info>
                     <Info><span>Cargo</span></Info>
+                    <Info><span>Local</span></Info>
                     <Info><span>Gestor</span></Info>
                 </ContactCard>
                 {contatos
@@ -21,6 +22,7 @@ function ContactsComponent({contatos}){
                         <Info>{contato.mail}</Info>
                         <Info>{contato.mobilePhone}</Info>
                         <Info>{contato.jobTitle}</Info>
+                        <Info>{contato.officeLocation}</Info>
                         <Info>{contato.manager}</Info>
                     </ContactCard>
                 ))}
@@ -36,7 +38,6 @@ const Container = styled.div`
     flex-direction: column;
     border-radius: 8px;
     align-items: center;
-    
 `;
   
 const List = styled.div`
@@ -45,20 +46,20 @@ const List = styled.div`
     align-items: center;
     gap: 10px;
     margin: 30px 0;
+    
 `;
 
 const ContactCard = styled.div`
     background: white;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 95%;
+    width: 98%;
     max-width: 1550px;
-    height: 50px;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     &:nth-of-type(1) {
-        background-color: #1a4cae;
+        background-color: #003591;
     }
 `;
 
@@ -69,37 +70,40 @@ const Info = styled.p`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 15px;
+    padding: 0 12px;
     font-size: 15px;
-    height: 50px;
+    height: 60px;
     border-radius: 8px;
     line-height: 22px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); // sombra suave
     &:nth-of-type(1) {
-        width: 300px;
+        width: 220px;
     }
     &:nth-of-type(2) {
         width: 300px;
     }
     &:nth-of-type(3) {
-        width: 150px;
+        width: 140px;
     }
     &:nth-of-type(4) {
         width: 200px;
     }
     &:nth-of-type(5) {
-        width: 300px;
+        width: 180px;
+    }
+    &:nth-of-type(6) {
+        width: 220px;
     }
     span{
         width: 100%;
         height: 100%;
         font-weight: bold;
-        background-color:#1a4cae;
+        background-color: #003591;
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1); 
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.8); 
     }
 `;
   
