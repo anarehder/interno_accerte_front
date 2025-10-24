@@ -18,6 +18,7 @@ import SugestoesComponent from "../components/homepage/SugestoesComponent";
 import HumorComponent from "../components/homepage/HumorComponent";
 import ContactsComponent from "../components/ContactsComponent";
 import apiService from "../services/apiService";
+import ChatIAComponent from "../components/homepage/ChatIAComponent";
 
 
 const HomePage = () => {
@@ -67,6 +68,7 @@ const HomePage = () => {
                 <>
                     <BirthdayPopUpComponent />
                     <ComunicadoPopUpComponent setUpdated={setUpdated}/>
+                    <ChatIAComponent />
                     <HomePageHeaderComponent notificacoes={notificacoes}/>
                     <MenuBarHomeComponent searchBar={searchBar} setSearchBar={setSearchBar} setFilteredContacts={setFilteredContacts} />
                     <HumorComponent />
