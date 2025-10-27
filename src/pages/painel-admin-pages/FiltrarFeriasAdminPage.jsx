@@ -101,7 +101,7 @@ function FiltrarFeriasAdminPage(){
 
     return (
         <PageContainer>
-                 <HeaderGGNewComponent pageTitle={"Filtrar Férias | Admin"} lastPage={"admin"} />
+                 <HeaderGGNewComponent pageTitle={"Filtrar Férias e Licenças | Admin"} lastPage={"admin"} />
             {dados &&
                 <Container>
                     <OpContainer>

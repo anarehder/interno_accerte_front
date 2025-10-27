@@ -57,12 +57,14 @@ function VacationsListComponent({filteredData, activeButton, handleSubmit}) {
                 : <h3>Sem Ferias nesta busca</h3>}
             <br/>
             <h2>Licenças</h2>
-            {filteredData.some(item => item.Licenca && item.Licenca.length > 0) ?
+            {filteredData.some(item => item.Licencas && item.Licencas.length > 0) ?
                 <VacationTable>
                     <div>
                         <p><span>Início</span></p>
+                        <p><span>Tipo</span></p>
+                        <p><span>Início</span></p>
                         <p><span>Fim</span></p>
-                        <p><span>Total</span></p>
+                        <p><span>Total Dias</span></p>
                     </div>
                     {filteredData?.map((d, i) => (
                             d.Licencas?.map((f, j) => (
@@ -88,6 +90,7 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 20px; 
+    margin-bottom: 50px;
     h2{
         color: #ff5843;
         margin: 10px 0;

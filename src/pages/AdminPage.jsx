@@ -43,7 +43,7 @@ const AdminPage = () => {
                 <Link to="/filtrarferias/admin">
                     <NewButton>
                         <img src={FiltrarFerias} alt='Filtrar Férias' />
-                        <p>Filtrar <br /> <span>Férias</span></p>
+                        <p>Filtrar Licenças <br /> <span>Férias</span></p>
                     </NewButton>
                 </Link>
 
