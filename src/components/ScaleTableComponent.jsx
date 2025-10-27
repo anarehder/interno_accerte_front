@@ -20,7 +20,7 @@ function ScaleTableComponent({type}) {
     const [updatedScale, setUpdatedScale] = useState(false);
     const [areas, setAreas] = useState([]);
 
-    const cores = { "Home": "blue", "Presencial": "green", "Férias - CLT": "orange", "Recesso - Estágio": "orange", "Feriado": "#f94860", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantão": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Viagem": "#fc7e00","Licença Maternidade": "#f94860", "Licença Paternidade": "#f94860", "Day OFF":"purple", "Outros": "black" };
+    const cores = { "Home": "blue", "Presencial - GYN": "green", "Presencial - BSB": "green","Presencial": "green", "Férias - CLT": "orange", "Recesso - Estágio": "orange", "Feriado": "#f94860", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantão": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Viagem": "#fc7e00", "Licença Maternidade": "#f94860", "Licença Paternidade": "#f94860", "Day OFF":"purple", "Outros": "black" };
 
     useEffect(() => {
         if (!dados) return;
@@ -93,7 +93,7 @@ function ScaleTableComponent({type}) {
                 <EditScaleButton $ativo={true} onClick={()=> setEditScale(false)} >Fechar Edição </EditScaleButton>
             }
             {editScale &&
-                < EditScaleComponent scale={scaleToEdit} opcoes={Object.keys(cores)} setUpdatedScale={setUpdatedScale} setEditScale={setEditScale} editScale={editScale}/>
+                < EditScaleComponent scale={scaleToEdit} opcoes={Object.keys(cores).filter(key => key !== "Presencial").sort()} setUpdatedScale={setUpdatedScale} setEditScale={setEditScale} editScale={editScale}/>
             }
             {loading && <h2> Carregando escala...</h2>}
             {!editScale && <>
@@ -124,6 +124,7 @@ function ScaleTableComponent({type}) {
                         <Day >Quarta</Day>
                         <Day >Quinta</Day>
                         <Day >Sexta</Day>
+                        {type === 'admin' && <EditAdminScaleButton disabled={true} style={{ cursor: "default" }} > Ação</EditAdminScaleButton>}
                     </Week>
                 </DepartmentContainer>}
             {selectedScale.length > 0 && areas.map((a) => {

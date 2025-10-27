@@ -4,7 +4,7 @@ import { useState } from 'react';
 import apiService from '../services/apiService';
 
 function EditScaleComponent({scale, opcoes, setUpdatedScale, setEditScale, editScale}) {
-    // console.log(scale);
+    console.log(scale);
     const  {user} = useAuth();
     const diasSemana = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
     const [diasSelecionados, setDiasSelecionados] = useState({
@@ -47,7 +47,7 @@ function EditScaleComponent({scale, opcoes, setUpdatedScale, setEditScale, editS
 
     return (
         <PageContainer>
-            <h2>Editar escala de: {scale.name}</h2>
+            <h2>Editar escala de: {scale.Funcionarios.nome}</h2>
             <div>
             {diasSemana.map(dia => (
                 <DropdownContainer key={dia}>
@@ -94,6 +94,7 @@ const DropdownContainer = styled.div`
     flex-direction: column;
     gap: 0.5rem;
     gap: 5px;
+    padding: 10px;
 `;
 
 const Label = styled.label`
