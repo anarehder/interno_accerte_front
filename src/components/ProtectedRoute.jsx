@@ -7,7 +7,10 @@ const ProtectedRoute = () => {
   const { carregando, user } = useAuth();
   const { inProgress } = useMsal();
   const isAuthenticated = useIsAuthenticated();
-
+  
+  const isLoggedIn = isAuthenticated && user !== null;
+  // console.log(isLoggedIn, isAuthenticated, user );
+  // console.log(inProgress, carregando);
   // Enquanto os dados estiverem carregando
   if (inProgress !== 'none' || carregando) {
     return (
@@ -25,7 +28,7 @@ const ProtectedRoute = () => {
   }
 
   // Se não estiver autenticado, redireciona para a página de login
-  if (!isAuthenticated || !user) {
+  if (!isLoggedIn) {
     return <Navigate to="/" replace state={{ from: location }} />;
   }
 

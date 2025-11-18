@@ -13,9 +13,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     async function fetchData() {
       if (accounts.length > 0) {
-        await getData();
-        setCarregando(false);
+        await getData(); 
       }
+      setCarregando(false);
     }
     fetchData();
   }, [accounts, instance]);
