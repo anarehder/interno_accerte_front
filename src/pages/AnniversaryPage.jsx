@@ -41,7 +41,6 @@ const List = styled.div`
     justify-content: center;
     margin-bottom: 20px;
     a{
-        background-color: red;
         width: 400px;
         height: 400px;
         flex-shrink: 0;
