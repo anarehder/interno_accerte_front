@@ -8,10 +8,12 @@ const AnniversaryPage = () => {
     const mesFormatado = mes.charAt(0).toUpperCase() + mes.slice(1).toLowerCase();
     return (
         <Container>
-            <HeaderGGNewComponent  pageTitle={`Aniversários`}  subtitle={` | ${mesFormatado}`}/>
+            <HeaderGGNewComponent pageTitle={`Aniversários`} subtitle={` | ${mesFormatado}`} />
             <List>
                 {dados?.aniversarios?.map((file, index) => (
-                    <Image key={index} src={file.url} alt={`Aniversário ${file.name}`} />
+                    <a href={file.url} target={"_blank"} key={index}>
+                        <Image src={file.url} alt={`Slide ${file.name}`} />
+                    </a>
                 ))}
             </List>
             <div>{dados.aniversarios[0].webUrl} </div>
@@ -38,6 +40,13 @@ const List = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     margin-bottom: 20px;
+    a{
+        background-color: red;
+        width: 400px;
+        height: 400px;
+        flex-shrink: 0;
+        border-radius: 10px;
+    }
 `;
 
 const Image = styled.img`

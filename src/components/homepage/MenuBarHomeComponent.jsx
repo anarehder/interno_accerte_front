@@ -35,7 +35,15 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
         <PageContainer>
             <MenuContainer>
                 <ItemsBar>
-                <MenuItem><Link to={"/sobre"}> <h1>SOBRE <span> NÓS</span></h1></Link></MenuItem>
+                <MenuItem>
+                {/* <Link to={"/sobre"}> <h1>SOBRE <span> NÓS</span></h1></Link> */}
+                <h1>SOBRE <span> NÓS </span></h1>
+                    <Dropdown>
+                        <DropdownItem><h1>SOBRE <span> NÓS </span></h1></DropdownItem>
+                        <DropdownItem><Link to={"/sobre"}>Sobre a Accerte</Link></DropdownItem>
+                        <DropdownItem><a href={'https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Extras/PORTFOLIO/PORTFOLIO%20ATUAL.pdf'} target="_blank">Portfólio</a></DropdownItem>
+                    </Dropdown>
+                </MenuItem>
                 <MenuItem>
                     <h1>GENTE <span> E GESTÃO </span></h1>
                     <Dropdown>

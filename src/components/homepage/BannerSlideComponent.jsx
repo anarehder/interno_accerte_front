@@ -29,14 +29,11 @@ function BannerSlideComponent() {
     <SliderContainer>
       <PrevNextButton onClick={prevSlide}>&#10094;</PrevNextButton>
       <SlideWrapper style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
-        {/* <Slide>
-          <SlideLink href="https://tinyurl.com/37razdyb" target="_blank" >
-            <SlideImage src={ipog} alt="IPOG" />
-          </SlideLink>
-        </Slide> */}
         <Slide>
           {images.map((image, index) => (
-            <SlideImage key={index} src={image.url} alt={`Slide ${image.name}`} />
+            <a href={image.url} target={"_blank"} key={index}>
+            <SlideImage src={image.url} alt={`Slide ${image.name}`} />
+            </a>
           ))}
         </Slide>
       </SlideWrapper>
@@ -62,7 +59,6 @@ const SlideWrapper = styled.div`
   transition: transform 0.5s ease-in-out;
   width: 100%; 
   a{
-    height: 500px !important;
     margin: 0;
     padding:0;
   }
@@ -72,6 +68,14 @@ const Slide = styled.div`
   min-width: 100%;
   min-height: 100%;
   box-sizing: border-box;
+  a{
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-shrink: 0;
+    border-radius: 10px;
+  }
 `
 
 const SlideLink = styled.a`
@@ -82,6 +86,7 @@ const SlideLink = styled.a`
 
 const SlideImage = styled.img`
   width: 100%;
+  height: 100%;
   flex-shrink: 0;
   border-radius: 10px;
 `;
