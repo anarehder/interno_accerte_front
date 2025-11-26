@@ -1,5 +1,6 @@
 import Header from "../../assets/header/header2.png";
 import Alert from "../../assets/header/alert.png";
+import Alert2 from "../../assets/header/alert_laranja.png";
 import { useAuth } from '../../contexts/AuthContext';
 import { getToken } from '../../services/graph';
 import { useEffect, useState } from 'react';
@@ -80,12 +81,12 @@ function HomePageHeaderComponent({notificacoes}) {
                         <button onClick={handleLogout}> <FiLogOut size={20} /> </button>
                         {notificacoesAtivas.length === 0 ? (
                             <BellWrapper>
-                                <img src={Alert} alt={'notificacoes'} />
+                                {/* <img src={Alert2} alt={'notificacoes'} /> */}
                             </BellWrapper>
                         ) : (
                             <BellWrapper onClick={() => setOpen(!open)}>
-                                <img src={Alert} alt={'notificacoes'} />
-                                <RedDot />
+                                <img src={Alert2} alt={'notificacoes'} />
+                                {/* <RedDot /> */}
                                 {open && (
                                     <Dropdown>
                                         {/* {notificacoesAtivas.map((tip, index) => (
