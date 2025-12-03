@@ -87,8 +87,26 @@ const FastLinksPage = () => {{
                 dados &&
                 <>
                     <List>
+                         <Card >
+                            <Info><span>Documentos Padrão</span></Info>
+                            <InfoButton>
+                                <button onClick={() => setDocuments(!documents)}>
+                                    {documents ? "Ocultar" : "Exibir"}
+                                </button>
+                            </InfoButton>
+                        </Card>
+                        {documents &&
+                            <SmallList>
+                                {dados?.docs?.map((file) => (
+                                    <Card key={file.url}>
+                                        <Info>{file.name.slice(0, -5)}</Info>
+                                        <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
+                                    </Card>
+                                ))}
+                            </SmallList>
+                        }
                         <Card >
-                            <Info>Fundos de Tela</Info>
+                            <Info><span>Fundos de Tela</span></Info>
                             <InfoButton>
                                 <button onClick={() => setWallpaper(!wallpaper)}>
                                     {wallpaper ? "Ocultar" : "Exibir"}
@@ -140,24 +158,7 @@ const FastLinksPage = () => {{
                                 ))}
                             </Card>
                         ))}
-                        <Card >
-                            <Info>Documentos Padrão</Info>
-                            <InfoButton>
-                                <button onClick={() => setDocuments(!documents)}>
-                                    {documents ? "Ocultar" : "Exibir"}
-                                </button>
-                            </InfoButton>
-                        </Card>
-                        {documents &&
-                            <SmallList>
-                                {dados?.docs?.map((file) => (
-                                    <Card key={file.url}>
-                                        <Info>{file.name.slice(0, -5)}</Info>
-                                        <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
-                                    </Card>
-                                ))}
-                            </SmallList>
-                        }
+                       
                     </List>
                 </>
             }
@@ -295,12 +296,15 @@ const Card = styled.div`
 const Info = styled.div`
     margin: 5px 0;
     display: flex;
-    color: #555;
+    color: #15244dff;
     text-align: left;
     font-size: 22px;
     gap: 20px;
     align-items: center;
     height: 30px;
+    span{
+        font-weight: 600;
+    }
     img {
         padding: 0;
         margin: 0;             // Espaçamento entre as imagens
