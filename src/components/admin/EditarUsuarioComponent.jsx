@@ -6,7 +6,7 @@ import apiService from "../../services/apiService";
 function EditarUsuarioComponent({info, setUpdated}){
     const { user } = useAuth();
     const [selectedFunc, setSelectedFunc] = useState(null);
-    const [form, setForm] = useState({ nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario: "", areaId: "", jornadaId: "", cargo: "" });
+    const [form, setForm] = useState({ nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario: "", areaId: "", jornadaId: "", cargo: "", localização: "", entrada: "" });
 
     const handleSelect = (id) => {
         const funcionario = info.listaFuncionarios.filter((f) => f.id === Number(id));
@@ -47,6 +47,7 @@ function EditarUsuarioComponent({info, setUpdated}){
             ...form,
             admissao: form.admissao ? new Date(form.admissao).toISOString() : "",
             demissao: form.demissao ? new Date(form.demissao).toISOString() : null,
+            entrada: form.entrada ? new Date(form.entrada).toISOString() : null,
             aniversario: form.aniversario ? new Date(form.aniversario).toISOString() : "",
         };
 
@@ -66,7 +67,7 @@ function EditarUsuarioComponent({info, setUpdated}){
             const response = await apiService.editUser(body);
             if (response.status === 200) {
                 alert("Usuário editado com sucesso!");
-                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:""});
+                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localização: "", entrada: "" });
                 setSelectedFunc(null);
                 setUpdated(true);
             }
@@ -139,6 +140,15 @@ function EditarUsuarioComponent({info, setUpdated}){
                                 />
                             </div>
                             <div>
+                                <Label>Localização</Label>
+                                <Input
+                                    type="text"
+                                    id="localizacao"
+                                    value={form.localizacao}
+                                    onChange={handleForm}
+                                />
+                            </div>
+                            <div>
                                 <Label>Tipo de Jornada</Label>
                                 <Select id="jornadaId" value={form.jornadaId} onChange={handleForm}>
                                     <option value="">Selecione...</option>
@@ -166,6 +176,15 @@ function EditarUsuarioComponent({info, setUpdated}){
                                     type="date"
                                     id="admissao"
                                     value={form.admissao?.slice(0, 10)}
+                                    onChange={handleForm}
+                                />
+                            </div>
+                            <div>
+                                <Label>Entrada</Label>
+                                <Input
+                                    type="date"
+                                    id="entrada"
+                                    value={form.entrada?.slice(0, 10)}
                                     onChange={handleForm}
                                 />
                             </div>
