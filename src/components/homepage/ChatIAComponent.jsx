@@ -3,15 +3,15 @@ import { FiSend } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion"; // Para animações suaves
 import { useState, useRef, useEffect } from 'react';
 import avatarAccerte from '../../assets/AvatarAccerte_2.png';
+import { useAuth } from '../../contexts/AuthContext';
+import apiService from '../../services/apiService';
 
 function ChatIAComponent() {
+    const { user } = useAuth();
     const [open, setOpen] = useState(false);
+    const [aguardandoResposta, setAguardandoResposta] = useState(false);
     const [chatHistory, setChatHistory] = useState([
-        {type:"pergunta", text: "Qual sua dúvida quanto às nossas políticas?"},
-        {type:"pergunta", text: "Quantos dias de home office tem a equipe ténica?"},
-        {type:"resposta", text: "Paris."},
-        {type:"pergunta", text: "Quem descobriu o Brasil?"},
-        {type:"resposta", text: "Pedro Álvares Cabral."}
+        {type:"pergunta", text: "Qual sua dúvida quanto às nossas políticas?"}
     ]);
     const [inputValue, setInputValue] = useState("");
     const chatBlockRef = useRef(null);
@@ -22,11 +22,27 @@ function ChatIAComponent() {
         }
     }, [chatHistory, open]);
 
-    const handleSend = (e) => {
+    const handleSend = async (e) => {
         e.preventDefault();
         if (inputValue.trim() === "") return;
-        setChatHistory([...chatHistory, { type: "pergunta", text: inputValue }]);
+        console.log("Enviando pergunta:", inputValue);
+        
+        const novaPergunta = { type: "pergunta", text: inputValue };
+        setChatHistory([...chatHistory, novaPergunta]);
         setInputValue("");
+        setAguardandoResposta(true);
+        
+        try {
+            const body = {"email": user.mail, "question": inputValue};
+            const response = await apiService.ragQuery(body);
+            console.log("Resposta recebida:", response.data.response);
+            setChatHistory(prev => [...prev, { type: "resposta", text: response.data.response }]);
+        } catch (error) {
+            console.error("Erro ao obter resposta:", error);
+            setChatHistory(prev => [...prev, { type: "resposta", text: "Desculpe, ocorreu um erro ao processar sua pergunta." }]);
+        } finally {
+            setAguardandoResposta(false);
+        }
     };
 
     return (
@@ -64,6 +80,15 @@ function ChatIAComponent() {
                                             {item.text}
                                         </Resposta>
                                 ))}
+                                {aguardandoResposta && (
+                                    <Resposta className="chat-message">
+                                        <TypingIndicator>
+                                            <span>.</span>
+                                            <span>.</span>
+                                            <span>.</span>
+                                        </TypingIndicator>
+                                    </Resposta>
+                                )}
                             </ChatBlock>
                             <PromptContainer>
                                 <Prompt className="chat-prompt" onSubmit={handleSend} as="form">
@@ -224,6 +249,35 @@ const ChatButton = styled.button`
     background:  #001143;
     color: white;
     }
+`;
+
+const TypingIndicator = styled.div`
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  
+  span {
+    animation: blink 1.4s infinite;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes blink {
+    0%, 60%, 100% {
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+  }
 `;
 
 const CloseButton = styled.button`

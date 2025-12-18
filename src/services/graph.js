@@ -294,8 +294,20 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
+  const accerteconnect2 = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/ACCERTE CONNECT 2025.2:/children`,
+    {
+      headers: { Authorization: `Bearer ${response.accessToken}` }
+    }
+  );
+  const files13 = await accerteconnect2.json();
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10, 'vagas': fileList11, 'accerteconnect': fileList12, 'imageUrl': imageUrl};
+  const fileList13 = files13.value.map(file => ({
+    name: file.name,
+    url: file.webUrl
+  }));
+
+  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10, 'vagas': fileList11, 'accerteconnect': fileList12, 'accerteconnect2': fileList13, 'imageUrl': imageUrl};
   sessionStorage.setItem("sharePoint", JSON.stringify(responseObject));
   return responseObject;    
 

@@ -6,10 +6,14 @@ import AndroidLogo from "../assets/logos-parceiros/google_play.png";
 import CajuLogo from "../assets/logos-parceiros/caju.png";  // Substitua pelos caminhos corretos
 import OnflyLogo from "../assets/logos-parceiros/onfly.png";  // Substitua pelos caminhos corretos
 import AccerteConnect from "../assets/logos-parceiros/accerte-connect-logo.png";
+import AccerteConnect2 from "../assets/logos-parceiros/accerte-connect-2-logo.png";
 import GymratsLogo from "../assets/logos-parceiros/gymrats.png"; 
 import MarqpontoLogo from "../assets/logos-parceiros/marq.png"; 
 import ClickSignLogo from "../assets/logos-parceiros/clicksign.png"; 
 import WellhubLogo from "../assets/logos-parceiros/wellhub.png";
+import SescLogo from "../assets/logos-parceiros/sesc.png";
+import FiiboLogo from "../assets/logos-parceiros/fiibo.png";
+import TotalPassLogo from "../assets/logos-parceiros/totalpass.png";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
 const FastLinksPage = () => {{
@@ -17,6 +21,7 @@ const FastLinksPage = () => {{
     const [wallpaper, setWallpaper] = useState(false);
     const [documents, setDocuments] = useState(false);
     const [acConnect1, setAcConnect1] = useState(false);
+    const [acConnect2, setAcConnect2] = useState(false);
     const imageMap = {
         Apple: AppleLogo,
         Android: AndroidLogo,
@@ -25,11 +30,17 @@ const FastLinksPage = () => {{
         Gympass: WellhubLogo,
         GymRats: GymratsLogo,
         MarqPonto: MarqpontoLogo,
-        Clicksign: ClickSignLogo
+        Clicksign: ClickSignLogo,
+        Sesc: SescLogo,
+        Fiibo: FiiboLogo,
+        TotalPass: TotalPassLogo
         // Adicione outros rótulos e imagens conforme necessário
       };
       
     const fixedLinks = [
+        {Sesc: "https://www.sescgo.com.br/o-sesc/credencial-sesc/a-credencial/"},
+        {Fiibo: "https://fiibo.com.br/"},
+        {TotalPass: "https://cloud.info.totalpass.com.br/aplicativo-totalpass?_gl=1*14amgg9*_gcl_au*MzA0NzMwMTAzLjE3NjYwODkwNzc.*_ga*NzE4Mzc1ODE0LjE3NjYwODkwNzc.*_ga_2WNY1K3W2N*czE3NjYwODkwNzckbzEkZzAkdDE3NjYwODkwNzckajYwJGwwJGgw&_ga=2.221617311.649053578.1766089077-718375814.1766089077"},
         {Caju: [
             {Apple: "https://apps.apple.com/br/app/caju-benef%C3%ADcios-por-inteiro/id1483671427" },
             {Android: "https://play.google.com/store/apps/details?id=com.caju.employeeApp&pcampaignid=web_share" }
@@ -44,6 +55,7 @@ const FastLinksPage = () => {{
         ]},
         {Clicksign: "https://app.clicksign.com/accounts/13505/tracking/notifications"},
         {GymRats: "https://share.gymrats.app/join?code=ITGCHBMV"},
+        
     ];
 
     useEffect(() => {
@@ -143,6 +155,24 @@ const FastLinksPage = () => {{
                                 {dados?.accerteconnect?.map((file) => (
                                     <Card key={file.url}>
                                         <Info>{file.name.slice(0, -5)}</Info>
+                                        <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
+                                    </Card>
+                                ))}
+                            </SmallList>
+                        }
+                        <Card >
+                            <Info><img src={AccerteConnect2} alt={"Accerte Connect 2"} /></Info>
+                            <InfoButton>
+                                <button onClick={() => setAcConnect2(!acConnect2)}>
+                                    {acConnect2 ? "Ocultar" : "Exibir"}
+                                </button>
+                            </InfoButton>
+                        </Card>
+                        {acConnect2 &&
+                            <SmallList>
+                                {dados?.accerteconnect2?.map((file) => (
+                                    <Card key={file.url}>
+                                        <Info>{file.name.slice(0, -4)}</Info>
                                         <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
                                     </Card>
                                 ))}
