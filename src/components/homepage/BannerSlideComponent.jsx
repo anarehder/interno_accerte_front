@@ -2,27 +2,29 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
 import Banner1 from "../../assets/basic/banner-test.jpg"
+import BannerSesc from "../../assets/basic/BannerSesc.png"
 
 function BannerSlideComponent() {
     const { dados } = useAuth();
     const images = dados?.banners?.length > 0 ? dados.banners : [{ name: "Default", url: Banner1 }];
     const [currentIndex, setCurrentIndex] = useState(0);
+    const imagesFull = [{ name: "Banner Sesc", url: BannerSesc }, ...images];
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % imagesFull.length);
         }, 10000);
         return () => clearInterval(interval);
-    }, [images.length]);
+    }, [imagesFull.length]);
 
     const prevSlide = () => {
         setCurrentIndex((prevIndex) =>
-            prevIndex === 0 ? images.length - 1 : prevIndex - 1
+            prevIndex === 0 ? imagesFull.length - 1 : prevIndex - 1
         );
     };
 
     const nextSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % imagesFull.length);
     };
 
   return (
@@ -30,11 +32,16 @@ function BannerSlideComponent() {
       <PrevNextButton onClick={prevSlide}>&#10094;</PrevNextButton>
       <SlideWrapper style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
         <Slide>
-          {images.map((image, index) => (
-            <a href={image.url} target={"_blank"} key={index}>
-            <SlideImage src={image.url} alt={`Slide ${image.name}`} />
-            </a>
-          ))}
+          <>
+            {/* <a href={'https://www.sescgo.com.br/o-sesc/credencial-sesc/a-credencial/'} target={"_blank"}>
+              <SlideImage src={BannerSesc} alt={"Banner Sesc"} />
+            </a> */}
+            {imagesFull.map((image, index) => (
+              <a href={image.url} target={"_blank"} key={index}>
+                <SlideImage src={image.url} alt={`Slide ${image.name}`} />
+              </a>
+            ))}
+          </>
         </Slide>
       </SlideWrapper>
       <PrevNextButton onClick={nextSlide}>&#10095;</PrevNextButton>
