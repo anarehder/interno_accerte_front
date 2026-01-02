@@ -19,6 +19,7 @@ import HumorComponent from "../components/homepage/HumorComponent";
 import ContactsComponent from "../components/ContactsComponent";
 import apiService from "../services/apiService";
 import ChatIAComponent from "../components/homepage/ChatIAComponent";
+import SomeoneBirthdayComponent from "../components/homepage/SomeoneBirthdayComponent";
 
 
 const HomePage = () => {
@@ -67,6 +68,7 @@ const HomePage = () => {
             {!user ? <h1> Carregando dados...</h1> :
                 <>
                     <BirthdayPopUpComponent />
+                    {/* <SomeoneBirthdayComponent /> */}
                     <ComunicadoPopUpComponent setUpdated={setUpdated}/>
                     {/* <ChatIAComponent /> */}
                     <HomePageHeaderComponent notificacoes={notificacoes}/>
