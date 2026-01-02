@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useMsal } from "@azure/msal-react";
 import { useIsAuthenticated } from '@azure/msal-react';
@@ -11,10 +11,17 @@ function LoginPage() {
     const { instance } = useMsal();
     const isAuthenticated = useIsAuthenticated();
     const navigate = useNavigate(); 
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
 
     useEffect(() => {
       if (isAuthenticated) {
-        navigate("/homepage");
+        setIsAuthenticating(true);
+        // Aguarda 1 segundo antes de redirecionar
+        const timer = setTimeout(() => {
+          navigate("/homepage");
+        }, 1000);
+        
+        return () => clearTimeout(timer);
       }
     }, [isAuthenticated, navigate]);
 
@@ -33,19 +40,17 @@ function LoginPage() {
     return (
         <PageContainer>
             <LogoContainer>
-                {/* <img src={Logo} alt="ACCERTE" /> */}
-                {/* <h1>INTRANET</h1> */}
             </LogoContainer>
             <LoginBox>
                 <Title><span>Intra</span>net</Title>
                 <SubTitle>accerte</SubTitle>
-                {/* <img src={Accerte} alt="ACCERTE" /> */}
-                {/* <OAuthButton onClick={() => handleLogin("popup")}>
-                    <FaMicrosoft /> Entrar com Microsoft - PopUp
-                </OAuthButton> */}
-                <OAuthButton onClick={() => handleLogin("redirect")}>
-                    <FaMicrosoft /> ENTRAR
-                </OAuthButton>
+                {isAuthenticating ? (
+                    <LoadingMessage>Carregando...</LoadingMessage>
+                ) : (
+                    <OAuthButton onClick={() => handleLogin("redirect")}>
+                        <FaMicrosoft /> ENTRAR
+                    </OAuthButton>
+                )}
             </LoginBox>
         </PageContainer>
     );
@@ -144,4 +149,24 @@ const OAuthButton = styled.button`
       background: linear-gradient(to right,#205fdd, #001143);
       color: white;
     }
+`;
+
+const LoadingMessage = styled.div`
+  color: white;
+  width: 250px;
+  font-size: 24px;
+  font-family: "Poppins", serif;
+  font-weight: 400;
+  margin-top: 45px;
+  text-align: center;
+  animation: pulse 1.5s ease-in-out infinite;
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
 `;
