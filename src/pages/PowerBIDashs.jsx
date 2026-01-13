@@ -1,28 +1,30 @@
-import React from "react";
 import styled from "styled-components";
+import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
-const PowerBIDashs = () => {
+const PowerBIProjetos = () => {
 
   return (
-    <Container>
-      <Title>Dashboards do Power BI</Title>
-      {/* <iframe title="Dash Marketing" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=81c72f67-5a46-4a20-b741-487f9fef3d8e&autoAuth=true&ctid=55fd007b-c6ef-420f-b9f5-3c806d3dab10" frameborder="0" allowFullScreen="true"></iframe> */}
-      <a href="https://app.powerbi.com/reportEmbed?reportId=81c72f67-5a46-4a20-b741-487f9fef3d8e&autoAuth=true&ctid=55fd007b-c6ef-420f-b9f5-3c806d3dab10" />
-    </Container>
+    <PageContainer>
+      <HeaderNewComponent pageTitle={"Dashboard Projetos"} />
+      <iframe 
+        title="DashProjetosAccerte_operacional" 
+        src="https://app.powerbi.com/view?r=eyJrIjoiYzk5YzdjMWItYTU3NC00NTliLWFkMjgtMWI1NmU2ZWMyZDhiIiwidCI6IjU1ZmQwMDdiLWM2ZWYtNDIwZi1iOWY1LTNjODA2ZDNkYWIxMCJ9" 
+        style={{ width: "95%", height: "79vh", border: "none" }}
+        allowFullScreen
+      ></iframe>
+    </PageContainer>
   );
 };
 
-export default PowerBIDashs;
+export default PowerBIProjetos;
 
 
-const Container = styled.div`
-  padding: 2rem;
-  font-family: "Segoe UI", sans-serif;
-  background-color: #f5f7fa;
-  min-height: 100vh;
-`;
-
-const Title = styled.h2`
-  color: #202940;
-  margin-bottom: 1rem;
+const PageContainer = styled.div`
+    width: 100%;
+    min-height: 100%;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    gap: 20px;
+    color:rgb(75, 74, 75);
 `;

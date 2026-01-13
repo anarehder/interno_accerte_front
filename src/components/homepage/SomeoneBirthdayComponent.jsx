@@ -2,53 +2,59 @@ import styled from 'styled-components';
 import { useEffect, useState } from "react";
 import BalloonAnimationComponent from './BalloonAnimationComponent';
 import { useAuth } from '../../contexts/AuthContext';
+import apiService from '../../services/apiService';
 
 function SomeoneBirthdayComponent() {
     const { user, dados, carregando } = useAuth();
-    const [closed, setClosed] = useState(false);
-    const [someBDay, setSomeBDay] = useState(true);
-
+    const [someBdayClosed, setSomeBdayClosed] = useState(false);
+    const [hasAnniversaryToday, setHasAnniversaryToday] = useState(false);
+    console.log(hasAnniversaryToday);
     useEffect(() => {
         const fetch = async () => {
             try {
                 const response = await apiService.getAniversariosDia();
                 if(response.data.length > 0){
-                    setSomeBDay(true);
+                    setHasAnniversaryToday(true);
                 }
                 else {
+                    setHasAnniversaryToday(false);
                     return;
                 }
             } catch (error) {
                 console.error("Erro ao buscar informacoes vagas:", error);
+                setHasAnniversaryToday(false);
                 return;
             }
         };
 
         fetch();
 
-        const lastClosed = localStorage.getItem("popupFechado");
+        const lastClosedDate = localStorage.getItem("someBdayClosed");
+        const today = new Date().toISOString().split('T')[0];
         
-        if (!lastClosed) {
-            setClosed(false);
+        if (!lastClosedDate) {
+            setSomeBdayClosed(false);
             return;
         }
 
-        const agora = new Date();
-        const ultimaData = new Date(parseInt(lastClosed, 10));
-        const diffMin = (agora - ultimaData) / 60000;
-
-        if (diffMin >= 30) {
-            setClosed(false);
+        if (lastClosedDate !== today) {
+            localStorage.removeItem("someBdayClosed");
+            setSomeBdayClosed(false);
+            return;
         }
+
+        setSomeBdayClosed(true);
 
     }, [carregando, user, dados]);
 
     const fecharPopup = () => {
-        setClosed(true);
+        const today = new Date().toISOString().split('T')[0];
+        localStorage.setItem("someBdayClosed", today);
+        setSomeBdayClosed(true);
     };
 
-    if (closed) return null;
-    if (!closed && someBDay) {
+    if (someBdayClosed) return null;
+    if (!someBdayClosed && hasAnniversaryToday) {
         return (
             <Overlay>
             <BalloonAnimationComponent />

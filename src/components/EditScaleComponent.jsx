@@ -4,7 +4,7 @@ import { useState } from 'react';
 import apiService from '../services/apiService';
 
 function EditScaleComponent({scale, opcoes, setUpdatedScale, setEditScale, editScale}) {
-    console.log(scale);
+    // console.log(scale);
     const  {user} = useAuth();
     const diasSemana = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
     const [diasSelecionados, setDiasSelecionados] = useState({

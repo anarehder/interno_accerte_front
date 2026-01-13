@@ -9,9 +9,10 @@ import apiService from '../../services/apiService';
 function ChatIAComponent() {
     const { user } = useAuth();
     const [open, setOpen] = useState(false);
+    const [startChat, setStartChat] = useState(false);
     const [aguardandoResposta, setAguardandoResposta] = useState(false);
     const [chatHistory, setChatHistory] = useState([
-        {type:"pergunta", text: "Qual sua dúvida quanto às nossas políticas?"}
+        {type:"resposta", text: "Qual sua dúvida quanto às nossas políticas?"}
     ]);
     const [inputValue, setInputValue] = useState("");
     const chatBlockRef = useRef(null);
@@ -53,55 +54,80 @@ function ChatIAComponent() {
                     <h2>X</h2>
                 </CloseButton>
                 :
-                <ChatButton onClick={() => setOpen(!open)}>
-                    <img src={avatarAccerte} alt="Abrir chat" style={{ width: '100%', height: '100%', borderRadius: 0, padding: 0, margin: 0, display: 'block' }} />
-                </ChatButton>
+                <>
+                    <WelcomeBox>
+                        <span>Olá</span>, como posso te ajudar?
+                    </WelcomeBox>
+                    <ChatButton onClick={() => setOpen(!open)}>
+                        <img src={avatarAccerte} alt="Abrir chat" style={{ width: '100%', height: '100%', borderRadius: 0, padding: 0, margin: 0, display: 'block' }} />
+                    </ChatButton>
+                </>
             }
             <AnimatePresence>
-            {open && (
-                <motion.div
+                {open && (
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 0 }}
                         transition={{ duration: 0 }}
                     >
-                        <ChatContainer>
-                            <ChatHeader>
-                                <span className="font-semibold">Fale com o NEO 🤖</span>
-                            </ChatHeader>
-                            <ChatBlock ref={chatBlockRef}>
-                                {chatHistory.map((item, index) => (
-                                    item.type === 'pergunta' ?
-                                        <Pergunta className="chat-message" key={index}>
-                                            {item.text}
-                                        </Pergunta>
-                                        :
-                                        <Resposta className="chat-message" key={index}>
-                                            {item.text}
+                        {
+                            !startChat &&
+                            <ChatContainer>
+                                <StartContainer>
+                                <img src={avatarAccerte} alt="Abrir chat" />
+                                <h2> NEO</h2>
+                                <h3> online</h3>
+                                <p>Olá seja bem-vindo(a)! <br/> Eu sou o NEO, seu assistente virtual, no momento estou preparado para responder suas dúvidas sobre as políticas da Accerte <br/> Para consultar os documentos: <a href="https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Políticas"target='_blank'><br/> Políticas da Accerte </a></p>
+                                </StartContainer>
+                                <StartButton onClick={() => setStartChat(true)}> Iniciar </StartButton>
+                            </ChatContainer>
+                        }
+                        {
+                            startChat &&
+                            <ChatContainer>
+                                <ChatHeader>
+                                    <img src={avatarAccerte} alt="Abrir chat" />
+                                    <div>
+                                        <span className="font-semibold">NEO</span>
+                                        <h3> online</h3>
+                                    </div>
+                                    
+                                </ChatHeader>
+                                <ChatBlock ref={chatBlockRef}>
+                                    {chatHistory.map((item, index) => (
+                                        item.type === 'pergunta' ?
+                                            <Pergunta className="chat-message" key={index}>
+                                                {item.text}
+                                            </Pergunta>
+                                            :
+                                            <Resposta className="chat-message" key={index}>
+                                                {item.text}
+                                            </Resposta>
+                                    ))}
+                                    {aguardandoResposta && (
+                                        <Resposta className="chat-message">
+                                            <TypingIndicator>
+                                                <span>.</span>
+                                                <span>.</span>
+                                                <span>.</span>
+                                            </TypingIndicator>
                                         </Resposta>
-                                ))}
-                                {aguardandoResposta && (
-                                    <Resposta className="chat-message">
-                                        <TypingIndicator>
-                                            <span>.</span>
-                                            <span>.</span>
-                                            <span>.</span>
-                                        </TypingIndicator>
-                                    </Resposta>
-                                )}
-                            </ChatBlock>
-                            <PromptContainer>
-                                <Prompt className="chat-prompt" onSubmit={handleSend} as="form">
-                                    <input
-                                        type="text"
-                                        placeholder="Digite sua pergunta..."
-                                        value={inputValue}
-                                        onChange={e => setInputValue(e.target.value)}
-                                    />
-                                    <button type="submit"> <FiSend /> </button>
-                                </Prompt>
-                            </PromptContainer>
-                        </ChatContainer>
+                                    )}
+                                </ChatBlock>
+                                <PromptContainer>
+                                    <Prompt className="chat-prompt" onSubmit={handleSend} as="form">
+                                        <input
+                                            type="text"
+                                            placeholder="Digite sua pergunta..."
+                                            value={inputValue}
+                                            onChange={e => setInputValue(e.target.value)}
+                                        />
+                                        <button type="submit"> <FiSend /> </button>
+                                    </Prompt>
+                                </PromptContainer>
+                            </ChatContainer>
+                        }
                     </motion.div>
             )}
             </AnimatePresence>
@@ -113,42 +139,99 @@ export default ChatIAComponent;
 
 const Overlay = styled.div`
     position: fixed;
+    // background: red;
     bottom: 10px;
     right: 20px;
     width: auto;
-    padding: 10px;
-    background-color: white;
-    border: 2px solid #001143; 
-    border-radius: 20px;
+    padding: 20px 15px;
+    border-radius: 30px;
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-end;
     align-items: center;
+    gap: 0;
     z-index: 9;
 `;
+
+const StartContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+    padding-top: 25px;
+    img{
+        height: 150px;
+        width: 150px;
+        margin: 0 auto;
+    }
+    a{
+        // font-size: 12px;
+    }
+    h3{
+        color: gray;
+        font-size: 15px;
+        font-style: italic;
+        margin-bottom: 10px;
+    }
+    p{
+        margin: 5px;
+        padding: 10px;
+        line-height: 1.3;
+        font-size: 14px;
+        word-break: break-word;
+        text-align: center;
+    }
+`
 
 const ChatContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 350px;
-    height: 400px;
+    height: 450px;
     background: white;
     border-radius: 16px;
     box-sizing: border-box;
     position: relative;
+    border: 1px solid #00000040;
 `;
 
+const StartButton = styled.button`
+    background-color: #003997;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 15px;
+    justify-content: center;
+`
+
 const ChatHeader = styled.div`
-    position: sticky;
-    padding: 5px;
-    top: 0;
-    background: white;
-    border-radius: 15px;
-    z-index: 2;
-    padding-bottom: 8px;
+    text-indent: 5px;
     font-size: 18px;
     font-weight: bold;
     text-align: center;
+    align-items: center;
     border-bottom: 1px solid #eee;
+    img{
+        width: 55px;
+        height: 55px;
+        margin: 0 10px;
+        border-radius: 50%;
+        vertical-align: middle;
+    }
+    div{
+        height: 90%;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 3px;
+    }
+    h3{
+        color: gray;
+        font-size: 13px;
+        font-style: italic;
+    }
 `;
 
 const ChatBlock = styled.div`
@@ -168,10 +251,11 @@ const ChatBlock = styled.div`
 
 const PromptContainer = styled.div`
     position: sticky;
+    border-radius: 30px;
     bottom: 0;
-    background: white;
     z-index: 2;
     padding-top: 8px;
+    padding: 2px 0;
     border-top: 1px solid #eee;
 `;
 
@@ -183,6 +267,7 @@ const Pergunta = styled.div`
     border-radius: 12px 12px 0 12px;
     font-size: 13px;
     line-height: 1.7;
+    margin-right: 8px;
 `;
 
 const Resposta = styled.div`
@@ -194,10 +279,10 @@ const Resposta = styled.div`
     text-align: left;
     border-radius: 0 12px 12px 12px;
     line-height: 1.7;
+    margin-left: 8px;
 `;
 
 const Prompt = styled.div`
-    background-color: white;
     color: #001143;
     font-size: 15px;
     display: flex;
@@ -208,6 +293,7 @@ const Prompt = styled.div`
     gap: 8px;
     box-sizing: border-box;
     align-self: stretch;
+    border-radius: 30px;
     input {
         font-size: 14px;
         flex: 1;
@@ -231,24 +317,50 @@ const Prompt = styled.div`
 `;
 
 const ChatButton = styled.button`
-  background: transparent;
+  background: white;
   font-size: 15px;
-  padding: 0;
+  padding: 5px;
+  text-align: center;
   margin: 0;
   cursor: pointer;
   color: #001143;
-  border: none;
+  border: 7px solid transparent;
+  background-image: linear-gradient(white, white), linear-gradient(180deg, #649AD9 0%, #004CB3 100%);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  overflow: hidden;
+  border-radius: 50%;
   z-index: 10;
-  width: 70px;
-  height: 70px;
+  width: 120px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   &:hover {
     cursor: pointer;
-    background:  #001143;
+    background-image: linear-gradient(white, white), linear-gradient(180deg, #549AC9 0%, #003BA3 100%);
+    background-origin: padding-box, border-box;
+    background-clip: padding-box, border-box;
     color: white;
     }
+`;
+
+const WelcomeBox = styled.div`
+  background: white;
+  color: #001143;
+  font-size: 16px;
+  width: 230px;
+  padding: 12px 20px;
+  padding-right: 35px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 4px 0px #00000040;
+  white-space: nowrap;
+  z-index: 5;
+  margin-right: -25px;
+  span{
+    font-weight: 600;
+}
 `;
 
 const TypingIndicator = styled.div`
@@ -282,16 +394,23 @@ const TypingIndicator = styled.div`
 
 const CloseButton = styled.button`
   background: transparent;
-  top: 0;
-  right: 0;
+  top: 20px;
+  right: 15px;
+  width: 30px;
+  text-align: center;
   position: absolute;
   font-size: 10px;
-  padding: 4px;
+  padding: 5px;
   margin: 6px;
-  margin-right: 12px;
   cursor: pointer;
   color: #001143;
+  border-radius: 50%;
   z-index: 10;
+  h2{
+    font-size: 16px;
+    width: 27px;
+    text-align: center;
+  }
   &:hover {
     cursor: pointer;
     background:  #001143;

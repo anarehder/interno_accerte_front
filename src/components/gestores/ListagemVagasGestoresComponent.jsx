@@ -39,7 +39,7 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent}) 
                 console.error("Erro ao editar status", error.data);
             }
         } else {
-            console.log('Ação cancelada.');
+            // console.log('Ação cancelada.');
         }
     };
     // console.log(vaga);

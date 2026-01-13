@@ -17,7 +17,6 @@ import ScalePage from "./pages/ScalePage";
 import AboutUsPage from "./pages/AboutUsPage";
 import AdminPage from "./pages/AdminPage";
 import UpdatesPage from "./pages/UpdatesPage";
-import PowerBIDashs from "./pages/PowerBIDashs";
 import PainelGestoresPage from "./pages/PainelGestoresPage";
 import BeneficiosPage from "./pages/BeneficiosPage";
 import FAQPage from "./pages/FAQPage";
@@ -46,6 +45,7 @@ import ListaFeedbackGestorPage from "./pages/painel-gestores-pages/ListaFeedback
 import OrganogramaPage from "./pages/OrganogramaPage";
 import PortifolioPage from "./pages/PortfolioPage";
 import PortfolioPage from "./pages/PortfolioPage";
+import PowerBIProjetos from "./pages/PowerBIDashs";
 
 function App() {
 
@@ -73,7 +73,7 @@ function App() {
                 <Route path="/escala" element={<ScalePage />} />
                 <Route path="/links" element={<FastLinksPage />} />
                 <Route path="/fiquepordentro" element={<UpdatesPage />} />
-                <Route path="/gestaoavista" element={<PowerBIDashs />} />
+                <Route path="/dashprojetos" element={<PowerBIProjetos />} />
                 <Route path="/painelgestores" element={<PainelGestoresPage />} />
                 <Route path="/faqs" element={<FAQPage />} />
                 <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />

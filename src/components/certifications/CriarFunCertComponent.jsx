@@ -101,7 +101,7 @@ function CriarFunCertComponent({handleClick}) {
                 alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
             }
         } else {
-            console.log('Ação cancelada.');
+            // console.log('Ação cancelada.');
         }
     };
     // console.log(form);
