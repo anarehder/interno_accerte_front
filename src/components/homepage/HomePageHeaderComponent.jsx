@@ -1,4 +1,5 @@
 import Header from "../../assets/header/header2.png";
+import HeaderJaneiro from "../../assets/header/header_janbranco_2026.png"
 import Alert from "../../assets/header/alert.png";
 import Alert2 from "../../assets/header/alert_laranja.png";
 import { useAuth } from '../../contexts/AuthContext';
@@ -66,15 +67,19 @@ function HomePageHeaderComponent({notificacoes}) {
                     <Photo>
                         {imageUrl ? <img src={imageUrl} alt={iniciais} /> : <div>{iniciais}</div> }
                     </Photo>
-                    <Texto>
+                    {/* <Texto>
                         {user ? <h1>Olá, <span> {user.givenName} </span><br /> <p>Seja Bem-Vindo(a)!</p></h1>
                             : <h1>Olá, <span> </span><br /> Seja Bem-Vindo(a)!</h1>}
-                    </Texto>
+                    </Texto> */}
+                    <Texto2>
+                        {user ? <h1>Olá, <span> {user.givenName} </span><br /> <p>Seja Bem-Vindo(a)!</p></h1>
+                            : <h1>Olá, <span> </span><br /> Seja Bem-Vindo(a)!</h1>}
+                    </Texto2>
                 </Block>
                 <Block>
-                    <Mensagem>
+                    {/* <Mensagem>
                         <h1>Tecnologia que <span>conecta</span>, <br/> Soluções que <span>transformam</span></h1>
-                    </Mensagem>
+                    </Mensagem> */}
                 </Block>
                 <Block>
                     <Alerta>
@@ -154,7 +159,7 @@ const PageContainer = styled.div`
 
 const HeaderContainer = styled.div`
     height: 200px;
-    background: url(${Header}) no-repeat right center;
+    background: url(${HeaderJaneiro}) no-repeat right center;
     background-size: cover;
     align-items: center;
     justify-content: space-between;
@@ -172,7 +177,7 @@ const Photo = styled.div`
     width: 140px;
     height: 140px;
     border-radius: 170px;
-    border: 10px solid white;
+    border: 3px solid #082764;
     color: white;
     margin-right: 20px;
     div{
@@ -201,6 +206,21 @@ const Texto = styled.div`
     }   
     span{
         color: #81cdff;    
+    }
+`
+
+const Texto2 = styled.div`
+    color: #082764;
+    justify-content: center;
+    h1{
+        line-height: 45px;
+    }  
+    p{
+        line-height: 45px;
+        font-size: 20px;
+    }   
+    span{
+        color: #082764;    
     }
 `
 

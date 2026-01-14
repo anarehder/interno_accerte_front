@@ -5,7 +5,7 @@ const PowerBIProjetos = () => {
 
   return (
     <PageContainer>
-      <HeaderNewComponent pageTitle={"Dashboard Projetos"} />
+      <HeaderNewComponent pageTitle={"Painel de Projetos"} />
       <iframe 
         title="DashProjetosAccerte_operacional" 
         src="https://app.powerbi.com/view?r=eyJrIjoiYzk5YzdjMWItYTU3NC00NTliLWFkMjgtMWI1NmU2ZWMyZDhiIiwidCI6IjU1ZmQwMDdiLWM2ZWYtNDIwZi1iOWY1LTNjODA2ZDNkYWIxMCJ9" 

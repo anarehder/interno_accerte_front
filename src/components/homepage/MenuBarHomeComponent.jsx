@@ -72,8 +72,8 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                     <h1>GESTÃO <span> DE TI </span></h1>
                     <Dropdown>
                         <DropdownItem><h1>GESTÃO <span> DE TI </span></h1></DropdownItem>
-                        <DropdownItem><Link to={"/dashprojetos "}>BI Projetos</Link></DropdownItem>
                         <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
+                        <DropdownItem><Link to={"/dashprojetos "}>Painel de Projetos</Link></DropdownItem>
                         <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem>
                     </Dropdown>
                 </MenuItem>

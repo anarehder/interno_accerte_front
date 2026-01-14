@@ -62,8 +62,6 @@ function SomeoneBirthdayComponent() {
             <Modal>
                 <Title>🎉 Hoje é aniversário de alguém especial! 🎂</Title>
                 <Message>
-                    Temos aniversariantes na equipe hoje! 
-                    <br />
                     Não esqueça de parabenizar! 🎈
                 </Message>
             </Modal>
@@ -132,6 +130,7 @@ const Title = styled.h2`
   color: #001143;
   margin-bottom: 20px;
   text-align: center;
+  line-height: 1.4;
 `;
 
 const Message = styled.p`

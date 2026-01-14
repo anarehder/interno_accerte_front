@@ -68,7 +68,7 @@ const HomePage = () => {
             {!user ? <h1> Carregando dados...</h1> :
                 <>
                     <BirthdayPopUpComponent />
-                    {/* <SomeoneBirthdayComponent /> */}
+                    <SomeoneBirthdayComponent />
                     <ComunicadoPopUpComponent setUpdated={setUpdated}/>
                     {/* <ChatIAComponent /> */}
                     <HomePageHeaderComponent notificacoes={notificacoes}/>

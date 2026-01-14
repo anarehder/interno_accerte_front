@@ -208,6 +208,7 @@ const StartButton = styled.button`
 
 const ChatHeader = styled.div`
     text-indent: 5px;
+    margin-top: 5px;
     font-size: 18px;
     font-weight: bold;
     text-align: center;
@@ -219,6 +220,7 @@ const ChatHeader = styled.div`
         margin: 0 10px;
         border-radius: 50%;
         vertical-align: middle;
+        border: 1px solid gray;
     }
     div{
         height: 90%;
