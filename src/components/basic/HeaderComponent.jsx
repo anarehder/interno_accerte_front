@@ -53,7 +53,7 @@ function HeaderComponent({pageTitle, type}) {
         });
         sessionStorage.removeItem("posts");
         sessionStorage.removeItem("sharePoint");
-        sessionStorage.removeItem("userMSAL");
+        localStorage.removeItem("userMSAL");
     }
     
     return (

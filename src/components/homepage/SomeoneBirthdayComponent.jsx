@@ -8,7 +8,7 @@ function SomeoneBirthdayComponent() {
     const { user, dados, carregando } = useAuth();
     const [someBdayClosed, setSomeBdayClosed] = useState(false);
     const [hasAnniversaryToday, setHasAnniversaryToday] = useState(false);
-    console.log(hasAnniversaryToday);
+    // console.log(hasAnniversaryToday);
     useEffect(() => {
         const fetch = async () => {
             try {

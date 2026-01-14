@@ -192,7 +192,7 @@ function buscarAreas(){
 }
 
 function ragQuery(body){
-    return axios.post(`${BASE_URL}/rag/query`, body)
+    return axios.post(`${BASE_URL}/rag/pergunta`, body)
 }
 
 

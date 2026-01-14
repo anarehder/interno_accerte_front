@@ -33,7 +33,7 @@ export async function getUserProfile(instance, accounts) {
     const details = await graphResponse.json();
     const user = {...details, 'token': response.accessToken};
 
-    sessionStorage.setItem("userMSAL", JSON.stringify(user));
+    localStorage.setItem("userMSAL", JSON.stringify(user));
     return user;
   } catch (error) {
     console.error("Erro ao obter dados do usuário:", error);

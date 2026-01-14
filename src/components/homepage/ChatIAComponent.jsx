@@ -26,18 +26,47 @@ function ChatIAComponent() {
     const handleSend = async (e) => {
         e.preventDefault();
         if (inputValue.trim() === "") return;
-        console.log("Enviando pergunta:", inputValue);
+        // console.log("Enviando pergunta:", inputValue);
         
         const novaPergunta = { type: "pergunta", text: inputValue };
-        setChatHistory([...chatHistory, novaPergunta]);
+        const novoHistorico = [...chatHistory, novaPergunta];
+        setChatHistory(novoHistorico);
         setInputValue("");
         setAguardandoResposta(true);
         
         try {
-            const body = {"email": user.mail, "question": inputValue};
+            let pergunta_anterior = "";
+            let resposta_anterior = "";
+            
+            if (novoHistorico.length > 1) {
+                // Encontrar a última pergunta (antes da nova pergunta)
+                for (let i = novoHistorico.length - 2; i >= 0; i--) {
+                    if (novoHistorico[i].type === "pergunta") {
+                        pergunta_anterior = novoHistorico[i].text;
+                        break;
+                    }
+                }
+                
+                // Encontrar a última resposta
+                for (let i = novoHistorico.length - 2; i >= 0; i--) {
+                    if (novoHistorico[i].type === "resposta") {
+                        resposta_anterior = novoHistorico[i].text;
+                        break;
+                    }
+                }
+            }
+            
+            const body = {
+                "email": user.mail,
+                "pergunta": inputValue,
+                "pergunta_anterior": pergunta_anterior,
+                "resposta_anterior": resposta_anterior
+            };
+            // console.log(chatHistory);
+            // console.log("Corpo da requisição:", body);
             const response = await apiService.ragQuery(body);
-            console.log("Resposta recebida:", response.data.response);
-            setChatHistory(prev => [...prev, { type: "resposta", text: response.data.response }]);
+            // console.log("Resposta recebida:", response.data.answer);
+            setChatHistory(prev => [...prev, { type: "resposta", text: response.data.answer }]);
         } catch (error) {
             console.error("Erro ao obter resposta:", error);
             setChatHistory(prev => [...prev, { type: "resposta", text: "Desculpe, ocorreu um erro ao processar sua pergunta." }]);

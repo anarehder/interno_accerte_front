@@ -30,26 +30,14 @@ const HomePage = () => {
     const isAuthenticated = useIsAuthenticated();
     const [notificacoes, setNotificacoes] = useState({"ferias": false,"vagas": false,"aniversario": false, "comunicados": false});
     const [filteredContacts, setFilteredContacts] = useState([]);
-
-    // useEffect(() => {
-    //     async function fetchData() {
-    //         if (!user || !dados) {
-    //             await getData();
-    //         }
-    //         if (!isAuthenticated) {
-    //             navigate("/");
-    //         }    
-    //         //buscar notificações
-    //         //se for admin pegar nova vaga ferias para aprovar e 
-    //     }
-    
-    //     fetchData();
-    // }, [isAuthenticated, navigate]);
-
+    const emails = ['ana.rehder@accerte.com.br', 'maria.silva@accerte.com.br','antonio.neto@accerte.com.br', 'eduardo.mendes@accerte.com.br', 'leonardo.antonio@accerte.com.br'];
 
     useEffect(() => {
         async function fetchData() {
-            if(user){
+            if (!dados) {
+                await getData();
+            }
+            if (user){
                 const body = {"email": user.mail};
                 const response = await apiService.buscarNotificacoes(body);
                 setNotificacoes(response.data);
@@ -70,7 +58,7 @@ const HomePage = () => {
                     <BirthdayPopUpComponent />
                     <SomeoneBirthdayComponent />
                     <ComunicadoPopUpComponent setUpdated={setUpdated}/>
-                    {/* <ChatIAComponent /> */}
+                    {emails.includes(user.mail) && <ChatIAComponent />}
                     <HomePageHeaderComponent notificacoes={notificacoes}/>
                     <MenuBarHomeComponent searchBar={searchBar} setSearchBar={setSearchBar} setFilteredContacts={setFilteredContacts} />
                     <HumorComponent />

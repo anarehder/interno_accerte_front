@@ -9,13 +9,14 @@ const msalConfig = {
     postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
   },
   cache: {
-    cacheLocation: "sessionStorage",
+    cacheLocation: "localStorage",
     storeAuthStateInCookie: false,
   },
 };
 
 export const msalInstance = new PublicClientApplication(msalConfig);
-
+// Initialize MSAL instance
+msalInstance.initialize();
 export const loginRequest = {
   // scopes: ["User.Read", "User.Read.All"],
   scopes: ["User.Read", "Sites.Read.All", "Files.Read.All", "User.ReadBasic.All", "User.Read.All", "Sites.ReadWrite.All", "Files.ReadWrite.All"],

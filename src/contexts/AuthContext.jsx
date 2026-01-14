@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     if (accounts.length > 0) {
       try {
         if (!user) {
-          const userSalvo = sessionStorage.getItem("userMSAL");
+          const userSalvo = localStorage.getItem("userMSAL");
           if (userSalvo) {
             const userMSAL = JSON.parse(userSalvo);
             setUser(userMSAL);
