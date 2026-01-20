@@ -3,27 +3,36 @@ import { loginRequest } from "./authConfig";
 import moment from 'moment';
 
 export async function getToken(instance, accounts) {
-  if (accounts.length === 0) {
-    console.warn("Nenhuma conta encontrada.");
+  if (!accounts || accounts.length === 0) {
+    console.warn("Nenhuma conta encontrada para obter token.");
     return null;
   }
 
   try {
-    const response = await instance.acquireTokenSilent({
+    return await instance.acquireTokenSilent({
       ...loginRequest,
       account: accounts[0],
     });
-
-    return response;
   } catch (error) {
-    console.error("Erro ao obter dados do token:", error);
-    return null;
+    console.warn("Falha ao obter token silenciosamente, tentando popup:", error);
+    try {
+      return await instance.acquireTokenPopup({
+        ...loginRequest,
+        account: accounts[0],
+      });
+    } catch (popupError) {
+      console.error("Erro ao obter token via popup:", popupError);
+      return null;
+    }
   }
 }
 
 export async function getUserProfile(instance, accounts) {
   try {
     const response = await getToken(instance, accounts);
+    if (!response?.accessToken) {
+      throw new Error("Token MSAL ausente ao buscar perfil");
+    }
     const graphResponse = await fetch("https://graph.microsoft.com/v1.0/me", {
       headers: {
         Authorization: `Bearer ${response.accessToken}`,
@@ -49,6 +58,9 @@ export async function getSharePointData(instance, accounts) {
     const sharedDocumentsId = "b!xlhstM3P3EaQzU6bGge34Glt-vRamHpMi47-bucH58MDGgu4dgmNSJGRO0nIdQD1";
 
     const response = await getToken(instance, accounts);
+    if (!response?.accessToken) {
+      throw new Error("Token MSAL ausente ao buscar dados do SharePoint");
+    }
 
   // PEGAR ID DO SITE
   // const graphResponse = await fetch(

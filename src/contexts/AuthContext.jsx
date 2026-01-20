@@ -41,12 +41,9 @@ export const AuthProvider = ({ children }) => {
           if (dadosSalvos) {
             const dados = JSON.parse(dadosSalvos);
             setDados(dados);
-            // console.log("busquei dados localmente");
-            // usar os dados
           } else {
             const dados = await getSharePointData(instance, accounts);
             setDados(dados);
-            // console.log("busquei dados");
           }
         }
         setCarregando(false);

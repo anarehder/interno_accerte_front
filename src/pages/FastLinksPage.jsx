@@ -16,7 +16,7 @@ import FiiboLogo from "../assets/logos-parceiros/fiibo.png";
 import TotalPassLogo from "../assets/logos-parceiros/totalpass.png";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
-const FastLinksPage = () => {{
+const FastLinksPage = () => {
     const { dados } = useAuth();
     const [wallpaper, setWallpaper] = useState(false);
     const [documents, setDocuments] = useState(false);
@@ -63,7 +63,7 @@ const FastLinksPage = () => {{
         window.scrollTo(0, 0);
     }, [dados]);
 
-    const renderLinks = (links, index) => {
+    const renderLinks = (links, keyPrefix) => {
         // Se for um array, mostra como dropdown
         if (Array.isArray(links)) {
             const options = links.map(linkObj => {
@@ -72,10 +72,12 @@ const FastLinksPage = () => {{
             });
 
             return (
-                <InfoButton key={links[index].url}>
+                <InfoButton key={`${keyPrefix}-dropdown`}>
                     <button>
-                        {options.map((opt, i) => (
-                            <a href={opt.url} target="_blank" key={opt.url}> <img src={imageMap[opt.label]} alt={opt.label} /> </a>
+                        {options.map((opt) => (
+                            <a href={opt.url} target="_blank" key={`${keyPrefix}-${opt.label}`}>
+                                <img src={imageMap[opt.label]} alt={opt.label} />
+                            </a>
                         ))}
                     </button>
                 </InfoButton>
@@ -84,7 +86,7 @@ const FastLinksPage = () => {{
       
         // Caso seja link direto
         return (
-          <InfoButton key={links}>
+          <InfoButton key={`${keyPrefix}-link`}>
             <button onClick={() => window.open(links, "_blank")}>
               Acessar
             </button>
@@ -178,16 +180,16 @@ const FastLinksPage = () => {{
                                 ))}
                             </SmallList>
                         }
-                        {fixedLinks.map((linkObj) => (
-                            <Card key={Object.keys(linkObj)}>
-                                <Info><img src={imageMap[Object.keys(linkObj)]} alt={Object.keys(linkObj)} /> </Info>
-                                {Object.values(linkObj).map((links, index) => (
-                                    <>
-                                        {renderLinks(links, index)}
-                                    </>
-                                ))}
-                            </Card>
-                        ))}
+                        {fixedLinks.map((linkObj) => {
+                            const label = Object.keys(linkObj)[0];
+                            const links = linkObj[label];
+                            return (
+                                <Card key={label}>
+                                    <Info><img src={imageMap[label]} alt={label} /> </Info>
+                                    {renderLinks(links, label)}
+                                </Card>
+                            );
+                        })}
                        
                     </List>
                 </>
@@ -195,7 +197,6 @@ const FastLinksPage = () => {{
         </Container>
     );
 };
-}
 
 export default FastLinksPage;
   
