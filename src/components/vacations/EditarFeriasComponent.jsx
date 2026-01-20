@@ -47,7 +47,42 @@ function EditarFeriasComponent({ selected, info, toEdit, setUpdated, setEditarFe
 
     };
 
+    function weekDay() {
+        const startDate = new Date(date.start);
+        startDate.setHours(startDate.getHours() + 6);
+        
+        const weekDay = startDate.getDay();
+        const mondayOrTuesday = weekDay === 1 || weekDay === 2; 
+
+        if (mondayOrTuesday) {
+            return true;
+        }
+        return alert("A data de início das férias deve ser sempre na segunda-feira ou terça-feira.");
+    }
+
+    function validateVacationLength() {
+        if (info.Contratos.tipo === "CLT" || info.Contratos.tipo === "ESTÁGIO") {
+            if (totalDays <= 5) {
+                alert("Para CLT e Estagiários, o período de férias deve ser maior que 5 dias.");
+                return false;
+            }
+        } else if (info.Contratos.tipo === "PJ" || info.Contratos.tipo === "COOPERADO") {
+            if (totalDays !== 10) {
+                alert("Para PJ e Cooperados, o período de férias deve ser exatamente 10 dias.");
+                return false;
+            }
+        }
+        return true;
+    }
+
     const handleConfirm = async () => {
+        if (!weekDay()) {
+            return;
+        }
+
+        if (!validateVacationLength()) {
+            return;
+        }
 
         const confirmed = window.confirm(
             `Funcionário: ${info.nome} ${info.sobrenome}\n` +
