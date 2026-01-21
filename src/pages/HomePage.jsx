@@ -43,8 +43,8 @@ const HomePage = () => {
     }, [user, updated]);
 
     const clearSearch = () => {
-        setFilteredContacts([]);
         setSearchBar("");
+        setFilteredContacts([]);
     }
     
     return (
@@ -60,9 +60,9 @@ const HomePage = () => {
                     <HumorComponent />
                     {filteredContacts.length > 0 ?
                         <SearchResponse>
-                            <h2> Resultados da busca...</h2>
+                            <div><button onClick={clearSearch}> Limpar pesquisa</button><h2> Resultados da busca...</h2> </div>
                             <ContactsComponent contatos={filteredContacts} />
-                            <button onClick={clearSearch}> Limpar pesquisa</button>
+                            
                         </SearchResponse>
                         :
                         <BannerContainer>
@@ -158,17 +158,30 @@ const BannerButton = styled.div`
 `
 
 const SearchResponse = styled.div`
-    margin: 75px 0;
+    margin: 78px 0;
     width: 95%;
+    max-width: 1550px;
     color: #1a4cae;
     flex-direction: column;
-    position: relative;
-    button {
-        position: absolute;
-        justify-content: center;
-        background-color: #1a4cae;
-        background: linear-gradient(to right,#205fdd, #001143);
-        right: 150px;
-        top:-5px;
+    div {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        gap: 1px;
+        h2 {
+            flex: 2;
+            text-align: center;
+            margin-right: 20px;
+            text-indent: -140px;
+        }
+        
+        button {
+            width: 200px;
+            justify-content: center;
+            background-color: #08090a;
+            background: linear-gradient(to right,#205fdd, #001143);
+        }
     }
 `

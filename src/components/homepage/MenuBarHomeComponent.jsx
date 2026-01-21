@@ -2,12 +2,48 @@ import { useAuth } from '../../contexts/AuthContext';
 import { FiSearch } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import styled from 'styled-components';
+import { useState, useEffect } from 'react';
 
 function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
     const { user, dados } = useAuth();
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1700);
+    const indicAiAllowed = [
+        'ana.rehder@accerte.com.br',
+        'eduardo.mendes@accerte.com.br',
+        'thiago.martins@accerte.com.br',
+        'antonio.neto@accerte.com.br',
+    ];
+    const canSeeIndicAi = indicAiAllowed.includes((user?.mail || '').toLowerCase());
+    const searchAlwaysExpanded = isLargeScreen;
+
+    useEffect(() => {
+        const handleResize = () => {
+            const isLarge = window.innerWidth > 1700;
+            setIsLargeScreen(isLarge);
+            setIsSearchOpen(isLarge); // Sempre aberto em telas grandes
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Chamar uma vez no mount
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, [canSeeIndicAi]);
 
     const handleSearch = (e) => {
-        setSearchBar(e.target.value);
+        const value = e.target.value;
+        setSearchBar(value);
+        
+        // Filtrar e exibir em tempo real
+        if (value) {
+            const filtered = dados.agenda.filter(contato =>
+                removeAcentos(contato.name.toLowerCase())
+                .includes(removeAcentos(value.toLowerCase()))
+            );
+            setFilteredContacts(filtered);
+        } else {
+            setFilteredContacts([]);
+        }
     };
     function removeAcentos(text) {
         return text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
@@ -26,11 +62,19 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
         }
     };
 
-    const clearSearch = () => {
-        setFilteredContacts([]);
-        setSearchBar("");
-    };
+    const toggleSearch = () => {
+        // Em telas grandes sem IndicAI, sempre submete a busca (barra sempre visível)
+        if (searchAlwaysExpanded) {
+            return; // O submit será via form
+        }
 
+        setIsSearchOpen(!isSearchOpen);
+        if (isSearchOpen) {
+            setSearchBar("");
+            setFilteredContacts([]);
+        }
+    };
+    console.log(isSearchOpen);
     return (
         <PageContainer>
             <MenuContainer>
@@ -89,17 +133,29 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                     </Dropdown>
                 </MenuItem>
                 </ItemsBar>
-                <SearchItem>
-                    <form onSubmit={handleSearchSubmit}>
-                    <input
-                        type="text"
-                        placeholder=" Pesquise aqui um contato"
-                        value={searchBar}
-                        onChange={handleSearch}
-                    />
-                    <button type="submit"><FiSearch size={25} /></button>
-                    </form>
-                </SearchItem>
+                <ActionsBar>
+                    {canSeeIndicAi && (
+                        <IndicAIButton href="https://novo.accerte.com.br/indicai-interno/" target="_blank" rel="noopener noreferrer">
+                            IndicAI
+                        </IndicAIButton>
+                    )}
+                    <SearchItem $isOpen={isSearchOpen || searchAlwaysExpanded} $isLargeScreen={searchAlwaysExpanded}>
+                        <form onSubmit={handleSearchSubmit}>
+                        {(isSearchOpen || searchAlwaysExpanded) && (
+                            <input
+                                type="text"
+                                placeholder=" Pesquise aqui um contato"
+                                value={searchBar}
+                                onChange={handleSearch}
+                                autoFocus={!searchAlwaysExpanded && isSearchOpen}
+                            />
+                        )}
+                        <button type={!searchAlwaysExpanded ? "button" : "submit"} onClick={!searchAlwaysExpanded ? toggleSearch : handleSearchSubmit}>
+                            <FiSearch size={25} />
+                        </button>
+                        </form>
+                    </SearchItem>
+                </ActionsBar>
                 
             </MenuContainer>
         </PageContainer>
@@ -117,7 +173,9 @@ const PageContainer = styled.div`
 `
 
 const MenuContainer = styled.div`
-    background-color: #e7e7e7;
+    background-color: #e7e7e7; 
+    display: flex;
+    position: relative;
     height: 60px;
     width: 90%;
     align-items: center;
@@ -128,7 +186,44 @@ const MenuContainer = styled.div`
 
 const ItemsBar = styled.div`
     width: 74%;
+    min-width: 1015px;
 }`
+
+const ActionsBar = styled.div`
+    display: flex;
+    align-items: center;
+    width: 200px;
+    margin-right: 10px;
+    gap: 15px;
+    justify-content: flex-end;
+    
+    @media (min-width: 1700px) {
+        width: 460px;
+        
+    }
+`
+
+const IndicAIButton = styled.a`
+    height: 45px;
+    padding: 0 20px;
+    border-radius: 10px;
+    background: linear-gradient(to right, #fd644f, #f28e27);
+    color: white;
+    font-weight: bold;
+    font-size: 17px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    }
+`
 
 const MenuItem = styled.div`
     max-width: 150px;
@@ -154,29 +249,50 @@ const MenuItem = styled.div`
 `;
 
 const SearchItem = styled.div`
-    width: 24%;
-    margin-right: 10px;
+    width: ${props => {
+        if (props.$isLargeScreen) return 'fit-content'; // Tela grande: ajusta ao conteúdo
+        return props.$isOpen ? 'fit-content' : '65px'; // Tela pequena: expansível
+    }};
+    position: ${props => props.$isOpen && !props.$isLargeScreen ? 'absolute' : 'relative'};
+    right: ${props => props.$isOpen && !props.$isLargeScreen ? '10px' : 'auto'};
+    top: ${props => props.$isOpen && !props.$isLargeScreen ? '50%' : 'auto'};
+    transform: ${props => props.$isOpen && !props.$isLargeScreen ? 'translateY(-50%)' : 'none'};
+    z-index: ${props => props.$isOpen && !props.$isLargeScreen ? '10' : '1'};
     border-radius: 10px;
     background-color:  #E7E7E7;
+    transition: width 0.3s ease, left 0.3s ease;
+    padding: 2px;
+
     form {
-        width: 90%;
-        margin-left: 20px;
+        width: ${props => {
+            if (props.$isLargeScreen) return 'auto';
+            return props.$isOpen ? 'auto' : '55px';
+        }};
+        margin-left: ${props => {
+            if (props.$isLargeScreen) return '0';
+            return props.$isOpen ? '0' : '0';
+        }};
         height: 45px;
         display: flex;
-        justify-content: space-between;
+        justify-content: ${props => {
+            if (props.$isLargeScreen) return 'space-between';
+            return props.$isOpen ? 'space-between' : 'center';
+        }};
         background: linear-gradient(to right,#205fdd, #001143);
         border-radius: 10px;
+        transition: all 0.3s ease;
+        padding: 0 5px;
         input {
-            width: 90%;
+            width: 250px;
             color: white;
             font-size: 15px;
+            font-weight: 600;
             border-right: 1px solid white;
-            padding-left: 5px;
-            text-indent: 15px;   
+            text-indent: 5px;   
             &::placeholder {
                 color: white;
                 padding-left: 5px;
-                text-indent: 15px;             
+                text-indent: 5px;           
             }
         }
         button {
@@ -185,8 +301,8 @@ const SearchItem = styled.div`
             justify-content: center;
             color: white;
             padding: 0;
-            margin-left: 5px;
             border: none;
+            cursor: pointer;
         }
     }
 `
