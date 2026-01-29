@@ -1,7 +1,16 @@
-import Header from "../../assets/header/header2.png";
-import HeaderJaneiro from "../../assets/header/header_janbranco_2026.png"
-import Alert from "../../assets/header/alert.png";
 import Alert2 from "../../assets/header/alert_laranja.png";
+import header01 from "../../assets/header/01.png";
+import header02 from "../../assets/header/02.png";
+import header03 from "../../assets/header/00.png";
+import header04 from "../../assets/header/00.png";
+import header05 from "../../assets/header/00.png";
+import header06 from "../../assets/header/00.png";
+import header07 from "../../assets/header/00.png";
+import header08 from "../../assets/header/00.png";
+import header09 from "../../assets/header/00.png";
+import header10 from "../../assets/header/00.png";
+import header11 from "../../assets/header/00.png";
+import header12 from "../../assets/header/00.png";
 import { useAuth } from '../../contexts/AuthContext';
 import { getToken } from '../../services/graph';
 import { useEffect, useState } from 'react';
@@ -18,12 +27,43 @@ function HomePageHeaderComponent({notificacoes}) {
     const { instance, accounts } = useMsal();
     const notificacoesAtivas = Object.keys(notificacoes).filter((key) => notificacoes[key]);
 
+    // Mapa de meses para imagens
+    const headerImagesMap = {
+        1: header01,
+        2: header02,
+        3: header03,
+        4: header04,
+        5: header05,
+        6: header06,
+        7: header07,
+        8: header08,
+        9: header09,
+        10: header10,
+        11: header11,
+        12: header12,
+    };
+
+    // Função para obter a imagem do header baseado no mês
+    function getHeaderImageByMonth() {
+        const mes = new Date().getMonth() + 1;
+        return headerImagesMap[mes];
+    }
+
+    const headerImage = getHeaderImageByMonth();
+
     function getIniciais(nome) {
         const palavras = nome.trim().split(/\s+/); // separa por espaços
         const iniciais = palavras.map(p => p[0].toUpperCase()).join(""); // pega todas as iniciais
         const resultado = iniciais[0] + iniciais[iniciais.length - 1]; // primeira + última
         return resultado;
     }
+
+    function getTextoColor() {
+        const mes = new Date().getMonth() + 1;
+        return mes === 1 ? '#082764' : 'white';
+    }
+
+    const textoColor = getTextoColor();
 
     useEffect(() => {
         async function fetchData() {
@@ -62,7 +102,7 @@ function HomePageHeaderComponent({notificacoes}) {
     
     return (
         <PageContainer>
-            <HeaderContainer>
+            <HeaderContainer $headerImage={headerImage}>
                 <Block>
                     <Photo>
                         {imageUrl ? <img src={imageUrl} alt={iniciais} /> : <div>{iniciais}</div> }
@@ -71,7 +111,7 @@ function HomePageHeaderComponent({notificacoes}) {
                         {user ? <h1>Olá, <span> {user.givenName} </span><br /> <p>Seja Bem-Vindo(a)!</p></h1>
                             : <h1>Olá, <span> </span><br /> Seja Bem-Vindo(a)!</h1>}
                     </Texto> */}
-                    <Texto2>
+                    <Texto2 style={{color: textoColor}}>
                         {user ? <h1>Olá, <span> {user.givenName} </span><br /> <p>Seja Bem-Vindo(a)!</p></h1>
                             : <h1>Olá, <span> </span><br /> Seja Bem-Vindo(a)!</h1>}
                     </Texto2>
@@ -159,7 +199,7 @@ const PageContainer = styled.div`
 
 const HeaderContainer = styled.div`
     height: 200px;
-    background: url(${HeaderJaneiro}) no-repeat right center;
+    background: url(${props => props.headerImage}) no-repeat right center;
     background-size: cover;
     align-items: center;
     justify-content: space-between;
@@ -210,7 +250,7 @@ const Texto = styled.div`
 `
 
 const Texto2 = styled.div`
-    color: #082764;
+    color: ${props => props.style?.color || '#082764'};
     justify-content: center;
     h1{
         line-height: 45px;
@@ -220,7 +260,7 @@ const Texto2 = styled.div`
         font-size: 20px;
     }   
     span{
-        color: #082764;    
+        color: ${props => props.style?.color || '#082764'};    
     }
 `
 

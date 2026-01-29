@@ -74,7 +74,7 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
             setFilteredContacts([]);
         }
     };
-    console.log(isSearchOpen);
+    // console.log(isSearchOpen);
     return (
         <PageContainer>
             <MenuContainer>
