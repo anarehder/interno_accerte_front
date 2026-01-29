@@ -46,6 +46,7 @@ function HomePageHeaderComponent({notificacoes}) {
     // Função para obter a imagem do header baseado no mês
     function getHeaderImageByMonth() {
         const mes = new Date().getMonth() + 1;
+        // console.log(mes);
         return headerImagesMap[mes];
     }
 
@@ -199,7 +200,7 @@ const PageContainer = styled.div`
 
 const HeaderContainer = styled.div`
     height: 200px;
-    background: url(${props => props.headerImage}) no-repeat right center;
+    background: url(${props => props.$headerImage}) no-repeat right center;
     background-size: cover;
     align-items: center;
     justify-content: space-between;
