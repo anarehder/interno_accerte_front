@@ -8,7 +8,7 @@ function CriarUsuarioComponent({info, setUpdated}){
     const { user, dados } = useAuth();
     const agenda = dados?.agenda;
     const [selectedFunc, setSelectedFunc] = useState(null);
-    const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localização: "", entrada: "" });
+    const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "" });
 
     const handleSelect = (email) => {
       const funcionario = agenda.find((f) => f.mail === email);
@@ -64,7 +64,7 @@ function CriarUsuarioComponent({info, setUpdated}){
             const response = await apiService.createUser(body);
             if (response.status === 200) {
                 alert("Usuário criado com sucesso!");
-                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localização: "", entrada: "" });
+                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "" });
                 setSelectedFunc(null);
                 setUpdated(true);
             }
