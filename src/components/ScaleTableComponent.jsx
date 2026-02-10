@@ -129,6 +129,10 @@ function ScaleTableComponent({type}) {
                 </DepartmentContainer>}
             {selectedScale.length > 0 && areas.map((a) => {
                 const scaleBySector = selectedScale.filter(item => item.Funcionarios.Areas.area === a.area);
+                
+                // Não renderizar a área se não houver funcionários
+                if (scaleBySector.length === 0) return null;
+                
                 return (
                     <DepartmentContainer key={a.area}>
                         <Title>
