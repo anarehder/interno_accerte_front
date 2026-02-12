@@ -135,7 +135,7 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 </ItemsBar>
                 <ActionsBar>
                     {canSeeIndicAi && (
-                        <IndicAIButton href="https://novo.accerte.com.br/indicai-interno/" target="_blank" rel="noopener noreferrer">
+                        <IndicAIButton href="https://accerte.com.br/indicai-interno/" target="_blank" rel="noopener noreferrer">
                             IndicAI
                         </IndicAIButton>
                     )}
