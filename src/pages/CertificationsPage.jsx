@@ -11,7 +11,7 @@ function CertificationsPage() {
         <PageContainer>
             <HeaderNewComponent pageTitle={"Certificações"}/>
             {
-                (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br'|| user?.mail === 'daniel.garcia@accerte.com.br'|| user?.mail === 'antonio.neto@accerte.com.br') && <AdminButton><Link to="/certificacoes/admin">Painel Admin</Link></AdminButton>
+                (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br'|| user?.mail === 'daniel.garcia@accerte.com.br'|| user?.mail === 'leonardo.antonio@accerte.com.br') && <AdminButton><Link to="/certificacoes/admin">Painel Admin</Link></AdminButton>
             }
             <CertificacoesListComponent />
         </PageContainer>
