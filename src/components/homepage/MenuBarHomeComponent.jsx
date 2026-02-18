@@ -93,6 +93,7 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                     <Dropdown>
                         <DropdownItem><h1>GENTE <span> E GESTÃO </span></h1></DropdownItem>
                         <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
+                        <DropdownItem><Link to={"/beneficios"}>Benefícios</Link></DropdownItem>
                         <DropdownItem><Link to={"/calendario"}>Calendário</Link></DropdownItem>
                         <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
                         <DropdownItem><Link to={"/faqs"}>FAQs</Link></DropdownItem>
