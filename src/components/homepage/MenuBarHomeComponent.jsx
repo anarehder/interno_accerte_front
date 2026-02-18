@@ -98,7 +98,7 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                         <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
                         <DropdownItem><Link to={"/faqs"}>FAQs</Link></DropdownItem>
                         <DropdownItem><Link to={"/ferias"}>Férias | Pausas</Link></DropdownItem>
-                        <DropdownItem><Link to={"/parceriaeducacional"}>IPOG</Link></DropdownItem>
+                        {/* <DropdownItem><Link to={"/parceriaeducacional"}>IPOG</Link></DropdownItem> */}
                         <DropdownItem><Link to={"/organograma"}>Organograma</Link></DropdownItem>
                         <DropdownItem><Link to={"/vagasemaberto"}>Vagas Abertas</Link></DropdownItem>
                     </Dropdown>
