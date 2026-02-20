@@ -6,7 +6,7 @@ import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
 function NovoComunicadoPage() {
     const { user } = useAuth();
-    const [form, setForm] = useState({ titulo: "", imagemUrl: "", linkExterno: "-", legenda: "", areaId: 7, dataDivulgacao: null });
+    const [form, setForm] = useState({ titulo: "", imagemUrl: "", linkExterno: "-", legenda: "", areaId: 7, dataDivulgacao: null, tipo: "" });
     const baseUrl = "https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Extras/COMUNICADOS/";
 
     const handleForm = (e) => {
@@ -28,7 +28,7 @@ function NovoComunicadoPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.titulo || !form.imagemUrl || !form.linkExterno || !form.areaId || !form.dataDivulgacao) {
+        if (!form.titulo || !form.imagemUrl || !form.linkExterno || !form.areaId || !form.dataDivulgacao || !form.tipo) {
             alert("Todos os campos obrigatórios devem ser preenchidos.");
             return;
         }
@@ -47,6 +47,7 @@ function NovoComunicadoPage() {
             `Solicitante: ${body.email}\n` +
             `Deseja criar o comunicado:\n` +
             `Nome: ${body.comunicado.titulo}\n` +
+            `Tipo: ${body.comunicado.tipo}\n` +
             `Imagem: ${body.comunicado.imagemUrl}\n`+
             `Data: ${body.comunicado.dataDivulgacao}\n`
         );
@@ -60,7 +61,7 @@ function NovoComunicadoPage() {
             const response = await apiService.criarComunicados(body);
             if (response.status === 200) {
                 alert("Comunicado criado com sucesso!");
-                setForm({ titulo: "", imagemUrl: "", linkExterno: "-", legenda: "", areaId: "", dataDivulgacao: null });
+                setForm({ titulo: "", imagemUrl: "", linkExterno: "-", legenda: "", areaId: "", dataDivulgacao: null, tipo: "" });
             }
         } catch (error) {
             console.error("Erro ao enviar requisição:", error);
@@ -91,6 +92,15 @@ function NovoComunicadoPage() {
                     value={form.legenda}
                     onChange={handleForm}
                 />
+            </div>
+            <div>
+                <Label>Tipo</Label>
+                <Select id="tipo" value={form.tipo} onChange={handleForm}>
+                    <option value="">Selecione...</option>
+                    <option value="Geral">Geral</option>
+                    <option value="Accerte em Movimento 2">Accerte em Movimento 2</option>
+                    <option value="Accerte em Movimento 3">Accerte em Movimento 3</option>
+                </Select>
             </div>
             <div>
                 <Label>Titulo Imagem Intranet</Label>
@@ -199,6 +209,18 @@ const Input = styled.input`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
+`;
+
+const Select = styled.select`
+  width: 400px;
+  justify-content: center;
+  text-align: left;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  text-indent: 8px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
 `;
 
 const Button = styled.button`
