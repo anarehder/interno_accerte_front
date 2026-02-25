@@ -8,13 +8,21 @@ function SomeoneBirthdayComponent() {
     const { user, dados, carregando } = useAuth();
     const [someBdayClosed, setSomeBdayClosed] = useState(false);
     const [hasAnniversaryToday, setHasAnniversaryToday] = useState(false);
+    const [aniversariantes, setAniversariantes] = useState([]);
     // console.log(hasAnniversaryToday);
     useEffect(() => {
         const fetch = async () => {
             try {
                 const response = await apiService.getAniversariosDia();
+                // console.log(response.data);
                 if(response.data.length > 0){
                     setHasAnniversaryToday(true);
+                    const aniversariantesOrdenados = response.data.sort((a, b) => {
+                        const nomeA = `${a.nome} ${a.sobrenome}`.toLowerCase();
+                        const nomeB = `${b.nome} ${b.sobrenome}`.toLowerCase();
+                        return nomeA.localeCompare(nomeB);
+                    });
+                    setAniversariantes(aniversariantesOrdenados);
                 }
                 else {
                     setHasAnniversaryToday(false);
@@ -53,6 +61,8 @@ function SomeoneBirthdayComponent() {
         setSomeBdayClosed(true);
     };
 
+    const emailsAniversariantes = aniversariantes.map(a => a.email).filter(Boolean).join(',');
+
     if (someBdayClosed) return null;
     if (!someBdayClosed && hasAnniversaryToday) {
         return (
@@ -64,6 +74,14 @@ function SomeoneBirthdayComponent() {
                 <Message>
                     Não esqueça de parabenizar! 🎈
                 </Message>
+                <AniversariantesList>
+                    {aniversariantes.map((aniversariante, index) => (
+                        <div key={index}>{aniversariante.nome} {aniversariante.sobrenome}</div>
+                    ))}
+                </AniversariantesList>
+                <EmailLink href={`mailto:${emailsAniversariantes}?subject=Feliz%20Aniversário`} target="_blank">
+                    📧 Enviar Email de Parabéns
+                </EmailLink>
             </Modal>
         </Overlay>
         );
@@ -138,4 +156,56 @@ const Message = styled.p`
   color: #001143;
   text-align: center;
   line-height: 1.6;
+`;
+
+const AniversariantesList = styled.div`
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  
+  div {
+    font-size: 16px;
+    color: #205fdd;
+    font-weight: 600;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    &::before {
+      content: "•";
+      font-size: 24px;
+      color: #205fdd;
+    }
+  }
+`;
+
+const EmailLink = styled.a`
+  margin-top: 25px;
+  padding: 12px 24px;
+  background: linear-gradient(to right, #205fdd, #001143);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: inline-block;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: white;
+    text-decoration: none;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
 `;
