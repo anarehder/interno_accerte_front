@@ -98,7 +98,6 @@ function NovoComunicadoPage() {
                 <Select id="tipo" value={form.tipo} onChange={handleForm}>
                     <option value="">Selecione...</option>
                     <option value="Geral">Geral</option>
-                    <option value="Accerte em Movimento 2">Accerte em Movimento 2</option>
                     <option value="Accerte em Movimento 3">Accerte em Movimento 3</option>
                 </Select>
             </div>

@@ -1,13 +1,16 @@
 import styled from "styled-components";
-import { useAuth } from "../contexts/AuthContext";
-import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 import { useEffect, useState } from "react";
-import apiService from "../services/apiService";
 import { HiOutlineMail } from "react-icons/hi";
 import { HiOutlineMailOpen } from "react-icons/hi";
+import { useAuth } from "../../contexts/AuthContext";
+import apiService from "../../services/apiService";
+import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
+import HeaderImageComponent from "../../components/basic/HeaderImageComponent";
+import AEMLogo from "../../assets/AEM-logo.png";
+import RegulamentoAEM3 from "../../assets/Regulamento AEM 3.pdf";
 
 
-const ComunicadosPage = () => {
+const AEM3Page = () => {
     {
         const { user } = useAuth();
         const [comunicados, setComunicados] = useState([]);
@@ -20,7 +23,7 @@ const ComunicadosPage = () => {
                 try {
                     const body = { email: user.mail };
                     const response = await apiService.buscarComunicadosEmail(body);
-                    const comunicadosFiltrados = response.data.filter(c => c.tipo === "Geral");
+                    const comunicadosFiltrados = response.data.filter(c => c.tipo === "Accerte em Movimento 3");
                     setComunicados(comunicadosFiltrados);
                     setUpdated(false);
                 } catch (error) {
@@ -61,7 +64,12 @@ const ComunicadosPage = () => {
 
         return (
             <Container>
-                <HeaderNewComponent pageTitle={"Comunicados"} />
+                {/* <HeaderNewComponent pageTitle={"Accerte em Movimento 2"} /> */}
+                <HeaderImageComponent pageTitle={"3ª"} subtitle={"Edição"} lastPage={"homepage"} image={AEMLogo} />
+                <RegulamentoContainer>
+                    <a href={RegulamentoAEM3} target="_blank" rel="noopener noreferrer">📄 Regulamento AEM 3</a>
+                </RegulamentoContainer>
+                {comunicados.length > 0 && (
                 <List>
                     <Info>
                         <p></p>
@@ -69,8 +77,7 @@ const ComunicadosPage = () => {
                         <p>Data Divulgação</p>
                         <div></div>
                     </Info>
-                    {comunicados.length > 0 &&
-                        comunicados?.map((c) => (
+                    {comunicados?.map((c) => (
                             <Card key={c.id} onClick={() => openCard(c.id)}>
                                 <Info>
                                     {c.LeituraComunicados[0].confLeitura === true ? <p><HiOutlineMailOpen size={30} /> </p> : <p> <HiOutlineMail size={30} /></p>}
@@ -95,19 +102,23 @@ const ComunicadosPage = () => {
                         ))
                     }
                 </List>
+                )}
+                {comunicados.length === 0 && <NenhumComunicadoMsg>Ainda não há comunicados do Accerte Em Movimento 3ª Edição</NenhumComunicadoMsg>}
             </Container >
         );
     };
 }
 
-export default ComunicadosPage;
+export default AEM3Page;
   
 
 const Container = styled.div`
+    display: flex;
     flex-direction: column;
     border-radius: 8px;
     align-items: center;
     margin-bottom: 30px;
+    width: 100%;
 `;
 
 
@@ -115,7 +126,7 @@ const List = styled.div`
     display: flex;
     flex-direction: column;
     gap: 25px;
-    margin: 30px 0 0 0;
+    margin: 30px auto 0 auto;
     justify-content: center;
     align-items: center;
     width: 70%;
@@ -131,6 +142,7 @@ const Card = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     gap: 10%;
     display: flex;
+    width: 100%;
 `;
 
 
@@ -143,7 +155,9 @@ const Info = styled.div`
     font-size: 22px;
     gap: 20px;
     align-items: center;
+    justify-content: center;
     height: 30px;
+    width: 100%;
     p:nth-of-type(1){
         width: 70px;
     }
@@ -151,7 +165,7 @@ const Info = styled.div`
         width: 500px;
     }
     p:nth-of-type(3){
-        width: 175px;
+        width: 230px;
     }
     div{
         width: 250px;
@@ -186,3 +200,37 @@ const Details = styled.div`
         height: 500px;
     }
 `
+
+const RegulamentoContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    a {
+        padding: 12px 24px;
+        background: linear-gradient(to right, #205fdd, #001143);
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+    }
+`;
+
+const NenhumComunicadoMsg = styled.div`
+    text-align: center;
+    color: #555;
+    font-size: 18px;
+    padding: 40px 20px;
+    font-weight: 500;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;

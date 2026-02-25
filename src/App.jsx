@@ -47,6 +47,8 @@ import OrganogramaPage from "./pages/OrganogramaPage";
 import PortifolioPage from "./pages/PortfolioPage";
 import PortfolioPage from "./pages/PortfolioPage";
 import PowerBIProjetos from "./pages/PowerBIDashs";
+import AEM2Page from "./pages/AEM-pages/AEM2Page";
+import AEM3Page from "./pages/AEM-pages/AEM3Page";
 
 function App() {
 
@@ -98,6 +100,8 @@ function App() {
                 <Route path="/criarcomunicado" element={<NovoComunicadoPage />} />
                 <Route path="/organograma" element={<OrganogramaPage />} />
                 <Route path="/portfolio" element={<PortfolioPage />} />
+                <Route path="/aem2" element={<AEM2Page />} />
+                <Route path="/aem3" element={<AEM3Page />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>

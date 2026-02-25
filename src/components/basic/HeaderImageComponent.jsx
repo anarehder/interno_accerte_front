@@ -7,12 +7,16 @@ function HeaderImageComponent({ pageTitle, subtitle, lastPage, image }) {
 
     return (
         <PageContainer>
-            <Link to={`/${lastPage}`}>
-                <ReturnButton> voltar </ReturnButton>
-            </Link>
-            <Link to="/homepage">
-                <LastPageButton> home page </LastPageButton>
-            </Link>
+            {lastPage &&
+                <Link to={`/${lastPage}`}>
+                    <ReturnButton> voltar </ReturnButton>
+                </Link>
+            }
+            {lastPage !== "homepage" &&
+                <Link to="/homepage">
+                    <LastPageButton> home page </LastPageButton>
+                </Link>
+            }
             <HeaderContainer>
                 <ImageContainer>
                     <img src={Logo} alt={"accerte"} />

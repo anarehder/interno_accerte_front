@@ -20,6 +20,7 @@ import ContactsComponent from "../components/ContactsComponent";
 import apiService from "../services/apiService";
 import ChatIAComponent from "../components/homepage/ChatIAComponent";
 import SomeoneBirthdayComponent from "../components/homepage/SomeoneBirthdayComponent";
+import AEMComponent from "../components/homepage/AEMComponent";
 
 
 const HomePage = () => {
@@ -88,9 +89,10 @@ const HomePage = () => {
                             </BannerMenu>
                         </BannerContainer>
                     }
-                    <LinkedinPostsComponent />
+                    <AEMComponent />
                     <IndicAccerteComponent user={user} />
-                    <SugestoesComponent email={user.mail} />
+                    <LinkedinPostsComponent />
+                    {/* <SugestoesComponent email={user.mail} /> */}
                     
                     <FooterComponent />
                 </>

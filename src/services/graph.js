@@ -334,7 +334,20 @@ export async function getSharePointData(instance, accounts) {
   }))
   .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10, 'vagas': fileList11, 'accerteconnect': fileList12, 'accerteconnect2': fileList13, 'beneficios': fileList14, 'imageUrl': imageUrl};
+  const aem3 = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/AEM 3:/children`,
+    {
+      headers: { Authorization: `Bearer ${response.accessToken}` }
+    }
+  );
+  const files15 = await aem3.json();
+
+  const fileList15 = files15.value.map(file => ({
+    name: file.name,
+    url: file.webUrl
+  }));
+
+  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10, 'vagas': fileList11, 'accerteconnect': fileList12, 'accerteconnect2': fileList13, 'beneficios': fileList14, 'aem3': fileList15, 'imageUrl': imageUrl};
   sessionStorage.setItem("sharePoint", JSON.stringify(responseObject));
   return responseObject;    
 

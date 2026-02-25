@@ -3,6 +3,8 @@ import { FiSearch } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
+import AEMLogoAzul from '../../assets/AEM-logo-azul.png';
+import AEMLogo from '../../assets/AEM-logo.png';
 
 function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
     const { user, dados } = useAuth();
@@ -133,6 +135,14 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                         }
                     </Dropdown>
                 </MenuItem>
+                <MenuItem>
+                    <LogoImg src={AEMLogoAzul} alt="Accerte em Movimento" />
+                    <Dropdown>
+                        <DropdownLogo><LogoImg src={AEMLogo} alt="Accerte em Movimento" /></DropdownLogo>
+                            <DropdownItem> <Link to="/aem2">2ª Edição</Link></DropdownItem>
+                            <DropdownItem> <Link to="/aem3">3ª Edição</Link></DropdownItem>
+                    </Dropdown>
+                </MenuItem>
                 </ItemsBar>
                 <ActionsBar>
                     {canSeeIndicAi && (
@@ -178,7 +188,7 @@ const MenuContainer = styled.div`
     display: flex;
     position: relative;
     height: 60px;
-    width: 90%;
+    width: 94%;
     align-items: center;
     justify-content: space-between;
     border-radius: 8px;
@@ -186,14 +196,17 @@ const MenuContainer = styled.div`
 `
 
 const ItemsBar = styled.div`
-    width: 74%;
-    min-width: 1015px;
+    width: 83%;
+    min-width: 1100px;
+    // background-color: red;
 }`
 
 const ActionsBar = styled.div`
     display: flex;
+    // background-color: red;
     align-items: center;
-    width: 200px;
+    width: 15%;
+    min-width: 200px;
     margin-right: 10px;
     gap: 15px;
     justify-content: flex-end;
@@ -247,6 +260,12 @@ const MenuItem = styled.div`
     span {
         font-weight: 600;
     }
+`;
+
+const LogoImg = styled.img`
+    height: 40px;
+    max-height: 40px;
+    object-fit: contain;
 `;
 
 const SearchItem = styled.div`
@@ -316,7 +335,7 @@ const Dropdown = styled.div`
     font-size: 14px !important;
     color: white;
     text-indent: 10px;
-    line-height: 30px;
+    line-height: 32px;
     background: linear-gradient(to bottom,#00348E, #001143);
     box-shadow: 2px 4px 3px 5px rgba(0, 0, 0, 0.2);
     display: none;
@@ -325,10 +344,19 @@ const Dropdown = styled.div`
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     h1{
-        line-height: 30px;
+        line-height: 35px;
         color: white;
         text-indent: 0px;
     }
+`;
+
+const DropdownLogo = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    margin-top: 5px;
+    padding: 3px 0;
 `;
 
 const DropdownItem = styled.div`

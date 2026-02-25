@@ -1,13 +1,15 @@
 import styled from "styled-components";
-import { useAuth } from "../contexts/AuthContext";
-import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 import { useEffect, useState } from "react";
-import apiService from "../services/apiService";
 import { HiOutlineMail } from "react-icons/hi";
 import { HiOutlineMailOpen } from "react-icons/hi";
+import { useAuth } from "../../contexts/AuthContext";
+import apiService from "../../services/apiService";
+import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
+import HeaderImageComponent from "../../components/basic/HeaderImageComponent";
+import AEMLogo from "../../assets/AEM-logo.png";
 
 
-const ComunicadosPage = () => {
+const AEM2Page = () => {
     {
         const { user } = useAuth();
         const [comunicados, setComunicados] = useState([]);
@@ -20,7 +22,8 @@ const ComunicadosPage = () => {
                 try {
                     const body = { email: user.mail };
                     const response = await apiService.buscarComunicadosEmail(body);
-                    const comunicadosFiltrados = response.data.filter(c => c.tipo === "Geral");
+                    console.log(response.data);
+                    const comunicadosFiltrados = response.data.filter(c => c.tipo === "Accerte em Movimento 2");
                     setComunicados(comunicadosFiltrados);
                     setUpdated(false);
                 } catch (error) {
@@ -61,7 +64,8 @@ const ComunicadosPage = () => {
 
         return (
             <Container>
-                <HeaderNewComponent pageTitle={"Comunicados"} />
+                {/* <HeaderNewComponent pageTitle={"Accerte em Movimento 2"} /> */}
+                <HeaderImageComponent pageTitle={"2ª"} subtitle={"Edição"} lastPage={"homepage"} image={AEMLogo} />
                 <List>
                     <Info>
                         <p></p>
@@ -100,14 +104,16 @@ const ComunicadosPage = () => {
     };
 }
 
-export default ComunicadosPage;
+export default AEM2Page;
   
 
 const Container = styled.div`
+    display: flex;
     flex-direction: column;
     border-radius: 8px;
     align-items: center;
     margin-bottom: 30px;
+    width: 100%;
 `;
 
 
@@ -115,7 +121,7 @@ const List = styled.div`
     display: flex;
     flex-direction: column;
     gap: 25px;
-    margin: 30px 0 0 0;
+    margin: 30px auto 0 auto;
     justify-content: center;
     align-items: center;
     width: 70%;
@@ -131,6 +137,7 @@ const Card = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     gap: 10%;
     display: flex;
+    width: 100%;
 `;
 
 
@@ -143,7 +150,9 @@ const Info = styled.div`
     font-size: 22px;
     gap: 20px;
     align-items: center;
+    justify-content: center;
     height: 30px;
+    width: 100%;
     p:nth-of-type(1){
         width: 70px;
     }
@@ -151,7 +160,7 @@ const Info = styled.div`
         width: 500px;
     }
     p:nth-of-type(3){
-        width: 175px;
+        width: 230px;
     }
     div{
         width: 250px;
