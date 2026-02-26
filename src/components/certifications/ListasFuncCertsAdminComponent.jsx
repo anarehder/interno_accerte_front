@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import apiService from '../../services/apiService';
 import { GrValidate } from "react-icons/gr";
 import { ImBlocked } from "react-icons/im";
+import EditarFuncCertComponent from './EditarFuncCertComponent';
 
 
 function ListarFuncCertsAdminComponent() {
@@ -12,6 +13,8 @@ function ListarFuncCertsAdminComponent() {
     const [funcCerts, setFuncCerts] = useState([]);
     const [funcionarios, setFuncionarios] = useState([]);
     const [updated, setUpdated] = useState(false);
+    const [funcCertToEdit, setFuncCertToEdit] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
 
     function formatarDataBR(dataIso) {
         const data = new Date(dataIso);
@@ -57,55 +60,85 @@ function ListarFuncCertsAdminComponent() {
         }
     };
 
+    const handleEdit = (cert) => {
+        setFuncCertToEdit(cert);
+        setShowEditModal(true);
+    };
+
+    const handleCloseEditModal = () => {
+        setShowEditModal(false);
+        setFuncCertToEdit(null);
+    };
+
     return (
         <PageContainer>
-            <EmissorBlock>
-                <Titulo>
-                    <h3>Funcionário</h3>
-                </Titulo>
-                <Certificacoes>
-                    <CertificacaoInfo>
-                        <div>Nome Certificação</div>
-                        <div>Emissão</div>
-                        <div>Validade</div>
-                        <div>Válida PCA</div>
-                        <div>Url</div>
-                        <div>Emissor</div>
-                        <div>Nivel</div>
-                        <div>Valor</div>
-                        <div>Ação</div>
-                    </CertificacaoInfo>
-                </Certificacoes>
-
-            </EmissorBlock>
-            {funcCerts.length > 0 && funcionarios.map((f) => {
-                const certByFunc = funcCerts.filter(c => c.funcionarioId === f.id);
-                if (certByFunc.length === 0) return null;
-                // console.log(f);
-                return (
-                    <EmissorBlock key={f.id}>
+            {showEditModal && funcCertToEdit ? (
+                <EditarFuncCertComponent 
+                    funcCert={funcCertToEdit}
+                    onClose={handleCloseEditModal}
+                    onSuccess={() => {
+                        setUpdated(true);
+                        handleCloseEditModal();
+                    }}
+                />
+            ) : (
+                <>
+                    <EmissorBlock>
                         <Titulo>
-                            <h3>{f.nome} {f.sobrenome}</h3>
+                            <h3>Funcionário</h3>
                         </Titulo>
                         <Certificacoes>
-                            {certByFunc.map((c) => (
-                                <CertificacaoInfo key={c.id}>
-                                    <div>{c.Certificacoes?.nome}</div>
-                                    <div>{formatarDataBR(c.emissao)}</div>
-                                    <div>{c.validade? formatarDataBR(c.validade) : "Não expira"}</div>
-                                    <div>{c.validaPCA ? "Válida" : "Inválida"}</div>
-                                    <a href={c.url} target='_blank'><div>{c.url ? "Link" : "-"}</div></a>
-                                    <div>{c.Certificacoes?.Emissor?.nome}</div>
-                                    <div>{c.Certificacoes?.NiveisBonificacao?.nivel}</div>
-                                    <div>{Number(c.Certificacoes?.NiveisBonificacao?.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
-                                    <div onClick={() => handleClick(c.id, !c.validaPCA)} style={{ cursor: "pointer" }}>{c.validaPCA ? <ImBlocked size={20}/> :<GrValidate size={24}/>}</div>
-                                </CertificacaoInfo>
-                            ))}
+                            <CertificacaoInfo>
+                                <div>Nome Certificação</div>
+                                <div>Emissão</div>
+                                <div>Validade</div>
+                                <div>Válida PCA</div>
+                                <div>Url</div>
+                                <div>Emissor</div>
+                                <div>Nivel</div>
+                                <div>Valor</div>
+                                <div>Editar</div>
+                                <div>Ação</div>
+                            </CertificacaoInfo>
                         </Certificacoes>
 
                     </EmissorBlock>
-                );
-            })}
+                    {funcCerts.length > 0 && funcionarios.map((f) => {
+                        const certByFunc = funcCerts.filter(c => c.funcionarioId === f.id);
+                        if (certByFunc.length === 0) return null;
+                        // Ordena: válidas primeiro, inválidas no final
+                        const certOrdenadas = certByFunc.sort((a, b) => {
+                            if (a.validaPCA === b.validaPCA) return 0;
+                            return a.validaPCA ? -1 : 1;
+                        });
+                        // console.log(f);
+                        return (
+                            <EmissorBlock key={f.id}>
+                                <Titulo>
+                                    <h3>{f.nome} {f.sobrenome}</h3>
+                                </Titulo>
+                                <Certificacoes>
+                                    {certOrdenadas.map((c) => (
+                                        <CertificacaoInfo key={c.id} $invalida={!c.validaPCA}>
+                                            <div>{c.Certificacoes?.nome}</div>
+                                            <div>{formatarDataBR(c.emissao)}</div>
+                                            <div>{c.validade? formatarDataBR(c.validade) : "Não expira"}</div>
+                                            <div>{c.validaPCA ? "Válida" : "Inválida"}</div>
+                                            <div><a href={c.url} target='_blank'>{c.url ? "Link" : "-"}</a></div>
+                                            <div>{c.Certificacoes?.Emissor?.nome}</div>
+                                            <div>{c.Certificacoes?.NiveisBonificacao?.nivel}</div>
+                                            <div>{Number(c.Certificacoes?.NiveisBonificacao?.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                                            <div><button onClick={() => handleEdit(c)}>Editar</button></div>
+                                            <div> <button onClick={() => handleClick(c.id, !c.validaPCA)} style={{ cursor: "pointer" }}>{c.validaPCA ? "Invalidar": "Validar"}</button></div>
+                                        </CertificacaoInfo>
+                                    ))}
+                                </Certificacoes>
+
+                            </EmissorBlock>
+                        );
+                    })}
+                </>
+            )}
         </PageContainer>
     )   
 }
@@ -129,14 +162,14 @@ const EmissorBlock = styled.div`
 const Titulo = styled.div`
     align-items: center;
     justify-content: center;
-    width: 250px;
+    width: 150px;
     background-color: #495f96ff;
     border-right: 0.5px solid gray;
     color: white;
-    text-align: left;
     h3{
         font-size: 16px;
         line-height: 22px;
+        padding: 5px 0;
     }
 `
 
@@ -150,28 +183,51 @@ const CertificacaoInfo = styled.div`
     border-bottom: 0.5px solid gray;
     justify-content: center;
     font-size: 15px;
-    gap: 3px;
+    gap: 4px;
+    line-height: 20px;
+    height: auto;
+    padding: 12px 0;
+    
+    &:nth-child(odd) {
+        background-color: #ffffff;
+    }
+    
+    &:nth-child(even) {
+        background-color: #d1c3c3;
+    }
+    
+    ${props => props.$invalida && `
+        div:nth-child(4) {
+            color: #d32f2f;
+            font-weight: 500;
+        }
+    `}
+    
+    ${props => !props.$invalida && props.$invalida !== undefined && `
+        div:nth-child(4) {
+            color: #2e7d32;
+            font-weight: 500;
+        }
+    `}
+    
     a{
         width: 60px;
         display: flex;
         text-align: center;
+        justify-content: center;
     }
     div{
         width: 100px;
         align-items: center;
         justify-content: center;
         text-align: center;
-        min-height: 28px;
-        line-height: 30px;
+        height: 32px;
         // border-left: 1px solid red;
     }
     div:nth-child(1){
-        width: 500px;
+        width: 410px;
         justify-content: flex-start;
-        text-indent: 15px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        text-align: left;
     }
     div:nth-child(4){
         width: 90px;
@@ -182,5 +238,19 @@ const CertificacaoInfo = styled.div`
     }
     div:nth-child(7){
         width: 50px;
+    }
+    div:nth-child(9){
+        width: 70px;
+    }
+    div:nth-child(10){
+        width: 75px;
+    }
+    button{
+        width: 95%;
+        display: flex;
+        justify-content: center;
+        font-size: 14px;
+        background-color: #495F96;
+        padding: 6px;
     }
 `

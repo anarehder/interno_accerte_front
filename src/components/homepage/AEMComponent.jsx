@@ -37,7 +37,13 @@ function AEMComponent() {
                                     </a>
                                 </div>
                             ))}
+                            {posts.length < 5 &&
+                                <div className="card" >
+                                    <p> ... </p>
+                                </div>
+                            }
                         </div>
+                        
                     </PostsContainer>
                 }
             </LinkedinContainer>
@@ -147,6 +153,10 @@ const PostsContainer = styled.div`
         z-index: 1; /* Garante que o link fique sobre a imagem */
         opacity: 0; /* Torna o link invisível */
         background-color: rgba(0, 0, 0, 0); /* Transparente, mas garante que o link será clicável */
+    }
+    p{
+        font-size: 40px;
+        line-height: 350px;
     }
 
     &:hover {

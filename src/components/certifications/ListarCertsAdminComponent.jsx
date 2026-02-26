@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import apiServiceCertificacoes from '../../services/apiServiceCertificacoes';
 import { useAuth } from '../../contexts/AuthContext';
-
+import { FaRegTrashAlt } from "react-icons/fa";
+import EditarCertificacaoComponent from './EditarCertificacaoComponent';
 
 function ListarCertsAdminComponent() {
     const { user } = useAuth();
@@ -10,6 +11,8 @@ function ListarCertsAdminComponent() {
     const [emissores, setEmissores] = useState([]);
     const [certifications, setCertifications] = useState([]);
     const [updated, setUpdated] = useState(false);
+    const [certToEdit, setCertToEdit] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
     
     
     useEffect(() => {
@@ -68,52 +71,81 @@ function ListarCertsAdminComponent() {
             // alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
         }
     };
+ 
+    const handleEdit = (cert) => {
+        setCertToEdit(cert);
+        setShowEditModal(true);
+    };
+
+    const handleCloseEditModal = () => {
+        setShowEditModal(false);
+        setCertToEdit(null);
+    };
 
     return (
         <PageContainer>
-            <EmissorBlock>
-                <Titulo>
-                    <h3>Emissor/Área</h3>
-                </Titulo>
-                <Certificacoes>
-                    <CertificacaoInfo>
-                        <div>Nome</div>
-                        <div>Nivel</div>
-                        <div>Ativa</div>
-                        <div>Bloqueada</div>
-                        <div>Limite</div>
-                        <div>Cert. Válidas</div>
-                        <div>Alteração Status PCA</div>
-                        <div>Alterar Bloqueio</div>
-                    </CertificacaoInfo>
-                </Certificacoes>
-
-            </EmissorBlock>
-            {certifications.length > 0 && emissores.map((e) => {
-                const certByEmissor = certifications.filter(c => c.emissorId === e.id);
-                return (
-                    <EmissorBlock key={e.nome}>
+            {showEditModal && certToEdit ?
+                (
+                    <EditarCertificacaoComponent
+                        certificacao={certToEdit}
+                        onClose={handleCloseEditModal}
+                        onSuccess={() => {
+                            setUpdated(true);
+                            handleCloseEditModal();
+                        }}
+                    />
+                )
+                :
+                <>
+                    <EmissorBlock>
                         <Titulo>
-                            <h3>{e.nome}</h3>
+                            <h3>Emissor/Área</h3>
                         </Titulo>
                         <Certificacoes>
-                            {certByEmissor.map((c) => (
-                                <CertificacaoInfo key={c.id}>
-                                    <div>{c.nome}</div>
-                                    <div>{niveis[c.nivelId-1] ? niveis[c.nivelId-1]?.nivel : c.nivelId}</div>
-                                    <div>{c.ativaPCA ? "Ativa" : "Inativa"}</div>
-                                    <div>{c.bloqueada ? "Bloqueada" : "Liberada"}</div>
-                                    <div>{c.limite}</div>
-                                    <div>{c.FuncionarioCerts.length}</div>
-                                    <div><button onClick={() => handleClickPCA(c.id, !c.ativaPCA)}>{c.ativaPCA ? "Inativar PCA" : "Ativar PCA"}</button></div>
-                                    <div><button onClick={() => handleClickBlock(c.id, !c.bloqueada)}>{c.bloqueada ? "Liberar" : "Bloquear"}</button></div>
-                                </CertificacaoInfo>
-                            ))}
+                            <CertificacaoInfo>
+                                <div>Nome</div>
+                                <div>Nivel</div>
+                                <div>Ativa</div>
+                                <div>Bloqueada</div>
+                                <div>Limite</div>
+                                <div>Cert. Válidas</div>
+                                <div>Alteração Status PCA</div>
+                                <div>Alterar Bloqueio</div>
+                                <div>Editar</div>
+                                {/* <div>Excluir</div> */}
+                            </CertificacaoInfo>
                         </Certificacoes>
 
                     </EmissorBlock>
-                );
-            })}
+                    {certifications.length > 0 && emissores.map((e) => {
+                        const certByEmissor = certifications.filter(c => c.emissorId === e.id);
+                        return (
+                            <EmissorBlock key={e.nome}>
+                                <Titulo>
+                                    <h3>{e.nome}</h3>
+                                </Titulo>
+                                <Certificacoes>
+                                    {certByEmissor.map((c) => (
+                                        <CertificacaoInfo key={c.id} $bloqueada={c.bloqueada}>
+                                            <div>{c.nome}</div>
+                                            <div>{niveis[c.nivelId - 1] ? niveis[c.nivelId - 1]?.nivel : c.nivelId}</div>
+                                            <div>{c.ativaPCA ? "Ativa" : "Inativa"}</div>
+                                            <div>{c.bloqueada ? "Bloqueada" : "Liberada"}</div>
+                                            <div>{c.limite}</div>
+                                            <div>{c.FuncionarioCerts.length}</div>
+                                            <div><button onClick={() => handleClickPCA(c.id, !c.ativaPCA)}>{c.ativaPCA ? "Inativar PCA" : "Ativar PCA"}</button></div>
+                                            <div><button onClick={() => handleClickBlock(c.id, !c.bloqueada)}>{c.bloqueada ? "Liberar" : "Bloquear"}</button></div>
+                                            <div><button onClick={() => handleEdit(c)}>Editar</button></div>
+                                            {/* <div><button><FaRegTrashAlt /></button></div> */}
+                                        </CertificacaoInfo>
+                                    ))}
+                                </Certificacoes>
+                            </EmissorBlock>
+                        );
+                    })}
+                </>
+            }
+
         </PageContainer>
     )   
 }
@@ -156,7 +188,33 @@ const CertificacaoInfo = styled.div`
     border-bottom: 0.5px solid gray;
     justify-content: center;
     font-size: 15px;
-    gap: 2px;
+    gap: 4px;
+    line-height: 20px;
+    height: auto;
+    padding: 7px 0;
+    
+    &:nth-child(odd) {
+        background-color: #ffffff;
+    }
+    
+    &:nth-child(even) {
+        background-color: #d1c3c3;;
+    }
+    
+    ${props => props.$bloqueada && `
+        div:nth-child(4) {
+            color: #d32f2f;
+            font-weight: 500;
+        }
+    `}
+    
+    ${props => !props.$bloqueada && props.$bloqueada !== undefined && `
+        div:nth-child(4) {
+            color: #2e7d32;
+            font-weight: 500;
+        }
+    `}
+    
     div{
         width: 75px;
         align-items: center;
@@ -166,9 +224,10 @@ const CertificacaoInfo = styled.div`
         // border-left: 1px solid red;
     }
     div:nth-child(1){
-        width: 600px;
+        width: 450px;
         justify-content: flex-start;
-        text-indent: 15px;
+        text-align: left;
+        text-indent: 2px;
     }
     div:nth-child(4){
         width: 90px;
@@ -179,12 +238,15 @@ const CertificacaoInfo = styled.div`
     div:nth-child(8){
         width: 90px;
     }
+    div:nth-child(10){
+        width: 50px;
+    }
     button{
         width: 95%;
         display: flex;
         justify-content: center;
         font-size: 14px;
         background-color: #495F96;
-        padding: 3px 5px;
+        padding: 6px;
     }
 `

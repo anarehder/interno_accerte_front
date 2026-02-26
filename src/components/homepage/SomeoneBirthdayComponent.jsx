@@ -119,7 +119,7 @@ const Modal = styled.div`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: calc(50% - 90px);
+  top: calc(50% - 140px);
   right: calc(50% - 270px);
   background-color: white;
   font-size: 20px;

@@ -58,6 +58,22 @@ function buscarListaValores(body){
     return axios.post(`${BASE_URL}/certificados/lista/agrupada`, body)
 }
 
-const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, buscarCertificacaoPorEmissor, criarCertFunc, buscarListaCertsNiveis, buscarListaCertsNiveisEmissor, buscarTop3Geral, buscarListaFuncCerts, editarStatus, buscarListaValores }
+function editarCertificacao(body, id){
+    return axios.post(`${BASE_URL}/certificados/editar/certificacao/id/${id}`, body)
+}
+
+function buscarCertificacaoPorId(id){
+    return axios.get(`${BASE_URL}/certificados/buscar/certificacao/id/${id}`)
+}
+
+function editarCertificacaoFuncionario(body, id){
+    return axios.post(`${BASE_URL}/certificados/editar/funcionariocert/id/${id}`, body)
+}
+
+function buscarCertificacaoFuncionarioPorId(id){
+    return axios.get(`${BASE_URL}/certificados/buscar/funcionariocert/id/${id}`)
+}
+
+const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, buscarCertificacaoPorEmissor, criarCertFunc, buscarListaCertsNiveis, buscarListaCertsNiveisEmissor, buscarTop3Geral, buscarListaFuncCerts, editarStatus, buscarListaValores, editarCertificacao, editarCertificacaoFuncionario, buscarCertificacaoPorId, buscarCertificacaoFuncionarioPorId }
 
 export default apiServiceCertificacoes;
