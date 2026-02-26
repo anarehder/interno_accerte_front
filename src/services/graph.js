@@ -277,7 +277,7 @@ export async function getSharePointData(instance, accounts) {
 
   const fileList10 = files10.value.map(file => ({
     name: file.name,
-    url: file.webUrl
+    url: file['@microsoft.graph.downloadUrl'] || file.webUrl
   }));
 
   const vagas = await fetch(
