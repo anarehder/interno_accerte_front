@@ -103,7 +103,7 @@ const AEM3Page = () => {
                     }
                 </List>
                 )}
-                {comunicados.length === 0 && <NenhumComunicadoMsg>Ainda não há comunicados do Accerte Em Movimento 3ª Edição</NenhumComunicadoMsg>}
+                {comunicados.length === 0 && <NenhumComunicadoMsg>Ainda não há comunicados do Accerte Em Movimento 3ª Edição.</NenhumComunicadoMsg>}
             </Container >
         );
     };

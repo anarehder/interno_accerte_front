@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import AEMLogo from '../../assets/AEM-logo.png';
+import AEMLogo from '../../assets/AEM-logo-compacta.png';
 import { useAuth } from '../../contexts/AuthContext';
 
 function AEMComponent() {
@@ -19,14 +19,16 @@ function AEMComponent() {
         };
 
         fetchPosts();
-    }, []);
+    }, [dados]);
 
     return (
         <PageContainer>
             <LinkedinContainer>
                 <Title>
-                        <img src={AEMLogo} alt="Logo AEM" /> 3ª edição
+                        <img src={AEMLogo} alt="Logo AEM" /> <span>Bem-estar em foco. </span> Fique por dentro.
                 </Title>
+                {loading && <div> <br />Carregando imagens... </div>}
+                {!loading && posts.length === 0 && <div> <br /> Falha ao carregar os posts... </div>}
                 {posts.length > 0 &&
                     <PostsContainer>
                         <div className="carousel" >
@@ -77,12 +79,15 @@ const Title = styled.div`
     align-items: center;
     margin: 0 auto;
     color: white;font-family: Poppins;
-    font-weight: 600;
+    
     font-size: 25px;
     line-height: 14px;
     letter-spacing: 0%;
     text-align: center;
-
+    span{
+        font-weight: 600;
+        padding-right: 10px;
+    }
     img {
         height: 50px;;
         object-fit: contain;

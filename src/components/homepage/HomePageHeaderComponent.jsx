@@ -152,6 +152,7 @@ function HomePageHeaderComponent({notificacoes}) {
                                             const rotas = {
                                                 aniversario: '/aniversarios',
                                                 comunicados: '/comunicados',
+                                                aem3: '/aem3',
                                                 ferias: '/aprovarferias',
                                                 vagas: '/listavagas',
                                                 feriasRH: '/aprovarferias/admin',
@@ -162,6 +163,7 @@ function HomePageHeaderComponent({notificacoes}) {
                                             const textos = {
                                                 aniversario: '🎂 Hoje tem aniversário!',
                                                 comunicados: '📢 Você tem comunicados não lidos.',
+                                                aem3: '📢 Você tem notificações AEM 3 não lidas.',
                                                 ferias: '🏖️ Você tem férias para aprovar!',
                                                 feriasRH: '🏖️ O RH férias para aprovar!',
                                                 vagasRH: '🔖 Nova vaga solicitada;',

@@ -342,10 +342,12 @@ export async function getSharePointData(instance, accounts) {
   );
   const files15 = await aem3.json();
 
-  const fileList15 = files15.value.map(file => ({
+  const fileList15 = files15.value
+  .map(file => ({
     name: file.name,
     url: file.webUrl
-  }));
+  }))
+  .sort((a, b) => b.name.localeCompare(a.name, 'pt-BR', { sensitivity: 'base' }));
 
   const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10, 'vagas': fileList11, 'accerteconnect': fileList12, 'accerteconnect2': fileList13, 'beneficios': fileList14, 'aem3': fileList15, 'imageUrl': imageUrl};
   sessionStorage.setItem("sharePoint", JSON.stringify(responseObject));
