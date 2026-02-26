@@ -163,7 +163,7 @@ function HomePageHeaderComponent({notificacoes}) {
                                             const textos = {
                                                 aniversario: '🎂 Hoje tem aniversário!',
                                                 comunicados: '📢 Você tem comunicados não lidos.',
-                                                aem3: '📢 Você tem notificações AEM 3 não lidas.',
+                                                aem3: '📢 Você tem comunicados do Accerte em Movimento 3 não lidos.',
                                                 ferias: '🏖️ Você tem férias para aprovar!',
                                                 feriasRH: '🏖️ O RH férias para aprovar!',
                                                 vagasRH: '🔖 Nova vaga solicitada;',

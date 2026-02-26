@@ -67,7 +67,7 @@ const AEM3Page = () => {
                 {/* <HeaderNewComponent pageTitle={"Accerte em Movimento 2"} /> */}
                 <HeaderImageComponent pageTitle={"3ª"} subtitle={"Edição"} lastPage={"homepage"} image={AEMLogo} />
                 <RegulamentoContainer>
-                    <a href={RegulamentoAEM3} target="_blank" rel="noopener noreferrer">📄 Regulamento AEM 3</a>
+                    <a href={"https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FAccerteTecnologiadaInformaoLtda%2FDocumentos%20Compartilhados%2FExtras%2FCOMUNICADOS%2FRegulamento%20Accerte%20em%20Movimento%2Epdf&parent=%2Fsites%2FAccerteTecnologiadaInformaoLtda%2FDocumentos%20Compartilhados%2FExtras%2FCOMUNICADOS&p=true&ga=1"} target="_blank" rel="noopener noreferrer">📄 Regulamento AEM 3</a>
                 </RegulamentoContainer>
                 {comunicados.length > 0 && (
                 <List>

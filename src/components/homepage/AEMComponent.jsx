@@ -89,7 +89,7 @@ const Title = styled.div`
         padding-right: 10px;
     }
     img {
-        height: 50px;;
+        height: 40px;
         object-fit: contain;
         padding: 0 10px;
         margin-right: 10px;
