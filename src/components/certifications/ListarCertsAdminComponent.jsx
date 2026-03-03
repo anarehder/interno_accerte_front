@@ -13,6 +13,8 @@ function ListarCertsAdminComponent() {
     const [updated, setUpdated] = useState(false);
     const [certToEdit, setCertToEdit] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [activeFilter, setActiveFilter] = useState('');
+    const [nameFilter, setNameFilter] = useState('');
     
     
     useEffect(() => {
@@ -82,6 +84,24 @@ function ListarCertsAdminComponent() {
         setCertToEdit(null);
     };
 
+    const handleFilterClick = (filter) => {
+        setActiveFilter((prevFilter) => (prevFilter === filter ? '' : filter));
+    };
+
+    const matchesFilter = (certification) => {
+        if (activeFilter === 'ativas') return certification.ativaPCA === true;
+        if (activeFilter === 'inativas') return certification.ativaPCA === false;
+        if (activeFilter === 'bloqueadas') return certification.bloqueada === true;
+        if (activeFilter === 'liberadas') return certification.bloqueada === false;
+        return true;
+    };
+
+    const matchesNameFilter = (certification) => {
+        const certificationName = certification?.nome?.toLowerCase() || '';
+        const searchedName = nameFilter.toLowerCase().trim();
+        return certificationName.includes(searchedName);
+    };
+
     return (
         <PageContainer>
             {showEditModal && certToEdit ?
@@ -97,6 +117,41 @@ function ListarCertsAdminComponent() {
                 )
                 :
                 <>
+                    <FilterContainer>
+                        <FilterTitle>Filtros:</FilterTitle>
+                        <FilterArea>
+                            <FilterButton
+                                $active={activeFilter === 'ativas'}
+                                onClick={() => handleFilterClick('ativas')}
+                            >
+                                Ativas
+                            </FilterButton>
+                            <FilterButton
+                                $active={activeFilter === 'inativas'}
+                                onClick={() => handleFilterClick('inativas')}
+                            >
+                                Inativas
+                            </FilterButton>
+                            <FilterButton
+                                $active={activeFilter === 'bloqueadas'}
+                                onClick={() => handleFilterClick('bloqueadas')}
+                            >
+                                Bloqueadas
+                            </FilterButton>
+                            <FilterButton
+                                $active={activeFilter === 'liberadas'}
+                                onClick={() => handleFilterClick('liberadas')}
+                            >
+                                Liberadas
+                            </FilterButton>
+                            <NameFilterInput
+                                type="text"
+                                placeholder="Filtrar por nome da certificação"
+                                value={nameFilter}
+                                onChange={(e) => setNameFilter(e.target.value)}
+                            />
+                        </FilterArea>
+                    </FilterContainer>
                     <EmissorBlock>
                         <Titulo>
                             <h3>Emissor/Área</h3>
@@ -118,7 +173,19 @@ function ListarCertsAdminComponent() {
 
                     </EmissorBlock>
                     {certifications.length > 0 && emissores.map((e) => {
-                        const certByEmissor = certifications.filter(c => c.emissorId === e.id);
+                        const certByEmissor = certifications
+                            .filter(c => c.emissorId === e.id)
+                            .filter(matchesFilter)
+                            .filter(matchesNameFilter)
+                            .sort((a, b) => {
+                                const aIsInativa = a.ativaPCA === false;
+                                const bIsInativa = b.ativaPCA === false;
+                                if (aIsInativa === bIsInativa) return 0;
+                                return aIsInativa ? 1 : -1;
+                            });
+
+                        if (certByEmissor.length === 0) return null;
+
                         return (
                             <EmissorBlock key={e.nome}>
                                 <Titulo>
@@ -166,6 +233,46 @@ const PageContainer = styled.div`
 const EmissorBlock = styled.div`
     border: 2px solid gray;
 `
+
+const FilterContainer = styled.div`
+    border: 1px solid #9ca3af;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 0 auto 16px;
+    background-color: #f9fafb;
+    align-items: center;
+`
+
+const FilterTitle = styled.div`
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+`
+
+const FilterArea = styled.div`
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+`
+
+const FilterButton = styled.button`
+    background-color: ${({ $active }) => ($active ? '#495F96' : '#e5e7eb')};
+    color: ${({ $active }) => ($active ? 'white' : '#374151')};
+    border: 1px solid #9ca3af;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+`
+
+const NameFilterInput = styled.input`
+    border: 1px solid #9ca3af;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    min-width: 280px;
+`
+
 const Titulo = styled.div`
     align-items: center;
     justify-content: center;
