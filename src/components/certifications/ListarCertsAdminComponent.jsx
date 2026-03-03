@@ -126,7 +126,7 @@ function ListarCertsAdminComponent() {
                                 </Titulo>
                                 <Certificacoes>
                                     {certByEmissor.map((c) => (
-                                        <CertificacaoInfo key={c.id} $bloqueada={c.bloqueada}>
+                                        <CertificacaoInfo key={c.id} $bloqueada={c.bloqueada} $ativa={c.ativaPCA}>
                                             <div>{c.nome}</div>
                                             <div>{niveis[c.nivelId - 1] ? niveis[c.nivelId - 1]?.nivel : c.nivelId}</div>
                                             <div>{c.ativaPCA ? "Ativa" : "Inativa"}</div>
@@ -201,7 +201,7 @@ const CertificacaoInfo = styled.div`
         background-color: #d1c3c3;;
     }
     
-    ${props => props.$bloqueada && `
+    ${props => props.$bloqueada  && `
         div:nth-child(4) {
             color: #d32f2f;
             font-weight: 500;
@@ -211,6 +211,19 @@ const CertificacaoInfo = styled.div`
     ${props => !props.$bloqueada && props.$bloqueada !== undefined && `
         div:nth-child(4) {
             color: #2e7d32;
+            font-weight: 500;
+        }
+    `}
+    ${props => props.$ativa && `
+        div:nth-child(3) {
+            color: #2e7d32;
+            font-weight: 500;
+        }
+    `}
+
+    ${props => !props.$ativa && props.$ativa !== undefined && `
+        div:nth-child(3) {
+            color: #d32f2f;
             font-weight: 500;
         }
     `}
