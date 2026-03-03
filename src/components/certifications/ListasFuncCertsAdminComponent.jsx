@@ -18,6 +18,7 @@ function ListarFuncCertsAdminComponent() {
     const [statusFilter, setStatusFilter] = useState('');
     const [levelFilter, setLevelFilter] = useState('');
     const [nameFilter, setNameFilter] = useState('');
+    const [ativaPCAFilter, setAtivaPCAFilter] = useState('');
 
     function formatarDataBR(dataIso) {
         const data = new Date(dataIso);
@@ -81,6 +82,10 @@ function ListarFuncCertsAdminComponent() {
         setLevelFilter((prevFilter) => (prevFilter === filter ? '' : filter));
     };
 
+    const handleAtivaPCAFilterClick = (filter) => {
+        setAtivaPCAFilter((prevFilter) => (prevFilter === filter ? '' : filter));
+    };
+
     const normalizeLevel = (level) => {
         if (level === null || level === undefined) return '';
         const levelText = String(level).trim().toUpperCase();
@@ -113,6 +118,97 @@ function ListarFuncCertsAdminComponent() {
         return certName.includes(searchedName);
     };
 
+    const matchesAtivaPCAFilter = (certification) => {
+        if (ativaPCAFilter === 'ativa') return certification.Certificacoes?.ativaPCA === true;
+        if (ativaPCAFilter === 'inativa') return certification.Certificacoes?.ativaPCA === false;
+        return true;
+    };
+
+    const exportToCSV = () => {
+        const headers = ['Funcionario', 'Nome Certificacaoo', 'Ativa PCA', 'Emissao', 'Validade', 'Valida PCA', 'Emissor', 'Nivel', 'Valor'];
+        const rows = [];
+
+        funcionarios.forEach(f => {
+            const certByFunc = funcCerts
+                .filter(c => c.funcionarioId === f.id)
+                .filter(matchesStatusFilter)
+                .filter(matchesLevelFilter)
+                .filter(matchesNameFilter)
+                .filter(matchesAtivaPCAFilter);
+
+            certByFunc.forEach(c => {
+                rows.push([
+                    `${f.nome} ${f.sobrenome}`,
+                    c.Certificacoes?.nome || '',
+                    c.Certificacoes?.ativaPCA ? 'Ativa' : 'Inativa',
+                    formatarDataBR(c.emissao),
+                    c.validade ? formatarDataBR(c.validade) : 'Nao expira',
+                    c.validaPCA ? 'Valida' : 'Invalida',
+                    c.Certificacoes?.Emissor?.nome || '',
+                    c.Certificacoes?.NiveisBonificacao?.nivel || '',
+                    Number(c.Certificacoes?.NiveisBonificacao?.valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                ]);
+            });
+        });
+
+        let csvContent = headers.join(';') + '\n';
+        rows.forEach(row => {
+            csvContent += row.join(';') + '\n';
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `certificacoes_func_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.click();
+    };
+
+    const exportToXML = () => {
+        let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<certificacoes>\n';
+
+        funcionarios.forEach(f => {
+            const certByFunc = funcCerts
+                .filter(c => c.funcionarioId === f.id)
+                .filter(matchesStatusFilter)
+                .filter(matchesLevelFilter)
+                .filter(matchesNameFilter)
+                .filter(matchesAtivaPCAFilter);
+
+            if (certByFunc.length > 0) {
+                xmlContent += `  <funcionario>\n`;
+                xmlContent += `    <nome>${f.nome} ${f.sobrenome}</nome>\n`;
+                xmlContent += `    <certificacoes>\n`;
+
+                certByFunc.forEach(c => {
+                    xmlContent += `      <certificacao>\n`;
+                    xmlContent += `        <nome>${c.Certificacoes?.nome || ''}</nome>\n`;
+                    xmlContent += `        <ativa_pca>${c.Certificacoes?.ativaPCA ? 'Ativa' : 'Inativa'}</ativa_pca>\n`;
+                    xmlContent += `        <emissao>${formatarDataBR(c.emissao)}</emissao>\n`;
+                    xmlContent += `        <validade>${c.validade ? formatarDataBR(c.validade) : 'Não expira'}</validade>\n`;
+                    xmlContent += `        <valida_pca>${c.validaPCA ? 'Válida' : 'Inválida'}</valida_pca>\n`;
+                    xmlContent += `        <url>${c.url || ''}</url>\n`;
+                    xmlContent += `        <emissor>${c.Certificacoes?.Emissor?.nome || ''}</emissor>\n`;
+                    xmlContent += `        <nivel>${c.Certificacoes?.NiveisBonificacao?.nivel || ''}</nivel>\n`;
+                    xmlContent += `        <valor>${Number(c.Certificacoes?.NiveisBonificacao?.valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</valor>\n`;
+                    xmlContent += `      </certificacao>\n`;
+                });
+
+                xmlContent += `    </certificacoes>\n`;
+                xmlContent += `  </funcionario>\n`;
+            }
+        });
+
+        xmlContent += '</certificacoes>';
+
+        const blob = new Blob([xmlContent], { type: 'application/xml;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `certificacoes_func_${new Date().toISOString().slice(0, 10)}.xml`);
+        link.click();
+    };
+
     return (
         <PageContainer>
             {showEditModal && funcCertToEdit ? (
@@ -126,9 +222,27 @@ function ListarFuncCertsAdminComponent() {
                 />
             ) : (
                 <>
+                    <ExportContainer>
+                        <ExportButton onClick={exportToCSV}>Exportar CSV</ExportButton>
+                        <ExportButton onClick={exportToXML}>Exportar XML</ExportButton>
+                    </ExportContainer>
                     <FilterContainer>
                         <FilterTitle>Filtros:</FilterTitle>
                         <FilterArea>
+                            <FilterButton
+                                $wide
+                                $active={ativaPCAFilter === 'ativa'}
+                                onClick={() => handleAtivaPCAFilterClick('ativa')}
+                            >
+                                Ativa PCA
+                            </FilterButton>
+                            <FilterButton
+                                $wide
+                                $active={ativaPCAFilter === 'inativa'}
+                                onClick={() => handleAtivaPCAFilterClick('inativa')}
+                            >
+                                Inativa PCA
+                            </FilterButton>
                             <FilterButton
                                 $wide
                                 $active={statusFilter === 'valida'}
@@ -182,7 +296,8 @@ function ListarFuncCertsAdminComponent() {
                             .filter(c => c.funcionarioId === f.id)
                             .filter(matchesStatusFilter)
                             .filter(matchesLevelFilter)
-                            .filter(matchesNameFilter);
+                            .filter(matchesNameFilter)
+                            .filter(matchesAtivaPCAFilter);
 
                         if (certByFunc.length === 0) return null;
                         // Ordena: válidas primeiro, inválidas no final
@@ -395,5 +510,27 @@ const CertificacaoInfo = styled.div`
         font-size: 14px;
         background-color: #495F96;
         padding: 6px;
+    }
+`
+
+const ExportContainer = styled.div`
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+`
+
+const ExportButton = styled.button`
+    background-color: #495F96;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #3a4a7a;
     }
 `

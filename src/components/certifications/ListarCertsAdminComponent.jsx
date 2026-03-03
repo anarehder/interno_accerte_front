@@ -102,6 +102,82 @@ function ListarCertsAdminComponent() {
         return certificationName.includes(searchedName);
     };
 
+    const exportToCSV = () => {
+        const headers = ['Emissor', 'Nome', 'Nivel', 'Ativa', 'Bloqueada', 'Limite', 'Cert. Validas'];
+        const rows = [];
+
+        emissores.forEach(e => {
+            const certByEmissor = certifications
+                .filter(c => c.emissorId === e.id)
+                .filter(matchesFilter)
+                .filter(matchesNameFilter);
+
+            certByEmissor.forEach(c => {
+                rows.push([
+                    e.nome,
+                    c.nome,
+                    niveis[c.nivelId - 1] ? niveis[c.nivelId - 1]?.nivel : c.nivelId,
+                    c.ativaPCA ? 'Ativa' : 'Inativa',
+                    c.bloqueada ? 'Bloqueada' : 'Liberada',
+                    c.limite,
+                    c.FuncionarioCerts.length
+                ]);
+            });
+        });
+
+        let csvContent = headers.join(';') + '\n';
+        rows.forEach(row => {
+            csvContent += row.join(';') + '\n';
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `certificacoes_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.click();
+    };
+
+    const exportToXML = () => {
+        let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<certificacoes>\n';
+
+        emissores.forEach(e => {
+            const certByEmissor = certifications
+                .filter(c => c.emissorId === e.id)
+                .filter(matchesFilter)
+                .filter(matchesNameFilter);
+
+            if (certByEmissor.length > 0) {
+                xmlContent += `  <emissor>\n`;
+                xmlContent += `    <nome>${e.nome}</nome>\n`;
+                xmlContent += `    <certificacoes>\n`;
+
+                certByEmissor.forEach(c => {
+                    xmlContent += `      <certificacao>\n`;
+                    xmlContent += `        <nome>${c.nome}</nome>\n`;
+                    xmlContent += `        <nivel>${niveis[c.nivelId - 1] ? niveis[c.nivelId - 1]?.nivel : c.nivelId}</nivel>\n`;
+                    xmlContent += `        <ativa>${c.ativaPCA ? 'Ativa' : 'Inativa'}</ativa>\n`;
+                    xmlContent += `        <bloqueada>${c.bloqueada ? 'Bloqueada' : 'Liberada'}</bloqueada>\n`;
+                    xmlContent += `        <limite>${c.limite}</limite>\n`;
+                    xmlContent += `        <cert_validas>${c.FuncionarioCerts.length}</cert_validas>\n`;
+                    xmlContent += `      </certificacao>\n`;
+                });
+
+                xmlContent += `    </certificacoes>\n`;
+                xmlContent += `  </emissor>\n`;
+            }
+        });
+
+        xmlContent += '</certificacoes>';
+
+        const blob = new Blob([xmlContent], { type: 'application/xml;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `certificacoes_${new Date().toISOString().slice(0, 10)}.xml`);
+        link.click();
+    };
+
     return (
         <PageContainer>
             {showEditModal && certToEdit ?
@@ -117,6 +193,10 @@ function ListarCertsAdminComponent() {
                 )
                 :
                 <>
+                    <ExportContainer>
+                        <ExportButton onClick={exportToCSV}>Exportar CSV</ExportButton>
+                        <ExportButton onClick={exportToXML}>Exportar XML</ExportButton>
+                    </ExportContainer>
                     <FilterContainer>
                         <FilterTitle>Filtros:</FilterTitle>
                         <FilterArea>
@@ -368,5 +448,27 @@ const CertificacaoInfo = styled.div`
         font-size: 14px;
         background-color: #495F96;
         padding: 6px;
+    }
+`
+
+const ExportContainer = styled.div`
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+`
+
+const ExportButton = styled.button`
+    background-color: #495F96;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #3a4a7a;
     }
 `
