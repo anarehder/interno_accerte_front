@@ -68,8 +68,6 @@ function CertificacoesListComponent() {
                     const gestorConf = response.data.filter(item => item.Funcionarios?.email?.toLowerCase() == user.mail?.toLowerCase());
                     if (gestorConf.length>0){
                         setAllowed(true);
-                    } else if (user.mail === 'daniel.garcia@accerte.com.br'){
-                        setAllowed(true);
                     }
                 } catch (error) {
                     console.error("Erro ao buscar informacoes de gestores:", error);
