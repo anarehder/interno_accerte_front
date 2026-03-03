@@ -88,7 +88,7 @@ function ChatIAComponent() {
                         <span>Olá</span>, como posso te ajudar?
                     </WelcomeBox>
                     <ChatButton onClick={() => setOpen(!open)}>
-                        <img src={avatarAccerte} alt="Abrir chat" style={{ width: '100%', height: '100%', borderRadius: 0, padding: 0, margin: 0, display: 'block' }} />
+                        <img src={avatarAccerte} alt="Abrir chat" style={{ width: '100%', height: '100%', borderRadius: 0, padding: 0, margin: 0, display: 'block', objectFit: 'cover', objectPosition: 'center', transform: 'scale(1.2)' }} />
                     </ChatButton>
                 </>
             }
@@ -191,6 +191,9 @@ const StartContainer = styled.div`
         height: 150px;
         width: 150px;
         margin: 0 auto;
+        border-radius: 50%;
+        border: 1px solid #001143;
+        margin-bottom: 10px;
     }
     a{
         // font-size: 12px;

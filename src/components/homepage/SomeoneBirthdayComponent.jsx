@@ -68,7 +68,8 @@ function SomeoneBirthdayComponent() {
         return (
             <Overlay>
             <BalloonAnimationComponent />
-            <CloseButton onClick={fecharPopup}>✖</CloseButton>
+            {/* <CloseButton onClick={fecharPopup}>✖</CloseButton> */}
+            
             <Modal>
                 <Title>🎉 Hoje é aniversário de alguém especial! 🎂</Title>
                 <Message>
@@ -82,6 +83,9 @@ function SomeoneBirthdayComponent() {
                 <EmailLink href={`mailto:${emailsAniversariantes}?subject=Feliz%20Aniversário`} target="_blank">
                     📧 Enviar Email de Parabéns
                 </EmailLink>
+                <CloseButton onClick={fecharPopup}>
+                    ✖ Fechar
+                </CloseButton>
             </Modal>
         </Overlay>
         );
@@ -118,27 +122,28 @@ const Modal = styled.div`
 `;
 
 const CloseButton = styled.button`
-  position: absolute;
-  top: calc(50% - 140px);
-  right: calc(50% - 270px);
-  background-color: white;
-  font-size: 20px;
-  padding: 7px;
+  margin-top: 15px;
+  padding: 12px 24px;
+  background: linear-gradient(to right, #FF455E, #cc3344);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  color: #FF455E;
-  border: 2px solid #FF455E;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 11;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  display: inline-block;
   
   &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    background: #FF455E;
-    color: white;
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 `;
 
