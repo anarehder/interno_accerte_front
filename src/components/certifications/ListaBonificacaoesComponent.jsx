@@ -38,8 +38,76 @@ function ListaBonificacoesComponent() {
         return acc;
     }, {});
 
+    const exportToCSV = () => {
+        const headers = ['Nome', 'I Total', 'I Mes Anterior', 'II', 'III', 'IV', 'V', 'Total Certificações', 'Valor Final'];
+        const rows = bonificacoes.map(b => [
+            `${b.nome} ${b.sobrenome}`,
+            b.I,
+            b.I_mes,
+            b.II,
+            b.III,
+            b.IV,
+            b.V,
+            b.Total,
+            Number((b.I_mes || 0) * (valoresPorNivel["I"] || 0) +
+                (b.II || 0) * (valoresPorNivel["II"] || 0) +
+                (b.III || 0) * (valoresPorNivel["III"] || 0) +
+                (b.IV || 0) * (valoresPorNivel["IV"] || 0) +
+                (b.V || 0) * (valoresPorNivel["V"] || 0)).toFixed(2)
+        ]);
+
+        let csvContent = headers.join(';') + '\n';
+        rows.forEach(row => {
+            csvContent += row.join(';') + '\n';
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `bonificacoes_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.click();
+    };
+
+    const exportToXML = () => {
+        let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<bonificacoes>\n';
+        
+        bonificacoes.forEach(b => {
+            const valorFinal = Number((b.I_mes || 0) * (valoresPorNivel["I"] || 0) +
+                (b.II || 0) * (valoresPorNivel["II"] || 0) +
+                (b.III || 0) * (valoresPorNivel["III"] || 0) +
+                (b.IV || 0) * (valoresPorNivel["IV"] || 0) +
+                (b.V || 0) * (valoresPorNivel["V"] || 0)).toFixed(2);
+
+            xmlContent += `  <funcionario>\n`;
+            xmlContent += `    <nome>${b.nome} ${b.sobrenome}</nome>\n`;
+            xmlContent += `    <i_total>${b.I}</i_total>\n`;
+            xmlContent += `    <i_mes_anterior>${b.I_mes}</i_mes_anterior>\n`;
+            xmlContent += `    <ii>${b.II}</ii>\n`;
+            xmlContent += `    <iii>${b.III}</iii>\n`;
+            xmlContent += `    <iv>${b.IV}</iv>\n`;
+            xmlContent += `    <v>${b.V}</v>\n`;
+            xmlContent += `    <total_certificacoes>${b.Total}</total_certificacoes>\n`;
+            xmlContent += `    <valor_final>${valorFinal}</valor_final>\n`;
+            xmlContent += `  </funcionario>\n`;
+        });
+
+        xmlContent += '</bonificacoes>';
+
+        const blob = new Blob([xmlContent], { type: 'application/xml;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `bonificacoes_${new Date().toISOString().slice(0, 10)}.xml`);
+        link.click();
+    };
+
     return (
         <PageContainer>
+            <ExportContainer>
+                <ExportButton onClick={exportToCSV}>Exportar CSV</ExportButton>
+                <ExportButton onClick={exportToXML}>Exportar XML</ExportButton>
+            </ExportContainer>
             <EmissorBlock>
                 <Titulo>
                     <h3>Nome</h3>
@@ -102,6 +170,28 @@ const PageContainer = styled.div`
     gap: 30px;
     margin: 0 auto;    
     margin-bottom: 30px;
+`
+
+const ExportContainer = styled.div`
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+`
+
+const ExportButton = styled.button`
+    background-color: #495F96;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #3a4a7a;
+    }
 `
 const EmissorBlock = styled.div`
     border: 2px solid gray;
