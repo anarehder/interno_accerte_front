@@ -15,6 +15,9 @@ function ListarFuncCertsAdminComponent() {
     const [updated, setUpdated] = useState(false);
     const [funcCertToEdit, setFuncCertToEdit] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [statusFilter, setStatusFilter] = useState('');
+    const [levelFilter, setLevelFilter] = useState('');
+    const [nameFilter, setNameFilter] = useState('');
 
     function formatarDataBR(dataIso) {
         const data = new Date(dataIso);
@@ -70,6 +73,46 @@ function ListarFuncCertsAdminComponent() {
         setFuncCertToEdit(null);
     };
 
+    const handleStatusFilterClick = (filter) => {
+        setStatusFilter((prevFilter) => (prevFilter === filter ? '' : filter));
+    };
+
+    const handleLevelFilterClick = (filter) => {
+        setLevelFilter((prevFilter) => (prevFilter === filter ? '' : filter));
+    };
+
+    const normalizeLevel = (level) => {
+        if (level === null || level === undefined) return '';
+        const levelText = String(level).trim().toUpperCase();
+        const map = { '1': 'I', '2': 'II', '3': 'III', '4': 'IV', '5': 'V' };
+
+        if (map[levelText]) return map[levelText];
+        if (['I', 'II', 'III', 'IV', 'V'].includes(levelText)) return levelText;
+
+        const onlyNumber = Number(levelText.replace(/\D/g, ''));
+        if (map[String(onlyNumber)]) return map[String(onlyNumber)];
+
+        return levelText;
+    };
+
+    const matchesStatusFilter = (certification) => {
+        if (statusFilter === 'valida') return certification.validaPCA === true;
+        if (statusFilter === 'invalida') return certification.validaPCA === false;
+        return true;
+    };
+
+    const matchesLevelFilter = (certification) => {
+        if (!levelFilter) return true;
+        const certLevel = normalizeLevel(certification?.Certificacoes?.NiveisBonificacao?.nivel);
+        return certLevel === levelFilter;
+    };
+
+    const matchesNameFilter = (certification) => {
+        const certName = certification?.Certificacoes?.nome?.toLowerCase() || '';
+        const searchedName = nameFilter.toLowerCase().trim();
+        return certName.includes(searchedName);
+    };
+
     return (
         <PageContainer>
             {showEditModal && funcCertToEdit ? (
@@ -83,6 +126,36 @@ function ListarFuncCertsAdminComponent() {
                 />
             ) : (
                 <>
+                    <FilterContainer>
+                        <FilterTitle>Filtros:</FilterTitle>
+                        <FilterArea>
+                            <FilterButton
+                                $wide
+                                $active={statusFilter === 'valida'}
+                                onClick={() => handleStatusFilterClick('valida')}
+                            >
+                                Válida PCA
+                            </FilterButton>
+                            <FilterButton
+                                $wide
+                                $active={statusFilter === 'invalida'}
+                                onClick={() => handleStatusFilterClick('invalida')}
+                            >
+                                Inválida PCA
+                            </FilterButton>
+                            <FilterButton $active={levelFilter === 'I'} onClick={() => handleLevelFilterClick('I')}>I</FilterButton>
+                            <FilterButton $active={levelFilter === 'II'} onClick={() => handleLevelFilterClick('II')}>II</FilterButton>
+                            <FilterButton $active={levelFilter === 'III'} onClick={() => handleLevelFilterClick('III')}>III</FilterButton>
+                            <FilterButton $active={levelFilter === 'IV'} onClick={() => handleLevelFilterClick('IV')}>IV</FilterButton>
+                            <FilterButton $active={levelFilter === 'V'} onClick={() => handleLevelFilterClick('V')}>V</FilterButton>
+                            <NameFilterInput
+                                type="text"
+                                placeholder="Filtrar por nome da certificação"
+                                value={nameFilter}
+                                onChange={(e) => setNameFilter(e.target.value)}
+                            />
+                        </FilterArea>
+                    </FilterContainer>
                     <EmissorBlock>
                         <Titulo>
                             <h3>Funcionário</h3>
@@ -90,6 +163,7 @@ function ListarFuncCertsAdminComponent() {
                         <Certificacoes>
                             <CertificacaoInfo>
                                 <div>Nome Certificação</div>
+                                <div>Ativa PCA</div>
                                 <div>Emissão</div>
                                 <div>Validade</div>
                                 <div>Válida PCA</div>
@@ -104,7 +178,12 @@ function ListarFuncCertsAdminComponent() {
 
                     </EmissorBlock>
                     {funcCerts.length > 0 && funcionarios.map((f) => {
-                        const certByFunc = funcCerts.filter(c => c.funcionarioId === f.id);
+                        const certByFunc = funcCerts
+                            .filter(c => c.funcionarioId === f.id)
+                            .filter(matchesStatusFilter)
+                            .filter(matchesLevelFilter)
+                            .filter(matchesNameFilter);
+
                         if (certByFunc.length === 0) return null;
                         // Ordena: válidas primeiro, inválidas no final
                         const certOrdenadas = certByFunc.sort((a, b) => {
@@ -119,8 +198,9 @@ function ListarFuncCertsAdminComponent() {
                                 </Titulo>
                                 <Certificacoes>
                                     {certOrdenadas.map((c) => (
-                                        <CertificacaoInfo key={c.id} $invalida={!c.validaPCA}>
+                                        <CertificacaoInfo key={c.id} $invalida={!c.validaPCA} $ativaCert={c.Certificacoes?.ativaPCA}>
                                             <div>{c.Certificacoes?.nome}</div>
+                                            <div>{c.Certificacoes?.ativaPCA ? "Ativa" : "Inativa"}</div>
                                             <div>{formatarDataBR(c.emissao)}</div>
                                             <div>{c.validade? formatarDataBR(c.validade) : "Não expira"}</div>
                                             <div>{c.validaPCA ? "Válida" : "Inválida"}</div>
@@ -159,6 +239,50 @@ const PageContainer = styled.div`
 const EmissorBlock = styled.div`
     border: 2px solid gray;
 `
+
+const FilterContainer = styled.div`
+    border: 1px solid #9ca3af;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 0 auto 16px;
+    background-color: #f9fafb;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+`
+
+const FilterTitle = styled.div`
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+`
+
+const FilterArea = styled.div`
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+`
+
+const FilterButton = styled.button`
+    background-color: ${({ $active }) => ($active ? '#495F96' : '#e5e7eb')};
+    color: ${({ $active }) => ($active ? 'white' : '#374151')};
+    border: 1px solid #9ca3af;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    width: ${({ $wide }) => ($wide ? '110px' : '50px')};
+    justify-content: center;
+`
+
+const NameFilterInput = styled.input`
+    border: 1px solid #9ca3af;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    width: 280px;
+`
+
 const Titulo = styled.div`
     align-items: center;
     justify-content: center;
@@ -188,6 +312,7 @@ const CertificacaoInfo = styled.div`
     height: auto;
     padding: 12px 0;
     
+    
     &:nth-child(odd) {
         background-color: #ffffff;
     }
@@ -197,15 +322,29 @@ const CertificacaoInfo = styled.div`
     }
     
     ${props => props.$invalida && `
-        div:nth-child(4) {
+        div:nth-child(5) {
             color: #d32f2f;
             font-weight: 500;
         }
     `}
     
     ${props => !props.$invalida && props.$invalida !== undefined && `
-        div:nth-child(4) {
+        div:nth-child(5) {
             color: #2e7d32;
+            font-weight: 500;
+        }
+    `}
+
+    ${props => props.$ativaCert && `
+        div:nth-child(2) {
+            color: #2e7d32;
+            font-weight: 500;
+        }
+    `}
+
+    ${props => !props.$ativaCert && props.$ativaCert !== undefined && `
+        div:nth-child(2) {
+            color: #d32f2f;
             font-weight: 500;
         }
     `}
@@ -217,32 +356,36 @@ const CertificacaoInfo = styled.div`
         justify-content: center;
     }
     div{
-        width: 100px;
+        width: 95px;
         align-items: center;
         justify-content: center;
         text-align: center;
         height: 32px;
-        // border-left: 1px solid red;
+        // border-right: 0.5px solid red;
     }
     div:nth-child(1){
-        width: 410px;
+        width: 350px;
         justify-content: flex-start;
         text-align: left;
+        padding-right: 5px;
     }
-    div:nth-child(4){
-        width: 90px;
+    div:nth-child(2){
+        width: 70px;
     }
     div:nth-child(5){
+        width: 75px;
+    }
+    div:nth-child(6){
         width: 60px;
         text-align: center;
     }
-    div:nth-child(7){
+    div:nth-child(8){
         width: 50px;
     }
-    div:nth-child(9){
+    div:nth-child(10){
         width: 70px;
     }
-    div:nth-child(10){
+    div:nth-child(11){
         width: 75px;
     }
     button{
