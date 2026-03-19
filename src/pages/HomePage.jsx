@@ -55,7 +55,7 @@ const HomePage = () => {
                     <BirthdayPopUpComponent />
                     <SomeoneBirthdayComponent />
                     <ComunicadoPopUpComponent setUpdated={setUpdated}/>
-                    <ChatIAComponent />
+                    {/* <ChatIAComponent /> */}
                     <HomePageHeaderComponent notificacoes={notificacoes}/>
                     <MenuBarHomeComponent searchBar={searchBar} setSearchBar={setSearchBar} setFilteredContacts={setFilteredContacts} />
                     <HumorComponent />
