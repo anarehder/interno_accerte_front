@@ -10,13 +10,6 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
     const { user, dados } = useAuth();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1700);
-    const indicAiAllowed = [
-        'ana.rehder@accerte.com.br',
-        'eduardo.mendes@accerte.com.br',
-        'thiago.martins@accerte.com.br',
-        'antonio.neto@accerte.com.br',
-    ];
-    const canSeeIndicAi = indicAiAllowed.includes((user?.mail || '').toLowerCase());
     const searchAlwaysExpanded = isLargeScreen;
 
     useEffect(() => {
@@ -30,7 +23,7 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
         handleResize(); // Chamar uma vez no mount
 
         return () => window.removeEventListener('resize', handleResize);
-    }, [canSeeIndicAi]);
+    }, []);
 
     const handleSearch = (e) => {
         const value = e.target.value;
@@ -145,11 +138,9 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 </MenuItem>
                 </ItemsBar>
                 <ActionsBar>
-                    {canSeeIndicAi && (
                         <IndicAIButton href="https://accerte.com.br/indicai-interno/" target="_blank" rel="noopener noreferrer">
                             IndicAI
                         </IndicAIButton>
-                    )}
                     <SearchItem $isOpen={isSearchOpen || searchAlwaysExpanded} $isLargeScreen={searchAlwaysExpanded}>
                         <form onSubmit={handleSearchSubmit}>
                         {(isSearchOpen || searchAlwaysExpanded) && (

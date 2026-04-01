@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
 import Banner1 from "../../assets/basic/banner-test.jpg"
+import BannerIndicai from "../../assets/basic/BannerCerts.jpeg"
 import BannerSesc from "../../assets/basic/BannerSesc.png"
 
 function BannerSlideComponent() {
     const { dados } = useAuth();
     const images = dados?.banners?.length > 0 ? dados.banners : [{ name: "Default", url: Banner1 }];
     const [currentIndex, setCurrentIndex] = useState(0);
-    const imagesFull = [{ name: "Banner Sesc", url: BannerSesc }, ...images];
+    const imagesFull = [{ name: "Banner IndicAI", url: BannerIndicai, externo: 'https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Pol%C3%ADticas/Pol%C3%ADtica%20do%20Programa%20de%20Certifica%C3%A7%C3%B5es%20Accerte.pdf' }, { name: "Banner Sesc", url: BannerSesc, externo:'https://www.sescgo.com.br/o-sesc/credencial-sesc/a-credencial/' }, ...images];
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -31,20 +32,25 @@ function BannerSlideComponent() {
     <SliderContainer>
       <PrevNextButton onClick={prevSlide}>&#10094;</PrevNextButton>
       <SlideWrapper style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
-        <Slide>
-          <>
-            {/* <a href={'https://www.sescgo.com.br/o-sesc/credencial-sesc/a-credencial/'} target={"_blank"}>
-              <SlideImage src={BannerSesc} alt={"Banner Sesc"} />
-            </a> */}
             {imagesFull.map((image, index) => (
-              <a href={image.url} target={"_blank"} key={index}>
+              <Slide key={index}>
+                <BannerLink href={image.externo} target={"_blank"} rel="noreferrer">
                 <SlideImage src={image.url} alt={`Slide ${image.name}`} />
-              </a>
+                </BannerLink>
+              </Slide>
             ))}
-          </>
-        </Slide>
       </SlideWrapper>
       <PrevNextButton onClick={nextSlide}>&#10095;</PrevNextButton>
+      <DotsContainer>
+        {imagesFull.map((_, index) => (
+          <DotButton
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            $active={index === currentIndex}
+            aria-label={`Ir para banner ${index + 1}`}
+          />
+        ))}
+      </DotsContainer>
     </SliderContainer>
   );
 };
@@ -64,31 +70,25 @@ const SliderContainer = styled.div`
 const SlideWrapper = styled.div`
   display: flex;
   transition: transform 0.5s ease-in-out;
-  width: 100%; 
-  a{
-    margin: 0;
-    padding:0;
-  }
+  width: 100%;
+  height: 100%;
 `
 
 const Slide = styled.div` 
   min-width: 100%;
-  min-height: 100%;
+  height: 100%;
   box-sizing: border-box;
-  a{
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    flex-shrink: 0;
-    border-radius: 10px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
-const SlideLink = styled.a`
+const BannerLink = styled.a`
+  width: 100%;
+  height: 100%;
   display: flex;
-  transition: transform 0.5s ease-in-out;
-  width: 300%;
+  border-radius: 10px;
+  overflow: hidden;
 `;
 
 const SlideImage = styled.img`
@@ -121,5 +121,26 @@ const PrevNextButton = styled.button`
     background: rgba(0, 0, 0, 0.8);
   }
 
-  
+`;
+
+const DotsContainer = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 6;
+`;
+
+const DotButton = styled.button`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: ${({ $active }) => ($active ? "#002367" : "rgba(88, 84, 84, 0.5)")};
+  transition: background 0.2s ease;
 `;

@@ -264,7 +264,8 @@ export async function getSharePointData(instance, accounts) {
   
   const fileList9 = files9.value.map(file => ({
     name: file.name,
-    url: file.webUrl
+    url: file.webUrl,
+    externo: file.webUrl, 
   }));
 
   const docs = await fetch(
