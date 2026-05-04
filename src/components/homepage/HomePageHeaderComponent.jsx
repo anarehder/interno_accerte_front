@@ -3,7 +3,7 @@ import header01 from "../../assets/header/01.png";
 import header02 from "../../assets/header/02.png";
 import header03 from "../../assets/header/03.png";
 import header04 from "../../assets/header/04.png";
-import header05 from "../../assets/header/00.png";
+import header05 from "../../assets/header/05.png";
 import header06 from "../../assets/header/00.png";
 import header07 from "../../assets/header/00.png";
 import header08 from "../../assets/header/00.png";
