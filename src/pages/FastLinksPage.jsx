@@ -27,7 +27,7 @@ const FastLinksPage = () => {
         Android: AndroidLogo,
         Caju: CajuLogo,
         Onfly: OnflyLogo,
-        Gympass: WellhubLogo,
+        Wellhub: WellhubLogo,
         GymRats: GymratsLogo,
         MarqPonto: MarqpontoLogo,
         Clicksign: ClickSignLogo,
@@ -40,7 +40,8 @@ const FastLinksPage = () => {
     const fixedLinks = [
         {Sesc: "https://www.sescgo.com.br/o-sesc/credencial-sesc/a-credencial/"},
         {Fiibo: "https://fiibo.com.br/"},
-        {TotalPass: "https://cloud.info.totalpass.com.br/aplicativo-totalpass?_gl=1*14amgg9*_gcl_au*MzA0NzMwMTAzLjE3NjYwODkwNzc.*_ga*NzE4Mzc1ODE0LjE3NjYwODkwNzc.*_ga_2WNY1K3W2N*czE3NjYwODkwNzckbzEkZzAkdDE3NjYwODkwNzckajYwJGwwJGgw&_ga=2.221617311.649053578.1766089077-718375814.1766089077"},
+        {Wellhub: "https://signup.gympass.com/company-search"},
+        // {TotalPass: "https://cloud.info.totalpass.com.br/aplicativo-totalpass?_gl=1*14amgg9*_gcl_au*MzA0NzMwMTAzLjE3NjYwODkwNzc.*_ga*NzE4Mzc1ODE0LjE3NjYwODkwNzc.*_ga_2WNY1K3W2N*czE3NjYwODkwNzckbzEkZzAkdDE3NjYwODkwNzckajYwJGwwJGgw&_ga=2.221617311.649053578.1766089077-718375814.1766089077"},
         {Caju: [
             {Apple: "https://apps.apple.com/br/app/caju-benef%C3%ADcios-por-inteiro/id1483671427" },
             {Android: "https://play.google.com/store/apps/details?id=com.caju.employeeApp&pcampaignid=web_share" }
