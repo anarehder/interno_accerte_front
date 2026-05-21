@@ -90,7 +90,7 @@ function CriarVagaPage({setSelectedItem}) {
         fetchScale();
 
     }, [user]);
-
+    // console.log(newReq);
     const handleSubmit = async (e) => {
         e.preventDefault(); // para não recarregar a página
     
@@ -102,8 +102,8 @@ function CriarVagaPage({setSelectedItem}) {
             console.log(body);
             await apiService.createVagas(body);
             alert('Vaga criada com sucesso!');
-            setNewReq(reqDefault);
-            setSelectedItem("");
+            // setNewReq(reqDefault);
+            window.location.reload();
         } catch (error) {
             console.error('Erro ao criar vaga:', error);
             alert('Possível erro ao criar vaga no servidor. Verifique se a vaga está na sua lista de vagas antes de tentar novamente.');
