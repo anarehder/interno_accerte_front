@@ -4,7 +4,7 @@ import header02 from "../../assets/header/02.png";
 import header03 from "../../assets/header/03.png";
 import header04 from "../../assets/header/04.png";
 import header05 from "../../assets/header/05.png";
-import header06 from "../../assets/header/00.png";
+import header06 from "../../assets/header/06.png";
 import header07 from "../../assets/header/00.png";
 import header08 from "../../assets/header/00.png";
 import header09 from "../../assets/header/00.png";
@@ -61,7 +61,7 @@ function HomePageHeaderComponent({notificacoes}) {
 
     function getTextoColor() {
         const mes = new Date().getMonth() + 1;
-        return mes === 1 ? '#082764' : 'white';
+        return [1, 6].includes(mes) ? '#082764' : 'white';
     }
 
     const textoColor = getTextoColor();
