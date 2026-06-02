@@ -6,6 +6,7 @@ import apiService from '../../services/apiService';
 import { GrValidate } from "react-icons/gr";
 import { ImBlocked } from "react-icons/im";
 import EditarFuncCertComponent from './EditarFuncCertComponent';
+import * as XLSX from 'xlsx';
 
 
 function ListarFuncCertsAdminComponent() {
@@ -209,6 +210,66 @@ function ListarFuncCertsAdminComponent() {
         link.click();
     };
 
+    const exportToXLSX = () => {
+        const data = [];
+
+        funcionarios.forEach(f => {
+            const certByFunc = funcCerts
+                .filter(c => c.funcionarioId === f.id)
+                .filter(matchesStatusFilter)
+                .filter(matchesLevelFilter)
+                .filter(matchesNameFilter)
+                .filter(matchesAtivaPCAFilter);
+
+            certByFunc.forEach(c => {
+                data.push({
+                    Funcionario: `${f.nome} ${f.sobrenome}`,
+                    'Nome Certificação': c.Certificacoes?.nome || '',
+                    'Ativa PCA': c.Certificacoes?.ativaPCA ? 'Ativa' : 'Inativa',
+                    Emissao: formatarDataBR(c.emissao),
+                    Validade: c.validade
+                        ? formatarDataBR(c.validade)
+                        : 'Não expira',
+                    'Válida PCA': c.validaPCA ? 'Válida' : 'Inválida',
+                    Emissor: c.Certificacoes?.Emissor?.nome || '',
+                    Nivel: c.Certificacoes?.NiveisBonificacao?.nivel || '',
+                    Valor: Number(
+                        c.Certificacoes?.NiveisBonificacao?.valor || 0
+                    ).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    })
+                });
+            });
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+
+        worksheet['!cols'] = [
+            { wch: 30 }, // Funcionario
+            { wch: 40 }, // Certificação
+            { wch: 12 }, // Ativa PCA
+            { wch: 15 }, // Emissao
+            { wch: 15 }, // Validade
+            { wch: 12 }, // Valida PCA
+            { wch: 25 }, // Emissor
+            { wch: 12 }, // Nivel
+            { wch: 15 }  // Valor
+        ];
+
+        const workbook = XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            'Certificações Funcionários'
+        );
+
+        XLSX.writeFile(
+            workbook,
+            `certificacoes_func_${new Date().toISOString().slice(0, 10)}.xlsx`
+        );
+    };
     return (
         <PageContainer>
             {showEditModal && funcCertToEdit ? (
@@ -225,6 +286,7 @@ function ListarFuncCertsAdminComponent() {
                     <ExportContainer>
                         <ExportButton onClick={exportToCSV}>Exportar CSV</ExportButton>
                         <ExportButton onClick={exportToXML}>Exportar XML</ExportButton>
+                        <ExportButton onClick={exportToXLSX}>Exportar Excel</ExportButton>
                     </ExportContainer>
                     <FilterContainer>
                         <FilterTitle>Filtros:</FilterTitle>

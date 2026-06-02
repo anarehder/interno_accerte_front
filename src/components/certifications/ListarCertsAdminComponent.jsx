@@ -4,6 +4,7 @@ import apiServiceCertificacoes from '../../services/apiServiceCertificacoes';
 import { useAuth } from '../../contexts/AuthContext';
 import { FaRegTrashAlt } from "react-icons/fa";
 import EditarCertificacaoComponent from './EditarCertificacaoComponent';
+import * as XLSX from 'xlsx';
 
 function ListarCertsAdminComponent() {
     const { user } = useAuth();
@@ -178,6 +179,55 @@ function ListarCertsAdminComponent() {
         link.click();
     };
 
+    const exportToXLSX = () => {
+        const data = [];
+
+        emissores.forEach(e => {
+            const certByEmissor = certifications
+                .filter(c => c.emissorId === e.id)
+                .filter(matchesFilter)
+                .filter(matchesNameFilter);
+
+            certByEmissor.forEach(c => {
+                data.push({
+                    Emissor: e.nome,
+                    Nome: c.nome,
+                    Nivel: niveis[c.nivelId - 1]
+                        ? niveis[c.nivelId - 1].nivel
+                        : c.nivelId,
+                    Ativa: c.ativaPCA ? 'Ativa' : 'Inativa',
+                    Bloqueada: c.bloqueada ? 'Bloqueada' : 'Liberada',
+                    Limite: c.limite,
+                    'Cert. Válidas': c.FuncionarioCerts.length
+                });
+            });
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+
+        worksheet['!cols'] = [
+            { wch: 25 }, // Emissor
+            { wch: 35 }, // Nome
+            { wch: 15 }, // Nivel
+            { wch: 12 }, // Ativa
+            { wch: 12 }, // Bloqueada
+            { wch: 10 }, // Limite
+            { wch: 15 }  // Cert. Válidas
+        ];
+
+        const workbook = XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            'Certificações'
+        );
+
+        XLSX.writeFile(
+            workbook,
+            `certificacoes_${new Date().toISOString().slice(0, 10)}.xlsx`
+        );
+    };
     return (
         <PageContainer>
             {showEditModal && certToEdit ?
@@ -196,6 +246,8 @@ function ListarCertsAdminComponent() {
                     <ExportContainer>
                         <ExportButton onClick={exportToCSV}>Exportar CSV</ExportButton>
                         <ExportButton onClick={exportToXML}>Exportar XML</ExportButton>
+                        <ExportButton onClick={exportToXLSX}>Exportar Excel</ExportButton>
+
                     </ExportContainer>
                     <FilterContainer>
                         <FilterTitle>Filtros:</FilterTitle>

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import apiServiceCertificacoes from '../../services/apiServiceCertificacoes';
 import { useAuth } from '../../contexts/AuthContext';
+import * as XLSX from 'xlsx';
 
 function ListaBonificacoesComponent() {
     const { user } = useAuth();
@@ -71,7 +72,7 @@ function ListaBonificacoesComponent() {
 
     const exportToXML = () => {
         let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<bonificacoes>\n';
-        
+
         bonificacoes.forEach(b => {
             const valorFinal = Number((b.I_mes || 0) * (valoresPorNivel["I"] || 0) +
                 (b.II || 0) * (valoresPorNivel["II"] || 0) +
@@ -102,11 +103,62 @@ function ListaBonificacoesComponent() {
         link.click();
     };
 
+    const exportToXLSX = () => {
+    const data = bonificacoes.map(b => ({
+        Nome: `${b.nome} ${b.sobrenome}`,
+        'I Total': b.I,
+        'I Mês Anterior': b.I_mes,
+        II: b.II,
+        III: b.III,
+        IV: b.IV,
+        V: b.V,
+        'Total Certificações': b.Total,
+        'Valor Final': (
+            (b.I_mes || 0) * (valoresPorNivel["I"] || 0) +
+            (b.II || 0) * (valoresPorNivel["II"] || 0) +
+            (b.III || 0) * (valoresPorNivel["III"] || 0) +
+            (b.IV || 0) * (valoresPorNivel["IV"] || 0) +
+            (b.V || 0) * (valoresPorNivel["V"] || 0)
+        ).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        })
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    worksheet['!cols'] = [
+        { wch: 30 }, // Nome
+        { wch: 10 },
+        { wch: 15 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 20 },
+        { wch: 15 }
+    ];
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        'Bonificações'
+    );
+
+    XLSX.writeFile(
+        workbook,
+        `bonificacoes_${new Date().toISOString().slice(0, 10)}.xlsx`
+    );
+        
+    };
     return (
         <PageContainer>
             <ExportContainer>
                 <ExportButton onClick={exportToCSV}>Exportar CSV</ExportButton>
                 <ExportButton onClick={exportToXML}>Exportar XML</ExportButton>
+                <ExportButton onClick={exportToXLSX}>Exportar Excel</ExportButton>
             </ExportContainer>
             <EmissorBlock>
                 <Titulo>

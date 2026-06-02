@@ -79,7 +79,7 @@ const HomePage = () => {
                                     <Link to="/compliance">COMPLIANCE </Link>
                                 </BannerButton>
                                 <BannerButton>
-                                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/ElJz5fHRZnZLtQKGIgm4FGoBP_6DfkYLbh62iK5sdJF5YA?e=UINlKh" target="_blank">
+                                    <a href="https://accerte.sharepoint.com/:f:/s/AccerteTecnologiadaInformaoLtda/IgBSc-Xx0WZ2S7UChiIJuBRqAR-dZPxmqoqSxnkNVz5D8Co?e=4pNyFg" target="_blank">
                                         ESCRITÓRIO DE PROCESSOS
                                     </a>
                                 </BannerButton>
