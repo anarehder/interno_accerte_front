@@ -110,6 +110,7 @@ const FastLinksPage = () => {
                                 </button>
                             </InfoButton>
                         </Card>
+                        
                         {documents &&
                             <SmallList>
                                 {dados?.docs?.map((file) => (
@@ -120,7 +121,11 @@ const FastLinksPage = () => {
                                 ))}
                             </SmallList>
                         }
-                        <Card >
+                        <Card>
+                            <Info><span> Agendar Sala de Reunião</span></Info>
+                            <InfoButton><button><a href="https://172.16.255.61/" target="blank"> Acessar </a></button></InfoButton>
+                        </Card>
+                        <Card>
                             <Info><span>Fundos de Tela</span></Info>
                             <InfoButton>
                                 <button onClick={() => setWallpaper(!wallpaper)}>

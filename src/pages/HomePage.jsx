@@ -70,6 +70,11 @@ const HomePage = () => {
                             <BannerSlideComponent />
                             <BannerMenu>
                                 <BannerButton>
+                                    <a href="https://172.16.255.61/" target="_blank">
+                                        AGENDAR SALA DE REUNIÃO
+                                    </a>
+                                </BannerButton>
+                                <BannerButton>
                                     <Link to="/assinatura">ASSINATURA DE E-MAIL</Link>
                                 </BannerButton>
                                 <BannerButton>
