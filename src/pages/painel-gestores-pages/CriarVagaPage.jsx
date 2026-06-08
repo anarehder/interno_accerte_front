@@ -93,20 +93,29 @@ function CriarVagaPage({setSelectedItem}) {
     // console.log(newReq);
     const handleSubmit = async (e) => {
         e.preventDefault(); // para não recarregar a página
-    
+
         try {
+            if (newReq.tipoContratoId === 0) {
+                alert("Selecione o tipo de contrato");
+                return
+            }
+            if (newReq.jornadaId === 0) {
+                alert("Selecione o tipo de jornada");
+                return
+            }
             const body = {
                 adminEmail: user.mail,
                 vaga: newReq
             }
             console.log(body);
+            
             await apiService.createVagas(body);
             alert('Vaga criada com sucesso!');
             // setNewReq(reqDefault);
             window.location.reload();
         } catch (error) {
-            console.error('Erro ao criar vaga:', error);
-            alert('Possível erro ao criar vaga no servidor. Verifique se a vaga está na sua lista de vagas antes de tentar novamente.');
+            // console.error('Erro ao criar vaga:', error);
+            alert(`Possível erro ao criar vaga no servidor. Verifique se a vaga está na sua lista de vagas antes de tentar novamente. Detalhe: ${error.response.data.details.length > 0 && error.response.data.details[0]}, ${error.response.data.name}`);
         }
     };
 
