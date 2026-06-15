@@ -20,7 +20,7 @@ function ScaleTableComponent({type}) {
     const [updatedScale, setUpdatedScale] = useState(false);
     const [areas, setAreas] = useState([]);
 
-    const cores = { "Home": "blue", "Presencial - GYN": "green", "Presencial - BSB": "green","Presencial": "green", "Férias - CLT": "orange", "Recesso - Estágio": "orange", "Feriado": "#f94860", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantão": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Viagem": "#fc7e00", "Licença Maternidade": "#f94860", "Licença Paternidade": "#f94860", "Day OFF":"purple", "Outros": "black" };
+    const cores = { "Home": "blue", "Home - Manhã ": "blue", "Home - Tarde": "blue", "Presencial - GYN": "green", "Presencial - BSB": "green","Presencial": "green", "Férias - CLT": "orange", "Recesso - Estágio": "orange", "Feriado": "#f94860", "Pausa - PJ": "orange", "Folga": "purple", "Banco de Horas": "purple", "Plantão": "gray", "Trabalho Remoto": "black", "Trabalho Externo": "black", "Viagem": "#fc7e00", "Licença Maternidade": "#f94860", "Licença Paternidade": "#f94860", "Day OFF":"purple", "Outros": "black" };
 
     useEffect(() => {
         if (!dados) return;
