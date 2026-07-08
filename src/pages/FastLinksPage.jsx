@@ -7,6 +7,7 @@ import CajuLogo from "../assets/logos-parceiros/caju.png";  // Substitua pelos c
 import OnflyLogo from "../assets/logos-parceiros/onfly.png";  // Substitua pelos caminhos corretos
 import AccerteConnect from "../assets/logos-parceiros/accerte-connect-logo.png";
 import AccerteConnect2 from "../assets/logos-parceiros/accerte-connect-2-logo.png";
+import AccerteConnect3 from "../assets/logos-parceiros/accerte-connect-3-logo.png";
 import GymratsLogo from "../assets/logos-parceiros/gymrats.png"; 
 import MarqpontoLogo from "../assets/logos-parceiros/marq.png"; 
 import ClickSignLogo from "../assets/logos-parceiros/clicksign.png"; 
@@ -22,6 +23,8 @@ const FastLinksPage = () => {
     const [documents, setDocuments] = useState(false);
     const [acConnect1, setAcConnect1] = useState(false);
     const [acConnect2, setAcConnect2] = useState(false);
+    const [acConnect3, setAcConnect3] = useState(false);
+
     const imageMap = {
         Apple: AppleLogo,
         Android: AndroidLogo,
@@ -169,7 +172,7 @@ const FastLinksPage = () => {
                             </SmallList>
                         }
                         <Card >
-                            <Info><img src={AccerteConnect2} alt={"Accerte Connect 2"} /></Info>
+                            <Info><img src={AccerteConnect2} alt={"Accerte Connect 2025.2"} /></Info>
                             <InfoButton>
                                 <button onClick={() => setAcConnect2(!acConnect2)}>
                                     {acConnect2 ? "Ocultar" : "Exibir"}
@@ -181,6 +184,24 @@ const FastLinksPage = () => {
                                 {dados?.accerteconnect2?.map((file) => (
                                     <Card key={file.url}>
                                         <Info>{file.name.slice(0, -4)}</Info>
+                                        <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
+                                    </Card>
+                                ))}
+                            </SmallList>
+                        }
+                        <Card >
+                            <Info><img src={AccerteConnect3} alt={"Accerte Connect 2026.1"} /></Info>
+                            <InfoButton>
+                                <button onClick={() => setAcConnect3(!acConnect3)}>
+                                    {acConnect3 ? "Ocultar" : "Exibir"}
+                                </button>
+                            </InfoButton>
+                        </Card>
+                        {acConnect3 &&
+                            <SmallList>
+                                {dados?.accerteconnect3?.map((file) => (
+                                    <Card key={file.url}>
+                                        <Info>{file.name.slice(0, -5)}</Info>
                                         <InfoButton><button><a href={file.url} target="_blank"> Acessar </a></button></InfoButton>
                                     </Card>
                                 ))}
