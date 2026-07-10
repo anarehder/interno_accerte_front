@@ -6,7 +6,7 @@ import apiService from "../../services/apiService";
 function EditarUsuarioComponent({info, setUpdated}){
     const { user } = useAuth();
     const [selectedFunc, setSelectedFunc] = useState(null);
-    const [form, setForm] = useState({ nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario: "", areaId: "", jornadaId: "", cargo: "", localização: "", entrada: "" });
+    const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager: false, telefone: "" });
 
     const handleSelect = (id) => {
         const funcionario = info.listaFuncionarios.filter((f) => f.id === Number(id));
@@ -39,14 +39,17 @@ function EditarUsuarioComponent({info, setUpdated}){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.nome || !form.sobrenome || !form.email || !form.tipoContratoId || !form.admissao || !form.aniversario || !form.areaId || !form.jornadaId || !form.cargo) {
+
+        if (!form.nome || !form.sobrenome || !form.email || !form.tipoContratoId || !form.admissao || !form.aniversario || !form.areaId || !form.jornadaId || !form.cargo || !form.telefone) {
             alert("Todos os campos obrigatórios devem ser preenchidos.");
             return;
-        }
+        };
+        
         const formComDatasFormatadas = {
             ...form,
             admissao: form.admissao ? new Date(form.admissao).toISOString() : "",
             demissao: form.demissao ? new Date(form.demissao).toISOString() : null,
+            nivel: form.nivel ? form.nivel : null,
             entrada: form.entrada ? new Date(form.entrada).toISOString() : null,
             aniversario: form.aniversario ? new Date(form.aniversario).toISOString() : "",
         };
@@ -67,7 +70,7 @@ function EditarUsuarioComponent({info, setUpdated}){
             const response = await apiService.editUser(body);
             if (response.status === 200) {
                 alert("Usuário editado com sucesso!");
-                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localização: "", entrada: "" });
+                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager:false, telefone: "" });
                 setSelectedFunc(null);
                 setUpdated(true);
             }
@@ -84,10 +87,10 @@ function EditarUsuarioComponent({info, setUpdated}){
                     <Select onChange={(e) => handleSelect(e.target.value)}>
                         <option value="">Escolha um funcionário para editar</option>
                         {info.listaFuncionarios.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                    {item.nome} {item.sobrenome}
-                                </option>
-                            ))}
+                            <option key={item.id} value={item.id}>
+                                {item.nome} {item.sobrenome}
+                            </option>
+                        ))}
                     </Select>
                     {selectedFunc && (
                         <>
@@ -136,6 +139,24 @@ function EditarUsuarioComponent({info, setUpdated}){
                                     type="text"
                                     id="cargo"
                                     value={form.cargo}
+                                    onChange={handleForm}
+                                />
+                            </div>
+                            <div>
+                                <Label>Nivel</Label>
+                                <Input
+                                    type="text"
+                                    id="nivel"
+                                    value={form.nivel}
+                                    onChange={handleForm}
+                                />
+                            </div>
+                            <div>
+                                <Label>Telefone</Label>
+                                <Input
+                                    type="text"
+                                    id="telefone"
+                                    value={form.telefone}
                                     onChange={handleForm}
                                 />
                             </div>
@@ -205,6 +226,14 @@ function EditarUsuarioComponent({info, setUpdated}){
                                     value={form.aniversario?.slice(0, 10)}
                                     onChange={handleForm}
                                 />
+                            </div>
+                            <div>
+                                <Label>É Gestor?</Label>
+                                <Select id="isManager" value={form.isManager} onChange={handleForm}>
+                                    <option value="">Selecione</option>
+                                    <option value={true}>Sim</option>
+                                    <option value={false}>Não</option>
+                                </Select>
                             </div>
                             <div>
                                 <Label>Administrador da Intranet?</Label>

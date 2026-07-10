@@ -8,7 +8,7 @@ function CriarUsuarioComponent({info, setUpdated}){
     const { user, dados } = useAuth();
     const agenda = dados?.agenda;
     const [selectedFunc, setSelectedFunc] = useState(null);
-    const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "" });
+    const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager:false, telefone: "" });
 
     const handleSelect = (email) => {
       const funcionario = agenda.find((f) => f.mail === email);
@@ -37,7 +37,7 @@ function CriarUsuarioComponent({info, setUpdated}){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.nome || !form.sobrenome || !form.email || !form.tipoContratoId || !form.admissao || !form.aniversario || !form.areaId || !form.jornadaId || !form.cargo) {
+        if (!form.nome || !form.sobrenome || !form.email || !form.tipoContratoId || !form.admissao || !form.aniversario || !form.areaId || !form.jornadaId || !form.cargo || !form.telefone) {
             alert("Todos os campos obrigatórios devem ser preenchidos.");
             return;
         }
@@ -46,6 +46,7 @@ function CriarUsuarioComponent({info, setUpdated}){
             admissao: form.admissao ? new Date(form.admissao).toISOString() : "",
             entrada: form.admissao ? new Date(form.admissao).toISOString() : "",
             aniversario: form.aniversario ? new Date(form.aniversario).toISOString() : "",
+            nivel: form.nivel ? form.nivel : null,
         };
 
         const body = {
@@ -64,7 +65,7 @@ function CriarUsuarioComponent({info, setUpdated}){
             const response = await apiService.createUser(body);
             if (response.status === 200) {
                 alert("Usuário criado com sucesso!");
-                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "" });
+                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager:false, telefone: "" });
                 setSelectedFunc(null);
                 setUpdated(true);
             }
@@ -141,6 +142,24 @@ function CriarUsuarioComponent({info, setUpdated}){
                                 />
                             </div>
                             <div>
+                                <Label>Nivel</Label>
+                                <Input
+                                    type="text"
+                                    id="nivel"
+                                    value={form.nivel}
+                                    onChange={handleForm}
+                                />
+                            </div>
+                            <div>
+                                <Label>Telefone</Label>
+                                <Input
+                                    type="text"
+                                    id="telefone"
+                                    value={form.telefone}
+                                    onChange={handleForm}
+                                />
+                            </div>
+                            <div>
                                 <Label>Localização</Label>
                                 <Input
                                     type="text"
@@ -197,6 +216,14 @@ function CriarUsuarioComponent({info, setUpdated}){
                                     value={form.aniversario}
                                     onChange={handleForm}
                                 />
+                            </div>
+                            <div>
+                                <Label>É Gestor?</Label>
+                                <Select id="isManager" value={form.isManager} onChange={handleForm}>
+                                    <option value="">Selecione</option>
+                                    <option value={true}>Sim</option>
+                                    <option value={false}>Não</option>
+                                </Select>
                             </div>
                             <div>
                                 <Label>Administrador da Intranet?</Label>
