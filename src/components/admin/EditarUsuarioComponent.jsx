@@ -5,11 +5,13 @@ import apiService from "../../services/apiService";
 
 function EditarUsuarioComponent({info, setUpdated}){
     const { user } = useAuth();
-    const [selectedFunc, setSelectedFunc] = useState(null);
+    const [selectedFunc, setSelectedFunc] = useState("-");
+    const [selectedId, setSelectedId] = useState("-");
     const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager: false, telefone: "" });
 
     const handleSelect = (id) => {
         const funcionario = info.listaFuncionarios.filter((f) => f.id === Number(id));
+        setSelectedId(id);
         if (funcionario[0]) {
             const { createdAt, updatedAt, id, ...rest } = funcionario[0];
             const cleanedRest = Object.fromEntries(
@@ -17,6 +19,8 @@ function EditarUsuarioComponent({info, setUpdated}){
             );
             setSelectedFunc(cleanedRest);
             setForm(cleanedRest);
+        } else {
+            setSelectedFunc("-");
         }
     };
 
@@ -27,6 +31,8 @@ function EditarUsuarioComponent({info, setUpdated}){
 
         if (id === "areaId" || id === "jornadaId" || id === "tipoContratoId") {
             newValue = Number(value);
+        } else if (id === "isAdmin" || id === "isManager") {
+            newValue = value === "true";
         } else {
             newValue = value;
         }
@@ -50,6 +56,8 @@ function EditarUsuarioComponent({info, setUpdated}){
             admissao: form.admissao ? new Date(form.admissao).toISOString() : "",
             demissao: form.demissao ? new Date(form.demissao).toISOString() : null,
             nivel: form.nivel ? form.nivel : null,
+            isAdmin: Boolean(form.isAdmin),
+            isManager: Boolean(form.isManager),
             entrada: form.entrada ? new Date(form.entrada).toISOString() : null,
             aniversario: form.aniversario ? new Date(form.aniversario).toISOString() : "",
         };
@@ -70,13 +78,14 @@ function EditarUsuarioComponent({info, setUpdated}){
             const response = await apiService.editUser(body);
             if (response.status === 200) {
                 alert("Usuário editado com sucesso!");
-                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager:false, telefone: "" });
-                setSelectedFunc(null);
+                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager: false, telefone: "" });
+                setSelectedFunc("-");
+                setSelectedId("-");
                 setUpdated(true);
             }
         } catch (error) {
             console.error("Erro ao enviar requisição:", error);
-            // alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
+            alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
         }
     };
 
@@ -84,15 +93,15 @@ function EditarUsuarioComponent({info, setUpdated}){
         <>
             {info.listaFuncionarios &&
                 <Container onSubmit={handleSubmit}>
-                    <Select onChange={(e) => handleSelect(e.target.value)}>
-                        <option value="">Escolha um funcionário para editar</option>
+                    <Select value={selectedId} onChange={(e) => handleSelect(e.target.value)}>
+                        <option value="-">Escolha um funcionário para editar</option>
                         {info.listaFuncionarios.map((item) => (
                             <option key={item.id} value={item.id}>
                                 {item.nome} {item.sobrenome}
                             </option>
                         ))}
                     </Select>
-                    {selectedFunc && (
+                    {(selectedFunc && selectedFunc !== "-") && (
                         <>
                             <div>
                                 <Label>Nome</Label>

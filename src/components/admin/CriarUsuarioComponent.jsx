@@ -8,7 +8,7 @@ function CriarUsuarioComponent({info, setUpdated}){
     const { user, dados } = useAuth();
     const agenda = dados?.agenda;
     const [selectedFunc, setSelectedFunc] = useState(null);
-    const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager:false, telefone: "" });
+    const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager: false, telefone: "" });
 
     const handleSelect = (email) => {
       const funcionario = agenda.find((f) => f.mail === email);
@@ -46,9 +46,11 @@ function CriarUsuarioComponent({info, setUpdated}){
             admissao: form.admissao ? new Date(form.admissao).toISOString() : "",
             entrada: form.admissao ? new Date(form.admissao).toISOString() : "",
             aniversario: form.aniversario ? new Date(form.aniversario).toISOString() : "",
+            isAdmin: "true" ? true : false,
+            isManager: "true" ? true : false,
             nivel: form.nivel ? form.nivel : null,
         };
-
+        console.log(form);
         const body = {
             adminEmail: user.mail,
             funcionario: formComDatasFormatadas,
@@ -65,7 +67,7 @@ function CriarUsuarioComponent({info, setUpdated}){
             const response = await apiService.createUser(body);
             if (response.status === 200) {
                 alert("Usuário criado com sucesso!");
-                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager:false, telefone: "" });
+                setForm({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager: false, telefone: "" });
                 setSelectedFunc(null);
                 setUpdated(true);
             }
