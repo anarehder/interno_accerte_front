@@ -112,7 +112,8 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                     <h1>GESTÃO <span> DE TI </span></h1>
                     <Dropdown>
                         <DropdownItem><h1>GESTÃO <span> DE TI </span></h1></DropdownItem>
-                        <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
+                        {/* <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA E-mail</a></DropdownItem> */}
+                        <DropdownItem><a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portal/71" target="blank">JIRA Portal</a></DropdownItem>
                         <DropdownItem><Link to={"/dashprojetos "}>Painel de Projetos</Link></DropdownItem>
                         <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem>
                     </Dropdown>
@@ -138,9 +139,9 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 </MenuItem>
                 </ItemsBar>
                 <ActionsBar>
-                        <IndicAIButton href="https://accerte.com.br/indicai-interno/" target="_blank" rel="noopener noreferrer">
+                        {/* <IndicAIButton href="https://accerte.com.br/indicai-interno/" target="_blank" rel="noopener noreferrer">
                             IndicAI
-                        </IndicAIButton>
+                        </IndicAIButton> */}
                     <SearchItem $isOpen={isSearchOpen || searchAlwaysExpanded} $isLargeScreen={searchAlwaysExpanded}>
                         <form onSubmit={handleSearchSubmit}>
                         {(isSearchOpen || searchAlwaysExpanded) && (

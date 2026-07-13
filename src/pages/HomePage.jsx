@@ -94,9 +94,10 @@ const HomePage = () => {
                             </BannerMenu>
                         </BannerContainer>
                     }
-                    <AEMComponent />
-                    <IndicAccerteComponent user={user} />
+                    {/* <AEMComponent /> */}
                     <LinkedinPostsComponent />
+                    <IndicAccerteComponent user={user} />
+                    
                     {/* <SugestoesComponent email={user.mail} /> */}
                     
                     <FooterComponent />

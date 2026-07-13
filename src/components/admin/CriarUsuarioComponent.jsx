@@ -25,6 +25,8 @@ function CriarUsuarioComponent({info, setUpdated}){
 
         if (id === "areaId" || id === "jornadaId" || id === "tipoContratoId") {
             newValue = Number(value);
+        } else if (id === "isAdmin" || id === "isManager") {
+            newValue = value === "true";
         } else {
             newValue = value;
         }
@@ -44,10 +46,10 @@ function CriarUsuarioComponent({info, setUpdated}){
         const formComDatasFormatadas = {
             ...form,
             admissao: form.admissao ? new Date(form.admissao).toISOString() : "",
-            entrada: form.admissao ? new Date(form.admissao).toISOString() : "",
+            entrada: form.entrada ? new Date(form.entrada).toISOString() : "",
             aniversario: form.aniversario ? new Date(form.aniversario).toISOString() : "",
-            isAdmin: "true" ? true : false,
-            isManager: "true" ? true : false,
+            isAdmin: Boolean(form.isAdmin),
+            isManager: Boolean(form.isManager),
             nivel: form.nivel ? form.nivel : null,
         };
         console.log(form);
