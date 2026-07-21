@@ -22,6 +22,7 @@ import PainelGestoresPage from "./pages/PainelGestoresPage";
 import BeneficiosPage from "./pages/BeneficiosPage";
 import FAQPage from "./pages/FAQPage";
 import ParceriaEducacionalPage from "./pages/ParceriaEducacionalPage";
+import VagasAbertasPage from "./pages/VagasAbertasPage";
 import PlantoesTIPage from "./pages/PlantoesTIPage";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
