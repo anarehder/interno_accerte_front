@@ -49,6 +49,7 @@ import PortfolioPage from "./pages/PortfolioPage";
 import PowerBIProjetos from "./pages/PowerBIDashs";
 import AEM2Page from "./pages/AEM-pages/AEM2Page";
 import AEM3Page from "./pages/AEM-pages/AEM3Page";
+import SignatureEmail2026Page from "./pages/SignatureEmail2026Page";
 
 function App() {
 
@@ -66,6 +67,7 @@ function App() {
                 <Route path="/beneficios" element={<BenefitsPage />} />
                 <Route path="/equipamentos" element={<EquipmentsPage />} />
                 <Route path="/assinatura" element={<SignatureEmail2025Page />} />
+                {/* <Route path="/assinatura2" element={<SignatureEmail2026Page />} /> */}
                 <Route path="/certificacoes" element={<CertificationsPage />} />
                 <Route path="/certificacoes/admin" element={<CertificationsAdminPage />} />
                 <Route path="/ferias" element={<VacationsPage />} />
@@ -82,7 +84,7 @@ function App() {
                 <Route path="/faqs" element={<FAQPage />} />
                 <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />
                 <Route path="/beneficios" element={<BeneficiosPage />} />
-                <Route path="/vagasemaberto" element={<VagasAbertasPage />} />
+                {/* <Route path="/vagasemaberto" element={<VagasAbertasPage />} /> */}
                 <Route path="/plantoes" element={<PlantoesTIPage />} />
                 <Route path="/comunicados" element={<ComunicadosPage />} />
                 <Route path="/feedback/onboarding" element={<FeedbackGestorPage />} />
