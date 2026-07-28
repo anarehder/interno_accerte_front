@@ -367,7 +367,7 @@ function ListarCertsAdminComponent() {
 export default ListarCertsAdminComponent;
 
 const PageContainer = styled.div`
-    width: 1350px;
+    width: 1400px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -506,8 +506,11 @@ const CertificacaoInfo = styled.div`
     div:nth-child(8){
         width: 90px;
     }
+    div:nth-child(9){
+        width: 80px;
+    }
     div:nth-child(10){
-        width: 50px;
+        width: 80px;
     }
     button{
         width: 95%;
