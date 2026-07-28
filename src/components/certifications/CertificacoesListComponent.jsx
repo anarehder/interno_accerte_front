@@ -12,7 +12,7 @@ function CertificacoesListComponent() {
     const { user } = useAuth();
     const [selectedLevel, setSelectedLevel] = useState("");
     const [niveis, setNiveis] = useState([]);
-    const [allowed, setAllowed] = useState(false);
+    const [allowed, setAllowed] = useState(true);
     const [emissores, setEmissores] = useState([]);
     const [selectedEmissor, setSelectedEmissor] = useState("");
     const [certifications, setCertifications] = useState([]);
@@ -38,8 +38,9 @@ function CertificacoesListComponent() {
             }
             try {
                 const response = await apiServiceCertificacoes.buscarCertificacao(body);
-                console.log(response.data);
-                setCertifications(response.data.filter(cert => cert.ativaPCA === true));
+                // aparecer todas as que são buscadas
+                //setCertifications(response.data.filter(cert => cert.ativaPCA === true));
+                setCertifications(response.data);
             } catch (error) {
                 console.error("Erro ao buscar informacoes de certificações:", error);
             }
@@ -59,25 +60,6 @@ function CertificacoesListComponent() {
         fetchData();
 
     }, [user]);
-
-    useEffect(() => {
-            if (!user) return;
-            const fetchGestores = async () => {
-                try {
-                    const response = await apiService.buscarGestoresInfo();
-                    const gestorConf = response.data.filter(item => item.Funcionarios?.email?.toLowerCase() == user.mail?.toLowerCase());
-                    if (gestorConf.length>0){
-                        setAllowed(true);
-                    }
-                } catch (error) {
-                    console.error("Erro ao buscar informacoes de gestores:", error);
-                }
-            };
-    
-            fetchGestores();
-    
-    }, [user]);
-
 
     const handleSelectEmissor = (e) => {
         const selectedId = e.target.value;
