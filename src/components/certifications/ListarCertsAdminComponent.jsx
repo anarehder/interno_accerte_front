@@ -17,7 +17,7 @@ function ListarCertsAdminComponent() {
     const [activeFilter, setActiveFilter] = useState('');
     const [nameFilter, setNameFilter] = useState('');
     
-    
+    console.log(certifications);
     useEffect(() => {
         if (!user) return;
         const fetchData = async () => {
@@ -63,6 +63,20 @@ function ListarCertsAdminComponent() {
 
     const handleClickBlock = async (id, status) => {
         const body = { email: user.mail, id: id, campo: "bloqueada", status: status };
+        try {
+            const response = await apiServiceCertificacoes.editarStatus(body);
+            if (response.status === 200) {
+                alert(`Certificação alterada com sucesso!`);
+                setUpdated(true);
+            }
+        } catch (error) {
+            console.error("Erro ao enviar requisição:", error);
+            // alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
+        }
+    };
+
+    const handleClickShow = async (id, status) => {
+        const body = { email: user.mail, id: id, campo: "exibir", status: status };
         try {
             const response = await apiServiceCertificacoes.editarStatus(body);
             if (response.status === 200) {
@@ -298,6 +312,7 @@ function ListarCertsAdminComponent() {
                                 <div>Cert. Válidas</div>
                                 <div>Alteração Status PCA</div>
                                 <div>Alterar Bloqueio</div>
+                                <div>Alterar Exibição</div>
                                 <div>Editar</div>
                                 {/* <div>Excluir</div> */}
                             </CertificacaoInfo>
@@ -334,6 +349,7 @@ function ListarCertsAdminComponent() {
                                             <div>{c.FuncionarioCerts.length}</div>
                                             <div><button onClick={() => handleClickPCA(c.id, !c.ativaPCA)}>{c.ativaPCA ? "Inativar PCA" : "Ativar PCA"}</button></div>
                                             <div><button onClick={() => handleClickBlock(c.id, !c.bloqueada)}>{c.bloqueada ? "Liberar" : "Bloquear"}</button></div>
+                                            <div><button onClick={() => handleClickShow(c.id, !c.exibirPortal)}>{c.exibirPortal ? "Retirar" : "Exibir"}</button></div>
                                             <div><button onClick={() => handleEdit(c)}>Editar</button></div>
                                             {/* <div><button><FaRegTrashAlt /></button></div> */}
                                         </CertificacaoInfo>

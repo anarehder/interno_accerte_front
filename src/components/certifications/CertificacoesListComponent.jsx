@@ -38,9 +38,8 @@ function CertificacoesListComponent() {
             }
             try {
                 const response = await apiServiceCertificacoes.buscarCertificacao(body);
-                // aparecer todas as que são buscadas
-                //setCertifications(response.data.filter(cert => cert.ativaPCA === true));
-                setCertifications(response.data);
+                // aparecer todas as que são buscadas com exibicao true
+                setCertifications(response.data.filter(cert => cert.exibirPortal === true));
             } catch (error) {
                 console.error("Erro ao buscar informacoes de certificações:", error);
             }

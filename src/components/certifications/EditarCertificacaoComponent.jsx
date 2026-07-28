@@ -57,7 +57,7 @@ function EditarCertificacaoComponent({ certificacao, onClose, onSuccess }) {
 
         if (id === "emissorId" || id === "limite" || id === "nivelId") {
             newValue = Number(value);
-        } else if (id === "ativaPCA" || id === "bloqueada") {
+        } else if (id === "ativaPCA" || id === "bloqueada" || id === "exibirPortal") {
             newValue = value === "true" || value === true;
         } else {
             newValue = value;
@@ -68,7 +68,7 @@ function EditarCertificacaoComponent({ certificacao, onClose, onSuccess }) {
             [id]: newValue
         }));
     };
-
+    console.log(form)
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.nome || ! form.emissorId) {
@@ -79,6 +79,7 @@ function EditarCertificacaoComponent({ certificacao, onClose, onSuccess }) {
             ...form,
             ativaPCA: Boolean(form.ativaPCA),
             bloqueada: Boolean(form.bloqueada),
+            exibirPortal: Boolean(form.exibirPortal),
             startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
             endDate: form.endDate ? new Date(form.endDate).toISOString() : null
         };
@@ -169,6 +170,14 @@ function EditarCertificacaoComponent({ certificacao, onClose, onSuccess }) {
                 <div>
                     <Label>Bloqueada Para Novas Certificações?</Label>
                     <Select id="bloqueada" value={form.bloqueada} onChange={handleForm}>
+                        <option value="">Selecione</option>
+                        <option value="true">Sim</option>
+                        <option value="false">Não</option>
+                    </Select>
+                </div>
+                <div>
+                    <Label>Exibir no Portal?</Label>
+                    <Select id="exibirPortal" value={form.exibirPortal} onChange={handleForm}>
                         <option value="">Selecione</option>
                         <option value="true">Sim</option>
                         <option value="false">Não</option>

@@ -5,7 +5,7 @@ import apiServiceCertificacoes from '../../services/apiServiceCertificacoes';
 
 function CriarCertificacaoComponent( {handleClick}) {
     const { user } = useAuth();
-    const [form, setForm] = useState({ nome: "", emissorId: "", limite: 0, nivelId: null, ativaPCA: true, bloqueada: false, startDate: null, endDate: null});
+    const [form, setForm] = useState({ nome: "", emissorId: "", limite: 0, nivelId: null, ativaPCA: true, bloqueada: false, startDate: null, endDate: null, exibirPortal: true});
     const [emissores, setEmissores] = useState([]);
     const [niveis, setNiveis] = useState([]);
     // console.log(form);
@@ -59,6 +59,7 @@ function CriarCertificacaoComponent( {handleClick}) {
             ...form,
             ativaPCA: Boolean(form.ativaPCA),
             bloqueada: Boolean(form.bloqueada),
+            exibirPortal: Boolean(form.exibirPortal),
             startDate: form.startDate ? new Date(form.startDate).toISOString() : null,
             endDate: form.endDate ? new Date(form.endDate).toISOString() : null
         };
@@ -78,7 +79,7 @@ function CriarCertificacaoComponent( {handleClick}) {
                 const response = await apiServiceCertificacoes.criarCertificacao(body);
                 if (response.status === 200) {
                     alert("Certificação criada com sucesso!");
-                    setForm({ nome: "", emissorId: "", limite: null, nivelId: null, ativaPCA: true, bloqueada: false, startDate: null, endDate: null});
+                    setForm({ nome: "", emissorId: "", limite: null, nivelId: null, ativaPCA: true, bloqueada: false, startDate: null, endDate: null, exibirPortal: true});
                     handleClick("");
                 }
             } catch (error) {
@@ -146,6 +147,14 @@ function CriarCertificacaoComponent( {handleClick}) {
                 <div>
                     <Label>Bloqueada Para Novas Certificações?</Label>
                     <Select id="bloqueada" value={form.bloqueada} onChange={handleForm}>
+                        <option value="">Selecione</option>
+                        <option value={true}>Sim</option>
+                        <option value={false}>Não</option>
+                    </Select>
+                </div>
+                <div>
+                    <Label>Exibir no Portal?</Label>
+                    <Select id="exibirPortal" value={form.exibirPortal} onChange={handleForm}>
                         <option value="">Selecione</option>
                         <option value={true}>Sim</option>
                         <option value={false}>Não</option>
