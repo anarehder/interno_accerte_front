@@ -82,7 +82,7 @@ function App() {
                 <Route path="/faqs" element={<FAQPage />} />
                 <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />
                 <Route path="/beneficios" element={<BeneficiosPage />} />
-                <Route path="/vagasemaberto" element={<VagasAbertasPage />} />
+                {/* <Route path="/vagasemaberto" element={<VagasAbertasPage />} /> */}
                 <Route path="/plantoes" element={<PlantoesTIPage />} />
                 <Route path="/comunicados" element={<ComunicadosPage />} />
                 <Route path="/feedback/onboarding" element={<FeedbackGestorPage />} />
