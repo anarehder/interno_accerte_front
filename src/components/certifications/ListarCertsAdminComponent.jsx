@@ -347,9 +347,9 @@ function ListarCertsAdminComponent() {
                                             <div>{c.bloqueada ? "Bloqueada" : "Liberada"}</div>
                                             <div>{c.limite}</div>
                                             <div>{c.FuncionarioCerts.length}</div>
-                                            <div><button onClick={() => handleClickPCA(c.id, !c.ativaPCA)}>{c.ativaPCA ? "Inativar PCA" : "Ativar PCA"}</button></div>
-                                            <div><button onClick={() => handleClickBlock(c.id, !c.bloqueada)}>{c.bloqueada ? "Liberar" : "Bloquear"}</button></div>
-                                            <div><button onClick={() => handleClickShow(c.id, !c.exibirPortal)}>{c.exibirPortal ? "Retirar" : "Exibir"}</button></div>
+                                            <div><ToggleButton $active={c.ativaPCA} onClick={() => handleClickPCA(c.id, !c.ativaPCA)}>{c.ativaPCA ? "Inativar PCA" : "Ativar PCA"}</ToggleButton></div>
+                                            <div><ToggleButton $active={!c.bloqueada} onClick={() => handleClickBlock(c.id, !c.bloqueada)}>{c.bloqueada ? "Liberar" : "Bloquear"}</ToggleButton></div>
+                                            <div><ToggleButton $active={c.exibirPortal} onClick={() => handleClickShow(c.id, !c.exibirPortal)}>{c.exibirPortal ? "Retirar" : "Exibir"}</ToggleButton></div>
                                             <div><button onClick={() => handleEdit(c)}>Editar</button></div>
                                             {/* <div><button><FaRegTrashAlt /></button></div> */}
                                         </CertificacaoInfo>
@@ -516,6 +516,20 @@ const CertificacaoInfo = styled.div`
         font-size: 14px;
         background-color: #495F96;
         padding: 6px;
+    }
+`
+
+const ToggleButton = styled.button`
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+    padding: 6px;
+    color: white;
+    background-color: ${({ $active }) => ($active ? '#d32f2f' : '#2e7d32')};
+
+    &:hover {
+        background-color: ${({ $active }) => ($active ? '#b71c1c' : '#1b5e20')};
     }
 `
 
