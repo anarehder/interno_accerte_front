@@ -269,7 +269,7 @@ export async function getSharePointData(instance, accounts) {
   }));
 
   const docs = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/DOCUMENTOS PADRAO:/children`,
+    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/PAPELARIA:/children`,
     {
       headers: { Authorization: `Bearer ${response.accessToken}` }
     }
