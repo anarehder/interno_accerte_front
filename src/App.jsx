@@ -39,6 +39,7 @@ import AprovarFeriasAdminPage from "./pages/painel-admin-pages/AprovarFeriasAdmi
 import EscalasAdminPage from "./pages/painel-admin-pages/EscalasAdminPage";
 import CriarFeriasLicAdminPage from "./pages/painel-admin-pages/CriarFeriasLicAdminPage";
 import FiltrarFeriasAdminPage from "./pages/painel-admin-pages/FiltrarFeriasAdminPage";
+import FeriasCompletasAdminPage from "./pages/painel-admin-pages/FeriasCompletasAdminPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NovoComunicadoPage from "./pages/NovoComunicadoPage";
 import FeedbackGestorPage from "./pages/painel-gestores-pages/FeedbackGestorPage";
@@ -97,6 +98,7 @@ function App() {
                 <Route path="/escalas/admin" element={<EscalasAdminPage />} />
                 <Route path="/criarferias/admin" element={<CriarFeriasLicAdminPage />} />
                 <Route path="/filtrarferias/admin" element={<FiltrarFeriasAdminPage />} />
+                <Route path="/ferias-completions" element={<FeriasCompletasAdminPage />} />
                 <Route path="/criarcomunicado" element={<NovoComunicadoPage />} />
                 <Route path="/organograma" element={<OrganogramaPage />} />
                 <Route path="/portfolio" element={<PortfolioPage />} />

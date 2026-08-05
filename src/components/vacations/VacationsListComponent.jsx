@@ -3,12 +3,20 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import apiService from '../../services/apiService';
 import { useAuth } from '../../contexts/AuthContext';
 
-function VacationsListComponent({filteredData, activeButton, handleSubmit}) {
+function VacationsListComponent({filteredData, activeButton, handleSubmit, showDelete = true}) {
     const { user } = useAuth();
     function formatarDataBR(dataIso) {
         const data = new Date(dataIso);
         const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
         return `${dia}/${mes}/${ano}`;
+    }
+
+    function getStatusLicenca(fim) {
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        const dataFim = new Date(fim);
+        dataFim.setHours(0, 0, 0, 0);
+        return dataFim < hoje ? "Finalizado" : "Em Andamento";
     }
 
     async function handleDelete (id) {
@@ -31,25 +39,27 @@ function VacationsListComponent({filteredData, activeButton, handleSubmit}) {
                     <VacationTable>
                         <div>
                             <p><span>Nome</span></p>
+                            <p><span>Admissão</span></p>
                             <p><span>Início</span></p>
                             <p><span>Fim</span></p>
-                            <p><span>Total</span></p>
+                            <p><span>Dias</span></p>
                             <p><span>Referente Início</span></p>
                             <p><span>Referente Fim</span></p>
                             <p><span>Status</span></p>
-                            <p><span>Deletar</span></p>
+                            {showDelete && <p><span>Deletar</span></p>}
                         </div>
                         {filteredData?.map((d, i) => (
                             d.Ferias?.map((f, j) => (
                                 <div key={j}>
                                     <p>{d.nome} {d.sobrenome}</p>
+                                    <p>{d.admissao ? formatarDataBR(d.admissao) : "-"}</p>
                                     <p>{formatarDataBR(f.inicio)}</p>
                                     <p>{formatarDataBR(f.fim)}</p>
                                     <p>{f.totalDias}</p>
                                     <p>{formatarDataBR(f.referenteInicio)}</p>
                                     <p>{formatarDataBR(f.referenteFim)}</p>
                                     <p>{f.status}</p>
-                                    <p onClick={() => handleDelete(f.id)}><RiDeleteBin6Line /></p>
+                                    {showDelete && <p onClick={() => handleDelete(f.id)}><RiDeleteBin6Line /></p>}
                                 </div>
                             ))
                         ))}
@@ -60,11 +70,12 @@ function VacationsListComponent({filteredData, activeButton, handleSubmit}) {
             {filteredData.some(item => item.Licencas && item.Licencas.length > 0) ?
                 <VacationTable>
                     <div>
-                        <p><span>Início</span></p>
+                        <p><span>Nome</span></p>
                         <p><span>Tipo</span></p>
                         <p><span>Início</span></p>
                         <p><span>Fim</span></p>
                         <p><span>Total Dias</span></p>
+                        <p><span>Status</span></p>
                     </div>
                     {filteredData?.map((d, i) => (
                             d.Licencas?.map((f, j) => (
@@ -74,6 +85,7 @@ function VacationsListComponent({filteredData, activeButton, handleSubmit}) {
                                     <p>{formatarDataBR(f.inicio)}</p>
                                     <p>{formatarDataBR(f.fim)}</p>
                                     <p>{f.totalDias}</p>
+                                    <p>{getStatusLicenca(f.fim)}</p>
                                 </div>
                             ))
                     ))}
@@ -118,6 +130,9 @@ const VacationTable = styled.div`
         width: 20%;
         &:nth-of-type(1) {
             width: 40%
+        }
+        &:nth-of-type(5) {
+            width: 8%
         }
     }
     span{
