@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import apiService from "../../services/apiService";
 
 const EditarEscalaComponent = () => {
-        const { dados, user } = useAuth();
+        const { user } = useAuth();
         const [inicioSemana, setInicioSemana] = useState('');
         const [fimSemana, setFimSemana] = useState('');
 
@@ -16,8 +16,7 @@ const EditarEscalaComponent = () => {
             const body = {
                 "adminEmail": user.mail,
                 "inicioSemana": inicioSemana,
-                "fimSemana": fimSemana,
-                "funcionarios": dados.agenda
+                "fimSemana": fimSemana
             };
             // console.log(body);
             // alert(body.funcionarios[0].mail);
