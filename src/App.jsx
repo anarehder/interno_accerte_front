@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MsalProvider } from '@azure/msal-react';
 import { msalInstance } from "./services/authConfig";
 import { AuthProvider } from "./contexts/AuthContext";
+import { FuncionariosProvider } from "./contexts/FuncionariosContext";
 import styled from 'styled-components'
 import BenefitsPage from "./pages/BenefitsPage";
 import VacationsPage from "./pages/VacationsPage";
@@ -57,57 +58,59 @@ function App() {
     <AppContainer>
       <MsalProvider instance={msalInstance}>
         <AuthProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<LoginPage />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path="/homepage" element={<HomePage />} />
-                <Route path="/admin" element={<AdminPage />} />
-                <Route path="/sobre" element={<AboutUsPage />} />
-                <Route path="/beneficios" element={<BenefitsPage />} />
-                <Route path="/equipamentos" element={<EquipmentsPage />} />
-                <Route path="/assinatura" element={<SignatureEmail2025Page />} />
-                <Route path="/certificacoes" element={<CertificationsPage />} />
-                <Route path="/certificacoes/admin" element={<CertificationsAdminPage />} />
-                <Route path="/ferias" element={<VacationsPage />} />
-                <Route path="/contatos" element={<ContactsPage />} />
-                <Route path="/aniversarios" element={<AnniversaryPage />} />
-                <Route path="/calendario" element={<CalendarPage />} />
-                <Route path="/politicas" element={<PolicyPage />} />
-                <Route path="/compliance" element={<CompliancePage />} />
-                <Route path="/escala" element={<ScalePage />} />
-                <Route path="/links" element={<FastLinksPage />} />
-                <Route path="/fiquepordentro" element={<UpdatesPage />} />
-                <Route path="/dashprojetos" element={<PowerBIProjetos />} />
-                <Route path="/painelgestores" element={<PainelGestoresPage />} />
-                <Route path="/faqs" element={<FAQPage />} />
-                <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />
-                <Route path="/beneficios" element={<BeneficiosPage />} />
-                {/* <Route path="/vagasemaberto" element={<VagasAbertasPage />} /> */}
-                <Route path="/plantoes" element={<PlantoesTIPage />} />
-                <Route path="/comunicados" element={<ComunicadosPage />} />
-                <Route path="/feedback/onboarding" element={<FeedbackGestorPage />} />
-                <Route path="/feedback/onboarding/lista" element={<ListaFeedbackGestorPage />} />
-                <Route path="/humorequipe" element={<HumorGestoresPage />} />
-                <Route path="/criarvaga" element={<CriarVagaPage />} />
-                <Route path="/listavagas" element={<ListaVagasPage />} />
-                <Route path="/aprovarferias" element={<AprovarFeriasPage />} />
-                <Route path="/filtrarferias" element={<FiltrarFeriasPage />} />
-                <Route path="/usuariosadmin" element={<UsuariosAdminPage />} />
-                <Route path="/aprovarferias/admin" element={<AprovarFeriasAdminPage />} />
-                <Route path="/escalas/admin" element={<EscalasAdminPage />} />
-                <Route path="/criarferias/admin" element={<CriarFeriasLicAdminPage />} />
-                <Route path="/filtrarferias/admin" element={<FiltrarFeriasAdminPage />} />
-                <Route path="/ferias-completions" element={<FeriasCompletasAdminPage />} />
-                <Route path="/criarcomunicado" element={<NovoComunicadoPage />} />
-                <Route path="/organograma" element={<OrganogramaPage />} />
-                <Route path="/portfolio" element={<PortfolioPage />} />
-                <Route path="/aem2" element={<AEM2Page />} />
-                <Route path="/aem3" element={<AEM3Page />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Route>
-            </Routes>
-          </BrowserRouter >
+          <FuncionariosProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<LoginPage />} />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/homepage" element={<HomePage />} />
+                  <Route path="/admin" element={<AdminPage />} />
+                  <Route path="/sobre" element={<AboutUsPage />} />
+                  <Route path="/beneficios" element={<BenefitsPage />} />
+                  <Route path="/equipamentos" element={<EquipmentsPage />} />
+                  <Route path="/assinatura" element={<SignatureEmail2025Page />} />
+                  <Route path="/certificacoes" element={<CertificationsPage />} />
+                  <Route path="/certificacoes/admin" element={<CertificationsAdminPage />} />
+                  <Route path="/ferias" element={<VacationsPage />} />
+                  <Route path="/contatos" element={<ContactsPage />} />
+                  <Route path="/aniversarios" element={<AnniversaryPage />} />
+                  <Route path="/calendario" element={<CalendarPage />} />
+                  <Route path="/politicas" element={<PolicyPage />} />
+                  <Route path="/compliance" element={<CompliancePage />} />
+                  <Route path="/escala" element={<ScalePage />} />
+                  <Route path="/links" element={<FastLinksPage />} />
+                  <Route path="/fiquepordentro" element={<UpdatesPage />} />
+                  <Route path="/dashprojetos" element={<PowerBIProjetos />} />
+                  <Route path="/painelgestores" element={<PainelGestoresPage />} />
+                  <Route path="/faqs" element={<FAQPage />} />
+                  <Route path="/parceriaeducacional" element={<ParceriaEducacionalPage />} />
+                  <Route path="/beneficios" element={<BeneficiosPage />} />
+                  {/* <Route path="/vagasemaberto" element={<VagasAbertasPage />} /> */}
+                  <Route path="/plantoes" element={<PlantoesTIPage />} />
+                  <Route path="/comunicados" element={<ComunicadosPage />} />
+                  <Route path="/feedback/onboarding" element={<FeedbackGestorPage />} />
+                  <Route path="/feedback/onboarding/lista" element={<ListaFeedbackGestorPage />} />
+                  <Route path="/humorequipe" element={<HumorGestoresPage />} />
+                  <Route path="/criarvaga" element={<CriarVagaPage />} />
+                  <Route path="/listavagas" element={<ListaVagasPage />} />
+                  <Route path="/aprovarferias" element={<AprovarFeriasPage />} />
+                  <Route path="/filtrarferias" element={<FiltrarFeriasPage />} />
+                  <Route path="/usuariosadmin" element={<UsuariosAdminPage />} />
+                  <Route path="/aprovarferias/admin" element={<AprovarFeriasAdminPage />} />
+                  <Route path="/escalas/admin" element={<EscalasAdminPage />} />
+                  <Route path="/criarferias/admin" element={<CriarFeriasLicAdminPage />} />
+                  <Route path="/filtrarferias/admin" element={<FiltrarFeriasAdminPage />} />
+                  <Route path="/ferias-completions" element={<FeriasCompletasAdminPage />} />
+                  <Route path="/criarcomunicado" element={<NovoComunicadoPage />} />
+                  <Route path="/organograma" element={<OrganogramaPage />} />
+                  <Route path="/portfolio" element={<PortfolioPage />} />
+                  <Route path="/aem2" element={<AEM2Page />} />
+                  <Route path="/aem3" element={<AEM3Page />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
+              </Routes>
+            </BrowserRouter >
+          </FuncionariosProvider>
         </AuthProvider>
       </MsalProvider>
     </AppContainer >

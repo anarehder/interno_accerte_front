@@ -2,14 +2,16 @@ import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
 import ContactsComponent from "../components/ContactsComponent";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
+import { useFuncionarios } from "../contexts/FuncionariosContext";
 
 const ContactsPage = () => {{
-    const { dados } = useAuth();
+    // const { dados } = useAuth();
+    const { dados } = useFuncionarios();
 
     return (
         <Container>
             <HeaderNewComponent pageTitle={"Contatos"} />
-            {dados?.agenda && <ContactsComponent contatos={dados?.agenda} />}
+            {dados && <ContactsComponent dados={dados} />}
         </Container>
     );
   };

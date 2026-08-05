@@ -1,8 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 
-function ContactsComponent({contatos}){
-    
+function ContactsComponent({dados}){
+    const gestoresSuperiores = dados.gestores.filter(g => g.gestorSuperiorId === 4 || g.gestorSuperiorId === 6 );
+    console.log(gestoresSuperiores);
+
     return (
         <Container>
             <List>
@@ -14,18 +16,23 @@ function ContactsComponent({contatos}){
                     <Info><span>Local</span></Info>
                     <Info><span>Gestor</span></Info>
                 </ContactCard>
-                {contatos
-                .filter(contato => contato.officeLocation !== "NA" && contato.officeLocation !== "OFF")
-                .map((contato, index) => (
-                    <ContactCard key={index}>
-                        <Info>{contato.name}</Info>
-                        <Info>{contato.mail}</Info>
-                        <Info>{contato.mobilePhone}</Info>
-                        <Info>{contato.jobTitle}</Info>
-                        <Info>{contato.officeLocation}</Info>
-                        <Info>{contato.manager}</Info>
-                    </ContactCard>
-                ))}
+                {dados?.funcionarios.length> 0 && dados?.funcionarios
+                // .filter(contato => contato.officeLocation !== "NA" && contato.officeLocation !== "OFF")
+                .map((contato, index) => {
+                    const gestorSuperior = gestoresSuperiores.find(g => g.areaId === contato.areaId);
+                    const gestorFuncionario = dados.funcionarios.find(f => f.id === gestorSuperior?.funcionarioId);
+
+                    return (
+                        <ContactCard key={index}>
+                            <Info>{contato.nome} {contato.sobrenome}</Info>
+                            <Info>{contato.email}</Info>
+                            <Info>{contato.telefone}</Info>
+                            <Info>{contato.cargo}</Info>
+                            <Info>{contato.localizacao}</Info>
+                            <Info>{gestorFuncionario ? `${gestorFuncionario.nome} ${gestorFuncionario.sobrenome}` : "-"}</Info>
+                        </ContactCard>
+                    );
+                })}
             </List>
         </Container>
     );
@@ -89,7 +96,7 @@ const Info = styled.p`
         width: 200px;
     }
     &:nth-of-type(5) {
-        width: 180px;
+        width: 130px;
     }
     &:nth-of-type(6) {
         width: 220px;
