@@ -11,7 +11,7 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration, pagerDu
     const [weekMinutes, setWeekMinutes] = useState(duration * 24 * 60);
     const now = new Date();
     const colors = [
-        '#123e8c', '#c13232', '#faa406', '#3D3D3D', '#009595', '#FFFFFF', '#AF5F5F'
+        '#123e8c', '#c13232', '#e48e05', '#3D3D3D', '#009595', '#FFFFFF', '#AF5F5F'
     ];
     
     // console.log(users);
@@ -168,7 +168,7 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration, pagerDu
 export default PlantoesTIComponent;
 
 const PageContainer = styled.div`
-    width: 90%;
+    width: 94%;
     position: relative;
     justify-content: center;
     flex-direction: column;
@@ -180,7 +180,8 @@ const ScaleName = styled.div`
   justify-content: space-between;
   align-items: center;
   font-size: 20px;
-  margin: 8px 20px;
+  margin: 5px 20px;
+
   div:nth-child(2){
     justify-content: center;
   }
@@ -192,7 +193,7 @@ const ScaleName = styled.div`
 `;
 
 const EscalaWrapper = styled.div`
-  padding: 1rem;
+  padding: 0.5rem;
   flex-direction: column;
   height: 110px;
 `;
@@ -208,7 +209,7 @@ const DayBlock = styled.div`
   height: 25px;
   padding: 6px 0;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 15px;
   border: 1px solid gray;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -232,7 +233,7 @@ const TimeBlock = styled.div`
     line-height: 1.1;
     overflow: hidden;
     padding: 0 5px;
-    height: 40px;
+    height: 50px;
     background-color: ${({ color }) => color || "#ccc"};
     left: ${({ start }) => `${start}%`};
     width: ${({ width }) => `${width}%`};
@@ -255,14 +256,17 @@ const NameLine = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 16px;
 `;
 
 const PhoneLine = styled.div`
     width: 100%;
-    font-size: 11px;
+    font-size: 12px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-top: 5px;
+    font-weight: bold;
 `;
 
 const HoverTooltip = styled.div`

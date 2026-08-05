@@ -18,6 +18,7 @@ const PlantoesTIPage = () => {
   const [currentOnCall, setCurrentOnCall] = useState([]);
   const [pagerDutyUsers, setPagerDutyUsers] = useState([]);
   const [carregando, setCarregando] = useState(true);
+  const [ocultarControles, setOcultarControles] = useState(false);
   const imageRef = useRef(null);
   console.log(pagerDutyUsers);
   const scales = [
@@ -120,16 +121,32 @@ const PlantoesTIPage = () => {
   };
 
   const handleDownload = () => {
-          if (imageRef.current) {
-              toPng(imageRef.current, { quality: 1 })
-                  .then((dataUrl) => {
-                      download(dataUrl, `Escala_Plantoes-${formatDate2(currentDay)}-${formatDate2(lastDay)}.png`, "image/png");
-                  })
-        .catch((error) => {
-          console.error("Erro ao gerar a imagem:", error);
-        });
-    }
+    setOcultarControles(true);
   };
+
+  useEffect(() => {
+    if (!ocultarControles) return;
+
+    // aguarda o re-render sem os controles antes de capturar a imagem
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (imageRef.current) {
+          toPng(imageRef.current, { quality: 1 })
+            .then((dataUrl) => {
+              download(dataUrl, `Escala_Plantoes-${formatDate2(currentDay)}-${formatDate2(lastDay)}.png`, "image/png");
+            })
+            .catch((error) => {
+              console.error("Erro ao gerar a imagem:", error);
+            })
+            .finally(() => {
+              setOcultarControles(false);
+            });
+        } else {
+          setOcultarControles(false);
+        }
+      });
+    });
+  }, [ocultarControles]);
 
   return (
     <>
@@ -139,20 +156,31 @@ const PlantoesTIPage = () => {
       <Container ref={imageRef}>
         <HeaderNewComponent pageTitle={"Escala Plantões Sustentação"} />
         <WeekHeader>
-          {/* <div> */}
-            {/* <button onClick={() => handleChangeDuration(3)}>Escala de 3 dias</button> */}
-            {/* <button onClick={() => handleChangeDuration(7)}>Escala de 7 dias</button> */}
-            {/* Coloque aqui seus botões para navegação e exibição das datas */}
-          {/* </div> */}
-          <div>
+          <NavGroup $hidden={ocultarControles}>
             <button onClick={goToPreviousWeek}> ⏮ Semana Anterior</button>
             <button onClick={handlePreviousDay}>◀ Dia Anterior</button>
-          </div>
-          <div> <h2>Semana: {formatDate(currentDay)} – {formatDate(lastDay)}</h2> </div>
-          <div>
+          </NavGroup>
+          <CenterBlock>
+            <h2>Datas: {formatDate(currentDay)} – {formatDate(lastDay)}</h2>
+            <DurationToggle $hidden={ocultarControles}>
+              <button
+                className={`duration-btn${duration === 4 ? ' active' : ''}`}
+                onClick={() => handleChangeDuration(4)}
+              >
+                4 dias
+              </button>
+              <button
+                className={`duration-btn${duration === 7 ? ' active' : ''}`}
+                onClick={() => handleChangeDuration(7)}
+              >
+                7 dias
+              </button>
+            </DurationToggle>
+          </CenterBlock>
+          <NavGroup $hidden={ocultarControles}>
             <button onClick={handleNextDay}>Próximo Dia ▶</button>
             <button onClick={goToNextWeek}> Próxima Semana ⏭</button>
-          </div>
+          </NavGroup>
 
         </WeekHeader>
         {carregando && <h2> Carregando dados ... </h2>}
@@ -184,18 +212,63 @@ const WeekHeader = styled.div`
   align-items: center;
   margin-top: 20px;
   margin-bottom: 30px;
-  height: 65px;
+  min-height: 65px;
   justify-content: space-between;
   button{
     max-width: 180px;
     font-size: 15px;
     justify-content: center;
     padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #123e8c;
+    color: #fff;
+    cursor: pointer;
   }
-  div{
-    gap: 5px;
-    justify-content: center;
-    width: 300px; 
+`;
+
+const NavGroup = styled.div`
+  display: ${({ $hidden }) => ($hidden ? 'none' : 'flex')};
+  gap: 5px;
+  justify-content: center;
+  width: 300px;
+`;
+
+const CenterBlock = styled.div`
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+`;
+
+const DurationToggle = styled.div`
+  display: ${({ $hidden }) => ($hidden ? 'none' : 'flex')};
+  gap: 0;
+  width: auto;
+  border: 1px solid #999;
+  border-radius: 6px;
+  overflow: hidden;
+
+  button.duration-btn {
+    max-width: none;
+    padding: 6px 14px;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+  }
+
+  button.duration-btn:first-child {
+    border-right: 1px solid #999;
+  }
+
+  button.duration-btn.active {
+    background: #123e8c;
+    color: #fff;
+    font-weight: bold;
   }
 `;
 
@@ -207,4 +280,10 @@ const Button = styled.button`
     top: 30px;
     font-size: 15px;
     z-index: 3;
+    border: none;
+    border-radius: 6px;
+    padding: 8px;
+    background: #123e8c;
+    color: #fff;
+    cursor: pointer;
 `;
