@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useState, useEffect } from "react";
 import apiService from '../services/apiService';
 
-function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
+function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration, pagerDutyUsers}) {
     const [users, setUsers] = useState([]); // Usuários da escala
     const [nameColor, setNameColor] = useState([]);
     const [schedule, setSchedule] = useState(null);
@@ -11,7 +11,7 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
     const [weekMinutes, setWeekMinutes] = useState(duration * 24 * 60);
     const now = new Date();
     const colors = [
-        '#123e8c', '#c13232', '#F5A91F', '#3D3D3D', '#009595', '#FFFFFF', '#AF5F5F'
+        '#123e8c', '#c13232', '#faa406', '#3D3D3D', '#009595', '#FFFFFF', '#AF5F5F'
     ];
     
     // console.log(users);
@@ -60,6 +60,28 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
     const formatHour = (date) => {
         const hours = String(date.getHours()).padStart(2, '0');
         return `${hours}h`;
+    };
+
+    const getUserPhone = (userId) => {
+        const usersArray = Array.isArray(pagerDutyUsers) ? pagerDutyUsers : (pagerDutyUsers?.users || []);
+        const user = usersArray.find((u) => u.id === userId);
+        const phoneContact = user?.contact_methods?.find((cm) => cm.type === "phone_contact_method");
+        return phoneContact?.address || "";
+    };
+
+    const formatPhone = (phone) => {
+        if (!phone) return '';
+        let digits = phone.replace(/\D/g, '');
+        if (digits.length > 11 && digits.startsWith('55')) {
+            digits = digits.slice(2); // remove código do país
+        }
+        if (digits.length === 11) {
+            return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+        }
+        if (digits.length === 10) {
+            return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+        }
+        return phone;
     };
     return (
         <PageContainer>
@@ -116,6 +138,7 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
                             const startPercent = Math.max((diffStart / weekMinutes) * 100, 0);
                             const endPercent = Math.min((diffEnd / weekMinutes) * 100, 100);
                             const width = endPercent - startPercent;
+                            const phone = formatPhone(getUserPhone(s.user.id));
 
                             return (
                                 <TimeBlock
@@ -123,9 +146,13 @@ function PlantoesTIComponent({id, currentDay, lastDay, oncall, duration}) {
                                     start={startPercent}
                                     width={width}
                                     color={nameColor[s.user.summary]}
-                                    title={`${s.user.summary} de ${formatDate(start)} até ${formatDate(end)}`}
                                 >
-                                    {s.user.summary}
+                                    <NameLine>{s.user.summary}</NameLine>
+                                    {phone && <PhoneLine>{phone}</PhoneLine>}
+                                    <HoverTooltip className="phone-tooltip">
+                                        <TooltipName>{s.user.summary}</TooltipName>
+                                        {phone && <TooltipPhone>{phone}</TooltipPhone>}
+                                    </HoverTooltip>
                                 </TimeBlock>
                             );
                         })}
@@ -197,18 +224,90 @@ const Timeline = styled.div`
 const TimeBlock = styled.div`
     position: absolute;
     top: 18px;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
     color: white;
-    line-height: 40px;
-    white-space: nowrap;
+    line-height: 1.1;
     overflow: hidden;
-    text-overflow: ellipsis;
-    text-indent: 5px;
+    padding: 0 5px;
     height: 40px;
     background-color: ${({ color }) => color || "#ccc"};
     left: ${({ start }) => `${start}%`};
     width: ${({ width }) => `${width}%`};
     border-radius: 5px;
+    cursor: default;
+
+    &:hover {
+        overflow: visible;
+        z-index: 5;
+    }
+
+    &:hover .phone-tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+`;
+
+const NameLine = styled.div`
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`;
+
+const PhoneLine = styled.div`
+    width: 100%;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`;
+
+const HoverTooltip = styled.div`
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #222;
+    color: #fff;
+    padding: 14px 22px;
+    min-width: 160px;
+    border-radius: 10px;
+    white-space: nowrap;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: #222 transparent transparent transparent;
+    }
+`;
+
+const TooltipName = styled.div`
+    font-size: 16px;
+    font-weight: bold;
+`;
+
+const TooltipPhone = styled.div`
+    font-size: 16px;
+    font-weight: normal;
+    margin-top: 4px;
 `;
 
 const HourBlock = styled.div`

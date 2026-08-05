@@ -16,9 +16,10 @@ const PlantoesTIPage = () => {
     return data;
   });
   const [currentOnCall, setCurrentOnCall] = useState([]);
+  const [pagerDutyUsers, setPagerDutyUsers] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const imageRef = useRef(null);
-
+  console.log(pagerDutyUsers);
   const scales = [
     "PABNNC7",
     "PCHC5N9",
@@ -48,6 +49,19 @@ const PlantoesTIPage = () => {
 
     return () => clearInterval(interval); // limpa o intervalo ao desmontar o componente
   }, [currentDay]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await apiService.getUsersPagerDuty();
+        setPagerDutyUsers(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar usuários do PagerDuty", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   useEffect(() => {
     const novaData = new Date(currentDay);
@@ -144,7 +158,7 @@ const PlantoesTIPage = () => {
         {carregando && <h2> Carregando dados ... </h2>}
         {!carregando && currentOnCall.length > 0 &&
           scales.map((s, index) => (
-            <PlantoesTIComponent key={s} id={s} currentDay={currentDay} lastDay={lastDay} oncall={currentOnCall.find((oc) => oc.schedule.id === s)} duration={duration}/>
+            <PlantoesTIComponent key={s} id={s} currentDay={currentDay} lastDay={lastDay} oncall={currentOnCall.find((oc) => oc.schedule.id === s)} duration={duration} pagerDutyUsers={pagerDutyUsers}/>
           ))
         }
       </Container>
