@@ -1,9 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-function ContactsComponent({dados}){
-    const gestoresSuperiores = dados.gestores.filter(g => g.gestorSuperiorId === 4 || g.gestorSuperiorId === 6 );
-    console.log(gestoresSuperiores);
+function ContactsComponent({dados, contatos}){
+    // "contatos" é opcional: quando informado, é a lista exibida (ex: resultado da busca
+    // na home page). "dados.funcionarios"/"dados.gestores" continuam sendo sempre a base
+    // completa, usada para localizar o gestor mesmo quando ele não está nos resultados filtrados.
+    const listaContatos = contatos ?? dados?.funcionarios ?? [];
+    const gestoresSuperiores = dados?.gestores?.filter(g => g.gestorSuperiorId === 4 || g.gestorSuperiorId === 6 ) ?? [];
 
     return (
         <Container>
@@ -16,11 +19,11 @@ function ContactsComponent({dados}){
                     <Info><span>Local</span></Info>
                     <Info><span>Gestor</span></Info>
                 </ContactCard>
-                {dados?.funcionarios.length> 0 && dados?.funcionarios
+                {listaContatos.length > 0 && listaContatos
                 // .filter(contato => contato.officeLocation !== "NA" && contato.officeLocation !== "OFF")
                 .map((contato, index) => {
                     const gestorSuperior = gestoresSuperiores.find(g => g.areaId === contato.areaId);
-                    const gestorFuncionario = dados.funcionarios.find(f => f.id === gestorSuperior?.funcionarioId);
+                    const gestorFuncionario = dados?.funcionarios?.find(f => f.id === gestorSuperior?.funcionarioId);
 
                     return (
                         <ContactCard key={index}>

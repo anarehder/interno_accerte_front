@@ -1,4 +1,5 @@
 import { useAuth } from '../../contexts/AuthContext';
+import { useFuncionarios } from '../../contexts/FuncionariosContext';
 import { FiSearch } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import styled from 'styled-components';
@@ -7,7 +8,8 @@ import AEMLogoAzul from '../../assets/AEM-logo-azul.png';
 import AEMLogo from '../../assets/AEM-logo.png';
 
 function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
-    const { user, dados } = useAuth();
+    const { user } = useAuth();
+    const { dados } = useFuncionarios();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1700);
     const searchAlwaysExpanded = isLargeScreen;
@@ -25,31 +27,33 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const handleSearch = (e) => {
-        const value = e.target.value;
-        setSearchBar(value);
-        
-        // Filtrar e exibir em tempo real
-        if (value) {
-            const filtered = dados.agenda.filter(contato =>
-                removeAcentos(contato.name.toLowerCase())
-                .includes(removeAcentos(value.toLowerCase()))
-            );
-            setFilteredContacts(filtered);
-        } else {
-            setFilteredContacts([]);
-        }
-    };
     function removeAcentos(text) {
         return text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     }
 
+    const buscarFuncionarios = (termo) => {
+        if (!dados?.funcionarios) return [];
+        return dados.funcionarios.filter(contato =>
+            removeAcentos(`${contato.nome} ${contato.sobrenome}`.toLowerCase())
+            .includes(removeAcentos(termo.toLowerCase()))
+        );
+    };
+
+    const handleSearch = (e) => {
+        const value = e.target.value;
+        setSearchBar(value);
+
+        // Filtrar e exibir em tempo real
+        if (value) {
+            setFilteredContacts(buscarFuncionarios(value));
+        } else {
+            setFilteredContacts([]);
+        }
+    };
+
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        const filtered = dados.agenda.filter(contato =>
-            removeAcentos(contato.name.toLowerCase())
-            .includes(searchBar.toLowerCase())
-        );
+        const filtered = buscarFuncionarios(searchBar);
         setFilteredContacts(filtered);
         if (filtered.length === 0){
             alert("Nenhum resultado encontrado.")

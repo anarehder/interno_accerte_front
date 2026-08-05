@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate  } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useFuncionarios } from "../contexts/FuncionariosContext";
 import { useIsAuthenticated } from '@azure/msal-react';
 import FooterComponent from "../components/basic/FooterComponent";
 import Background from "../assets/basic/background.png"
@@ -26,6 +27,7 @@ import AEMComponent from "../components/homepage/AEMComponent";
 const HomePage = () => {
     const navigate = useNavigate();
     const { user, dados, getData } = useAuth();
+    const { dados: dadosFuncionarios } = useFuncionarios();
     const [searchBar, setSearchBar] = useState("");
     const [updated, setUpdated] = useState(false);
     const isAuthenticated = useIsAuthenticated();
@@ -62,7 +64,7 @@ const HomePage = () => {
                     {filteredContacts.length > 0 ?
                         <SearchResponse>
                             <div><button onClick={clearSearch}> Limpar pesquisa</button><h2> Resultados da busca...</h2> </div>
-                            <ContactsComponent contatos={filteredContacts} />
+                            <ContactsComponent dados={dadosFuncionarios} contatos={filteredContacts} />
                             
                         </SearchResponse>
                         :
