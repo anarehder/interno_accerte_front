@@ -16,7 +16,7 @@ const PolicyPage = () => {{
             <List>
                 {dados?.politicas?.map((file, index) => (
                 <Card key={index}>
-                    <Info>{file.name.slice(0,-4)}</Info>
+                    <Info>{file.name.replace(/\.pdf$/i, '')}</Info>
                     <Info><button><a href={file.url} target="_blank"> Acessar </a></button></Info>
                 </Card>
             ))}

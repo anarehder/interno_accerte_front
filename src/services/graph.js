@@ -56,7 +56,7 @@ export async function getSharePointData(instance, accounts) {
     //const siteId = "accerte.sharepoint.com,b46c58c6-cfcd-46dc-90cd-4e9b1a07b7e0,f4fa6d69-985a-4c7a-8b8e-fe6ee707e7c3";
     //const displayName= "Accerte Tecnologia da Informação Ltda";
     const sharedDocumentsId = "b!xlhstM3P3EaQzU6bGge34Glt-vRamHpMi47-bucH58MDGgu4dgmNSJGRO0nIdQD1";
-
+    const processosId = "b!tZ9WpjtCoUmoh1oXNJKTLk5bFhrPALFIlLSurBgKIJLSaJJkIWfLTKEn2GoP0Csg"
     const response = await getToken(instance, accounts);
     if (!response?.accessToken) {
       throw new Error("Token MSAL ausente ao buscar dados do SharePoint");
@@ -73,7 +73,7 @@ export async function getSharePointData(instance, accounts) {
   // console.log(siteData); // Salve este ID para a próxima etapa
   //PEGAR ID DO DRIVE DOCUMENTOS
   // const graphResponse = await fetch(
-  //   `https://graph.microsoft.com/v1.0/sites/${siteId}/drives`,
+  //   `https://graph.microsoft.com/v1.0/sites/accerte.sharepoint.com,a6569fb5-423b-49a1-a887-5a173492932e,1a165b4e-00cf-48b1-94b4-aeac180a2092/drives`,
   //   {
   //     headers: { Authorization: `Bearer ${response.accessToken}` }
   //   }
@@ -82,7 +82,6 @@ export async function getSharePointData(instance, accounts) {
   // console.log(drives);
   //name:"Teams Wiki Data"
   // id:"b!xlhstM3P3EaQzU6bGge34Glt-vRamHpMi47-bucH58N_pfP09ZpKQJ4WX7V7ssSu"
-  
   //PEGAR DA SHARED DOCUMENTS
   
   const politica = await fetch(
@@ -91,8 +90,28 @@ export async function getSharePointData(instance, accounts) {
       headers: { Authorization: `Bearer ${response.accessToken}` }
     }
   );
-  
+
+  const politicaProc = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${processosId}/list/items?$expand=fields,driveItem&$filter=fields/TIPODEDOCUMENTO eq '${encodeURIComponent("Política")}'`,
+    {
+      headers: {
+        Authorization: `Bearer ${response.accessToken}`,
+        Prefer: "HonorNonIndexedQueriesWarningMayFailRandomly",
+      }
+    }
+  );
+  const filesProc = await politicaProc.json();
   const files = await politica.json();
+  // console.log(files);
+  // console.log(filesProc);
+
+  // const fileList = (filesProc.value || [])
+  //   .map(item => ({
+  //     name: item.fields.T_x00ed_tuloo,
+  //     url: item.webUrl
+  //   }));
+  // console.log(fileListPolProc);
+  
 
   const fileList = files.value.map(file => ({
     name: file.name,
