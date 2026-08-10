@@ -404,6 +404,8 @@ const FilterContainer = styled.div`
     margin: 0 auto 16px;
     background-color: #f9fafb;
     align-items: center;
+    width: 100%;
+    box-sizing: border-box;
 `
 
 const FilterTitle = styled.div`
