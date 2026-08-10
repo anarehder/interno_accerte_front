@@ -195,42 +195,19 @@ export async function getSharePointData(instance, accounts) {
       
   const files5 = await agenda.json();
       
-  const fileList5 = await Promise.all(
-    files5.value
+  const fileList5 = files5.value
     .filter(f => f.officeLocation !== "NA" && f.officeLocation !== "OFF" && f.mail)
     .sort((a, b) => a.displayName.localeCompare(b.displayName))
-    .map(async (file) => {
-      let managerName = null;
-      try {
-        const managerRes = await fetch(`https://graph.microsoft.com/v1.0/users/${file.mail}/manager`, {
-          headers: {
-            Authorization: `Bearer ${response.accessToken}`,
-          },
-        });
-  
-        if (managerRes.ok) {
-          const managerData = await managerRes.json();
-          managerName = managerData.displayName || "-";
-        } else {
-          managerName = "-";
-        }
-      } catch (e) {
-        managerName = "-";
-      }
-  
-      return {
-        name: file.displayName,
-        givenName: file.givenName,
-        surname: file.surname,
-        jobTitle: file.jobTitle,
-        mail: file.mail,
-        mobilePhone: file.mobilePhone,
-        officeLocation: file.officeLocation,
-        department: file.department,
-        manager: managerName,
-      };
-    })
-  );
+    .map((file) => ({
+      name: file.displayName,
+      givenName: file.givenName,
+      surname: file.surname,
+      jobTitle: file.jobTitle,
+      mail: file.mail,
+      mobilePhone: file.mobilePhone,
+      officeLocation: file.officeLocation,
+      department: file.department,
+    }));
 
   const ano = new Date().getFullYear();
   const calendario = await fetch(
