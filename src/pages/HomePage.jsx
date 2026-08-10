@@ -91,7 +91,10 @@ const HomePage = () => {
                                     </a>
                                 </BannerButton>
                                 <BannerButton>
-                                    <Link to={"/politicas"}>POLÍTICAS </Link>
+                                    <a href="https://accerte.sharepoint.com/sites/centraldeprocessos/Processos/Forms/AllItems.aspx?FilterField1=TIPODEDOCUMENTO&FilterValue1=Pol%C3%ADtica&FilterType1=Choice&viewid=39df2e84%2D0f79%2D44ee%2D9ec3%2Dc42427a75ccc" target="_blank">
+                                        POLÍTICAS
+                                    </a>
+                                    {/* <Link to={"/politicas"}>POLÍTICAS </Link> */}
                                 </BannerButton>
                             </BannerMenu>
                         </BannerContainer>
