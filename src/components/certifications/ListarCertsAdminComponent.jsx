@@ -94,6 +94,21 @@ function ListarCertsAdminComponent() {
         setShowEditModal(true);
     };
 
+    const handleDelete = async (id) => {
+        if (!window.confirm('Tem certeza que deseja excluir esta certificação?')) return;
+        const body = { email: user.mail };
+        try {
+            const response = await apiServiceCertificacoes.deletarCertificacao(body, id);
+            if (response.status === 200) {
+                alert('Certificação excluída com sucesso!');
+                setUpdated(true);
+            }
+        } catch (error) {
+            console.error("Erro ao excluir certificação:", error);
+            alert('Ocorreu um erro ao excluir a certificação.');
+        }
+    };
+
     const handleCloseEditModal = () => {
         setShowEditModal(false);
         setCertToEdit(null);
@@ -314,7 +329,7 @@ function ListarCertsAdminComponent() {
                                 <div>Alterar Bloqueio</div>
                                 <div>Alterar Exibição</div>
                                 <div>Editar</div>
-                                {/* <div>Excluir</div> */}
+                                <div>Excluir</div>
                             </CertificacaoInfo>
                         </Certificacoes>
 
@@ -351,7 +366,7 @@ function ListarCertsAdminComponent() {
                                             <div><ToggleButton $active={!c.bloqueada} onClick={() => handleClickBlock(c.id, !c.bloqueada)}>{c.bloqueada ? "Liberar" : "Bloquear"}</ToggleButton></div>
                                             <div><ToggleButton $active={c.exibirPortal} onClick={() => handleClickShow(c.id, !c.exibirPortal)}>{c.exibirPortal ? "Retirar" : "Exibir"}</ToggleButton></div>
                                             <div><button onClick={() => handleEdit(c)}>Editar</button></div>
-                                            {/* <div><button><FaRegTrashAlt /></button></div> */}
+                                            <div><DeleteButton onClick={() => handleDelete(c.id)}><FaRegTrashAlt /></DeleteButton></div>
                                         </CertificacaoInfo>
                                     ))}
                                 </Certificacoes>
@@ -367,7 +382,7 @@ function ListarCertsAdminComponent() {
 export default ListarCertsAdminComponent;
 
 const PageContainer = styled.div`
-    width: 1400px;
+    width: 1450px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -512,6 +527,9 @@ const CertificacaoInfo = styled.div`
     div:nth-child(10){
         width: 80px;
     }
+    div:nth-child(11){
+        width: 60px;
+    }
     button{
         width: 95%;
         display: flex;
@@ -533,6 +551,21 @@ const ToggleButton = styled.button`
 
     &:hover {
         background-color: ${({ $active }) => ($active ? '#b71c1c' : '#1b5e20')};
+    }
+`
+
+const DeleteButton = styled.button`
+    width: 95%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    background-color: #d32f2f;
+    padding: 6px;
+
+    &:hover {
+        background-color: #b71c1c;
     }
 `
 

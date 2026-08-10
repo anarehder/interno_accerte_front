@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import apiService from '../../services/apiService';
 import { GrValidate } from "react-icons/gr";
 import { ImBlocked } from "react-icons/im";
+import { FaRegTrashAlt } from "react-icons/fa";
 import EditarFuncCertComponent from './EditarFuncCertComponent';
 import * as XLSX from 'xlsx';
 
@@ -73,6 +74,21 @@ function ListarFuncCertsAdminComponent() {
     const handleCloseEditModal = () => {
         setShowEditModal(false);
         setFuncCertToEdit(null);
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Tem certeza que deseja excluir esta certificação do funcionário?')) return;
+        const body = { email: user.mail };
+        try {
+            const response = await apiServiceCertificacoes.deletarCertificacaoFuncionario(body, id);
+            if (response.status === 200) {
+                alert('Certificação excluída com sucesso!');
+                setUpdated(true);
+            }
+        } catch (error) {
+            console.error("Erro ao excluir certificação do funcionário:", error);
+            alert('Ocorreu um erro ao excluir a certificação.');
+        }
     };
 
     const handleStatusFilterClick = (filter) => {
@@ -349,6 +365,7 @@ function ListarFuncCertsAdminComponent() {
                                 <div>Valor</div>
                                 <div>Editar</div>
                                 <div>Ação</div>
+                                <div>Excluir</div>
                             </CertificacaoInfo>
                         </Certificacoes>
 
@@ -386,7 +403,8 @@ function ListarFuncCertsAdminComponent() {
                                             <div>{c.Certificacoes?.NiveisBonificacao?.nivel}</div>
                                             <div>{Number(c.Certificacoes?.NiveisBonificacao?.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
                                             <div><button onClick={() => handleEdit(c)}>Editar</button></div>
-                                            <div> <button onClick={() => handleClick(c.id, !c.validaPCA)} style={{ cursor: "pointer" }}>{c.validaPCA ? "Invalidar": "Validar"}</button></div>
+                                            <div><ActionButton $invalidar={c.validaPCA} onClick={() => handleClick(c.id, !c.validaPCA)}>{c.validaPCA ? "Invalidar": "Validar"}</ActionButton></div>
+                                            <div><DeleteButton onClick={() => handleDelete(c.id)}><FaRegTrashAlt /></DeleteButton></div>
                                         </CertificacaoInfo>
                                     ))}
                                 </Certificacoes>
@@ -402,7 +420,7 @@ function ListarFuncCertsAdminComponent() {
 export default ListarFuncCertsAdminComponent;
 
 const PageContainer = styled.div`
-    width: 1350px;
+    width: 1450px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -565,6 +583,9 @@ const CertificacaoInfo = styled.div`
     div:nth-child(11){
         width: 75px;
     }
+    div:nth-child(12){
+        width: 60px;
+    }
     button{
         width: 95%;
         display: flex;
@@ -572,6 +593,36 @@ const CertificacaoInfo = styled.div`
         font-size: 14px;
         background-color: #495F96;
         padding: 6px;
+    }
+`
+
+const DeleteButton = styled.button`
+    width: 95%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    background-color: #d32f2f;
+    padding: 6px;
+
+    &:hover {
+        background-color: #b71c1c;
+    }
+`
+
+const ActionButton = styled.button`
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+    background-color: #495F96;
+    color: white;
+    padding: 6px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: ${({ $invalidar }) => ($invalidar ? '#d32f2f' : '#2e7d32')};
     }
 `
 

@@ -74,6 +74,14 @@ function buscarCertificacaoFuncionarioPorId(id){
     return axios.get(`${BASE_URL}/certificados/buscar/funcionariocert/id/${id}`)
 }
 
-const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, buscarCertificacaoPorEmissor, criarCertFunc, buscarListaCertsNiveis, buscarListaCertsNiveisEmissor, buscarTop3Geral, buscarListaFuncCerts, editarStatus, buscarListaValores, editarCertificacao, editarCertificacaoFuncionario, buscarCertificacaoPorId, buscarCertificacaoFuncionarioPorId }
+function deletarCertificacao(body, id){
+    return axios.delete(`${BASE_URL}/certificados/deletar/certificacao/${id}`, body)
+}
+
+function deletarCertificacaoFuncionario(body, id){
+    return axios.delete(`${BASE_URL}/certificados/deletar/funcionariocert/${id}`, body)
+}
+
+const apiServiceCertificacoes = { criarEmissor, buscarEmissor, criarNivel, buscarNivel, criarCertificacao, buscarCertificacao, buscarCertificacaoPorEmissor, criarCertFunc, buscarListaCertsNiveis, buscarListaCertsNiveisEmissor, buscarTop3Geral, buscarListaFuncCerts, editarStatus, buscarListaValores, editarCertificacao, editarCertificacaoFuncionario, buscarCertificacaoPorId, buscarCertificacaoFuncionarioPorId, deletarCertificacao, deletarCertificacaoFuncionario }
 
 export default apiServiceCertificacoes;
