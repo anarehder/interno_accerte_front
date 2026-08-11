@@ -79,8 +79,10 @@ function ListarFuncCertsAdminComponent() {
     const handleDelete = async (id) => {
         if (!window.confirm('Tem certeza que deseja excluir esta certificação do funcionário?')) return;
         const body = { email: user.mail };
+        console.log(body);
         try {
             const response = await apiServiceCertificacoes.deletarCertificacaoFuncionario(body, id);
+            
             if (response.status === 200) {
                 alert('Certificação excluída com sucesso!');
                 setUpdated(true);
