@@ -43,6 +43,7 @@ import FiltrarFeriasAdminPage from "./pages/painel-admin-pages/FiltrarFeriasAdmi
 import FeriasCompletasAdminPage from "./pages/painel-admin-pages/FeriasCompletasAdminPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NovoComunicadoPage from "./pages/NovoComunicadoPage";
+import NovoArquivoBucketPage from "./pages/NovoArquivoBucketPage";
 import FeedbackGestorPage from "./pages/painel-gestores-pages/FeedbackGestorPage";
 import ListaFeedbackGestorPage from "./pages/painel-gestores-pages/ListaFeedbackGestorPage";
 import OrganogramaPage from "./pages/OrganogramaPage";
@@ -102,6 +103,7 @@ function App() {
                   <Route path="/filtrarferias/admin" element={<FiltrarFeriasAdminPage />} />
                   <Route path="/ferias-completions" element={<FeriasCompletasAdminPage />} />
                   <Route path="/criarcomunicado" element={<NovoComunicadoPage />} />
+                  <Route path="/criararquivocloud" element={<NovoArquivoBucketPage />} />
                   <Route path="/organograma" element={<OrganogramaPage />} />
                   <Route path="/portfolio" element={<PortfolioPage />} />
                   <Route path="/aem2" element={<AEM2Page />} />
