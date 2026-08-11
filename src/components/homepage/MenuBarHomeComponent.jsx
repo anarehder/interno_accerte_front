@@ -133,7 +133,7 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                         <DropdownItem><h1>GESTÃO <span>À VISTA</span></h1></DropdownItem>
                         {
                             (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br') &&
-                            <DropdownItem> <Link to="/admin">Painel Admin</Link></DropdownItem>
+                            <DropdownItem> <Link to="/admin">Painel RH</Link></DropdownItem>
                         }
                         <DropdownItem> <Link to="/painelgestores">Painel Gestores</Link></DropdownItem>
                         {
