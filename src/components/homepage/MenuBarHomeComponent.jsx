@@ -27,6 +27,11 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    const funcionarioLogado = dados?.funcionarios?.find(
+        (contato) => contato.email?.toLowerCase() === user?.mail?.toLowerCase()
+    );
+    const isMarketing = funcionarioLogado?.areaId === 10 || funcionarioLogado?.areaId === 12;
+
     function removeAcentos(text) {
         return text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     }
@@ -126,11 +131,16 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                     <h1>GESTÃO <span>À VISTA</span></h1>
                     <Dropdown>
                         <DropdownItem><h1>GESTÃO <span>À VISTA</span></h1></DropdownItem>
-                        <DropdownItem> <Link to="/painelgestores">Painel Gestores</Link></DropdownItem>
                         {
                             (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br') &&
                             <DropdownItem> <Link to="/admin">Painel Admin</Link></DropdownItem>
                         }
+                        <DropdownItem> <Link to="/painelgestores">Painel Gestores</Link></DropdownItem>
+                        {
+                            (isMarketing || user?.mail === 'ana.rehder@accerte.com.br') &&
+                            <DropdownItem> <Link to="/painelmarketing">Painel Marketing</Link></DropdownItem>
+                        }
+                        
                     </Dropdown>
                 </MenuItem>
                 <MenuItem>
