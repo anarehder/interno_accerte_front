@@ -1,14 +1,37 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
+import apiServiceBucket from "../../services/apiServiceBucket";
 import Banner1 from "../../assets/basic/banner-test.jpg"
 import BannerIndicai from "../../assets/basic/BannerCerts.jpeg"
 import BannerSesc from "../../assets/basic/BannerSesc.png"
 
 function BannerSlideComponent() {
-    const { dados } = useAuth();
-    const images = dados?.banners?.length > 0 ? dados.banners : [{ name: "Default", url: Banner1 }];
+    const { user } = useAuth();
+    const [images, setImages] = useState([{ name: "Default", url: Banner1 }]);
     const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        if (!user) return;
+        const fetchBanners = async () => {
+            const body = { email: user.mail };
+            try {
+                const response = await apiServiceBucket.buscarArquivosCloudPorGrupo("Banner", body);
+                const banners = (response.data || []).map((banner) => ({
+                    name: banner.descricao,
+                    url: banner.arquivo,
+                    externo: banner.linkExterno,
+                }));
+                if (banners.length > 0) {
+                    setImages(banners);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar banners:", error);
+            }
+        };
+        fetchBanners();
+    }, [user]);
+
     const imagesFull = [{ name: "Banner IndicAI", url: BannerIndicai, externo: 'https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Pol%C3%ADticas/Pol%C3%ADtica%20do%20Programa%20de%20Certifica%C3%A7%C3%B5es%20Accerte.pdf' }, { name: "Banner Sesc", url: BannerSesc, externo:'https://www.sescgo.com.br/o-sesc/credencial-sesc/a-credencial/' }, ...images];
 
     useEffect(() => {
