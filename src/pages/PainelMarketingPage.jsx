@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { FaCloudUploadAlt, FaFolderOpen, FaBullhorn } from "react-icons/fa";
+import { FaCloudUploadAlt, FaFolderOpen, FaBullhorn, FaListUl } from "react-icons/fa";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
 function PainelMarketingPage() {
@@ -28,6 +28,13 @@ function PainelMarketingPage() {
                         <p>Criar <br /> <span>Comunicado</span></p>
                     </NewButton>
                 </Link>
+
+                <Link to="/listacomunicados">
+                    <NewButton>
+                        <FaListUl size={90} />
+                        <p>Listar <br /> <span>Comunicados</span></p>
+                    </NewButton>
+                </Link>
             </ButtonContainer>
         </PageContainer>
     );
@@ -46,10 +53,10 @@ const PageContainer = styled.div`
 `;
 
 const ButtonContainer = styled.div`
+    display: grid;
+    grid-template-columns: repeat(2, 220px);
     justify-content: center;
-    flex-wrap: wrap;
     gap: 30px;
-    width: 900px;
     margin-top: 20px;
 `;
 
@@ -58,7 +65,7 @@ const NewButton = styled.button`
     justify-content: center;
     width: 220px;
     height: 220px;
-    gap: 7px;
+    gap: 20px;
     border-radius: 28px;
     color: #003289;
     border: 1px solid #acaaaaff;
@@ -70,6 +77,10 @@ const NewButton = styled.button`
     text-align: center;
 
     p{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         height: 80px;
         font-size: 23px;
     }

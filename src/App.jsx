@@ -45,6 +45,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NovoComunicadoPage from "./pages/NovoComunicadoPage";
 import NovoArquivoBucketPage from "./pages/NovoArquivoBucketPage";
 import ListaArquivosCloudPage from "./pages/ListaArquivosCloudPage";
+import ListaComunicadosPage from "./pages/ListaComunicadosPage";
 import PainelMarketingPage from "./pages/PainelMarketingPage";
 import FeedbackGestorPage from "./pages/painel-gestores-pages/FeedbackGestorPage";
 import ListaFeedbackGestorPage from "./pages/painel-gestores-pages/ListaFeedbackGestorPage";
@@ -107,6 +108,7 @@ function App() {
                   <Route path="/criarcomunicado" element={<NovoComunicadoPage />} />
                   <Route path="/criararquivocloud" element={<NovoArquivoBucketPage />} />
                   <Route path="/arquivoscloud" element={<ListaArquivosCloudPage />} />
+                  <Route path="/listacomunicados" element={<ListaComunicadosPage />} />
                   <Route path="/painelmarketing" element={<PainelMarketingPage />} />
                   <Route path="/organograma" element={<OrganogramaPage />} />
                   <Route path="/portfolio" element={<PortfolioPage />} />
