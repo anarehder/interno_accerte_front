@@ -72,7 +72,7 @@ function NovoComunicadoPage() {
 
     return (
         <PageContainer>
-        <HeaderNewComponent pageTitle={"Criar Comunicado"} />
+        <HeaderNewComponent pageTitle={"Criar Comunicado"} returnTo="/painelmarketing" />
         <Container>
             
             <div>

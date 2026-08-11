@@ -3,13 +3,18 @@ import Header from "../../assets/header/accerte-background.png";
 import Logo from "../../assets/header/logo-accerte.png";
 import styled from 'styled-components';
 
-function HeaderNewComponent({pageTitle, subtitle}) {
-    
+function HeaderNewComponent({pageTitle, subtitle, returnTo = "/homepage"}) {
+
     return (
         <PageContainer>
-            <Link to="/homepage">
+            <Link to={returnTo}>
                 <ReturnButton> voltar </ReturnButton>
             </Link>
+            {returnTo !== "/homepage" &&
+                <Link to="/homepage">
+                    <HomeButton> homepage </HomeButton>
+                </Link>
+            }
             <HeaderContainer>
                 <ImageContainer>
                     {/* <h1>accerte</h1> */}
@@ -81,6 +86,25 @@ const Title = styled.div`
 const ReturnButton = styled.button`
     top: 10%;
     left: 1%;
+    position: absolute;
+    font-size: 16px;
+    justify-content: center;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid #001143;
+    color: #001143;
+    &:hover {
+        background-color: #001143;
+        color:white;
+    }
+`;
+
+const HomeButton = styled.button`
+    top: 10%;
+    right: 1%;
     position: absolute;
     font-size: 16px;
     justify-content: center;

@@ -122,7 +122,7 @@ function ListaArquivosCloudPage() {
 
     return (
         <PageContainer>
-            <HeaderNewComponent pageTitle={"Arquivos Cloud"} />
+            <HeaderNewComponent pageTitle={"Arquivos Cloud"} returnTo="/painelmarketing" />
             <TopBar>
                 <AdminButton><Link to="/criararquivocloud">Criar Arquivo</Link></AdminButton>
             </TopBar>

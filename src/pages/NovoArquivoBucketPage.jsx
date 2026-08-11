@@ -91,7 +91,7 @@ function NovoArquivoBucketPage() {
 
     return (
         <PageContainer>
-        <HeaderNewComponent pageTitle={"Criar Arquivo Cloud"} />
+        <HeaderNewComponent pageTitle={"Criar Arquivo Cloud"} returnTo="/painelmarketing" />
         <Container>
 
             <div>
