@@ -2,12 +2,14 @@ import { useState } from "react";
 import styled from 'styled-components';
 import { useAuth } from "../contexts/AuthContext";
 import apiService from "../services/apiService";
+import apiServiceBucket from "../services/apiServiceBucket";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
 function NovoComunicadoPage() {
     const { user } = useAuth();
-    const [form, setForm] = useState({ titulo: "", imagemUrl: "", linkExterno: "-", legenda: "", areaId: 7, dataDivulgacao: null, tipo: "" });
-    const baseUrl = "https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Extras/COMUNICADOS/";
+    const [form, setForm] = useState({ titulo: "", linkExterno: "-", legenda: "", areaId: 7, dataDivulgacao: null, tipo: "" });
+    const [imagemFile, setImagemFile] = useState(null);
+    const [enviando, setEnviando] = useState(false);
 
     const handleForm = (e) => {
         const { id, value } = e.target;
@@ -26,21 +28,25 @@ function NovoComunicadoPage() {
         }));
     };
 
+    const handleFile = (e) => {
+        setImagemFile(e.target.files[0] || null);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.titulo || !form.imagemUrl || !form.linkExterno || !form.areaId || !form.dataDivulgacao || !form.tipo) {
+        if (!form.titulo || !imagemFile || !form.linkExterno || !form.areaId || !form.dataDivulgacao || !form.tipo) {
             alert("Todos os campos obrigatórios devem ser preenchidos.");
             return;
         }
-        const formComDatasFormatadas = {
-            ...form,
-            dataDivulgacao: form.dataDivulgacao,
-            imagemUrl: form.imagemUrl &&  `${baseUrl}${encodeURIComponent(form.imagemUrl)}`
-        };
+
+        const imagemUrl = apiServiceBucket.getFileUrl(imagemFile.name);
 
         const body = {
             email: user.mail,
-            comunicado: formComDatasFormatadas,
+            comunicado: {
+                ...form,
+                imagemUrl,
+            },
         };
 
         const confirmado = confirm(
@@ -57,15 +63,21 @@ function NovoComunicadoPage() {
             return;
         }
 
+        setEnviando(true);
         try {
+            await apiServiceBucket.uploadFile(imagemFile, imagemFile.name);
+
             const response = await apiService.criarComunicados(body);
             if (response.status === 200) {
                 alert("Comunicado criado com sucesso!");
-                setForm({ titulo: "", imagemUrl: "", linkExterno: "-", legenda: "", areaId: "", dataDivulgacao: null, tipo: "" });
+                setForm({ titulo: "", linkExterno: "-", legenda: "", areaId: 7, dataDivulgacao: null, tipo: "" });
+                setImagemFile(null);
             }
         } catch (error) {
             console.error("Erro ao enviar requisição:", error);
-            // alert(`Ocorreu um erro. Tente novamente, ${error.response.data.message}.`);
+            alert("Ocorreu um erro ao enviar o arquivo. Tente novamente.");
+        } finally {
+            setEnviando(false);
         }
     };
 
@@ -98,23 +110,16 @@ function NovoComunicadoPage() {
                 <Select id="tipo" value={form.tipo} onChange={handleForm}>
                     <option value="">Selecione...</option>
                     <option value="Geral">Geral</option>
-                    <option value="Accerte em Movimento 3">Accerte em Movimento 3</option>
+                    <option value="Accerte em Movimento 4">Accerte em Movimento 4</option>
                 </Select>
             </div>
             <div>
-                <Label>Titulo Imagem Intranet</Label>
-                <Input
-                    type="text"
-                    id="imagemUrl"
-                    value={form.imagemUrl}
-                    onChange={handleForm}
+                <Label>Imagem</Label>
+                <FileInput
+                    type="file"
+                    id="imagem"
+                    onChange={handleFile}
                 />
-            </div>
-            <div>
-                <Label>URL Imagem Sharepoint</Label>
-                <p>
-                {baseUrl}{encodeURIComponent(form.imagemUrl)}
-                </p>
             </div>
             <div>
                 <Label>Link Externo</Label>
@@ -147,7 +152,9 @@ function NovoComunicadoPage() {
             </div>
 
             <ButtonContainer>
-                <Button onClick={handleSubmit}>Criar Comunicado</Button>
+                <Button onClick={handleSubmit} disabled={enviando}>
+                    {enviando ? "Enviando..." : "Criar Comunicado"}
+                </Button>
             </ButtonContainer>
         </Container>
         </PageContainer>
@@ -203,6 +210,18 @@ const Input = styled.input`
   text-indent: 8px;
   height: 40px;
   font-size: 18px;
+`;
+
+const FileInput = styled(Input)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-indent: 0;
+
+  &::file-selector-button {
+    margin: 7px;
+  }
 `;
 
 const ButtonContainer = styled.div`

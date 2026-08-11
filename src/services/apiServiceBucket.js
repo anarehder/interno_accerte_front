@@ -37,6 +37,10 @@ function deletarArquivoCloud(id, body){
     })
 }
 
-const apiServiceBucket = { uploadFile, getFileUrl, buscarArquivosCloud, buscarArquivosCloudPorGrupo, criarArquivoCloud, editarArquivoCloud, deletarArquivoCloud };
+function buscarComunicadosTodos(body){
+    return axios.post(`${BASE_URL}/comunicados/todos`, body)
+}
+
+const apiServiceBucket = { uploadFile, getFileUrl, buscarArquivosCloud, buscarArquivosCloudPorGrupo, criarArquivoCloud, editarArquivoCloud, deletarArquivoCloud, buscarComunicadosTodos };
 
 export default apiServiceBucket;
