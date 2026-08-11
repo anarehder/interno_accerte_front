@@ -5,8 +5,6 @@ import { useAuth } from "../contexts/AuthContext";
 import apiServiceBucket from "../services/apiServiceBucket";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
-const GRUPOS = ["Banner", "Comunicado", "AEM4"];
-
 const getHoje = () => {
     const hoje = new Date();
     const ano = hoje.getFullYear();
@@ -50,6 +48,8 @@ function ListaArquivosCloudPage() {
         };
         fetchArquivos();
     }, [user]);
+
+    const grupos = [...new Set(arquivos.map((a) => a.grupo).filter(Boolean))].sort();
 
     const arquivosFiltrados = arquivos
         .filter((a) => !grupoFiltro || a.grupo === grupoFiltro)
@@ -137,7 +137,7 @@ function ListaArquivosCloudPage() {
                         >
                             Todos
                         </FilterButton>
-                        {GRUPOS.map((grupo) => (
+                        {grupos.map((grupo) => (
                             <FilterButton
                                 key={grupo}
                                 $active={grupoFiltro === grupo}
