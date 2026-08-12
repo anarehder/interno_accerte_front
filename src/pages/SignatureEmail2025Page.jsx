@@ -1,15 +1,17 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import styled from 'styled-components';
 import backgroundSignature from "../assets/ASSINATURA-2025.png";
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 import { useAuth } from '../contexts/AuthContext';
+import { useFuncionarios } from '../contexts/FuncionariosContext';
 import { ImWhatsapp } from "react-icons/im";
 import { TfiEmail } from "react-icons/tfi";
 
 function SignatureEmail2025Page() {
     const { user } = useAuth();
+    const { dados, getData } = useFuncionarios();
     const imageRef = useRef(null);
     const [errors, setErrors] = useState({});
     const [displayImage, setDisplayImage] = useState(false);
@@ -17,6 +19,23 @@ function SignatureEmail2025Page() {
         nome: "",
         sobrenome: "",
     });
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const funcionario = dados?.funcionarios?.find(
+        (f) => f.email?.toLowerCase() === user?.mail?.toLowerCase()
+    );
+
+    useEffect(() => {
+        if (funcionario) {
+            setForm({
+                nome: funcionario.nome ?? "",
+                sobrenome: funcionario.sobrenome ?? "",
+            });
+        }
+    }, [funcionario]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -62,14 +81,14 @@ function SignatureEmail2025Page() {
                     <Name>{form?.nome} </Name> <Surname>{form?.sobrenome}</Surname>
                 </FullName>
                 <Position>
-                    <p>{user?.jobTitle}</p>
+                    <p>{funcionario?.cargo}</p>
                     {/* <p>Diretor de Comunicação, Marketing e Canais</p> */}
                 </Position>
-                <WhatsApp>   
-                    <ImWhatsapp size={24}/> <strong>{user?.mobilePhone.slice(0, 4)}</strong> {user?.mobilePhone.slice(4, 15)}
+                <WhatsApp>
+                    <ImWhatsapp size={24}/> <strong>{funcionario?.telefone?.slice(0, 4)}</strong> {funcionario?.telefone?.slice(4, 15)}
                 </WhatsApp>
                 <Mail>
-                    <TfiEmail size={24}/>{user?.mail}
+                    <TfiEmail size={24}/>{funcionario?.email}
                 </Mail>
             </ImageContainer>
         </PageContainer>
@@ -86,6 +105,7 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 45px;
+    margin-bottom: 50px;
 `
 
 const FormContainer = styled.div`

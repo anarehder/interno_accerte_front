@@ -6,10 +6,12 @@ import FuncionariosListComponent from "../../components/admin/FuncionariosListCo
 import HeaderGGNewComponent from "../../components/gentegestao/HeaderGGNewComponent";
 
 function FuncionariosAdminPage() {
-    const { dados, carregando } = useFuncionarios();
+    const { dados, carregando, getData } = useFuncionarios();
     const [info, setInfo] = useState(null);
 
     useEffect(() => {
+        getData();
+
         const fetchInfo = async () => {
             try {
                 const response = await apiService.buscarInfoCriarFunc();
