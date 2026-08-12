@@ -36,6 +36,8 @@ import ListaVagasPage from "./pages/painel-gestores-pages/ListaVagasPage";
 import AprovarFeriasPage from "./pages/painel-gestores-pages/AprovarFeriasPage";
 import FiltrarFeriasPage from "./pages/painel-gestores-pages/FiltrarFeriasPage";
 import UsuariosAdminPage from "./pages/painel-admin-pages/UsuariosAdminPage";
+import CriarUsuarioAdminPage from "./pages/painel-admin-pages/CriarUsuarioAdminPage";
+import EditarUsuarioAdminPage from "./pages/painel-admin-pages/EditarUsuarioAdminPage";
 import FuncionariosAdminPage from "./pages/painel-admin-pages/FuncionariosAdminPage";
 import AprovarFeriasAdminPage from "./pages/painel-admin-pages/AprovarFeriasAdminPage";
 import EscalasAdminPage from "./pages/painel-admin-pages/EscalasAdminPage";
@@ -101,6 +103,8 @@ function App() {
                   <Route path="/aprovarferias" element={<AprovarFeriasPage />} />
                   <Route path="/filtrarferias" element={<FiltrarFeriasPage />} />
                   <Route path="/usuariosadmin" element={<UsuariosAdminPage />} />
+                  <Route path="/criarusuario/admin" element={<CriarUsuarioAdminPage />} />
+                  <Route path="/editarusuario/admin" element={<EditarUsuarioAdminPage />} />
                   <Route path="/funcionarios/admin" element={<FuncionariosAdminPage />} />
                   <Route path="/aprovarferias/admin" element={<AprovarFeriasAdminPage />} />
                   <Route path="/escalas/admin" element={<EscalasAdminPage />} />

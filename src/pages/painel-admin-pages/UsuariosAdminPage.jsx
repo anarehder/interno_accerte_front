@@ -1,52 +1,24 @@
-import { useEffect, useState } from "react";
 import styled from 'styled-components';
-import { useAuth } from "../../contexts/AuthContext";
-import apiService from "../../services/apiService";
-import CriarUsuarioComponent from "../../components/admin/CriarUsuarioComponent";
-import EditarUsuarioComponent from "../../components/admin/EditarUsuarioComponent";
+import { Link } from "react-router-dom";
 import HeaderGGNewComponent from "../../components/gentegestao/HeaderGGNewComponent";
 
 function UsuariosAdminPage(){
-    const { user, dados } = useAuth();
-    const [info, setInfo] = useState([]);
-    const [carregando, setCarregando] = useState(true);
-    const [updated, setUpdated] = useState(false);
-    const [action, setAction] = useState("");
-    
-    useEffect(() => {
-        if (!user) return;
-        const fetchScale = async () => {
-            try {
-                const response = await apiService.buscarInfoCriarFunc();
-                setInfo(response.data);
-                setCarregando(false);
-                setUpdated(false);
-            } catch (error) {
-                setErrorMessage(error.response.data.message);
-                setCarregando(false);
-            }
-        };
-
-        fetchScale();
-
-    }, [user, updated]);
-
     return (
         <PageContainer>
          <HeaderGGNewComponent pageTitle={"Painel Usuários | Admin"} lastPage={"admin"} />
         <Container>
-            {dados && !carregando &&
-                <ButtonsContainer>
-                    <Button onClick={() => setAction("Criar")}>
+            <ButtonsContainer>
+                <Link to="/criarusuario/admin">
+                    <Button>
                         Criar Usuario
                     </Button>
-                    <Button onClick={() => setAction("Editar")}>
+                </Link>
+                <Link to="/editarusuario/admin">
+                    <Button>
                         Editar Usuario
                     </Button>
-                </ButtonsContainer>
-            }
-            {action === "Criar" && <CriarUsuarioComponent info={info} setUpdated={setUpdated} />}  
-            {action === "Editar" && <EditarUsuarioComponent info={info} setUpdated={setUpdated} />}            
+                </Link>
+            </ButtonsContainer>
         </Container>
         </PageContainer>
     );
