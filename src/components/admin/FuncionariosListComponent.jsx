@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import styled from "styled-components";
-import { FiCopy, FiCheck } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { FiCopy, FiCheck, FiEdit2 } from "react-icons/fi";
 
 function formatDate(dateStr) {
     if (!dateStr) return "-";
@@ -67,12 +68,19 @@ function FuncionariosListComponent({ funcionarios, gestores, info }) {
                 {lista.map((f) => (
                     <Card key={f.id ?? f.email}>
                         <CardHeader>
-                            <Avatar>{(f.nome?.[0] ?? "?").toUpperCase()}</Avatar>
-                            <HeaderInfo>
-                                <Nome>{f.nome} {f.sobrenome}</Nome>
-                                <Cargo>{f.cargo || "-"}</Cargo>
-                                {gestorIds.has(f.id) && <Badge>Gestor</Badge>}
-                            </HeaderInfo>
+                            <HeaderMain>
+                                <Avatar>{(f.nome?.[0] ?? "?").toUpperCase()}</Avatar>
+                                <HeaderInfo>
+                                    <Nome>{f.nome} {f.sobrenome}</Nome>
+                                    <Cargo>{f.cargo || "-"}</Cargo>
+                                    {gestorIds.has(f.id) && <Badge>Gestor</Badge>}
+                                </HeaderInfo>
+                            </HeaderMain>
+                            {f.id != null && (
+                                <EditLink to={`/editarusuario/admin?funcionarioId=${f.id}`} title="Editar funcionário">
+                                    <FiEdit2 size={16} />
+                                </EditLink>
+                            )}
                         </CardHeader>
 
                         <Details>
@@ -198,11 +206,39 @@ const Card = styled.div`
 
 const CardHeader = styled.div`
     align-items: center;
+    justify-content: space-between;
     width: 100%;
     gap: 10px;
     padding: 16px 20px;
     background: linear-gradient(94.61deg, #E7185A 3.73%, #aa1041ff 133.27%);
     color: white;
+`;
+
+const HeaderMain = styled.div`
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 10px;
+`;
+
+const EditLink = styled(Link)`
+    display: flex;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    margin-right: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(232, 173, 173, 0.58);
+    color: white;
+    font-size: 15px;
+    text-decoration: none;
+    transition: background 0.15s ease;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.35);
+    }
 `;
 
 const Avatar = styled.div`
@@ -225,6 +261,7 @@ const HeaderInfo = styled.div`
     min-width: 0;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: center;
     gap: 4px;
     text-align: left;
 `;

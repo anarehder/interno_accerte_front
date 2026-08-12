@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from 'styled-components';
 import { useAuth } from "../../contexts/AuthContext";
 import apiService from "../../services/apiService";
 
-function EditarUsuarioComponent({info, setUpdated}){
+function EditarUsuarioComponent({info, setUpdated, initialFuncionarioId, onSuccess, onCancel}){
     const { user } = useAuth();
     const [selectedFunc, setSelectedFunc] = useState("-");
     const [selectedId, setSelectedId] = useState("-");
     const [form, setForm] = useState({nome: "", sobrenome: "", email: "", tipoContratoId: "", admissao: "", demissao: null, isAdmin: false, aniversario:"", areaId:"", jornadaId:"", cargo:"", localizacao: "", entrada: "", nivel: "", isManager: false, telefone: "" });
+    const initialAplicadoRef = useRef(false);
 
     const handleSelect = (id) => {
         const funcionario = info.listaFuncionarios.filter((f) => f.id === Number(id));
@@ -23,6 +24,17 @@ function EditarUsuarioComponent({info, setUpdated}){
             setSelectedFunc("-");
         }
     };
+
+    // Quando a página é aberta a partir da lista de funcionários, o funcionário
+    // clicado já vem pré-selecionado (uma única vez, ao carregar a lista).
+    useEffect(() => {
+        if (initialAplicadoRef.current) return;
+        if (!initialFuncionarioId) return;
+        if (!info?.listaFuncionarios?.length) return;
+
+        handleSelect(initialFuncionarioId);
+        initialAplicadoRef.current = true;
+    }, [info, initialFuncionarioId]);
 
     const handleForm = (e) => {
         const { id, value } = e.target;
@@ -82,6 +94,7 @@ function EditarUsuarioComponent({info, setUpdated}){
                 setSelectedFunc("-");
                 setSelectedId("-");
                 setUpdated(true);
+                onSuccess?.();
             }
         } catch (error) {
             console.error("Erro ao enviar requisição:", error);
@@ -254,6 +267,9 @@ function EditarUsuarioComponent({info, setUpdated}){
                             </div>
 
                             <ButtonContainer>
+                                {onCancel && (
+                                    <CancelButton type="button" onClick={onCancel}>Cancelar</CancelButton>
+                                )}
                                 <Button type="submit" onClick={handleSubmit}>Editar Usuário</Button>
                             </ButtonContainer>
                         </>
@@ -313,6 +329,7 @@ const Input = styled.input`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
+  gap: 15px;
 `;
 
 const Button = styled.button`
@@ -326,5 +343,20 @@ const Button = styled.button`
 
   &:hover {
     background-color: #45a049;
+  }
+`;
+
+const CancelButton = styled.button`
+  padding: 10px 20px;
+  background-color: transparent;
+  color: #555;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
   }
 `;

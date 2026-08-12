@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from 'styled-components';
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import apiService from "../../services/apiService";
 import EditarUsuarioComponent from "../../components/admin/EditarUsuarioComponent";
@@ -7,6 +8,9 @@ import HeaderGGNewComponent from "../../components/gentegestao/HeaderGGNewCompon
 
 function EditarUsuarioAdminPage(){
     const { user } = useAuth();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const funcionarioId = searchParams.get("funcionarioId");
     const [info, setInfo] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [updated, setUpdated] = useState(false);
@@ -31,10 +35,18 @@ function EditarUsuarioAdminPage(){
 
     return (
         <PageContainer>
-            <HeaderGGNewComponent pageTitle={"Editar Usuário | Admin"} lastPage={"usuariosadmin"} />
+            <HeaderGGNewComponent pageTitle={"Editar Usuário | Admin"} lastPage={"funcionarios/admin"} />
             <Container>
                 {carregando && <p>Carregando...</p>}
-                {!carregando && info && <EditarUsuarioComponent info={info} setUpdated={setUpdated} />}
+                {!carregando && info && (
+                    <EditarUsuarioComponent
+                        info={info}
+                        setUpdated={setUpdated}
+                        initialFuncionarioId={funcionarioId}
+                        onSuccess={() => navigate("/funcionarios/admin")}
+                        onCancel={() => navigate("/funcionarios/admin")}
+                    />
+                )}
             </Container>
         </PageContainer>
     );
