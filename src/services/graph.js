@@ -83,65 +83,23 @@ export async function getSharePointData(instance, accounts) {
   //name:"Teams Wiki Data"
   // id:"b!xlhstM3P3EaQzU6bGge34Glt-vRamHpMi47-bucH58N_pfP09ZpKQJ4WX7V7ssSu"
   //PEGAR DA SHARED DOCUMENTS
-  
-  const politica = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Políticas:/children`,
-    {
-      headers: { Authorization: `Bearer ${response.accessToken}` }
-    }
-  );
 
-  const politicaProc = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${processosId}/list/items?$expand=fields,driveItem&$filter=fields/TIPODEDOCUMENTO eq '${encodeURIComponent("Política")}'`,
-    {
-      headers: {
-        Authorization: `Bearer ${response.accessToken}`,
-        Prefer: "HonorNonIndexedQueriesWarningMayFailRandomly",
-      }
-    }
-  );
-  const filesProc = await politicaProc.json();
-  const files = await politica.json();
-  // console.log(files);
-  // console.log(filesProc);
+  // const politicaProc = await fetch(
+  //   `https://graph.microsoft.com/v1.0/drives/${processosId}/list/items?$expand=fields,driveItem&$filter=fields/TIPODEDOCUMENTO eq '${encodeURIComponent("Política")}'`,
+  //   {
+  //     headers: {
+  //       Authorization: `Bearer ${response.accessToken}`,
+  //       Prefer: "HonorNonIndexedQueriesWarningMayFailRandomly",
+  //     }
+  //   }
+  // );
+  // const filesProc = await politicaProc.json();
 
   // const fileList = (filesProc.value || [])
   //   .map(item => ({
   //     name: item.fields.T_x00ed_tuloo,
   //     url: item.webUrl
   //   }));
-  // console.log(fileListPolProc);
-  
-
-  const fileList = files.value.map(file => ({
-    name: file.name,
-    url: file.webUrl
-  }));
-
-  const codigos = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Código de Ética e Conduta:/children`,
-    {
-      headers: { Authorization: `Bearer ${response.accessToken}` }
-    }
-  );
-  const files2 = await codigos.json();
-  const fileList2 = files2.value.map(file => ({
-    name: file.name,
-    url: file.webUrl
-  }));
-
-  
-  const processos = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Escritório de Processos:/children`,
-    {
-      headers: { Authorization: `Bearer ${response.accessToken}` }
-    }
-  );
-  const files3 = await processos.json();
-  const fileList3 = files3.value.map(file => ({
-    name: file.name,
-    url: file.webUrl
-  }));
 
   const monthNumberPadded = moment().format('MM'); 
   const mes = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date()).toUpperCase();
@@ -250,20 +208,6 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const banners = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/BANNERS:/children`,
-    {
-      headers: { Authorization: `Bearer ${response.accessToken}` }
-    }
-  );
-  const files9 = await banners.json();
-  
-  const fileList9 = files9.value.map(file => ({
-    name: file.name,
-    url: file.webUrl,
-    externo: file.webUrl, 
-  }));
-
   const docs = await fetch(
     `https://graph.microsoft.com/v1.0/drives/${sharedDocumentsId}/root:/Extras/PAPELARIA:/children`,
     {
@@ -359,7 +303,7 @@ export async function getSharePointData(instance, accounts) {
     url: file.webUrl
   }));
 
-  const responseObject = {'politicas': fileList, 'codigos': fileList2, 'processos': fileList3, 'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'banners':fileList9, 'docs': fileList10, 'vagas': fileList11, 'accerteconnect': fileList12, 'accerteconnect2': fileList13, 'beneficios': fileList14, 'aem3': fileList15, 'imageUrl': imageUrl, 'accerteconnect3': fileList16};
+  const responseObject = {'aniversarios': fileList4, 'aniversarioDia': aniversarioDia, 'agenda': fileList5, 'calendario': fileList6, 'compliance':fileList7, 'background':fileList8, 'docs': fileList10, 'vagas': fileList11, 'accerteconnect': fileList12, 'accerteconnect2': fileList13, 'beneficios': fileList14, 'aem3': fileList15, 'imageUrl': imageUrl, 'accerteconnect3': fileList16};
   sessionStorage.setItem("sharePoint", JSON.stringify(responseObject));
   return responseObject;    
 
