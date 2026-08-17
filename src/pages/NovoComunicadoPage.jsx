@@ -5,6 +5,14 @@ import apiService from "../services/apiService";
 import apiServiceBucket from "../services/apiServiceBucket";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
+const getHoje = () => {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoje.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
+};
+
 function NovoComunicadoPage() {
     const { user } = useAuth();
     const [form, setForm] = useState({ titulo: "", linkExterno: "-", legenda: "", areaId: 7, dataDivulgacao: null, tipo: "" });
@@ -69,6 +77,19 @@ function NovoComunicadoPage() {
 
             const response = await apiService.criarComunicados(body);
             if (response.status === 200) {
+                const arquivoCloudBody = {
+                    email: user.mail,
+                    arquivo: {
+                        grupo: "Comunicado",
+                        descricao: form.titulo,
+                        arquivo: imagemUrl,
+                        linkExterno: (form.linkExterno && form.linkExterno !== "-") ? form.linkExterno : "",
+                        inicio: getHoje(),
+                        fim: null,
+                    },
+                };
+                await apiServiceBucket.criarArquivoCloud(arquivoCloudBody);
+
                 alert("Comunicado criado com sucesso!");
                 setForm({ titulo: "", linkExterno: "-", legenda: "", areaId: 7, dataDivulgacao: null, tipo: "" });
                 setImagemFile(null);
