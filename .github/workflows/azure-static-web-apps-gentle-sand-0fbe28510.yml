@@ -36,6 +36,7 @@ jobs:
           VITE_APP_CLIENT: ${{ secrets.VITE_APP_CLIENT }}
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
+          VITE_OCI_BUCKET: ${{ secrets.VITE_OCI_BUCKET }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
