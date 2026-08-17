@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import apiServiceBucket from "../services/apiServiceBucket";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
+import { HiOutlineZoomIn, HiOutlineX } from "react-icons/hi";
 
 const formatDate = (data) => {
     if (!data) return null;
@@ -17,6 +18,7 @@ function ListaComunicadosPage() {
     const [loading, setLoading] = useState(true);
     const [selectedId, setSelectedId] = useState(null);
     const [tipoFiltro, setTipoFiltro] = useState("");
+    const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
     useEffect(() => {
         if (!user) return;
@@ -55,6 +57,12 @@ function ListaComunicadosPage() {
 
     const handleTipoClick = (tipo) => {
         setTipoFiltro((prev) => (prev === tipo ? "" : tipo));
+    };
+
+    const abrirImagemAmpliada = (e, url) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setImagemAmpliada(url);
     };
 
     return (
@@ -114,7 +122,16 @@ function ListaComunicadosPage() {
                 <PreviewPanel>
                     {selecionado ? (
                         <>
-                            <PreviewImage src={selecionado.imagemUrl} alt={selecionado.titulo} />
+                            <ImageWrapper>
+                                <PreviewImage src={selecionado.imagemUrl} alt={selecionado.titulo} />
+                                <ZoomButton
+                                    type="button"
+                                    title="Ampliar imagem"
+                                    onClick={(e) => abrirImagemAmpliada(e, selecionado.imagemUrl)}
+                                >
+                                    <HiOutlineZoomIn size={26} />
+                                </ZoomButton>
+                            </ImageWrapper>
                             <PreviewTitle>{selecionado.titulo}</PreviewTitle>
                             <PreviewDetails>
                                 <div><strong>Tipo:&nbsp;</strong>{selecionado.tipo}</div>
@@ -136,6 +153,23 @@ function ListaComunicadosPage() {
                     )}
                 </PreviewPanel>
             </ExplorerContainer>
+
+            {imagemAmpliada && (
+                <ModalOverlay onClick={() => setImagemAmpliada(null)}>
+                    <ModalCloseButton
+                        type="button"
+                        title="Fechar"
+                        onClick={() => setImagemAmpliada(null)}
+                    >
+                        <HiOutlineX size={28} />
+                    </ModalCloseButton>
+                    <ModalImage
+                        src={imagemAmpliada}
+                        alt="Imagem ampliada"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </ModalOverlay>
+            )}
         </PageContainer>
     );
 }
@@ -219,7 +253,7 @@ const FilterButton = styled.button`
 const ExplorerContainer = styled.div`
     width: 90%;
     max-width: 1200px;
-    height: 560px;
+    height: 650px;
     margin-bottom: 40px;
     border: 1px solid #9ca3af;
     border-radius: 10px;
@@ -305,13 +339,44 @@ const PreviewPanel = styled.div`
     box-sizing: border-box;
 `;
 
-const PreviewImage = styled.img`
+const ImageWrapper = styled.div`
+    position: relative;
     width: 100%;
-    max-height: 390px;
-    object-fit: contain;
+    height: 390px;
+    align-items: center;
+    justify-content: center;
     border-radius: 8px;
     border: 1px solid #d1d5db;
     background-color: white;
+    overflow: hidden;
+`;
+
+const PreviewImage = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+`;
+
+const ZoomButton = styled.button`
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.85);
+    }
 `;
 
 const PreviewTitle = styled.div`
@@ -340,4 +405,42 @@ const EmptyState = styled.div`
     font-size: 14px;
     text-align: center;
     width: 100%;
+`;
+
+const ModalOverlay = styled.div`
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+`;
+
+const ModalCloseButton = styled.button`
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    cursor: pointer;
+    z-index: 1001;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+`;
+
+const ModalImage = styled.img`
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 `;

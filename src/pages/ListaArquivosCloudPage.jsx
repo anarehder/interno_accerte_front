@@ -129,6 +129,15 @@ function ListaArquivosCloudPage() {
 
             <FilterContainer>
                 <FilterGroup>
+                    <FilterTitle>Expiração:</FilterTitle>
+                    <ToggleButton
+                        $active={somenteAtivos}
+                        onClick={() => setSomenteAtivos((prev) => !prev)}
+                    >
+                        {somenteAtivos ? "Somente Ativos" : "Todos (incl. expirados)"}
+                    </ToggleButton>
+                </FilterGroup>
+                <FilterGroup>
                     <FilterTitle>Grupo:</FilterTitle>
                     <FilterArea>
                         <FilterButton
@@ -147,15 +156,6 @@ function ListaArquivosCloudPage() {
                             </FilterButton>
                         ))}
                     </FilterArea>
-                </FilterGroup>
-                <FilterGroup>
-                    <FilterTitle>Expiração:</FilterTitle>
-                    <ToggleButton
-                        $active={somenteAtivos}
-                        onClick={() => setSomenteAtivos((prev) => !prev)}
-                    >
-                        {somenteAtivos ? "Somente Ativos" : "Todos (incl. expirados)"}
-                    </ToggleButton>
                 </FilterGroup>
             </FilterContainer>
 
@@ -226,6 +226,13 @@ function ListaArquivosCloudPage() {
                                     <>
                                         <div><strong>Fim:&nbsp;</strong>{formatDate(selecionado.fim) || "sem expiração"}</div>
                                         <div><strong>Status:&nbsp;</strong>{isAtivo(selecionado) ? "Ativo" : "Expirado"}</div>
+                                        {selecionado.arquivo && (
+                                            <div>
+                                                <a href={selecionado.arquivo} target="_blank" rel="noreferrer">
+                                                    Link do arquivo
+                                                </a>
+                                            </div>
+                                        )}
                                         {selecionado.linkExterno && (
                                             <div>
                                                 <a href={selecionado.linkExterno} target="_blank" rel="noreferrer">
@@ -288,26 +295,31 @@ const FilterContainer = styled.div`
     border-radius: 10px;
     padding: 12px;
     background-color: #f9fafb;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
     box-sizing: border-box;
 `;
 
 const FilterGroup = styled.div`
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+    width: auto;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
 `;
 
 const FilterTitle = styled.div`
     font-size: 14px;
     font-weight: 700;
     color: #374151;
-    min-width: 80px;
 `;
 
 const FilterArea = styled.div`
     display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
     gap: 10px;
     flex-wrap: wrap;
 `;
@@ -387,6 +399,7 @@ const ListItemInfo = styled.div`
 
 const ListItemTitle = styled.div`
     font-size: 15px;
+    line-height: 1.4;
     font-weight: 600;
     color: #1f2937;
     white-space: nowrap;
