@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import apiServiceBucket from "../services/apiServiceBucket";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
+import { HiOutlineZoomIn, HiOutlineX } from "react-icons/hi";
 
 const getHoje = () => {
     const hoje = new Date();
@@ -29,8 +30,9 @@ function ListaArquivosCloudPage() {
     const [grupoFiltro, setGrupoFiltro] = useState("");
     const [somenteAtivos, setSomenteAtivos] = useState(true);
     const [editando, setEditando] = useState(false);
-    const [editForm, setEditForm] = useState({ fim: "", linkExterno: "" });
+    const [editForm, setEditForm] = useState({ inicio: "", fim: "", linkExterno: "" });
     const [salvando, setSalvando] = useState(false);
+    const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
     useEffect(() => {
         if (!user) return;
@@ -76,8 +78,18 @@ function ListaArquivosCloudPage() {
         setGrupoFiltro((prev) => (prev === grupo ? "" : grupo));
     };
 
+    const abrirImagemAmpliada = (e, url) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setImagemAmpliada(url);
+    };
+
     const handleEditClick = () => {
-        setEditForm({ fim: selecionado.fim || "", linkExterno: selecionado.linkExterno || "" });
+        setEditForm({
+            inicio: selecionado.inicio || "",
+            fim: selecionado.fim || "",
+            linkExterno: selecionado.linkExterno || "",
+        });
         setEditando(true);
     };
 
@@ -95,7 +107,7 @@ function ListaArquivosCloudPage() {
                 descricao: selecionado.descricao,
                 arquivo: selecionado.arquivo,
                 linkExterno: editForm.linkExterno,
-                inicio: selecionado.inicio,
+                inicio: editForm.inicio || null,
                 fim: editForm.fim || null,
             },
         };
@@ -107,7 +119,12 @@ function ListaArquivosCloudPage() {
                 alert("Arquivo atualizado com sucesso!");
                 setArquivos((prev) => prev.map((a) => (
                     a.id === selecionado.id
-                        ? { ...a, fim: editForm.fim || null, linkExterno: editForm.linkExterno }
+                        ? {
+                            ...a,
+                            inicio: editForm.inicio || null,
+                            fim: editForm.fim || null,
+                            linkExterno: editForm.linkExterno,
+                        }
                         : a
                 )));
                 setEditando(false);
@@ -187,14 +204,34 @@ function ListaArquivosCloudPage() {
                 <PreviewPanel>
                     {selecionado ? (
                         <>
-                            <PreviewImage src={selecionado.arquivo} alt={selecionado.descricao} />
+                            <ImageWrapper>
+                                <PreviewImage src={selecionado.arquivo} alt={selecionado.descricao} />
+                                <ZoomButton
+                                    type="button"
+                                    title="Ampliar imagem"
+                                    onClick={(e) => abrirImagemAmpliada(e, selecionado.arquivo)}
+                                >
+                                    <HiOutlineZoomIn size={26} />
+                                </ZoomButton>
+                            </ImageWrapper>
                             <PreviewTitle>{selecionado.descricao}</PreviewTitle>
                             <PreviewDetails>
                                 <div><strong>Grupo:&nbsp;</strong>{selecionado.grupo}</div>
-                                <div><strong>Início:&nbsp;</strong>{formatDate(selecionado.inicio)}</div>
+                                {!editando && (
+                                    <div><strong>Início:&nbsp;</strong>{formatDate(selecionado.inicio)}</div>
+                                )}
 
                                 {editando ? (
                                     <EditForm onSubmit={handleEditSubmit}>
+                                        <EditField>
+                                            <label htmlFor="inicio">Início:</label>
+                                            <input
+                                                type="date"
+                                                id="inicio"
+                                                value={editForm.inicio}
+                                                onChange={handleEditChange}
+                                            />
+                                        </EditField>
                                         <EditField>
                                             <label htmlFor="fim">Fim:</label>
                                             <input
@@ -250,6 +287,23 @@ function ListaArquivosCloudPage() {
                     )}
                 </PreviewPanel>
             </ExplorerContainer>
+
+            {imagemAmpliada && (
+                <ModalOverlay onClick={() => setImagemAmpliada(null)}>
+                    <ModalCloseButton
+                        type="button"
+                        title="Fechar"
+                        onClick={() => setImagemAmpliada(null)}
+                    >
+                        <HiOutlineX size={28} />
+                    </ModalCloseButton>
+                    <ModalImage
+                        src={imagemAmpliada}
+                        alt="Imagem ampliada"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </ModalOverlay>
+            )}
         </PageContainer>
     );
 }
@@ -262,7 +316,7 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     position: absolute;
-    gap: 20px;
+    gap: 15px;
     color: rgb(75, 74, 75);
 `;
 
@@ -350,7 +404,7 @@ const ExplorerContainer = styled.div`
     width: 90%;
     max-width: 1200px;
     height: 560px;
-    margin-bottom: 40px;
+    margin-bottom: 25px;
     border: 1px solid #9ca3af;
     border-radius: 10px;
     overflow: hidden;
@@ -445,13 +499,44 @@ const PreviewPanel = styled.div`
     box-sizing: border-box;
 `;
 
-const PreviewImage = styled.img`
+const ImageWrapper = styled.div`
+    position: relative;
     width: 100%;
-    max-height: 280px;
-    object-fit: contain;
+    height: 280px;
+    align-items: center;
+    justify-content: center;
     border-radius: 8px;
     border: 1px solid #d1d5db;
     background-color: white;
+    overflow: hidden;
+`;
+
+const PreviewImage = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+`;
+
+const ZoomButton = styled.button`
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.85);
+    }
 `;
 
 const PreviewTitle = styled.div`
@@ -563,4 +648,42 @@ const EmptyState = styled.div`
     font-size: 14px;
     text-align: center;
     width: 100%;
+`;
+
+const ModalOverlay = styled.div`
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+`;
+
+const ModalCloseButton = styled.button`
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    cursor: pointer;
+    z-index: 1001;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+`;
+
+const ModalImage = styled.img`
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 `;
