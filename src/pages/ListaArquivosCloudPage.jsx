@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import apiServiceBucket from "../services/apiServiceBucket";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
-import { HiOutlineZoomIn, HiOutlineX } from "react-icons/hi";
+import { HiOutlineZoomIn, HiOutlineX, HiOutlineTrash } from "react-icons/hi";
 
 const getHoje = () => {
     const hoje = new Date();
@@ -134,6 +134,25 @@ function ListaArquivosCloudPage() {
             alert("Ocorreu um erro ao editar o arquivo. Tente novamente.");
         } finally {
             setSalvando(false);
+        }
+    };
+
+    const handleDeleteClick = async (e, arquivo) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const confirmado = confirm(`Deseja realmente excluir o arquivo "${arquivo.descricao}"?`);
+        if (!confirmado) return;
+
+        try {
+            const body = { email: user.mail };
+            const response = await apiServiceBucket.deletarArquivoCloud(arquivo.id, body);
+            if (response.status === 200) {
+                setArquivos((prev) => prev.filter((a) => a.id !== arquivo.id));
+            }
+        } catch (error) {
+            console.error("Erro ao excluir arquivo cloud:", error);
+            alert("Ocorreu um erro ao excluir o arquivo. Tente novamente.");
         }
     };
 
@@ -277,7 +296,16 @@ function ListaArquivosCloudPage() {
                                                 </a>
                                             </div>
                                         )}
-                                        <EditButton onClick={handleEditClick}>Editar</EditButton>
+                                        <PreviewActions>
+                                            <EditButton onClick={handleEditClick}>Editar</EditButton>
+                                            <DeleteIconButton
+                                                type="button"
+                                                title="Excluir arquivo"
+                                                onClick={(e) => handleDeleteClick(e, selecionado)}
+                                            >
+                                                <HiOutlineTrash size={28} />
+                                            </DeleteIconButton>
+                                        </PreviewActions>
                                     </>
                                 )}
                             </PreviewDetails>
@@ -446,6 +474,8 @@ const Thumb = styled.img`
 `;
 
 const ListItemInfo = styled.div`
+    flex: 1;
+    min-width: 0;
     flex-direction: column;
     gap: 4px;
     overflow: hidden;
@@ -466,6 +496,27 @@ const ListItemMeta = styled.div`
     gap: 8px;
     font-size: 12px;
     color: #6b7280;
+`;
+
+const DeleteIconButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border: 2px solid #9ca3af;
+    border-radius: 6px;
+    background-color: white;
+    color: #6b7280;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #fee2e2;
+        border-color: #d32f2f;
+        color: #d32f2f;
+    }
 `;
 
 const GrupoBadge = styled.span`
@@ -560,10 +611,16 @@ const PreviewDetails = styled.div`
 `;
 
 const EditButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    box-sizing: border-box;
+    font-size: 16px;
     background-color: white;
     border: 2px solid #003289;
     color: #003289;
-    padding: 8px 16px;
+    padding: 0 20px;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
@@ -573,6 +630,12 @@ const EditButton = styled.button`
         background-color: #003289;
         color: white;
     }
+`;
+
+const PreviewActions = styled.div`
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 `;
 
 const EditForm = styled.form`
@@ -610,6 +673,7 @@ const EditActions = styled.div`
 `;
 
 const SaveButton = styled.button`
+    font-size: 16px;
     background-color: #2e7d32;
     color: white;
     border: none;
@@ -629,6 +693,7 @@ const SaveButton = styled.button`
 `;
 
 const CancelButton = styled.button`
+    font-size: 16px;
     background-color: #e5e7eb;
     color: #374151;
     border: none;
