@@ -58,7 +58,6 @@ import PortfolioPage from "./pages/PortfolioPage";
 import PowerBIProjetos from "./pages/PowerBIDashs";
 import AEM2Page from "./pages/AEM-pages/AEM2Page";
 import AEM3Page from "./pages/AEM-pages/AEM3Page";
-import UploadOciPage from "./pages/UploadOciPage";
 
 function App() {
 
@@ -121,7 +120,6 @@ function App() {
                   <Route path="/portfolio" element={<PortfolioPage />} />
                   <Route path="/aem2" element={<AEM2Page />} />
                   <Route path="/aem3" element={<AEM3Page />} />
-                  <Route path="/upload-oci" element={<UploadOciPage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Route>
               </Routes>

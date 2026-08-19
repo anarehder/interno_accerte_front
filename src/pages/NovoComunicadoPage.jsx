@@ -47,32 +47,44 @@ function NovoComunicadoPage() {
             return;
         }
 
-        const imagemUrl = apiServiceBucket.getFileUrl(imagemFile.name);
-
-        const body = {
-            email: user.mail,
-            comunicado: {
-                ...form,
-                imagemUrl,
-            },
-        };
-
-        const confirmado = confirm(
-            `Solicitante: ${body.email}\n` +
-            `Deseja criar o comunicado:\n` +
-            `Nome: ${body.comunicado.titulo}\n` +
-            `Tipo: ${body.comunicado.tipo}\n` +
-            `Imagem: ${body.comunicado.imagemUrl}\n`+
-            `Data: ${body.comunicado.dataDivulgacao}\n`
-        );
-        if (!confirmado) {
-            // se cancelou, para tudo
-            alert("Operação cancelada pelo usuário.");
-            return;
-        }
-
         setEnviando(true);
         try {
+            try {
+                await apiServiceBucket.fileExists(imagemFile.name);
+                // se não deu erro, o arquivo já existe no bucket
+                alert(apiServiceBucket.ERRO_ARQUIVO_DUPLICADO);
+                return;
+            } catch (error) {
+                if (error.response?.status !== 404) {
+                    throw error;
+                }
+                // 404: arquivo não existe, pode seguir
+            }
+
+            const imagemUrl = apiServiceBucket.getFileUrl(imagemFile.name);
+
+            const body = {
+                email: user.mail,
+                comunicado: {
+                    ...form,
+                    imagemUrl,
+                },
+            };
+
+            const confirmado = confirm(
+                `Solicitante: ${body.email}\n` +
+                `Deseja criar o comunicado:\n` +
+                `Nome: ${body.comunicado.titulo}\n` +
+                `Tipo: ${body.comunicado.tipo}\n` +
+                `Imagem: ${body.comunicado.imagemUrl}\n`+
+                `Data: ${body.comunicado.dataDivulgacao}\n`
+            );
+            if (!confirmado) {
+                // se cancelou, para tudo
+                alert("Operação cancelada pelo usuário.");
+                return;
+            }
+
             await apiServiceBucket.uploadFile(imagemFile, imagemFile.name);
 
             const response = await apiService.criarComunicados(body);

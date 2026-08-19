@@ -3,6 +3,12 @@ import axios from "axios";
 const BUCKET_URL = import.meta.env.VITE_OCI_BUCKET;
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
+const ERRO_ARQUIVO_DUPLICADO = "Já existe um arquivo com este nome, favor renomear o arquivo e enviar novamente";
+
+function fileExists(fileName) {
+    return axios.head(`${BUCKET_URL}${fileName}`);
+}
+
 function uploadFile(file, fileName) {
     return axios.put(`${BUCKET_URL}${fileName}`, file, {
         headers: {
@@ -41,6 +47,6 @@ function buscarComunicadosTodos(body){
     return axios.post(`${BASE_URL}/comunicados/todos`, body)
 }
 
-const apiServiceBucket = { uploadFile, getFileUrl, buscarArquivosCloud, buscarArquivosCloudPorGrupo, criarArquivoCloud, editarArquivoCloud, deletarArquivoCloud, buscarComunicadosTodos };
+const apiServiceBucket = { uploadFile, fileExists, getFileUrl, buscarArquivosCloud, buscarArquivosCloudPorGrupo, criarArquivoCloud, editarArquivoCloud, deletarArquivoCloud, buscarComunicadosTodos, ERRO_ARQUIVO_DUPLICADO };
 
 export default apiServiceBucket;

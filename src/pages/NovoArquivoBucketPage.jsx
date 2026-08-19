@@ -41,37 +41,48 @@ function NovoArquivoBucketPage() {
         }
 
 
-        const arquivoUrl = apiServiceBucket.getFileUrl(arquivoFile.name);
-        console.log(arquivoUrl);
-        const body = {
-            email: user.mail,
-            arquivo: {
-                grupo: form.grupo,
-                descricao: form.descricao,
-                arquivo: arquivoUrl,
-                linkExterno: form.linkExterno,
-                inicio: form.inicio,
-                fim: form.fim || null,
-            },
-        };
-
-        const confirmado = confirm(
-            `Solicitante: ${body.email}\n` +
-            `Deseja criar o arquivo:\n` +
-            `Grupo: ${body.arquivo.grupo}\n` +
-            `Descrição: ${body.arquivo.descricao}\n` +
-            `Arquivo: ${body.arquivo.arquivo}\n` +
-            `Início: ${body.arquivo.inicio}\n` +
-            `Fim: ${body.arquivo.fim ?? "-"}\n`
-        );
-        if (!confirmado) {
-            // se cancelou, para tudo
-            alert("Operação cancelada pelo usuário.");
-            return;
-        }
-
         setEnviando(true);
         try {
+            try {
+                await apiServiceBucket.fileExists(arquivoFile.name);
+                // se não deu erro, o arquivo já existe no bucket
+                alert(apiServiceBucket.ERRO_ARQUIVO_DUPLICADO);
+                return;
+            } catch (error) {
+                if (error.response?.status !== 404) {
+                    throw error;
+                }
+                // 404: arquivo não existe, pode seguir
+            }
+
+            const arquivoUrl = apiServiceBucket.getFileUrl(arquivoFile.name);
+            const body = {
+                email: user.mail,
+                arquivo: {
+                    grupo: form.grupo,
+                    descricao: form.descricao,
+                    arquivo: arquivoUrl,
+                    linkExterno: form.linkExterno,
+                    inicio: form.inicio,
+                    fim: form.fim || null,
+                },
+            };
+
+            const confirmado = confirm(
+                `Solicitante: ${body.email}\n` +
+                `Deseja criar o arquivo:\n` +
+                `Grupo: ${body.arquivo.grupo}\n` +
+                `Descrição: ${body.arquivo.descricao}\n` +
+                `Arquivo: ${body.arquivo.arquivo}\n` +
+                `Início: ${body.arquivo.inicio}\n` +
+                `Fim: ${body.arquivo.fim ?? "-"}\n`
+            );
+            if (!confirmado) {
+                // se cancelou, para tudo
+                alert("Operação cancelada pelo usuário.");
+                return;
+            }
+
             await apiServiceBucket.uploadFile(arquivoFile, arquivoFile.name);
 
             const response = await apiServiceBucket.criarArquivoCloud(body);
