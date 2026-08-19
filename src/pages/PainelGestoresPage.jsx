@@ -41,54 +41,64 @@ function PainelGestoresPage() {
         <PageContainer>
             <HeaderNewComponent pageTitle={"Painel Gestores"} />
             <ButtonContainer>
-                <Link to="/criarvaga">
-                    <NewButton disabled={!allowed && true}>
+                <ButtonLink to="/criarvaga" allowed={allowed}>
+                    <NewButton disabled={!allowed}>
                         <img src={RequisicaoVaga} alt='Requisição de Vagas' />
                         <p>Requisição de <br/> <span>Vaga</span></p>
                     </NewButton>
-                </Link>
-                <Link to="/listavagas">
-                <NewButton disabled={!allowed && true}>
+                </ButtonLink>
+                <ButtonLink to="/listavagas" allowed={allowed}>
+                <NewButton disabled={!allowed}>
                     <img src={MinhasVagas} alt='Minhas Vagas' />
                     <p>Minhas <br/> <span>Vagas</span></p>
                 </NewButton>
-                </Link>
-                
-                <Link to="/humorequipe">
-                <NewButton disabled={!allowed && true}>
+                </ButtonLink>
+
+                <ButtonLink to="/humorequipe" allowed={allowed}>
+                <NewButton disabled={!allowed}>
                     <img src={TermometroHumor} alt='Termômetro Humor' />
                     <p>Termômetro de <br/> <span>Humor</span></p>
                 </NewButton>
-                </Link>
-                
-                <Link to="/aprovarferias">
-                <NewButton disabled={!allowed && true}>
+                </ButtonLink>
+
+                <ButtonLink to="/aprovarferias" allowed={allowed}>
+                <NewButton disabled={!allowed}>
                     <img src={AprovarFerias} alt='Aprovar Férias' />
                     <p>Aprovar <br/> <span>Férias</span></p>
                 </NewButton>
-                </Link>
-                
-                <Link to="/filtrarferias">
-                    <NewButton disabled={(!allowedSub) && true}>
+                </ButtonLink>
+
+                <ButtonLink to="/filtrarferias" allowed={allowedSub}>
+                    <NewButton disabled={!allowedSub}>
                     <img src={FiltrarFerias} alt='Filtrar Férias' />
                     <p>Filtrar <br/> <span>Férias</span></p>
                     </NewButton>
-                </Link>
-                <Link to="/feedback/onboarding">
-                    <NewButton disabled={!allowed && true}>
+                </ButtonLink>
+                <ButtonLink to="/feedback/onboarding" allowed={allowed}>
+                    <NewButton disabled={!allowed}>
                         <VscFeedback size={115}/>
                         <p>Criar Feedback <br/> <span>Onboarding</span></p>
                     </NewButton>
-                </Link>
-                <Link to="/feedback/onboarding/lista">
-                    <NewButton disabled={!allowed && true}>
+                </ButtonLink>
+                <ButtonLink to="/feedback/onboarding/lista" allowed={allowed}>
+                    <NewButton disabled={!allowed}>
                         <LiaListAlt  size={115}/>
                         <p>Lista Feedbacks <br/> <span>Onboarding</span></p>
                     </NewButton>
-                </Link>
+                </ButtonLink>
             </ButtonContainer>
         </PageContainer>
     )
+}
+
+// Só renderiza o <Link> (e, portanto, o href) quando o acesso é permitido.
+// Assim, com o botão desabilitado não existe link algum para abrir via
+// clique do meio, "abrir em nova aba" ou "copiar link" no menu de contexto.
+function ButtonLink({ to, allowed, children }) {
+    if (!allowed) {
+        return <>{children}</>;
+    }
+    return <Link to={to}>{children}</Link>;
 }
 
 export default PainelGestoresPage;
