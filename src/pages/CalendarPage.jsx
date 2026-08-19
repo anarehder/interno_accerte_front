@@ -1,27 +1,43 @@
 import styled from "styled-components";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import apiServiceBucket from "../services/apiServiceBucket";
 import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
 
-const CalendarPage = () => {{
-    const { dados } = useAuth();
+const CalendarPage = () => {
+    const { user } = useAuth();
+    const [calendarios, setCalendarios] = useState([]);
+
+    useEffect(() => {
+        if (!user) return;
+        const fetchCalendarios = async () => {
+            const body = { email: user.mail };
+            try {
+                const response = await apiServiceBucket.buscarArquivosCloudPorGrupo("Calendário", body);
+                setCalendarios(response.data || []);
+            } catch (error) {
+                console.error("Erro ao buscar calendários:", error);
+            }
+        };
+        fetchCalendarios();
+    }, [user]);
 
     return (
         <Container>
             <HeaderGGNewComponent  pageTitle={`Calendários`} />
             <List>
-                {dados?.calendario?.map((file, index) => (
-                    <div key={index}>
-                        <a href={file.url} target="_blank" download={`${file.name.slice(0, -4)}.jpg`}>
+                {calendarios.map((file, index) => (
+                    <div key={file.uniqueid ?? index}>
+                        <a href={file.arquivo} target="_blank" download={`${file.descricao}.jpg`}>
                             <Button>Download imagem</Button>
                         </a>
-                        <Image src={file.url} alt={`Aniversário ${file.name}`} />
+                        <Image src={file.arquivo} alt={file.descricao} />
                     </div>
-            ))}
+                ))}
             </List>
         </Container>
     );
-  };
-}
+};
 
 export default CalendarPage;
 
@@ -62,15 +78,17 @@ const List = styled.div`
     div {
         flex-direction: column;
         width: 500px;
+        height: 700px;
         align-items: center;
         position: relative;
     }
 `;
 
 const Image = styled.img`
-    width: 500px;
-    height: 500px;
-    object-fit: cover;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
