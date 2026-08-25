@@ -1,21 +1,47 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { GoDotFill } from "react-icons/go";
-import { FaDotCircle } from "react-icons/fa";
-import { IoBowlingBall } from "react-icons/io5";
-import { SiPolkadot } from "react-icons/si";
-import { PiDotsThreeCircleFill } from "react-icons/pi";
+import { jsPDF } from 'jspdf';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa6';
+import { FaIdBadge, FaBriefcase, FaFileSignature, FaListCheck, FaTrash, FaFilePdf } from 'react-icons/fa6';
 import { useAuth } from '../../contexts/AuthContext';
+import { useFuncionarios } from '../../contexts/FuncionariosContext';
 import apiService from '../../services/apiService';
 
+const AREAS_COM_STATUS_COMPLETO = [1, 7, 12];
 
-function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent}) {
+const STATUS_COLORS = {
+    'Cancelada': { text: '#dc2626', bg: '#fee2e2' },
+    'Solicitado': { text: '#2563eb', bg: '#eff6ff' },
+    'Stand By': { text: '#3b82f6', bg: '#eff6ff' },
+    'Divulgação': { text: '#0284c7', bg: '#f0f9ff' },
+    'Triagem curricular': { text: '#0ea5e9', bg: '#f0f9ff' },
+    'Validação curricular': { text: '#0891b2', bg: '#ecfeff' },
+    'Seleção em agendamento': { text: '#06b6d4', bg: '#ecfeff' },
+    'Entrevista com o Gestor': { text: '#0d9488', bg: '#f0fdfa' },
+    'Entrega Documentos Admissão': { text: '#14b8a6', bg: '#f0fdfa' },
+    'Testes e referências': { text: '#059669', bg: '#ecfdf5' },
+    'Validação do perfil': { text: '#10b981', bg: '#ecfdf5' },
+    'Concluída': { text: '#15803d', bg: '#dcfce7' },
+};
+const DEFAULT_STATUS_COLOR = { text: '#6b7280', bg: '#f3f4f6' };
+
+const getStatusColor = (status) => STATUS_COLORS[status] || DEFAULT_STATUS_COLOR;
+
+function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, hideSalary}) {
     const {user} = useAuth();
+    const {dados} = useFuncionarios();
     const [expanded, setExpanded] = useState(false);
     const [novoStatus, setNovoStatus] = useState(vaga.status);
-    
+
     const progress = getProgressPercent(vaga.status);
+    const statusColor = getStatusColor(vaga.status);
+
+    const funcionarioLogado = dados?.funcionarios?.find(
+        (f) => f.email?.toLowerCase() === user?.mail?.toLowerCase()
+    );
+    const isGestorAreaCompleta = dados?.gestores?.some(
+        (g) => g.funcionarioId === funcionarioLogado?.id && AREAS_COM_STATUS_COMPLETO.includes(g.areaId)
+    ) ?? false;
     // console.log(progress);
     const handleStatusChange = (novoStatus) => {
         setNovoStatus(novoStatus);
@@ -42,334 +68,599 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent}) 
             // console.log('Ação cancelada.');
         }
     };
+
+    const handleDelete = async () => {
+        const body = {
+            "email": user.mail,
+            "id": vaga.id
+        }
+        const confirmado = window.confirm(`Deseja realmente excluir a vaga "${vaga.cargo}"? Essa ação não pode ser desfeita.`);
+
+        if (confirmado) {
+            try {
+                await apiService.deleteVagas(body);
+                setUpdated(true);
+                setExpanded(false);
+                alert("Vaga excluída")
+            } catch (error) {
+                console.error("Erro ao excluir vaga", error.data);
+            }
+        } else {
+            // console.log('Ação cancelada.');
+        }
+    };
+
+    const handleExportPDF = () => {
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const marginX = 15;
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const maxWidth = pageWidth - marginX * 2;
+        const salarioFormatado = hideSalary
+            ? '*****'
+            : Number(vaga.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        let y = 40;
+
+        const checkPageBreak = (needed) => {
+            if (y + needed > pageHeight - 15) {
+                pdf.addPage();
+                y = 20;
+            }
+        };
+
+        const addSectionTitle = (text) => {
+            checkPageBreak(12);
+            pdf.setFillColor('#205fdd');
+            pdf.rect(marginX, y - 3.2, 3, 3, 'F');
+            pdf.setFontSize(12);
+            pdf.setFont(undefined, 'bold');
+            pdf.setTextColor('#205fdd');
+            pdf.text(text.toUpperCase(), marginX + 6, y);
+            y += 3;
+            pdf.setDrawColor('#e5e7eb');
+            pdf.setLineWidth(0.2);
+            pdf.line(marginX, y, pageWidth - marginX, y);
+            pdf.setTextColor('#000000');
+            y += 6;
+        };
+
+        const addField = (label, value) => {
+            const text = (value === null || value === undefined || value === '') ? '-' : String(value);
+            const labelText = `${label}: `;
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'bold');
+            const labelWidth = pdf.getTextWidth(labelText);
+            pdf.setFont(undefined, 'normal');
+            const lines = pdf.splitTextToSize(text, maxWidth - labelWidth);
+            checkPageBreak(lines.length * 5 + 3);
+            pdf.setTextColor('#999999');
+            pdf.setFont(undefined, 'bold');
+            pdf.text(labelText, marginX, y);
+            pdf.setTextColor('#333333');
+            pdf.setFont(undefined, 'normal');
+            pdf.text(lines, marginX + labelWidth, y);
+            y += lines.length * 5 + 3;
+        };
+
+        const addMultilineField = (label, value) => {
+            checkPageBreak(8);
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'bold');
+            pdf.setTextColor('#999999');
+            pdf.text(label.toUpperCase(), marginX, y);
+            pdf.setTextColor('#333333');
+            y += 5;
+            pdf.setFont(undefined, 'normal');
+            const linhas = (value || '').split('\n').filter((linha) => linha.trim() !== '');
+            if (linhas.length === 0) {
+                checkPageBreak(5);
+                pdf.text('-', marginX, y);
+                y += 5;
+            } else {
+                linhas.forEach((linha) => {
+                    const wrapped = pdf.splitTextToSize(linha, maxWidth - 5);
+                    checkPageBreak(wrapped.length * 5);
+                    pdf.setFillColor('#205fdd');
+                    pdf.circle(marginX + 1, y - 1.2, 0.7, 'F');
+                    pdf.text(wrapped, marginX + 4, y);
+                    y += wrapped.length * 5;
+                });
+            }
+            y += 3;
+        };
+
+        // Header
+        pdf.setFillColor('#001143');
+        pdf.rect(0, 0, pageWidth, 32, 'F');
+        pdf.setFontSize(18);
+        pdf.setFont(undefined, 'bold');
+        pdf.setTextColor('#ffffff');
+        const cargoText = vaga.cargo || 'Vaga';
+        pdf.text(cargoText, marginX, 18);
+        const cargoWidth = pdf.getTextWidth(cargoText);
+
+        // Badge de status, ao lado do nome da vaga
+        pdf.setFontSize(10);
+        pdf.setFont(undefined, 'bold');
+        const statusWidth = pdf.getTextWidth(vaga.status) + 8;
+        const statusX = marginX + cargoWidth + 6;
+        pdf.setFillColor(statusColor.bg);
+        pdf.roundedRect(statusX, 12.8, statusWidth, 7, 3.5, 3.5, 'F');
+        pdf.setTextColor(statusColor.text);
+        pdf.text(vaga.status, statusX + 4, 17.6);
+        pdf.setTextColor('#000000');
+
+        if (vaga.confidencial === 1) {
+            pdf.setFontSize(9);
+            const tagText = 'CONFIDENCIAL';
+            const tagWidth = pdf.getTextWidth(tagText) + 6;
+            pdf.setFillColor('#f59e0b');
+            pdf.roundedRect(pageWidth - marginX - tagWidth, 10, tagWidth, 7, 2, 2, 'F');
+            pdf.setTextColor('#78350f');
+            pdf.text(tagText, pageWidth - marginX - tagWidth + 3, 14.8);
+        }
+
+        pdf.setFontSize(9);
+        pdf.setFont(undefined, 'normal');
+        pdf.setTextColor('#c7d2fe');
+        pdf.text(
+            `Criada em ${new Date(vaga.createdAt).toLocaleDateString()}  •  Atualizada em ${new Date(vaga.updatedAt).toLocaleDateString()}`,
+            marginX, 26
+        );
+
+        addSectionTitle('Informações gerais');
+        addField('Solicitante', vaga.Solicitante);
+        addField('Tipo', vaga.tipo);
+        addField('Contrato', vaga.contrato);
+        addField('Salário', salarioFormatado);
+        y += 3;
+
+        addSectionTitle('Vaga');
+        addField('Área', vaga.area);
+        addField('Motivo', vaga.motivo);
+        addField('Substituído', vaga.Substituido ? vaga.Substituido : '-');
+        addField('Última Atualização', new Date(vaga.updatedAt).toLocaleDateString());
+        y += 3;
+
+        addSectionTitle('Detalhes da contratação');
+        addField('Formação Acadêmica', vaga.formacaoAcad);
+        addField('Salário Variável', vaga.sal_variavel === 1 ? 'Sim' : 'Não');
+        addField('Início Imediato', vaga.imediato === 1 ? 'Sim' : 'Não');
+        addField('Quantidade de Vagas', vaga.qtdeDeVagas);
+        y += 3;
+
+        addSectionTitle('Descrição da vaga');
+        addMultilineField('Hard Skills', vaga.reqHardSkills);
+        addMultilineField('Soft Skills', vaga.reqSoftSkills);
+        addMultilineField('Atividades', vaga.atividades);
+        addMultilineField('Informações adicionais', vaga.informacoes);
+
+        pdf.save(`Vaga-${vaga.cargo || vaga.id}.pdf`);
+    };
     // console.log(vaga);
     return (
-        <PageContainer>
+        <Card>
             <HeaderRow>
-                <Title>
-                    <Title>{vaga.cargo} {vaga.confidencial === 1 ? " - Confidencial" : ""}</Title>
-                    <SubTitle>Criada em {new Date(vaga.createdAt).toLocaleDateString()}</SubTitle>
-                </Title>
-                <HeaderItems>
-                    <Status $status={vaga.status}>
-                        <PiDotsThreeCircleFill size={40} />
-                        {vaga.status}
-                    </Status>
-                    <ProgressContainer>
-                        <Progress $status={vaga.status} $percent={progress} />
-                    </ProgressContainer>
-                    <ToggleButton onClick={() => setExpanded(!expanded)}>
+                <HeaderMain>
+                    <CargoTitle>
+                        {vaga.cargo}
+                        {vaga.confidencial === 1 && <ConfidencialTag>Confidencial</ConfidencialTag>}
+                    </CargoTitle>
+                    <SubTitle>
+                        Criada em {new Date(vaga.createdAt).toLocaleDateString()}
+                        {' • '}Última atualização em {new Date(vaga.updatedAt).toLocaleDateString()}
+                    </SubTitle>
+                </HeaderMain>
+                <HeaderMeta>
+                    <StatusBadge $bg={statusColor.bg} $color={statusColor.text}>{vaga.status}</StatusBadge>
+                    <ProgressTrack>
+                        <ProgressFill $status={vaga.status} $percent={progress} />
+                    </ProgressTrack>
+                    <ToggleButton onClick={handleExportPDF} aria-label="Exportar vaga em PDF" title="Exportar PDF">
+                        <FaFilePdf />
+                    </ToggleButton>
+                    <ToggleButton onClick={() => setExpanded(!expanded)} aria-label={expanded ? "Recolher detalhes" : "Expandir detalhes"}>
                         {expanded ? <FaChevronUp /> : <FaChevronDown />}
                     </ToggleButton>
-                </HeaderItems>
+                </HeaderMeta>
             </HeaderRow>
             {expanded && (
                 <Details>
-                    <DetailRow>
-                        <DetailCard>
-                            <Label>Solicitante</Label>
-                            <Value>{vaga.Solicitante}</Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Tipo</Label>
-                            <Value>{vaga.tipo}</Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Contrato</Label>
-                            <Value>{vaga.contrato}</Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Salário</Label>
-                            <Value>{Number(vaga.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Value>
-                        </DetailCard>
-                    </DetailRow>
-                    <DetailRow>
-                        <DetailCard>
-                            <Label>Área</Label>
-                            <Value>{vaga.area}</Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Motivo</Label>
-                            <Value>{vaga.motivo}</Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Substituído</Label>
-                            <Value>{vaga.Substituido ? vaga.Substituido : "-"}</Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Última Atualização</Label>
-                            <Value>{new Date(vaga.updatedAt).toLocaleDateString()}</Value>
-                        </DetailCard>
-                    </DetailRow>
-                    <DetailRow>
-                        <DetailCard>
-                            <Label>Formação Acadêmica</Label>
-                            <Value>{vaga.formacaoAcad}</Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Salário Variável</Label>
-                            <Value>{vaga.sal_variavel === 1 ? "Sim" : "Não"}</Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Início Imediato</Label>
-                            <Value>{vaga.imediato === 1 ? "Sim" : "Não"}</Value>
-                        </DetailCard>
-                        
-                        <DetailCard>
-                            <Label>Quantidade de Vagas</Label>
-                            <Value>{vaga.qtdeDeVagas}</Value>
-                        </DetailCard>
-                    </DetailRow>
+                    <Section>
+                        <SectionTitle><FaIdBadge /> Informações gerais</SectionTitle>
+                        <DetailGrid>
+                            <DetailCard>
+                                <Label>Solicitante</Label>
+                                <Value>{vaga.Solicitante}</Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Tipo</Label>
+                                <Value>{vaga.tipo}</Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Contrato</Label>
+                                <Value>{vaga.contrato}</Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Salário</Label>
+                                <Value>{hideSalary ? "*****" : Number(vaga.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Value>
+                            </DetailCard>
+                        </DetailGrid>
+                    </Section>
 
-                    <DetailRow>
-                        <DetailCard>
-                            <Label>Hard Skills</Label>
-                            <Value>
-                                {vaga.reqHardSkills.split('\n').map((linha, index) => (
-                                    <p key={index}>{linha}</p>
-                                ))}
-                            </Value>
-                            {/* <Value>{vaga.reqHardSkills}</Value> */}
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Soft Skills</Label>
-                            <Value>
-                                {vaga.reqSoftSkills.split('\n').map((linha, index) => (
-                                    <p key={index}>{linha}</p>
-                                ))}
-                            </Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Atividades</Label>
-                            <Value>
-                                {vaga.atividades.split('\n').map((linha, index) => (
-                                    <p key={index}>{linha}</p>
-                                ))}
-                            </Value>
-                        </DetailCard>
-                        <DetailCard>
-                            <Label>Informações adicionais</Label>
-                            <Value>
-                                {vaga.informacoes.split('\n').map((linha, index) => (
-                                    <p key={index}>{linha}</p>
-                                ))}
-                            </Value>
-                        </DetailCard>
-                    </DetailRow>
+                    <Section>
+                        <SectionTitle><FaBriefcase /> Vaga</SectionTitle>
+                        <DetailGrid>
+                            <DetailCard>
+                                <Label>Área</Label>
+                                <Value>{vaga.area}</Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Motivo</Label>
+                                <Value>{vaga.motivo}</Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Substituído</Label>
+                                <Value>{vaga.Substituido ? vaga.Substituido : "-"}</Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Última Atualização</Label>
+                                <Value>{new Date(vaga.updatedAt).toLocaleDateString()}</Value>
+                            </DetailCard>
+                        </DetailGrid>
+                    </Section>
 
-                    {(user.mail === "ana.rehder@accerte.com.br" || user.mail === "maria.silva@accerte.com.br") ? (
-                        <EditRow>
-                            <div>
-                                <h2>Alterar Status: </h2>
-                                <select value={novoStatus} onChange={(e) => handleStatusChange(e.target.value)}>
-                                    <option value="">{novoStatus}</option>
-                                    <option value="Stand By">Stand By</option>
-                                    <option value="Divulgação">Divulgação</option>
-                                    <option value="Triagem curricular">Triagem curricular</option>
-                                    <option value="Validação curricular">Validação curricular</option>
-                                    <option value="Seleção em agendamento">Seleção em agendamento</option>
-                                    <option value="Entrevista com o Gestor">Entrevista com o Gestor</option>
-                                    <option value="Entrega Documentos Admissão">Entrega Documentos Admissão</option>
-                                    <option value="Testes e referências">Testes e referências</option>
-                                    <option value="Validação do perfil">Validação do perfil</option>
-                                    <option value="Concluída">Concluída</option>
-                                    <option value="Cancelada">Cancelada</option>
-                                </select>
-                            </div>
-                            <button onClick={handleSubmit}>Alterar Status</button>
-                        </EditRow>
-                    ):
+                    <Section>
+                        <SectionTitle><FaFileSignature /> Detalhes da contratação</SectionTitle>
+                        <DetailGrid>
+                            <DetailCard>
+                                <Label>Formação Acadêmica</Label>
+                                <Value>{vaga.formacaoAcad}</Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Salário Variável</Label>
+                                <Value>{vaga.sal_variavel === 1 ? "Sim" : "Não"}</Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Início Imediato</Label>
+                                <Value>{vaga.imediato === 1 ? "Sim" : "Não"}</Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Quantidade de Vagas</Label>
+                                <Value>{vaga.qtdeDeVagas}</Value>
+                            </DetailCard>
+                        </DetailGrid>
+                    </Section>
+
+                    <Section>
+                        <SectionTitle><FaListCheck /> Descrição da vaga</SectionTitle>
+                        <StackGrid>
+                            <DetailCard>
+                                <Label>Hard Skills</Label>
+                                <Value>
+                                    {vaga.reqHardSkills.split('\n').map((linha, index) => (
+                                        <p key={index}>{linha}</p>
+                                    ))}
+                                </Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Soft Skills</Label>
+                                <Value>
+                                    {vaga.reqSoftSkills.split('\n').map((linha, index) => (
+                                        <p key={index}>{linha}</p>
+                                    ))}
+                                </Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Atividades</Label>
+                                <Value>
+                                    {vaga.atividades.split('\n').map((linha, index) => (
+                                        <p key={index}>{linha}</p>
+                                    ))}
+                                </Value>
+                            </DetailCard>
+                            <DetailCard>
+                                <Label>Informações adicionais</Label>
+                                <Value>
+                                    {vaga.informacoes.trim()
+                                        ? vaga.informacoes.split('\n').map((linha, index) => (
+                                            <p key={index}>{linha}</p>
+                                        ))
+                                        : <p>-</p>
+                                    }
+                                </Value>
+                            </DetailCard>
+                        </StackGrid>
+                    </Section>
+
                     <EditRow>
-                            <div>
-                                <h2>Alterar Status: </h2>
-                                <select value={novoStatus} onChange={(e) => handleStatusChange(e.target.value)}>
-                                    <option value="">{novoStatus}</option>
+                        <EditLabel>Alterar status</EditLabel>
+                        <EditControls>
+                            <select value={novoStatus} onChange={(e) => handleStatusChange(e.target.value)}>
+                                <option value="">{novoStatus}</option>
+                                {isGestorAreaCompleta ? (
+                                    <>
+                                        <option value="Stand By">Stand By</option>
+                                        <option value="Divulgação">Divulgação</option>
+                                        <option value="Triagem curricular">Triagem curricular</option>
+                                        <option value="Validação curricular">Validação curricular</option>
+                                        <option value="Seleção em agendamento">Seleção em agendamento</option>
+                                        <option value="Entrevista com o Gestor">Entrevista com o Gestor</option>
+                                        <option value="Entrega Documentos Admissão">Entrega Documentos Admissão</option>
+                                        <option value="Testes e referências">Testes e referências</option>
+                                        <option value="Validação do perfil">Validação do perfil</option>
+                                        <option value="Concluída">Concluída</option>
+                                        <option value="Cancelada">Cancelada</option>
+                                    </>
+                                ) : (
                                     <option value="Cancelada">Cancelada</option>
-                                </select>
-                            </div>
-                            <button onClick={handleSubmit}>Alterar Status</button>
-                        </EditRow>
-                    }
+                                )}
+                            </select>
+                            <SubmitButton onClick={handleSubmit}>Alterar Status</SubmitButton>
+                            {isGestorAreaCompleta && (
+                                <DeleteButton onClick={handleDelete}>
+                                    <FaTrash /> Excluir Vaga
+                                </DeleteButton>
+                            )}
+                        </EditControls>
+                    </EditRow>
                 </Details>
             )}
-        </PageContainer>
+        </Card>
     );
 };
 
 export default ListagemVagasGestoresComponent;
 
-const PageContainer = styled.div`
-    width: 80%;
-    border-radius: 30px;
-    border: 1px solid gray;
+const Card = styled.div`
+    width: 100%;
+    box-sizing: border-box;
     flex-direction: column;
-    margin-bottom: 30px;
+    background-color: #fff;
+    border: 1px solid #eceff2;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 10px rgba(20, 30, 60, 0.05);
     color: #555;
 `;
 
 const HeaderRow = styled.div`
-    flex-direction: column;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
 `;
 
-const Title = styled.div`
-    font-size: 22px;
-    font-weight: bold;
+const HeaderMain = styled.div`
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+`;
+
+const CargoTitle = styled.div`
+    font-size: 19px;
+    font-weight: 700;
     align-items: center;
-    justify-content: space-between;
-    text-align: center;
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
-    background-color: #007BFF;
-    color: white;
-    min-height: 50px;
-    text-indent: 15px;
-    p {
-        font-size: 15px;
-        line-height: 18px;
-        width: 150px;
-        margin-right: 15px;
-        text-align: right;
-    }
+    gap: 10px;
+    color: #222;
+    text-align: left;
+`;
+
+const ConfidencialTag = styled.span`
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #b45309;
+    background-color: #fef3c7;
+    padding: 3px 10px;
+    border-radius: 999px;
 `;
 
 const SubTitle = styled.div`
-    width: 40%;
-    font-size: 15px;
-    font-weight: 500;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 10px;
+    margin-top: 5px;
+    font-size: 13px;
+    color: #888;
 `;
 
-const HeaderItems = styled.div`
-    justify-content: flex-start;
-    margin: 10px 0;
+const HeaderMeta = styled.div`
+    align-items: center;
+    gap: 16px;
 `;
 
-const Status = styled.div`
-    font-size: 16px;
-    width: 45%;
-    margin-left: 15px;
-    align-items: center;
-    font-weight: bold;
-    color: ${({ $status }) => {
-    switch ($status) {
-      case 'Cancelada': return '#dc2626'; // vermelho
-      case 'Solicitado': return '#F9933C';
-      case 'Stand By': return '#f59e0b'; // amarelo escuro
-      case 'Divulgação': return '#f59e0b';
-      case 'Triagem curricular': return '#fbbf24';
-      case 'Validação curricular': return '#facc15';
-      case 'Seleção em agendamento': return '#a3e635';
-      case 'Entrevista com o Gestor': return '#4ade80';
-      case 'Testes e referências': return '#34d399';
-      case 'Validação do perfil': return '#22c55e';
-      case 'Concluída': return '#16a34a';
-      default: return '#6b7280'; // cinza
-    }
+const StatusBadge = styled.div`
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+    background-color: ${({ $bg }) => $bg};
+    color: ${({ $color }) => $color};
+`;
+
+const ProgressTrack = styled.div`
+    width: 220px;
+    background-color: #eef0f3;
+    border-radius: 999px;
+    height: 16px;
+`;
+
+const ProgressFill = styled.div`
+  border-radius: 999px;
+  height: 100%;
+  background: ${({ $status }) => {
+    if ($status === 'Cancelada') return '#dc2626';
+    if ($status === 'Concluída') return '#16a34a';
+    return 'linear-gradient(to right, #2563eb, #16a34a)';
   }};
-`;
-
-const ProgressContainer = styled.div`
-    width: 45%; 
-    background-color: #e5e7eb;
-    border-radius: 12px;
-    height: 22px;
-    margin: 12px 0;
-    border: 1px solid 555;
-`;
-
-const Progress = styled.div`
-  border-radius: 12px;
-  background: ${({ $status }) =>
-    $status === 'Cancelada'
-      ? '#dc2626'
-      : 'linear-gradient(to right, #fb923c, #22c55e)'};
   width: ${({ $percent }) => $percent}%;
   transition: width 0.3s ease;
 `;
 
 const ToggleButton = styled.button`
-    background: none;
-    margin-right: 15px;
-    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    background: #f4f6f9;
+    width: 34px;
+    height: 34px;
+    aspect-ratio: 1 / 1;
+    padding: 0;
     border: none;
-    color: #6b7280;
-    &:hover{
-        background: none;
+    border-radius: 999px;
+    color: #555;
+    font-size: 14px;
+
+    &:hover {
+        background: #e8ebf0;
     }
 `;
 
 const Details = styled.div`
-    width: 95%;
-    margin-top: 16px;
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f2f5;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    border-radius: 10px;
-    overflow-y: hidden;
-    margin: 15px auto;
+    gap: 20px;
 `;
 
-const DetailRow = styled.div`
-    // background-color: red;
-    gap: 15px;
+const Section = styled.div`
+    flex-direction: column;
+`
+
+const SectionTitle = styled.div`
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #205fdd;
+    margin-bottom: 12px;
+
+    svg {
+        font-size: 14px;
+        cursor: default;
+    }
+`
+
+const DetailGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px 24px;
+`
+
+const StackGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 24px;
+
+    @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+    }
 `
 
 const DetailCard = styled.div`
-    gap: 12x;
     flex-direction: column;
-    margin-bottom: 10px;
-    line-height: 20px;
-    // background-color: red;
+    gap: 4px;
 `
 
 const Label = styled.div`
-    font-size: 12px;
-    line-height: 15px;
-    font-weight: bold;
+    font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
-    color: #555;
+    letter-spacing: 0.2px;
+    color: #999;
 `;
 
 const Value = styled.div`
     font-size: 14px;
-    // background-color: red;
-    width: 90%;
-    color: #555;
-    margin-bottom: 10px;
+    color: #333;
     flex-direction: column;
-    p{
-        margin-top: 10px;
-        font-size: 14px;
+    text-align: left;
+    line-height: 20px;
+    p {
         text-align: left;
+        font-size: 14px;
+        &:not(:first-child) {
+            margin-top: 6px;
+        }
     }
 `;
 
 const EditRow = styled.div`
-    div { 
-        gap: 20px;
-    }
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f2f5;
+`;
+
+const EditLabel = styled.div`
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+`;
+
+const EditControls = styled.div`
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
     select {
-        height: 40px;
-        width: 280px;
+        height: 42px;
+        min-width: 260px;
+        padding: 0 14px;
         font-size: 14px;
-        color: #555;
-        border: 1px solid #555;
-        &:placeholder{
-            border: 1px solid #555;
+        color: #333;
+        background-color: #fafbfc;
+        border: 1px solid #dfe3e8;
+        border-radius: 10px;
+        cursor: pointer;
+
+        &:focus {
+            outline: none;
+            border-color: #205fdd;
+            box-shadow: 0 0 0 3px rgba(32, 95, 221, 0.12);
         }
     }
-    button{
-        height: 40px;
-        font-size: 14px;
-        margin-right: 15px;
+`;
+
+const SubmitButton = styled.button`
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(to right, #205fdd, #001143);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(32, 95, 221, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(32, 95, 221, 0.32);
+        background: linear-gradient(to right, #205fdd, #001143);
     }
-    h2{
-        font-size: 15px;
+`;
+
+const DeleteButton = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid #dc2626;
+    border-radius: 999px;
+    background: #fff;
+    color: #dc2626;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+        background: #dc2626;
+        color: #fff;
     }
-`
+`;

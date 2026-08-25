@@ -67,6 +67,11 @@ function createVagas(body){
     return axios.post(`${BASE_URL}/vagas/criar`, body)
 }
 
+function deleteVagas(body){
+    return axios.post(`${BASE_URL}/vagas/delete`, body)
+}
+
+
 function getVagas(body){
     return axios.post(`${BASE_URL}/vagas/buscar`, body)
 }
@@ -200,6 +205,6 @@ function ragQuery(body){
 }
 
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery }
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery }
 
 export default apiService;
