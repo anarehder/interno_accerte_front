@@ -29,7 +29,7 @@ function FiltrarFeriasPage(){
             const fetchScale = async () => {
                 try {
                     if(user.mail === "daniel.garcia@accerte.com.br" || user.mail === ("ana.rehder@accerte.com.br")){
-                        const body = {"adminEmail": "rodrigo.mouzinho@accerte.com.br"};
+                        const body = {"adminEmail": "ronildo.gama@accerte.com.br"};
                         const response = await apiService.buscarFuncionarioPorArea(body);
                         setFuncionarios(response.data);
                     }
