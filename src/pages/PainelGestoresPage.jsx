@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import apiService from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext';
+import { useFuncionarios } from '../contexts/FuncionariosContext';
 import HeaderNewComponent from '../components/basic/HeaderNewComponent';
 import AprovarFerias from '../assets/painel-gestores/aprovar-ferias.png';
 import FiltrarFerias from '../assets/painel-gestores/filtrar-ferias.png';
@@ -14,90 +13,75 @@ import { LiaListAlt } from "react-icons/lia";
 
 function PainelGestoresPage() {
     const { user } = useAuth();
-    const [allowed, setAllowed] = useState(false);
-    const [allowedSub, setAllowedSub] = useState(false);
+    const { dados: dadosFuncionarios } = useFuncionarios();
 
-    useEffect(() => {
-        if (!user) return;
-        const fetchScale = async () => {
-            try {
-                const response = await apiService.buscarGestoresInfo();
-                const gestorConf = response.data.filter(item => item.Funcionarios?.email?.toLowerCase() == user.mail?.toLowerCase());
-                if (gestorConf.length>0){
-                    setAllowed(true);
-                    setAllowedSub(true);
-                }
-                if (user.mail === 'daniel.garcia@accerte.com.br'){
-                    setAllowedSub(true);
-                }
-            } catch (error) {
-                console.error("Erro ao buscar informacoes gestores", error);
-            }
-        };
-        fetchScale();
-    }, [user]);
-
+    const allowed = dadosFuncionarios?.gestores?.some(item => item.Funcionarios?.email?.toLowerCase() == user?.mail?.toLowerCase()) ?? false;
+    const isDaniel = user?.mail?.toLowerCase() === 'daniel.garcia@accerte.com.br';
+    const allowedSub = allowed || isDaniel;
+    
     return (
         <PageContainer>
             <HeaderNewComponent pageTitle={"Painel Gestores"} />
-            <ButtonContainer>
-                <ButtonLink to="/criarvaga" allowed={allowed}>
-                    <NewButton disabled={!allowed}>
-                        <img src={RequisicaoVaga} alt='Requisição de Vagas' />
-                        <p>Requisição de <br/> <span>Vaga</span></p>
-                    </NewButton>
-                </ButtonLink>
-                <ButtonLink to="/listavagas" allowed={allowed}>
-                <NewButton disabled={!allowed}>
-                    <img src={MinhasVagas} alt='Minhas Vagas' />
-                    <p>Minhas <br/> <span>Vagas</span></p>
-                </NewButton>
-                </ButtonLink>
+            {allowedSub ? (
+                <ButtonContainer>
+                    {allowed && (
+                        <>
+                            <ButtonLink to="/criarvaga">
+                                <NewButton>
+                                    <img src={RequisicaoVaga} alt='Requisição de Vagas' />
+                                    <p>Requisição de <br/> <span>Vaga</span></p>
+                                </NewButton>
+                            </ButtonLink>
+                            <ButtonLink to="/listavagas">
+                                <NewButton>
+                                    <img src={MinhasVagas} alt='Minhas Vagas' />
+                                    <p>Minhas <br/> <span>Vagas</span></p>
+                                </NewButton>
+                            </ButtonLink>
+                            <ButtonLink to="/feedback/onboarding">
+                                <NewButton>
+                                    <VscFeedback size={115}/>
+                                    <p>Criar Feedback <br/> <span>Onboarding</span></p>
+                                </NewButton>
+                            </ButtonLink>
+                            <ButtonLink to="/feedback/onboarding/lista">
+                                <NewButton>
+                                    <LiaListAlt  size={115}/>
+                                    <p>Lista Feedbacks <br/> <span>Onboarding</span></p>
+                                </NewButton>
+                            </ButtonLink>
+                            <ButtonLink to="/humorequipe">
+                                <NewButton>
+                                    <img src={TermometroHumor} alt='Termômetro Humor' />
+                                    <p>Termômetro de <br/> <span>Humor</span></p>
+                                </NewButton>
+                            </ButtonLink>
+                            <ButtonLink to="/aprovarferias">
+                                <NewButton>
+                                    <img src={AprovarFerias} alt='Aprovar Férias' />
+                                    <p>Aprovar <br/> <span>Férias</span></p>
+                                </NewButton>
+                            </ButtonLink>
+                        </>
+                    )}
 
-                <ButtonLink to="/humorequipe" allowed={allowed}>
-                <NewButton disabled={!allowed}>
-                    <img src={TermometroHumor} alt='Termômetro Humor' />
-                    <p>Termômetro de <br/> <span>Humor</span></p>
-                </NewButton>
-                </ButtonLink>
-
-                <ButtonLink to="/aprovarferias" allowed={allowed}>
-                <NewButton disabled={!allowed}>
-                    <img src={AprovarFerias} alt='Aprovar Férias' />
-                    <p>Aprovar <br/> <span>Férias</span></p>
-                </NewButton>
-                </ButtonLink>
-
-                <ButtonLink to="/filtrarferias" allowed={allowedSub}>
-                    <NewButton disabled={!allowedSub}>
-                    <img src={FiltrarFerias} alt='Filtrar Férias' />
-                    <p>Filtrar <br/> <span>Férias</span></p>
-                    </NewButton>
-                </ButtonLink>
-                <ButtonLink to="/feedback/onboarding" allowed={allowed}>
-                    <NewButton disabled={!allowed}>
-                        <VscFeedback size={115}/>
-                        <p>Criar Feedback <br/> <span>Onboarding</span></p>
-                    </NewButton>
-                </ButtonLink>
-                <ButtonLink to="/feedback/onboarding/lista" allowed={allowed}>
-                    <NewButton disabled={!allowed}>
-                        <LiaListAlt  size={115}/>
-                        <p>Lista Feedbacks <br/> <span>Onboarding</span></p>
-                    </NewButton>
-                </ButtonLink>
-            </ButtonContainer>
+                    {allowedSub && (
+                        <ButtonLink to="/filtrarferias">
+                            <NewButton>
+                                <img src={FiltrarFerias} alt='Filtrar Férias' />
+                                <p>Filtrar <br/> <span>Férias</span></p>
+                            </NewButton>
+                        </ButtonLink>
+                    )}
+                </ButtonContainer>
+            ) : (
+                <EmptyMessage>Nenhuma opção disponível para o seu usuário.</EmptyMessage>
+            )}
         </PageContainer>
     )
 }
 
-// Só renderiza o <Link> (e, portanto, o href) quando o acesso é permitido.
-// Assim, com o botão desabilitado não existe link algum para abrir via
-// clique do meio, "abrir em nova aba" ou "copiar link" no menu de contexto.
-function ButtonLink({ to, allowed, children }) {
-    if (!allowed) {
-        return <>{children}</>;
-    }
+function ButtonLink({ to, children }) {
     return <Link to={to}>{children}</Link>;
 }
 
@@ -113,13 +97,20 @@ const PageContainer = styled.div`
     color:rgb(75, 74, 75);
 `
 
+const EmptyMessage = styled.p`
+    width: 100%;
+    text-align: center;
+    margin-top: 60px;
+    font-family: Poppins;
+    font-size: 20px;
+    color: #666;
+`
+
 const ButtonContainer = styled.div`
     justify-content: center;
     flex-wrap: wrap;
-    // padding: 20px 0;
     gap: 30px;
     width: 1200px;
-    // background-color: red;
 `
 
 const NewButton = styled.button`
@@ -146,7 +137,6 @@ const NewButton = styled.button`
         font-style: Bold;
     }
     img{
-        // width: 120px;
         height: 110px;
     }
     &: hover {
@@ -157,52 +147,5 @@ const NewButton = styled.button`
             filter: brightness(0) invert(1);
         }
     }
-    &:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-        color: gray;
-        img{
-            filter: sepia(100%) saturate(10%) brightness(100%) contrast(100%) invert(100%);
-        }
-        &: hover {
-            background-color: #ccc;
-        }
-    }
 `
 
-const SideBar = styled.div`
-    width: 350px;
-    position: absolute;
-    padding: 15px 0;
-    align-items: center;
-    height: 60vh;
-    border-right: 2px solid gray;
-    flex-direction: column;
-    gap: 30px;
-    button{
-        width: 300px;
-        height: 60px;
-        font-size: 22px;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 10px;
-        &: hover {
-        cursor: pointer;
-        }
-    }
-`
-
-const PageRightContainer = styled.div`
-    margin: 0 10px 0 350px;
-    justify-content: flex-start;
-    align-items: center;
-    flex-direction: column;
-    gap: 10px;
-    height: calc(100%-100px);
-    color: #555;
-    border: none;
-    position: relative;
-    h2 {
-        margin: 10px 0;
-    }
-`
