@@ -468,17 +468,17 @@ function CriarVagaPage() {
                         <StackGrid>
                             <FieldGroup $full>
                                 <FieldLabel required infoKey="atividades" onInfoClick={setInfoAberto}>Responsabilidades e atribuições</FieldLabel>
-                                <textarea name="atividades" onChange={handleChange} maxLength={990}/>
+                                <textarea name="atividades" onChange={handleChange} maxLength={2000}/>
                             </FieldGroup>
 
                             <FieldGroup $full>
                                 <FieldLabel required infoKey="reqHardSkills" onInfoClick={setInfoAberto}>Pré-requisitos técnicos</FieldLabel>
-                                <textarea name="reqHardSkills" onChange={handleChange} maxLength={990} />
+                                <textarea name="reqHardSkills" onChange={handleChange} maxLength={2000} />
                             </FieldGroup>
 
                             <FieldGroup $full>
                                 <FieldLabel required infoKey="reqSoftSkills" onInfoClick={setInfoAberto}>Comportamentos e habilidades</FieldLabel>
-                                <textarea name="reqSoftSkills" onChange={handleChange} maxLength={990}/>
+                                <textarea name="reqSoftSkills" onChange={handleChange} maxLength={2000}/>
                             </FieldGroup>
 
                             <FieldGroup $full>
