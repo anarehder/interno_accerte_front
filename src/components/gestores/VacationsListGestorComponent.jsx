@@ -67,10 +67,10 @@ function VacationsListGestorComponent({filteredData, activeButton}) {
 export default VacationsListGestorComponent;
 
 const PageContainer = styled.div`
-    width: 85%;
+    width: 100%;
     flex-direction: column;
     align-items: center;
-    gap: 20px; 
+    gap: 20px;
     h2{
         color: #0057E1;
         margin: 10px 0;
@@ -79,29 +79,40 @@ const PageContainer = styled.div`
         color: gray;
         margin-bottom: 30px;
     }
-    
+
 `
 
-const VacationTable = styled.div` 
+const VacationTable = styled.div`
     flex-direction: column;
     justify-content: space-between;
-    gap: 10px;
+    width: 100%;
+    gap: 4px;
     color: #0057E1;
     div {
         margin-bottom: 0 !important;
         align-items: center;
-        min-height: 40px;
-        border-bottom: 1px solid #80808F;
-        padding-bottom: 7px;
+        gap: 10px;
+        min-height: 44px;
+        border-bottom: 1px solid #e2e4e8;
+        padding: 6px 4px;
+    }
+    div:first-of-type {
+        border-bottom: 2px solid #0057E1;
     }
     p{
+        flex: 1;
+        min-width: 0;
         text-align: center;
-        width: 20%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         &:nth-of-type(1) {
-            width: 40%
+            flex: 1.6;
+            text-align: left;
         }
     }
     span{
         font-weight: 700;
+        white-space: normal;
     }
 `

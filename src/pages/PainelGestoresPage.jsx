@@ -10,6 +10,7 @@ import RequisicaoVaga from '../assets/painel-gestores/requisicao-vaga.png';
 import TermometroHumor from '../assets/painel-gestores/termometro-humor.png';
 import { VscFeedback } from "react-icons/vsc";
 import { LiaListAlt } from "react-icons/lia";
+import { FaUsers } from "react-icons/fa6";
 
 function PainelGestoresPage() {
     const { user } = useAuth();
@@ -54,6 +55,12 @@ function PainelGestoresPage() {
                                 <NewButton>
                                     <img src={TermometroHumor} alt='Termômetro Humor' />
                                     <p>Termômetro de <br/> <span>Humor</span></p>
+                                </NewButton>
+                            </ButtonLink>
+                            <ButtonLink to="/meusfuncionarios">
+                                <NewButton>
+                                    <FaUsers size={115}/>
+                                    <p>Meus <br/> <span>Funcionários</span></p>
                                 </NewButton>
                             </ButtonLink>
                             <ButtonLink to="/aprovarferias">
