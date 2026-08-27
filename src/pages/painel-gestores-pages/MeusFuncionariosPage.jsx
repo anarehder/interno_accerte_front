@@ -1,9 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import apiService from '../../services/apiService';
 import { useAuth } from '../../contexts/AuthContext';
 import HeaderImageComponent from '../../components/basic/HeaderImageComponent';
+import SortableFieldButtonComponent from '../../components/basic/SortableFieldButtonComponent';
+import useSortableData from '../../hooks/useSortableData';
 import { FaUser } from 'react-icons/fa6';
+
+const SORT_FIELDS = [
+    { field: 'nome', label: 'Nome' },
+    { field: 'cargo', label: 'Cargo' },
+    { field: 'area', label: 'Área' },
+];
 
 function MeusFuncionariosPage() {
     const { user } = useAuth();
@@ -23,9 +31,7 @@ function MeusFuncionariosPage() {
                     apiService.buscarFuncionarioPorArea(body),
                     apiService.buscarAreas(),
                 ]);
-                const f = responseFuncionarios.data;
-                f.sort((a, b) => a.nome.localeCompare(b.nome));
-                setFuncionarios(f);
+                setFuncionarios(responseFuncionarios.data);
                 const mapaAreas = {};
                 responseAreas.data.forEach((a) => { mapaAreas[a.id] = a.area; });
                 setAreas(mapaAreas);
@@ -46,6 +52,17 @@ function MeusFuncionariosPage() {
         return `${f.nome} ${f.sobrenome}`.toLowerCase().includes(termo) || f.cargo?.toLowerCase().includes(termo);
     });
 
+    // Comparador customizado para "área", que não é um campo direto do funcionário (vem do mapa areaId -> nome).
+    const comparators = useMemo(() => ({
+        area: (a, b) => (areas[a.areaId] ?? '').localeCompare(areas[b.areaId] ?? '', 'pt-BR', { sensitivity: 'base' }),
+    }), [areas]);
+
+    const { sortedItems: funcionariosOrdenados, requestSort, getSortDirection } = useSortableData(
+        funcionariosFiltrados,
+        { field: 'nome', direction: 'asc' },
+        comparators
+    );
+
     return (
         <PageContainer>
             <HeaderImageComponent pageTitle={"Funcionários"} subtitle={"Área"} lastPage={"painelgestores"} />
@@ -60,14 +77,28 @@ function MeusFuncionariosPage() {
                     onChange={(e) => setBusca(e.target.value)}
                 />
 
+                {funcionarios.length > 0 && !carregando && (
+                    <SortRow>
+                        <SortLabel>Ordenar por:</SortLabel>
+                        {SORT_FIELDS.map(({ field, label }) => (
+                            <SortableFieldButtonComponent
+                                key={field}
+                                label={label}
+                                direction={getSortDirection(field)}
+                                onClick={() => requestSort(field)}
+                            />
+                        ))}
+                    </SortRow>
+                )}
+
                 {carregando && <StateBox>Carregando funcionários...</StateBox>}
                 {errorMessage && <StateBox><h3>{errorMessage}</h3></StateBox>}
                 {(funcionarios.length === 0 && !carregando && !errorMessage) && <StateBox><h3>Nenhum funcionário vinculado a você.</h3></StateBox>}
-                {(funcionarios.length !== 0 && funcionariosFiltrados.length === 0 && !carregando && !errorMessage) && <StateBox><h3>Nenhum funcionário encontrado para a busca.</h3></StateBox>}
+                {(funcionarios.length !== 0 && funcionariosOrdenados.length === 0 && !carregando && !errorMessage) && <StateBox><h3>Nenhum funcionário encontrado para a busca.</h3></StateBox>}
 
-                {funcionariosFiltrados.length !== 0 && !carregando && (
+                {funcionariosOrdenados.length !== 0 && !carregando && (
                     <CardsContainer>
-                        {funcionariosFiltrados.map((f) => (
+                        {funcionariosOrdenados.map((f) => (
                             <Card key={f.id}>
                                 <IconCircle>
                                     <FaUser size={26} />
@@ -124,6 +155,21 @@ const Container = styled.div`
     gap: 10px;
     color: #555;
     border: none;
+`
+
+const SortRow = styled.div`
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 4px;
+`
+
+const SortLabel = styled.span`
+    font-size: 13px;
+    font-weight: 600;
+    color: #777;
+    margin-right: 2px;
 `
 
 const SearchBar = styled.input`

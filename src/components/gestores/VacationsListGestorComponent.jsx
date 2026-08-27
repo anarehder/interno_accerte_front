@@ -1,62 +1,135 @@
+import { useMemo } from 'react';
 import styled from 'styled-components';
-import { useAuth } from '../../contexts/AuthContext';
+import useSortableData from '../../hooks/useSortableData';
+import SortableFieldButtonComponent from '../basic/SortableFieldButtonComponent';
+
+const FERIAS_COLUMNS = [
+    { field: 'nome', label: 'Nome' },
+    { field: 'inicio', label: 'Início' },
+    { field: 'fim', label: 'Fim' },
+    { field: 'totalDias', label: 'Total' },
+    { field: 'referenteInicio', label: 'Referente Início' },
+    { field: 'referenteFim', label: 'Referente Fim' },
+    { field: 'status', label: 'Status' },
+];
+
+const LICENCAS_COLUMNS = [
+    { field: 'nome', label: 'Nome' },
+    { field: 'tipo', label: 'Tipo' },
+    { field: 'inicio', label: 'Início' },
+    { field: 'fim', label: 'Fim' },
+    { field: 'totalDias', label: 'Total' },
+];
+
+function formatarDataBR(dataIso) {
+    const data = new Date(dataIso);
+    const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
+    return `${dia}/${mes}/${ano}`;
+}
 
 function VacationsListGestorComponent({filteredData, activeButton}) {
-    function formatarDataBR(dataIso) {
-        const data = new Date(dataIso);
-        const [ano, mes, dia] = data.toISOString().slice(0, 10).split("-");
-        return `${dia}/${mes}/${ano}`;
-    }
+    // Datas em ISO (YYYY-MM-DD) ordenam corretamente como texto, então não precisam de comparador customizado.
+    const feriasRows = useMemo(() => {
+        const rows = [];
+        filteredData?.forEach((d) => {
+            d.Ferias?.forEach((f) => {
+                rows.push({
+                    nome: `${d.nome} ${d.sobrenome}`,
+                    inicio: f.inicio,
+                    fim: f.fim,
+                    totalDias: f.totalDias,
+                    referenteInicio: f.referenteInicio,
+                    referenteFim: f.referenteFim,
+                    status: f.status,
+                });
+            });
+        });
+        return rows;
+    }, [filteredData]);
+
+    const licencasRows = useMemo(() => {
+        const rows = [];
+        filteredData?.forEach((d) => {
+            d.Licencas?.forEach((f) => {
+                rows.push({
+                    nome: `${d.nome} ${d.sobrenome}`,
+                    tipo: f.tipo,
+                    inicio: f.inicio,
+                    fim: f.fim,
+                    totalDias: f.totalDias,
+                });
+            });
+        });
+        return rows;
+    }, [filteredData]);
+
+    const {
+        sortedItems: feriasOrdenadas,
+        requestSort: requestFeriasSort,
+        getSortDirection: getFeriasSortDirection,
+    } = useSortableData(feriasRows, { field: 'nome', direction: 'asc' });
+
+    const {
+        sortedItems: licencasOrdenadas,
+        requestSort: requestLicencasSort,
+        getSortDirection: getLicencasSortDirection,
+    } = useSortableData(licencasRows, { field: 'nome', direction: 'asc' });
 
     return (
         <PageContainer>
             {activeButton === "Funcionário" &&<h2>Admissão: {formatarDataBR(filteredData[0].admissao) } • Tipo Contrato: {filteredData[0].Contratos.tipo} • Dias Ferias: {filteredData[0].Contratos.diasFerias}</h2> }
             <h2>Férias</h2>
-            {filteredData.some(item => item.Ferias && item.Ferias.length > 0) ?
+            {feriasRows.length > 0 ?
                     <VacationTable>
                         <div>
-                            <p><span>Nome</span></p>
-                            <p><span>Início</span></p>
-                            <p><span>Fim</span></p>
-                            <p><span>Total</span></p>
-                            <p><span>Referente Início</span></p>
-                            <p><span>Referente Fim</span></p>
-                            <p><span>Status</span></p>
+                            {FERIAS_COLUMNS.map(({ field, label }) => (
+                                <p key={field}>
+                                    <SortableFieldButtonComponent
+                                        variant="plain"
+                                        label={label}
+                                        direction={getFeriasSortDirection(field)}
+                                        onClick={() => requestFeriasSort(field)}
+                                    />
+                                </p>
+                            ))}
                         </div>
-                        {filteredData?.map((d, i) => (
-                            d.Ferias?.map((f, j) => (
-                                <div key={j}>
-                                    <p>{d.nome} {d.sobrenome}</p>
-                                    <p>{formatarDataBR(f.inicio)}</p>
-                                    <p>{formatarDataBR(f.fim)}</p>
-                                    <p>{f.totalDias}</p>
-                                    <p>{formatarDataBR(f.referenteInicio)}</p>
-                                    <p>{formatarDataBR(f.referenteFim)}</p>
-                                    <p>{f.status}</p>
-                                </div>
-                            ))
+                        {feriasOrdenadas.map((f, i) => (
+                            <div key={i}>
+                                <p>{f.nome}</p>
+                                <p>{formatarDataBR(f.inicio)}</p>
+                                <p>{formatarDataBR(f.fim)}</p>
+                                <p>{f.totalDias}</p>
+                                <p>{formatarDataBR(f.referenteInicio)}</p>
+                                <p>{formatarDataBR(f.referenteFim)}</p>
+                                <p>{f.status}</p>
+                            </div>
                         ))}
                     </VacationTable>
                 : <h3>Sem Ferias nesta busca</h3>}
             <br/>
             <h2>Licenças</h2>
-            {filteredData.some(item => item.Licenca && item.Licenca.length > 0) ?
+            {licencasRows.length > 0 ?
                 <VacationTable>
                     <div>
-                        <p><span>Início</span></p>
-                        <p><span>Fim</span></p>
-                        <p><span>Total</span></p>
+                        {LICENCAS_COLUMNS.map(({ field, label }) => (
+                            <p key={field}>
+                                <SortableFieldButtonComponent
+                                    variant="plain"
+                                    label={label}
+                                    direction={getLicencasSortDirection(field)}
+                                    onClick={() => requestLicencasSort(field)}
+                                />
+                            </p>
+                        ))}
                     </div>
-                    {filteredData?.map((d, i) => (
-                            d.Licencas?.map((f, j) => (
-                                <div key={j}>
-                                    <p>{d.nome} {d.sobrenome}</p>
-                                    <p>{f.tipo}</p>
-                                    <p>{formatarDataBR(f.inicio)}</p>
-                                    <p>{formatarDataBR(f.fim)}</p>
-                                    <p>{f.totalDias}</p>
-                                </div>
-                            ))
+                    {licencasOrdenadas.map((f, i) => (
+                        <div key={i}>
+                            <p>{f.nome}</p>
+                            <p>{f.tipo}</p>
+                            <p>{formatarDataBR(f.inicio)}</p>
+                            <p>{formatarDataBR(f.fim)}</p>
+                            <p>{f.totalDias}</p>
+                        </div>
                     ))}
                 </VacationTable>
                 : <h3>Sem licenças nesta busca</h3>}
@@ -109,6 +182,15 @@ const VacationTable = styled.div`
         &:nth-of-type(1) {
             flex: 1.6;
             text-align: left;
+        }
+    }
+    div:first-of-type p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: visible;
+        &:nth-of-type(1) {
+            justify-content: flex-start;
         }
     }
     span{
