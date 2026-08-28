@@ -25,7 +25,7 @@ function MeusFuncionariosPage() {
         if (!user) return;
         const fetchData = async () => {
             try {
-                const body = { adminEmail: user.mail };
+                const body = { adminEmail: 'ronildo.gama@accerte.com.br' };
 
                 const [responseFuncionarios, responseAreas] = await Promise.all([
                     apiService.buscarFuncionarioPorArea(body),
@@ -65,7 +65,7 @@ function MeusFuncionariosPage() {
 
     return (
         <PageContainer>
-            <HeaderImageComponent pageTitle={"Funcionários"} subtitle={"Área"} lastPage={"painelgestores"} />
+            <HeaderImageComponent pageTitle={"Minha"} subtitle={"Equipe"} lastPage={"painelgestores"} />
             <h2>Funcionários da minha área</h2>
             <IntroText>Confira abaixo quem são os funcionários vinculados a você.</IntroText>
 

@@ -36,7 +36,10 @@ function FiltrarFeriasPage(){
                 try {
                     const body = buildAdminEmailBody();
                     const response = await apiService.buscarFuncionarioPorArea(body);
-                    setFuncionarios(response.data);
+                    const ordenados = [...response.data].sort((a, b) =>
+                        `${a.nome} ${a.sobrenome}`.localeCompare(`${b.nome} ${b.sobrenome}`, 'pt-BR', { sensitivity: 'base' })
+                    );
+                    setFuncionarios(ordenados);
                 } catch (error) {
                     console.error("Erro ao buscar informacoes vagas:", error);
                 }

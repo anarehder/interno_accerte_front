@@ -60,7 +60,7 @@ function PainelGestoresPage() {
                             <ButtonLink to="/meusfuncionarios">
                                 <NewButton>
                                     <FaUsers size={115}/>
-                                    <p>Meus <br/> <span>Funcionários</span></p>
+                                    <p>Minha <br/> <span>Equipe</span></p>
                                 </NewButton>
                             </ButtonLink>
                             <ButtonLink to="/aprovarferias">
