@@ -25,7 +25,7 @@ function MeusFuncionariosPage() {
         if (!user) return;
         const fetchData = async () => {
             try {
-                const body = { adminEmail: 'ronildo.gama@accerte.com.br' };
+                const body = { adminEmail: user?.mail };
 
                 const [responseFuncionarios, responseAreas] = await Promise.all([
                     apiService.buscarFuncionarioPorArea(body),
