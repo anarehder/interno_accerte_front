@@ -142,6 +142,10 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, h
             y += lines.length * 5 + 3;
         };
 
+        // Remove marcadores de lista já existentes no texto (•, -, *, ● etc.) para não
+        // duplicar com o bullet desenhado pelo PDF
+        const stripBullet = (linha) => linha.replace(/^[\s]*[•▪●◦‣∙·\-\*]+\s*/, '').trim();
+
         const addMultilineField = (label, value) => {
             checkPageBreak(8);
             pdf.setFontSize(10);
@@ -151,7 +155,10 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, h
             pdf.setTextColor('#333333');
             y += 5;
             pdf.setFont(undefined, 'normal');
-            const linhas = (value || '').split('\n').filter((linha) => linha.trim() !== '');
+            const linhas = (value || '')
+                .split('\n')
+                .map(stripBullet)
+                .filter((linha) => linha !== '');
             if (linhas.length === 0) {
                 checkPageBreak(5);
                 pdf.text('-', marginX, y);
