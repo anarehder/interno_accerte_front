@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getSharePointData, getUserProfile } from "../services/graph";
+import { getSharePointData, getUserProfile, getIdToken } from "../services/graph";
 import { useMsal } from "@azure/msal-react";
 
 const AuthContext = createContext();
@@ -55,8 +55,13 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // Busca um idToken sempre válido/renovado, sem depender do que está salvo em user/localStorage.
+  async function getFreshIdToken() {
+    return await getIdToken(instance, accounts);
+  }
+
   return (
-    <AuthContext.Provider value={{ user, dados, instance, carregando, getData }}>
+    <AuthContext.Provider value={{ user, dados, instance, carregando, getData, getIdToken: getFreshIdToken }}>
       {children}
     </AuthContext.Provider>
   );

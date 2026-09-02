@@ -27,6 +27,18 @@ export async function getToken(instance, accounts) {
   }
 }
 
+// Busca um idToken sempre atualizado (o MSAL renova sozinho via acquireTokenSilent
+// se o token em cache estiver expirado). Use isso na hora de chamar o backend,
+// em vez de depender do idToken salvo no user/localStorage.
+export async function getIdToken(instance, accounts) {
+  const response = await getToken(instance, accounts);
+  if (!response?.idToken) {
+    console.warn("idToken ausente ao tentar obtê-lo.");
+    return null;
+  }
+  return response.idToken;
+}
+
 export async function getUserProfile(instance, accounts) {
   try {
     const response = await getToken(instance, accounts);
@@ -40,7 +52,9 @@ export async function getUserProfile(instance, accounts) {
     });
     
     const details = await graphResponse.json();
-    const user = {...details, 'token': response.accessToken};
+    // Não guardamos token/idToken aqui: quem precisar de um token pede na hora
+    // via getToken()/getIdToken(), que o MSAL já cacheia e renova sozinho.
+    const user = {...details};
 
     localStorage.setItem("userMSAL", JSON.stringify(user));
     return user;

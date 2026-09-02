@@ -1,10 +1,18 @@
 import axios from "axios";
+import { msalInstance } from "./authConfig";
+import { getIdToken } from "./graph";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 // console.log(BASE_URL);
 
-function getPosts() {
-    return axios.get(`${BASE_URL}/linkedin/posts`);
+// em chamadas do axios que precisem estar autenticadas como ultimo argumento.
+async function getAuthHeaders() {
+    const idToken = await getIdToken(msalInstance, msalInstance.getAllAccounts());
+    return { headers: { Authorization: `Bearer ${idToken}` } };
+}
+
+async function getPosts() {
+    return axios.get(`${BASE_URL}/linkedin/posts`, await getAuthHeaders());
 }
 
 function createUser(body) {
