@@ -252,6 +252,8 @@ const MenuItem = styled.div`
     &:hover div {
         display: block;
         justify-content: center;
+        padding-top: 5px;
+
     }
     &:hover {
         background-color: #00348E;
@@ -270,8 +272,7 @@ const MenuItem = styled.div`
 `;
 
 const LogoImg = styled.img`
-    height: 50px;
-    // max-height: 40px;
+    width: 80%;
     object-fit: contain;
     transition: filter 0.2s ease;
 `;

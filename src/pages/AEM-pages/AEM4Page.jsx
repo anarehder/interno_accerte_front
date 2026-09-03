@@ -13,7 +13,7 @@ const formatarDataBR = (dataIso) => {
     return `${dia}/${mes}/${ano}`;
 };
 
-const AEM3Page = () => {
+const AEM4Page = () => {
     const { user } = useAuth();
     const [comunicados, setComunicados] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ const AEM3Page = () => {
             try {
                 const body = { email: user.mail };
                 const response = await apiService.buscarComunicadosEmail(body);
-                const comunicadosFiltrados = response.data.filter((c) => c.tipo === "Accerte em Movimento 3");
+                const comunicadosFiltrados = response.data.filter((c) => c.tipo === "Accerte em Movimento 4");
                 setComunicados(comunicadosFiltrados);
                 setUpdated(false);
             } catch (error) {
@@ -74,9 +74,9 @@ const AEM3Page = () => {
 
     return (
         <Container>
-            <HeaderImageComponent pageTitle={"3ª"} subtitle={"Edição"} lastPage={"homepage"} image={AEMLogo} />
+            <HeaderImageComponent pageTitle={"4ª"} subtitle={"Edição"} lastPage={"homepage"} image={AEMLogo} />
             <RegulamentoContainer>
-                <a href={"https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FAccerteTecnologiadaInformaoLtda%2FDocumentos%20Compartilhados%2FExtras%2FCOMUNICADOS%2FRegulamento%20Accerte%20em%20Movimento%2Epdf&parent=%2Fsites%2FAccerteTecnologiadaInformaoLtda%2FDocumentos%20Compartilhados%2FExtras%2FCOMUNICADOS&p=true&ga=1"} target="_blank" rel="noopener noreferrer">📄 Regulamento AEM 3</a>
+                <a href={"https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FAccerteTecnologiadaInformaoLtda%2FDocumentos%20Compartilhados%2FExtras%2FCOMUNICADOS%2FRegulamento%20Accerte%20em%20Movimento%2Epdf&parent=%2Fsites%2FAccerteTecnologiadaInformaoLtda%2FDocumentos%20Compartilhados%2FExtras%2FCOMUNICADOS&p=true&ga=1"} target="_blank" rel="noopener noreferrer">📄 Regulamento AEM 4</a>
             </RegulamentoContainer>
 
             {comunicados.length > 0 && (
@@ -151,7 +151,7 @@ const AEM3Page = () => {
             )}
 
             {!loading && comunicados.length === 0 && (
-                <NenhumComunicadoMsg>Ainda não há comunicados do Accerte Em Movimento 3ª Edição.</NenhumComunicadoMsg>
+                <NenhumComunicadoMsg>Ainda não há comunicados do Accerte Em Movimento 4ª Edição.</NenhumComunicadoMsg>
             )}
 
             {imagemAmpliada && (
@@ -174,7 +174,7 @@ const AEM3Page = () => {
     );
 };
 
-export default AEM3Page;
+export default AEM4Page;
 
 const Container = styled.div`
     display: flex;
