@@ -4,8 +4,7 @@ import { FiSearch } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
-import AEMLogoAzul from '../../assets/AEM-logo-azul.png';
-import AEMLogo from '../../assets/AEM-logo.png';
+import AEMLogoAzul from '../../assets/LOGO_AEM_4.png';
 
 function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
     const { user } = useAuth();
@@ -87,7 +86,6 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 {/* <Link to={"/sobre"}> <h1>SOBRE <span> NÓS</span></h1></Link> */}
                 <h1>SOBRE <span> NÓS </span></h1>
                     <Dropdown>
-                        <DropdownItem><h1>SOBRE <span> NÓS </span></h1></DropdownItem>
                         <DropdownItem><Link to={"/sobre"}>Sobre a Accerte</Link></DropdownItem>
                         <DropdownItem><a href={'https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Extras/PORTFOLIO/PORTFOLIO%20ATUAL.pdf'} target="_blank">Portfólio</a></DropdownItem>
                     </Dropdown>
@@ -95,7 +93,6 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 <MenuItem>
                     <h1>GENTE <span> E GESTÃO </span></h1>
                     <Dropdown>
-                        <DropdownItem><h1>GENTE <span> E GESTÃO </span></h1></DropdownItem>
                         <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
                         <DropdownItem><Link to={"/beneficios"}>Benefícios</Link></DropdownItem>
                         <DropdownItem><Link to={"/calendario"}>Calendário</Link></DropdownItem>
@@ -112,7 +109,6 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 <MenuItem>
                     <h1>FIQUE  <span> POR DENTRO </span></h1>
                     <Dropdown>
-                        <DropdownItem><h1>FIQUE <span> POR DENTRO </span></h1></DropdownItem>
                         <DropdownItem><Link to={"/comunicados"}>Comunicados</Link></DropdownItem>
                         <DropdownItem><Link to={"/fiquepordentro"}>Vídeos</Link></DropdownItem>
                     </Dropdown>
@@ -120,7 +116,6 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 <MenuItem>
                     <h1>GESTÃO <span> DE TI </span></h1>
                     <Dropdown>
-                        <DropdownItem><h1>GESTÃO <span> DE TI </span></h1></DropdownItem>
                         {/* <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA E-mail</a></DropdownItem> */}
                         <DropdownItem><a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portal/71" target="blank">JIRA Portal</a></DropdownItem>
                         <DropdownItem><Link to={"/dashprojetos "}>Painel de Projetos</Link></DropdownItem>
@@ -130,7 +125,6 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 <MenuItem>
                     <h1>GESTÃO <span>À VISTA</span></h1>
                     <Dropdown>
-                        <DropdownItem><h1>GESTÃO <span>À VISTA</span></h1></DropdownItem>
                         {
                             (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br') &&
                             <DropdownItem> <Link to="/admin">Painel RH</Link></DropdownItem>
@@ -146,9 +140,9 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 <MenuItem>
                     <LogoImg src={AEMLogoAzul} alt="Accerte em Movimento" />
                     <Dropdown>
-                        <DropdownLogo><LogoImg src={AEMLogo} alt="Accerte em Movimento" /></DropdownLogo>
                             <DropdownItem> <Link to="/aem2">2ª Edição</Link></DropdownItem>
                             <DropdownItem> <Link to="/aem3">3ª Edição</Link></DropdownItem>
+                            <DropdownItem> <Link to="/aem4">4ª Edição</Link></DropdownItem>
                     </Dropdown>
                 </MenuItem>
                 </ItemsBar>
@@ -259,6 +253,13 @@ const MenuItem = styled.div`
         display: block;
         justify-content: center;
     }
+    &:hover {
+        background-color: #00348E;
+        color: white;
+    }
+    &:hover img {
+        filter: brightness(0) invert(1);
+    }
     h1{
         font-size: 14px !important;
         font-weight: 400;
@@ -269,9 +270,10 @@ const MenuItem = styled.div`
 `;
 
 const LogoImg = styled.img`
-    height: 40px;
-    max-height: 40px;
+    height: 50px;
+    // max-height: 40px;
     object-fit: contain;
+    transition: filter 0.2s ease;
 `;
 
 const SearchItem = styled.div`
@@ -335,9 +337,9 @@ const SearchItem = styled.div`
 
 const Dropdown = styled.div`
     position: absolute;
-    top: 0;
+    top: 100%;
     left: 0;
-    max-width: 150px;
+    max-width: 101%;
     font-size: 14px !important;
     color: white;
     text-indent: 10px;

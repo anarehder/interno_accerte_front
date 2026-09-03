@@ -13,7 +13,6 @@ function MenuBarGGComponent() {
                 <MenuItem>
                     <h1>GENTE <span> E GESTÃO </span></h1>
                     <Dropdown>
-                        <DropdownItem><h1>GENTE <span> E GESTÃO </span></h1></DropdownItem>
                         <DropdownItem><Link to={"/aniversarios"}>Aniversários</Link></DropdownItem>
                         <DropdownItem><Link to={"/calendario"}>Calendário</Link></DropdownItem>
                         <DropdownItem><Link to={"/escala"}>Escala Semanal</Link></DropdownItem>
@@ -29,7 +28,6 @@ function MenuBarGGComponent() {
                 <MenuItem>
                     <h1>GESTÃO <span> DE TI </span></h1>
                     <Dropdown>
-                        <DropdownItem><h1>GESTÃO <span> DE TI </span></h1></DropdownItem>
                         <DropdownItem><a href="mailto:atendimento@accerte.com.br?subject=Chamado%20Interno&body=Gostaria%20de%20solicitar%20..." target="blank">JIRA</a></DropdownItem>
                         <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem>
                     </Dropdown>
@@ -37,7 +35,6 @@ function MenuBarGGComponent() {
                 <MenuItem>
                     <h1>GESTÃO <span>À VISTA</span></h1>
                     <Dropdown>
-                        <DropdownItem><h1>GESTÃO <span>À VISTA</span></h1></DropdownItem>
                         <DropdownItem> <Link to="/painelgestores">Painel Gestores</Link></DropdownItem>
                         {
                             (user?.mail === 'maria.silva@accerte.com.br' || user?.mail === 'ana.rehder@accerte.com.br') &&
@@ -94,6 +91,10 @@ const MenuItem = styled.div`
         display: block;
         justify-content: center;
     }
+    &:hover {
+        background-color: #F1314D;
+        color: white;
+    }
     h1{
         font-size: 14px !important;
     }
@@ -101,7 +102,7 @@ const MenuItem = styled.div`
 
 const Dropdown = styled.div`
     position: absolute;
-    top: 0;
+    top: 100%;
     left: 0;
     max-width: 150px;
     font-size: 14px !important;
