@@ -128,8 +128,20 @@ function buscarHumorFuncionario(body){
     return axios.post(`${BASE_URL}/humor/funcionario`, body)
 }
 
-function buscarGestoresInfo(){
-    return axios.get(`${BASE_URL}/funcionarios/gestores`)
+async function buscarGestoresInfo(){
+    return axios.get(`${BASE_URL}/gestores`, await getAuthHeaders())
+}
+
+async function criarGestor(body){
+    return axios.post(`${BASE_URL}/gestores/criar`, body, await getAuthHeaders())
+}
+
+async function editarGestor(id, body){
+    return axios.post(`${BASE_URL}/gestores/editar/${id}`, body, await getAuthHeaders())
+}
+
+async function deletarGestor(id){
+    return axios.post(`${BASE_URL}/gestores/delete/${id}`, null, await getAuthHeaders())
 }
 
 function buscarInfoCriarFunc(){
@@ -213,6 +225,6 @@ function ragQuery(body){
 }
 
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery }
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, criarGestor, editarGestor, deletarGestor, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery }
 
 export default apiService;

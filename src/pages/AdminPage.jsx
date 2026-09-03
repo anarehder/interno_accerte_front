@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "../contexts/AuthContext";
-import { FaUsersGear, FaUsers } from "react-icons/fa6";
+import { FaUsersGear, FaUsers, FaUserTie } from "react-icons/fa6";
 import { AiOutlineSchedule } from "react-icons/ai";
 import { FaCalendarWeek } from "react-icons/fa6";
 import HeaderGGNewComponent from "../components/gentegestao/HeaderGGNewComponent";
@@ -30,6 +30,13 @@ const AdminPage = () => {
                     <NewButton>
                         <FaUsers size={100}/>
                         <p>Listar <br /> <span>Funcionários</span></p>
+                    </NewButton>
+                </Link>
+
+                <Link to="/gestores/admin">
+                    <NewButton>
+                        <FaUserTie size={100}/>
+                        <p>Gestores <br /> <span>por Área</span></p>
                     </NewButton>
                 </Link>
 

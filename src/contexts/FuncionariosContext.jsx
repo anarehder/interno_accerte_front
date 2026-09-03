@@ -29,8 +29,22 @@ export const FuncionariosProvider = ({ children }) => {
     }
   }
 
+  // Rebusca só a lista de gestores (rota /gestores), sem refazer a busca de
+  // funcionários. Usado após criar/editar/excluir um gestor.
+  async function getGestores() {
+    try {
+      const gestoresRes = await apiService.buscarGestoresInfo();
+      setDados((prevDados) => ({
+        ...(prevDados ?? {}),
+        gestores: gestoresRes.data,
+      }));
+    } catch (error) {
+      console.error("Erro em getGestores (FuncionariosContext):", error);
+    }
+  }
+
   return (
-    <FuncionariosContext.Provider value={{ dados, carregando, getData }}>
+    <FuncionariosContext.Provider value={{ dados, carregando, getData, getGestores }}>
       {children}
     </FuncionariosContext.Provider>
   );
