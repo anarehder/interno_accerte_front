@@ -2,11 +2,22 @@ import React from "react";
 import styled from "styled-components";
 
 function ContactsComponent({dados, contatos}){
-    // "contatos" é opcional: quando informado, é a lista exibida (ex: resultado da busca
-    // na home page). "dados.funcionarios"/"dados.gestores" continuam sendo sempre a base
-    // completa, usada para localizar o gestor mesmo quando ele não está nos resultados filtrados.
     const listaContatos = contatos ?? dados?.funcionarios ?? [];
-    const gestoresSuperiores = dados?.gestores?.filter(g => g.gestorSuperiorId === 4 || g.gestorSuperiorId === 6 ) ?? [];
+    const listaGestores = dados?.gestores ?? [];
+
+    // Quantas áreas esse funcionário gerencia (ao todo, em listaGestores).
+    const areasGeridasPor = (funcionarioId) =>
+        listaGestores.filter(g => g.funcionarioId === funcionarioId).length;
+
+    // Quando uma área tem mais de um gestor cadastrado, prioriza o que é gestor
+    // exclusivamente dela (ex: Josue, que só gerencia essa área). O gestor que
+    // acumula várias áreas (ex: Ronildo) só aparece quando for a única opção.
+    function gestorDaArea(areaId){
+        const candidatos = listaGestores.filter(g => g.areaId === areaId);
+        if (candidatos.length <= 1) return candidatos[0];
+        return candidatos.find(g => areasGeridasPor(g.funcionarioId) === 1)
+            ?? candidatos[0];
+    }
 
     return (
         <Container>
@@ -22,7 +33,12 @@ function ContactsComponent({dados, contatos}){
                 {listaContatos.length > 0 && listaContatos
                 // .filter(contato => contato.officeLocation !== "NA" && contato.officeLocation !== "OFF")
                 .map((contato, index) => {
-                    const gestorSuperior = gestoresSuperiores.find(g => g.areaId === contato.areaId);
+                    // Se a pessoa é gestor, exibe o gestor superior dela (registrado no
+                    // próprio cadastro de gestor). Caso contrário, exibe o gestor da área.
+                    const gestorProprio = listaGestores.find(g => g.funcionarioId === contato.id);
+                    const gestorSuperior = gestorProprio
+                        ? { funcionarioId: gestorProprio.gestorSuperiorId }
+                        : gestorDaArea(contato.areaId);
                     const gestorFuncionario = dados?.funcionarios?.find(f => f.id === gestorSuperior?.funcionarioId);
 
                     return (
