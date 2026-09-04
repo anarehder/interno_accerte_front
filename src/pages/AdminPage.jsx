@@ -22,27 +22,27 @@ const AdminPage = () => {
             <ButtonContainer>
                 <Link to="/usuariosadmin">
                     <NewButton>
-                        <FaUsersGear size={100}/>
+                        <FaUsersGear size={115}/>
                         <p>Painel de <br /> <span>Usuários</span></p>
                     </NewButton>
                 </Link>
                 <Link to="/funcionarios/admin">
                     <NewButton>
-                        <FaUsers size={100}/>
+                        <FaUsers size={115}/>
                         <p>Listar <br /> <span>Funcionários</span></p>
                     </NewButton>
                 </Link>
 
                 <Link to="/gestores/admin">
                     <NewButton>
-                        <FaUserTie size={100}/>
+                        <FaUserTie size={115}/>
                         <p>Gestores <br /> <span>por Área</span></p>
                     </NewButton>
                 </Link>
 
                 <Link to="/escalas/admin">
                     <NewButton>
-                        <FaCalendarWeek size={80}/>
+                        <FaCalendarWeek size={115}/>
                         <p>Painel de <br /> <span>Escalas</span></p>
                     </NewButton>
                 </Link>
@@ -87,10 +87,8 @@ const PageContainer = styled.div`
 const ButtonContainer = styled.div`
     justify-content: center;
     flex-wrap: wrap;
-    // padding: 20px 0;
     gap: 30px;
-    width: 900px;
-    // background-color: red;
+    width: 1200px;
 `
 
 const NewButton = styled.button`
