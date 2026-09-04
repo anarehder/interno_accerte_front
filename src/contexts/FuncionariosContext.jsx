@@ -13,13 +13,15 @@ export const FuncionariosProvider = ({ children }) => {
 
   async function getData() {
     try {
-      const [funcionariosRes, gestoresRes] = await Promise.all([
+      const [funcionariosRes, gestoresRes, areasRes] = await Promise.all([
         apiService.buscarFuncionarioAtivo(),
         apiService.buscarGestoresInfo(),
+        apiService.buscarAreas(),
       ]);
       const novosDados = {
         funcionarios: funcionariosRes.data,
         gestores: gestoresRes.data,
+        areas: areasRes.data,
       };
       setDados(novosDados);
     } catch (error) {
