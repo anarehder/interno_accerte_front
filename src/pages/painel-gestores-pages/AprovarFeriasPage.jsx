@@ -40,6 +40,15 @@ function AprovarFeriasPage() {
         return `${dia}/${mes}/${ano}`;
     }
 
+    // Heurística por palavra-chave: cobre os status de férias (Aprovado/Reprovado/Concluído/Solicitado...).
+    function getStatusStyle(status) {
+        const s = (status || '').toLowerCase();
+        if (s.includes('reprovado')) return { bg: '#fdecea', color: '#c0392b', border: '#c0392b' };
+        if (s.includes('conclu')) return { bg: '#eef1f4', color: '#5b6b79', border: '#9aa7b2' };
+        if (s.includes('aprovado')) return { bg: '#e8f8ef', color: '#1e8e5a', border: '#1e8e5a' };
+        return { bg: '#fff8e6', color: '#b8860b', border: '#d4a017' }; // pendente/solicitado/outros
+    }
+
     async function handleApprove(id, status){
         const body = {email: user.mail, id: id, status: status, tipo: type};
         try {
@@ -60,7 +69,7 @@ function AprovarFeriasPage() {
         <PageContainer>
             <HeaderImageComponent pageTitle={"Aprovar"} subtitle={"Férias"} lastPage={"painelgestores"} image={AprovarFerias} />
             <Container>
-                <h2>Aprovação de Férias</h2>
+                <h2>Férias Solicitadas</h2>
                 {ferias.length !== 0 &&
                     < VacationTable >
                         <div>
@@ -76,25 +85,42 @@ function AprovarFeriasPage() {
                         </div>
                         {ferias
                             ?.filter((d) => !d.status.includes("Reprovado"))
-                            .map((d, i) => (
-                                <div key={i}>
-                                    <p>{d.Funcionarios.nome} {d.Funcionarios.sobrenome}</p>
-                                    <p>{formatarDataBR(d.inicio)}</p>
-                                    <p>{formatarDataBR(d.fim)}</p>
-                                    <p>{d.totalDias}</p>
-                                    <p>{formatarDataBR(d.referenteInicio)}</p>
-                                    <p>{formatarDataBR(d.referenteFim)}</p>
-                                    <p>{d.status}</p>
-                                    <p onClick={() => handleApprove(d.id, true)}><FaCheck /></p>
-                                    {
-                                        !d.status.includes("Reprovado") ? <p onClick={() => handleApprove(d.id, false)}><MdBlock /></p> : <p style={{ cursor: 'default', color: "#555" }}><MdBlock style={{ cursor: 'default' }} /></p>
-                                    }
-
-                                </div>
-                            ))}
+                            .map((d, i) => {
+                                const statusStyle = getStatusStyle(d.status);
+                                return (
+                                    <div key={i}>
+                                        <p>{d.Funcionarios.nome} {d.Funcionarios.sobrenome}</p>
+                                        <p>{formatarDataBR(d.inicio)}</p>
+                                        <p>{formatarDataBR(d.fim)}</p>
+                                        <p>{d.totalDias}</p>
+                                        <p>{formatarDataBR(d.referenteInicio)}</p>
+                                        <p>{formatarDataBR(d.referenteFim)}</p>
+                                        <p>
+                                            <Tag $bg={statusStyle.bg} $color={statusStyle.color} $border={statusStyle.border}>
+                                                {d.status}
+                                            </Tag>
+                                        </p>
+                                        <p>
+                                            <ActionButton $variant="approve" onClick={() => handleApprove(d.id, true)} title="Aprovar">
+                                                <FaCheck />
+                                            </ActionButton>
+                                        </p>
+                                        <p>
+                                            {!d.status.includes("Reprovado")
+                                                ? <ActionButton $variant="reject" onClick={() => handleApprove(d.id, false)} title="Reprovar">
+                                                    <MdBlock />
+                                                </ActionButton>
+                                                : <ActionButton $variant="disabled" disabled title="Já reprovado">
+                                                    <MdBlock />
+                                                </ActionButton>
+                                            }
+                                        </p>
+                                    </div>
+                                );
+                            })}
                     </VacationTable>
                 }
-                {ferias.length === 0 && !carregando && <h2>Sem férias pra aprovar.</h2>}
+                {ferias.length === 0 && !carregando && <h2>Sem férias pra exibir.</h2>}
             </Container >
         </PageContainer>
     );
@@ -168,5 +194,47 @@ const VacationTable = styled.div`
     }
     span{
         font-weight: 600;
+    }
+`
+
+const Tag = styled.span`
+    display: inline-flex;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 999px;
+    border: 1px solid ${({ $border }) => $border};
+    color: ${({ $color }) => $color};
+    background: ${({ $bg }) => $bg};
+    white-space: nowrap;
+`
+
+const ACTION_VARIANTS = {
+    approve: { color: '#1e8e5a', bg: '#e8f8ef', hoverBg: '#1e8e5a' },
+    reject: { color: '#c0392b', bg: '#fdecea', hoverBg: '#c0392b' },
+    disabled: { color: '#9aa7b2', bg: '#eef1f4', hoverBg: '#eef1f4' },
+};
+
+const ActionButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid ${({ $variant }) => ACTION_VARIANTS[$variant].color};
+    background: ${({ $variant }) => ACTION_VARIANTS[$variant].bg};
+    color: ${({ $variant }) => ACTION_VARIANTS[$variant].color};
+    cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+    transition: 0.2s;
+    padding: 0;
+
+    svg {
+        font-size: 16px;
+    }
+
+    &:hover {
+        background: ${({ $variant, disabled }) => (disabled ? ACTION_VARIANTS[$variant].bg : ACTION_VARIANTS[$variant].hoverBg)};
+        color: ${({ disabled }) => (disabled ? 'inherit' : '#fff')};
     }
 `
