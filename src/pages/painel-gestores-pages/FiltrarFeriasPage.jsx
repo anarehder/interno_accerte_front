@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import styled from 'styled-components';
 import apiService from "../../services/apiService";
 import { useAuth } from "../../contexts/AuthContext";
@@ -20,6 +20,7 @@ function FiltrarFeriasPage(){
     const [noData, setNoData] = useState(false);
     const [filteredData, setFilteredData] = useState([]); //responsta da req
     const [funcionarios, setFuncionarios] = useState([]);
+    const [showConcluidas, setShowConcluidas] = useState(false); //exibir ou não férias já concluídas
 
     const FILTER_TABS = [
         { key: "Funcionário", label: "Funcionário", icon: <FaUser /> },
@@ -112,6 +113,15 @@ function FiltrarFeriasPage(){
     const isConfirmDisabled = (activeButton === "Funcionário" && !selectedEmployee)
         || (activeButton === "Período" && (!date.start || !date.end));
 
+    // Sem o toggle ligado, escondemos as férias já concluídas do resultado.
+    const displayData = useMemo(() => {
+        if (showConcluidas) return filteredData;
+        return filteredData.map(item => ({
+            ...item,
+            Ferias: item.Ferias?.filter(f => f.status !== "Concluído") ?? []
+        }));
+    }, [filteredData, showConcluidas]);
+
     return (
         <PageContainer>
             <HeaderImageComponent pageTitle={"Filtrar"} subtitle={"Férias"} lastPage={"painelgestores"} image={FiltrarFerias} />
@@ -174,16 +184,28 @@ function FiltrarFeriasPage(){
                         }
 
                         {activeButton !== "" &&
+                            <ToggleRow>
+                                <input
+                                    id="showConcluidas"
+                                    type="checkbox"
+                                    checked={showConcluidas}
+                                    onChange={(e) => setShowConcluidas(e.target.checked)}
+                                />
+                                <label htmlFor="showConcluidas">Mostrar férias concluídas</label>
+                            </ToggleRow>
+                        }
+
+                        {activeButton !== "" &&
                             <ConfirmButton onClick={handleSubmit} disabled={isConfirmDisabled}>
                                 Buscar férias
                             </ConfirmButton>
                         }
                     </FilterCard>
 
-                    {filteredData.length > 0 && (
+                    {displayData.length > 0 && (
                         <ResultsCard>
                             <VacationsListGestorComponent
-                                filteredData={filteredData}
+                                filteredData={displayData}
                                 activeButton={activeButton} handleSubmit={handleSubmit}
                             />
                         </ResultsCard>
@@ -327,6 +349,24 @@ const Input = styled.input`
         border-color: #0057E1;
     }
 `;
+
+const ToggleRow = styled.div`
+    align-items: center;
+    gap: 8px;
+
+    input {
+        width: 16px;
+        height: 16px;
+        accent-color: #0057E1;
+        cursor: pointer;
+    }
+
+    label {
+        font-size: 14px;
+        color: #555;
+        cursor: pointer;
+    }
+`
 
 const ConfirmButton = styled.button`
   align-self: flex-end;
