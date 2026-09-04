@@ -67,6 +67,8 @@ function VacationsPage() {
                 const feriasDatas = gerarFerias(admissao);
                 setFeriasDisponiveis(feriasDatas);
                 setSelectedPeriod(-1);
+                setAgendarFerias(false);
+                setEditarFerias([]);
                 setUpdated(false);
             }
         }
@@ -118,7 +120,7 @@ function VacationsPage() {
             {vacationInfo &&
                 <>
                     <EmployeeInfo>
-                        <InfoTag $bg="#fdecef" $color="#ED1F4C" $border="#ED1F4C">Início: {admissao}</InfoTag>
+                        <InfoTag $bg="#fdecef" $color="#ED1F4C" $border="#ED1F4C">Admissão: {admissao}</InfoTag>
                         {vacationInfo?.Contratos?.tipo &&
                             <InfoTag $bg={contratoStyle.bg} $color={contratoStyle.color} $border={contratoStyle.border}>
                                 {vacationInfo.Contratos.tipo}
@@ -127,34 +129,28 @@ function VacationsPage() {
                         <InfoTag $bg="#fdecef" $color="#ED1F4C" $border="#ED1F4C">Total Anual: {vacationInfo?.Contratos?.diasFerias} dias</InfoTag>
                     </EmployeeInfo>
 
-                    {agendarFerias &&
-                        <VacationContiner>
-                            <CriarFeriasComponent selected={feriasDisponiveis[selectedPeriod]} info={vacationInfo} setUpdated={setUpdated} setAgendarFerias={setAgendarFerias} />
-                        </VacationContiner>
-                    }
-                    {editarFerias.length !== 0 &&
-                        <VacationContiner>
-                            <EditarFeriasComponent selected={feriasDisponiveis[selectedPeriod]} toEdit={editarFerias} info={vacationInfo} setUpdated={setUpdated} setEditarFerias={setEditarFerias} />
-                        </VacationContiner>
-                    }
-                    {(editarFerias.length === 0 && !agendarFerias) &&
-                        <ExplorerContainer>
-                            <ListPanel>
-                                <ListPanelTitle>Períodos Aquisitivos</ListPanelTitle>
-                                {periodosParaExibir.map(({ periodo, index }) => {
-                                    const usoStyle = getPeriodoUsageStyle(periodosResumo[index]?.diasUsados ?? 0, vacationInfo?.Contratos?.diasFerias);
-                                    return (
-                                        <PeriodListItem key={index} onClick={() => selecionarFeriasPorInicio(periodo.inicio, index)} $active={selectedPeriod === index}>
-                                            <PeriodRange>{periodo.inicio} - {periodo.fim}</PeriodRange>
-                                            <Tag $bg={usoStyle.bg} $color={usoStyle.color} $border={usoStyle.border}>
-                                                {usoStyle.label}
-                                            </Tag>
-                                        </PeriodListItem>
-                                    );
-                                })}
-                            </ListPanel>
-                            <DetailsPanel>
-                                {selectedPeriod >= 0 ?
+                    <ExplorerContainer>
+                        <ListPanel>
+                            <ListPanelTitle>Períodos Aquisitivos</ListPanelTitle>
+                            {periodosParaExibir.map(({ periodo, index }) => {
+                                const usoStyle = getPeriodoUsageStyle(periodosResumo[index]?.diasUsados ?? 0, vacationInfo?.Contratos?.diasFerias);
+                                return (
+                                    <PeriodListItem key={index} onClick={() => selecionarFeriasPorInicio(periodo.inicio, index)} $active={selectedPeriod === index}>
+                                        <PeriodRange>{periodo.inicio} - {periodo.fim}</PeriodRange>
+                                        <Tag $bg={usoStyle.bg} $color={usoStyle.color} $border={usoStyle.border}>
+                                            {usoStyle.label}
+                                        </Tag>
+                                    </PeriodListItem>
+                                );
+                            })}
+                            
+                        </ListPanel>
+                        <DetailsPanel>
+                            {agendarFerias ?
+                                <CriarFeriasComponent selected={feriasDisponiveis[selectedPeriod]} info={vacationInfo} setUpdated={setUpdated} setAgendarFerias={setAgendarFerias} />
+                                : editarFerias.length !== 0 ?
+                                <EditarFeriasComponent selected={feriasDisponiveis[selectedPeriod]} toEdit={editarFerias} info={vacationInfo} setUpdated={setUpdated} setEditarFerias={setEditarFerias} />
+                                : selectedPeriod >= 0 ?
                                     <>
                                         <VacationPeriod>
                                             {feriasSelecionadas.length === 0 ?
@@ -227,10 +223,9 @@ function VacationsPage() {
                                         </TotalContainer>
                                     </>
                                     : <EmptyState>Selecione um período aquisitivo na lista ao lado.</EmptyState>
-                                }
-                            </DetailsPanel>
-                        </ExplorerContainer>
-                    }
+                            }
+                        </DetailsPanel>
+                    </ExplorerContainer>
                 </>
             }
         </PageContainer>
@@ -261,7 +256,7 @@ const EmployeeInfo = styled.div`
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-    margin: 20px 0;
+    margin: 5px 0;
 `
 
 const InfoTag = styled.span`
@@ -294,12 +289,12 @@ const ListPanel = styled.div`
     width: 360px;
     flex-shrink: 0;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
     padding: 18px;
     border-right: 1px solid #f0dbe0;
     background: #fff8f9;
     overflow-y: auto;
-    max-height: 560px;
+    max-height: 1000px;
     box-sizing: border-box;
 
     @media (max-width: 800px) {
@@ -349,7 +344,7 @@ const DetailsPanel = styled.div`
     gap: 20px;
     padding: 24px;
     box-sizing: border-box;
-    overflow-y: auto;
+    overflow-x: hidden;
 `
 
 const EmptyState = styled.div`
@@ -358,28 +353,6 @@ const EmptyState = styled.div`
     align-items: center;
     padding: 40px 0;
     color: #888;
-`
-
-const VacationContiner = styled.div`
-    width: 75%;
-    min-width: 700px;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 40px;
-    div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-        padding-bottom: 7px;
-        line-height: 25px;
-    }
-    button {
-        background-color: #ff5843;
-        border: 2px solid #ff5843;
-    }
 `
 
 const VacationPeriod = styled.div`
