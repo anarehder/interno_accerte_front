@@ -24,3 +24,5 @@ certs/
 *.sln
 *.sw?
 *.env
+
+documentacao/
