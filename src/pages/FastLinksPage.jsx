@@ -118,8 +118,8 @@ const FastLinksPage = () => {
                             <SmallList>
                                 {dados?.docs?.map((file) => (
                                     <Card key={file.url}>
-                                        <Info>{file.name.slice(0, -5)}</Info>
-                                        <InfoButton><button><a href={file.url}> Baixar </a></button></InfoButton>
+                                        <Info>{file.name}</Info>
+                                        <InfoButton><button><a href={file.url} target="_blank"> Abrir </a></button></InfoButton>
                                     </Card>
                                 ))}
                             </SmallList>
