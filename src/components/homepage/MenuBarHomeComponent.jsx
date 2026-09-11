@@ -87,7 +87,7 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 <h1>SOBRE <span> NÓS </span></h1>
                     <Dropdown>
                         <DropdownItem><Link to={"/sobre"}>Sobre a Accerte</Link></DropdownItem>
-                        <DropdownItem><a href={'https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Extras/PORTFOLIO/PORTFOLIO%20ATUAL.pdf'} target="_blank">Portfólio</a></DropdownItem>
+                        <DropdownItem><a href={'https://accerte.sharepoint.com/:b:/s/Accerte-Geral/IQDdfZP_gEekTo8FfzHefuNSAas6NnvE3UPrqp94CgY9Lbk?e=uSZSon'} target="_blank">Portfólio</a></DropdownItem>
                     </Dropdown>
                 </MenuItem>
                 <MenuItem>
