@@ -31,6 +31,23 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
     );
     const isMarketing = funcionarioLogado?.areaId === 10 || funcionarioLogado?.areaId === 12;
 
+    const areasTPA = [
+        'Admin-Intranet',
+        'Banco de Dados e Cloud',
+        'Infraestrutura e Monitoramento',
+        'Projetos e Sustentação',
+        'Segurança da Informação',
+        'Tecnologia da Informação',
+        'Presidência',
+    ];
+    const canSeeTPA = dados?.gestores?.some((item) => {
+        const email = user?.mail?.toLowerCase();
+        const isGestorOuSuperior =
+            item.Funcionarios?.email?.toLowerCase() === email ||
+            item.GestorSuperior?.email?.toLowerCase() === email;
+        return isGestorOuSuperior && areasTPA.includes(item.Areas?.area);
+    }) ?? false;
+
     function removeAcentos(text) {
         return text.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     }
@@ -120,6 +137,10 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                         <DropdownItem><a href="https://accertetecnologia.atlassian.net/servicedesk/customer/portal/71" target="blank">JIRA Portal</a></DropdownItem>
                         <DropdownItem><Link to={"/dashprojetos "}>Painel de Projetos</Link></DropdownItem>
                         <DropdownItem><Link to={"/plantoes "}>Plantões</Link></DropdownItem>
+                        {
+                            canSeeTPA &&
+                            <DropdownItem><Link to={"/tpa "}>TPA</Link></DropdownItem>
+                        }
                     </Dropdown>
                 </MenuItem>
                 <MenuItem>

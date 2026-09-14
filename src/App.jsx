@@ -61,6 +61,7 @@ import PowerBIProjetos from "./pages/PowerBIDashs";
 import AEM2Page from "./pages/AEM-pages/AEM2Page";
 import AEM3Page from "./pages/AEM-pages/AEM3Page";
 import AEM4Page from "./pages/AEM-pages/AEM4Page";
+import TpaPage from "./pages/tpa/TpaPage";
 
 function App() {
 
@@ -123,6 +124,7 @@ function App() {
                   <Route path="/painelmarketing" element={<PainelMarketingPage />} />
                   <Route path="/organograma" element={<OrganogramaPage />} />
                   <Route path="/portfolio" element={<PortfolioPage />} />
+                  <Route path="/tpa" element={<TpaPage />} />
                   <Route path="/aem2" element={<AEM2Page />} />
                   <Route path="/aem3" element={<AEM3Page />} />
                   <Route path="/aem4" element={<AEM4Page />} />

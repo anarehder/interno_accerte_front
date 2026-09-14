@@ -1,0 +1,1969 @@
+import apiServiceJira from "../../services/apiServiceJira";
+
+// Portado quase literalmente do dashboard de referência (tpa-dashboard/index.html):
+// mesma renderização via DOM direto (sem estado React) e mesma lógica de
+// filtros/gráficos/exportação — só as chamadas fetch('/api/...') viraram
+// apiServiceJira, pra seguir o padrão de services já usado neste projeto.
+export function initTpaDashboard() {
+  "use strict";
+
+  /* TICKETS: [slot, createdEpochMs, elapsedMinutes|null, breached(1|0|null), key, summary, goalMinutes|null, ongoingBreachEpochMs|null, priority|null, loggedTimeSeconds|null, parentKey|null, parentSummary|null, linkedKey|null, linkedSummary|null]
+     ongoingBreachEpochMs is set only for tickets still awaiting first response — the exact
+     wall-clock moment their SLA cycle will breach (used by the "SLA" watch tab).
+     priority (t[8]) vem direto do campo "Prioridade" do Jira (ex.: "Muito Alto", "Alto",
+     "Médio", "Baixo", "Muito Baixo") — usado pelo filtro global de prioridade.
+     loggedTimeSeconds (t[9]) é o tempo de trabalho (worklog) já apontado no chamado, em
+     segundos — existe independente do ciclo de SLA, então permite ver se um chamado
+     "Sem hora lançada" já foi de fato trabalhado por algum analista.
+     parentKey/parentSummary (t[10]/t[11]) vêm do campo "parent" nativo do Jira —
+     só existe quando o chamado é de fato uma Subtarefa (hierarquia real).
+     linkedKey/linkedSummary (t[12]/t[13]) vêm do vínculo (issue link) do Jira — muito
+     comum em chamados Interno (que não têm "parent") apontarem pro chamado "de
+     verdade" (Zabbix/Solicitação) pro qual aquele trabalho foi feito. Pra saber se um
+     chamado "Sem hora lançada" já foi trabalhado, o que importa é só o Registro de
+     Atividades (worklog) do Jira — nunca o ciclo de SLA: ver noSlaRowInfo(), que
+     olha a hora própria e, na falta dela, a hora lançada no vinculado (t[12]). O mesmo
+     noSlaRowInfo() também decide qual dos dois é o "chamado principal" pra exibição: é
+     sempre o de data de criação mais antiga (o Interno costuma ser aberto depois, quando
+     alguém aponta trabalho separado daquele chamado). */
+  var TICKETS = [];
+  var META = null;
+  var TICKET_BY_KEY = null; // cache: chamado (key) -> tupla em TICKETS, reconstruído a cada applyData()
+  function ticketByKey(key){
+    if (!TICKET_BY_KEY){
+      TICKET_BY_KEY = {};
+      for (var i = 0; i < TICKETS.length; i++){ TICKET_BY_KEY[TICKETS[i][4]] = TICKETS[i]; }
+    }
+    return key != null ? TICKET_BY_KEY[key] : undefined;
+  }
+  // Reúne, pra uma linha da lista "Sem hora lançada", tudo que depende do par
+  // chamado/vinculado:
+  //  - Qual dos dois é o "chamado principal" pra exibição: sempre o de data de
+  //    criação MAIS ANTIGA (o chamado Interno normalmente é aberto depois, pra
+  //    apontar trabalho separado daquele chamado "de verdade" — Zabbix ou
+  //    Solicitação). Só dá pra comparar quando o vinculado está nos dados
+  //    carregados (senão não temos a data dele, e mantemos t como principal).
+  //  - Horas lançadas: exclusivamente o Registro de Atividades (worklog) do
+  //    Jira, nunca o ciclo de SLA. Olha a hora própria de quem está sendo
+  //    exibido como "Chamado"; se não tiver, cai pra hora do vinculado. Só
+  //    quando nem um nem outro tem hora é que conta como "sem apontamento".
+  function noSlaRowInfo(t){
+    var linkedKey = t[12] || null;
+    var linkedSummary = t[13] || null;
+    var linkedT = linkedKey ? ticketByKey(linkedKey) : null;
+    var swapped = !!(linkedT && linkedT[1] < t[1]); // vinculado é mais antigo -> ele é o principal
+    var principal = swapped ? linkedT : t;
+    var principalKey = swapped ? linkedKey : t[4];
+    var principalSummary = swapped ? linkedSummary : t[5];
+    var otherKey = swapped ? t[4] : linkedKey;
+    var otherSummary = swapped ? t[5] : linkedSummary;
+    var otherTicket = swapped ? t : linkedT; // null quando não há vínculo ou o vinculado não foi carregado
+    var ownSec = principal[9] || null;
+    var otherSec = otherTicket ? (otherTicket[9] || null) : null;
+    return {
+      principalKey: principalKey,
+      principalSummary: principalSummary,
+      createdMs: principal[1],
+      otherKey: otherKey,
+      otherSummary: otherSummary,
+      sec: ownSec || otherSec || null,
+      viaLinked: !ownSec && !!otherSec
+    };
+  }
+
+  // Ordem de exibição conhecida do esquema de prioridade do Jira. Qualquer valor
+  // que apareça nos dados e não esteja nessa lista é anexado ao final, na ordem
+  // em que for encontrado — assim o filtro nunca "esconde" uma prioridade nova.
+  var PRIORITY_ORDER = ["Muito Alto", "Alto", "Médio", "Baixo", "Muito Baixo"];
+  function priorityOptionsFromTickets(){
+    var seen = {};
+    TICKETS.forEach(function(t){ if (t[8]) seen[t[8]] = true; });
+    var known = PRIORITY_ORDER.filter(function(p){ return seen[p]; });
+    var extra = Object.keys(seen).filter(function(p){ return PRIORITY_ORDER.indexOf(p) === -1; }).sort();
+    return known.concat(extra);
+  }
+
+  var ANALYSTS = [
+    { name: "Lucas Viana Hahn", short: "Lucas V. Hahn", slot: 1 },
+    { name: "Vinícius Felipe de Souza Soares", short: "Vinícius Soares", slot: 2 },
+    { name: "Alexsander", short: "Alexsander", slot: 3 },
+    { name: "Lucas Alexandre Brandão Lopes", short: "Lucas A. Brandão", slot: 4 }
+  ];
+  function analystBySlot(slot){ return ANALYSTS.filter(function(a){return a.slot===slot;})[0]; }
+  function escapeHtml(s){
+    return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  var datasetMin = 0, datasetMax = 0;
+
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function seriesColor(slot){ return cssVar('--series-' + slot); }
+
+  function fmtMinShort(v){
+    if (v === null || v === undefined || isNaN(v)) return "—";
+    return (Math.round(v*10)/10).toLocaleString('pt-BR', {maximumFractionDigits:1});
+  }
+  function fmtPct(v){
+    if (v === null || v === undefined || isNaN(v)) return "—";
+    return (Math.round(v*10)/10).toLocaleString('pt-BR', {maximumFractionDigits:1}) + "%";
+  }
+  function fmtInt(v){ return Number(v||0).toLocaleString('pt-BR'); }
+
+  function statusFor(pct){
+    if (pct === null || pct === undefined || isNaN(pct)) return { key:'neutral', label:'Sem dados' };
+    if (pct < 10) return { key:'good', label:'Bom' };
+    if (pct < 20) return { key:'warning', label:'Atenção' };
+    if (pct < 35) return { key:'serious', label:'Sério' };
+    return { key:'critical', label:'Crítico' };
+  }
+
+  var ICONS = {
+    good: '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    warning: '<svg viewBox="0 0 16 16" fill="none"><path d="M8 2l7 12H1L8 2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 6.5v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="12" r="0.9" fill="currentColor"/></svg>',
+    serious: '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.4" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.8v3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11" r="0.9" fill="currentColor"/></svg>',
+    critical: '<svg viewBox="0 0 16 16" fill="none"><path d="M8 1.3l2.1 2.1 3-.3.6 3 2.1 2.1L14.3 8l1.5 2.1L14.5 12l-.6 3-3-.3L8.8 16.9 6.7 14.7l-3 .3-.6-3-2.1-2.1L2.5 8 1 5.9l1.6-2.1 3 .3.6-3L8.5 1.3z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><path d="M8 5.5v3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11" r="0.9" fill="currentColor"/></svg>',
+    neutral: '<svg viewBox="0 0 16 16" fill="none"><line x1="3.5" y1="8" x2="12.5" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+  };
+
+  /* ================= date / bucket helpers (America/Sao_Paulo, fixed UTC-3, no DST since 2019) ================= */
+  var YMD_FMT = new Intl.DateTimeFormat('en-CA', { timeZone:'America/Sao_Paulo', year:'numeric', month:'2-digit', day:'2-digit' });
+  function ymd(ms){ return YMD_FMT.format(new Date(ms)); } // "YYYY-MM-DD" in São Paulo local calendar
+  function spMidnightMs(y,m,d){ return Date.UTC(y, m-1, d, 3, 0, 0); } // local 00:00 -03:00 == UTC 03:00
+  function parseYMD(s){ var p = s.split('-').map(Number); return { y:p[0], m:p[1], d:p[2] }; }
+  function spTodayParts(){ return parseYMD(ymd(Date.now())); }
+  function mondayOf(y,m,d){
+    var pseudo = new Date(Date.UTC(y, m-1, d));
+    var dow = pseudo.getUTCDay(); // 0=Sun..6=Sat
+    var back = (dow + 6) % 7;
+    pseudo.setUTCDate(pseudo.getUTCDate() - back);
+    return { y: pseudo.getUTCFullYear(), m: pseudo.getUTCMonth()+1, d: pseudo.getUTCDate() };
+  }
+  function addDaysYMD(y,m,d,delta){
+    var pseudo = new Date(Date.UTC(y, m-1, d));
+    pseudo.setUTCDate(pseudo.getUTCDate() + delta);
+    return { y: pseudo.getUTCFullYear(), m: pseudo.getUTCMonth()+1, d: pseudo.getUTCDate() };
+  }
+  function fmtDateBR(ymdStr){
+    var p = parseYMD(ymdStr);
+    return String(p.d).padStart(2,'0') + '/' + String(p.m).padStart(2,'0');
+  }
+  function fmtDateFullBR(ms){
+    return new Date(ms).toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', timeZone:'America/Sao_Paulo' });
+  }
+  function fmtDateTimeBR(iso){
+    var d = new Date(iso);
+    return d.toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone:'America/Sao_Paulo' }) + ' (Brasília)';
+  }
+
+  function granularityFor(fromMs, toMs){
+    var days = (toMs - fromMs) / 86400000;
+    if (days <= 16) return 'day';
+    if (days <= 120) return 'week';
+    return 'month';
+  }
+  function bucketKey(ms, granularity){
+    var s = ymd(ms);
+    if (granularity === 'day') return s;
+    if (granularity === 'month') return s.slice(0,7);
+    var p = parseYMD(s);
+    var mo = mondayOf(p.y, p.m, p.d);
+    return mo.y + '-' + String(mo.m).padStart(2,'0') + '-' + String(mo.d).padStart(2,'0');
+  }
+  function bucketLabel(key, granularity){
+    if (granularity === 'month'){
+      var p = key.split('-');
+      var names = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+      return names[parseInt(p[1],10)-1] + '/' + p[0].slice(2);
+    }
+    return fmtDateBR(key);
+  }
+  function generateBucketKeys(fromMs, toMs, granularity){
+    var keys = [];
+    if (granularity === 'day'){
+      var d0 = parseYMD(ymd(fromMs));
+      var cursor = spMidnightMs(d0.y, d0.m, d0.d);
+      while (cursor <= toMs){
+        keys.push(ymd(cursor));
+        cursor += 86400000;
+      }
+    } else if (granularity === 'week'){
+      var f0 = parseYMD(ymd(fromMs));
+      var mo0 = mondayOf(f0.y, f0.m, f0.d);
+      var cursorD = new Date(Date.UTC(mo0.y, mo0.m-1, mo0.d));
+      var cursorMs = spMidnightMs(cursorD.getUTCFullYear(), cursorD.getUTCMonth()+1, cursorD.getUTCDate());
+      while (cursorMs <= toMs){
+        keys.push(ymd(cursorMs));
+        cursorD.setUTCDate(cursorD.getUTCDate() + 7);
+        cursorMs = spMidnightMs(cursorD.getUTCFullYear(), cursorD.getUTCMonth()+1, cursorD.getUTCDate());
+      }
+    } else {
+      var s0 = parseYMD(ymd(fromMs));
+      var y = s0.y, m = s0.m;
+      var guard = 0;
+      while (spMidnightMs(y,m,1) <= toMs && guard < 60){
+        keys.push(y + '-' + String(m).padStart(2,'0'));
+        m += 1; if (m > 12){ m = 1; y += 1; }
+        guard++;
+      }
+    }
+    if (keys.length === 0) keys.push(ymd(fromMs));
+    return keys;
+  }
+
+  /* ================= period presets ================= */
+  function computePeriod(state){
+    var now = Date.now();
+    if (state.period === 'today'){
+      var t = spTodayParts();
+      return { from: spMidnightMs(t.y, t.m, t.d), to: now, label: 'Hoje' };
+    }
+    if (state.period === 'yesterday'){
+      var ty = spTodayParts();
+      var y = addDaysYMD(ty.y, ty.m, ty.d, -1);
+      return { from: spMidnightMs(y.y, y.m, y.d), to: spMidnightMs(ty.y, ty.m, ty.d) - 1, label: 'Ontem' };
+    }
+    if (state.period === 'week'){
+      var t2 = spTodayParts();
+      var mo = mondayOf(t2.y, t2.m, t2.d);
+      return { from: spMidnightMs(mo.y, mo.m, mo.d), to: now, label: 'Esta semana' };
+    }
+    if (state.period === 'lastweek'){
+      var t2b = spTodayParts();
+      var moThis = mondayOf(t2b.y, t2b.m, t2b.d);
+      var moThisMs = spMidnightMs(moThis.y, moThis.m, moThis.d);
+      var moLast = addDaysYMD(moThis.y, moThis.m, moThis.d, -7);
+      return { from: spMidnightMs(moLast.y, moLast.m, moLast.d), to: moThisMs - 1, label: 'Última semana' };
+    }
+    if (state.period === 'month'){
+      var t3 = spTodayParts();
+      return { from: spMidnightMs(t3.y, t3.m, 1), to: now, label: 'Este mês' };
+    }
+    if (state.period === '90d'){
+      return { from: now - 90*86400000, to: now, label: 'Últimos 3 meses' };
+    }
+    if (state.period === '270d'){
+      return { from: now - 270*86400000, to: now, label: 'Últimos 9 meses' };
+    }
+    if (state.period === '365d'){
+      return { from: now - 365*86400000, to: now, label: 'Últimos 12 meses' };
+    }
+    if (state.period === 'custom' && state.customFrom && state.customTo){
+      var pf = parseYMD(state.customFrom), pt = parseYMD(state.customTo);
+      return { from: spMidnightMs(pf.y, pf.m, pf.d), to: spMidnightMs(pt.y, pt.m, pt.d) + 86400000 - 1, label: 'Personalizado' };
+    }
+    return { from: now - 180*86400000, to: now, label: 'Últimos 6 meses' };
+  }
+
+  /* ================= aggregation ================= */
+  // Aplica o filtro global de prioridade (state.priority) — usado por todo lugar
+  // que hoje lê TICKETS diretamente, pra que o filtro afete o dashboard inteiro
+  // (KPIs, gráficos, mapa de calor, evolução, cumprimento de meta e aba SLA).
+  function visibleTickets(){
+    if (state.priority === 'all') return TICKETS;
+    return TICKETS.filter(function(t){ return t[8] === state.priority; });
+  }
+  function filterTickets(from, to, slot){
+    return visibleTickets().filter(function(t){
+      return t[1] >= from && t[1] <= to && (slot == null || t[0] === slot);
+    });
+  }
+  function percentile(sorted, p){
+    if (!sorted.length) return null;
+    var idx = (sorted.length - 1) * p;
+    var lo = Math.floor(idx), hi = Math.ceil(idx);
+    if (lo === hi) return sorted[lo];
+    return sorted[lo] + (sorted[hi]-sorted[lo]) * (idx - lo);
+  }
+  function aggregate(rows){
+    var responded = rows.filter(function(r){ return r[2] !== null; });
+    // Sem primeira resposta ainda (r[2]===null) tem dois casos bem diferentes:
+    // um ciclo de SLA em andamento, com meta (r[6]!=null) — está de fato
+    // aguardando resposta e conta pra "Pendentes"; ou nenhum ciclo de SLA
+    // registrado (r[6]==null, ex.: tipo de chamado sem SLA configurado). Esse
+    // segundo grupo vira o card "Sem hora lançada": o que importa pra quem
+    // olha esse card NÃO é o ciclo de SLA (isso é só o filtro técnico usado
+    // pra achar esse grupo) — é se alguém de fato lançou hora de trabalho
+    // nesse chamado ou no vinculado dele (ver noSlaRowInfo()). Um chamado
+    // desse grupo pode ter hora lançada perfeitamente normal; só não teve o
+    // TPA (1ª resposta) medido pelo SLA.
+    var notResponded = rows.filter(function(r){ return r[2] === null; });
+    var pendingRows = notResponded.filter(function(r){ return r[6] != null; });
+    var noSlaRows = notResponded.filter(function(r){ return r[6] == null; });
+    var elapsed = responded.map(function(r){ return r[2]; }).sort(function(a,b){return a-b;});
+    var sum = elapsed.reduce(function(s,v){return s+v;}, 0);
+    var breachedRows = responded.filter(function(r){ return r[3] === 1; });
+    return {
+      ticket_count: rows.length,
+      responded_count: responded.length,
+      pending_count: pendingRows.length,
+      no_sla_count: noSlaRows.length,
+      avg: elapsed.length ? sum/elapsed.length : null,
+      median: elapsed.length ? percentile(elapsed, 0.5) : null,
+      p90: elapsed.length ? percentile(elapsed, 0.9) : null,
+      breached_count: breachedRows.length,
+      breach_rate_pct: responded.length ? (breachedRows.length/responded.length*100) : null
+    };
+  }
+  function buildTrend(rows, slots, granularity, fromMs, toMs){
+    var keys = generateBucketKeys(fromMs, toMs, granularity);
+    var series = {};
+    slots.forEach(function(slot){
+      var byKey = {};
+      keys.forEach(function(k){ byKey[k] = []; });
+      rows.filter(function(r){ return r[0] === slot; }).forEach(function(r){
+        var k = bucketKey(r[1], granularity);
+        if (byKey[k]) byKey[k].push(r);
+      });
+      series[slot] = keys.map(function(k){
+        var agg = aggregate(byKey[k]);
+        return { key:k, count: agg.ticket_count, avg: agg.avg, breach: agg.breach_rate_pct };
+      });
+    });
+    return { keys: keys, series: series };
+  }
+
+  /* ================= state ================= */
+  var state = { analyst: 'all', period: '180d', customFrom: null, customTo: null, priority: 'all' };
+  var visibleSlots = {}; ANALYSTS.forEach(function(a){ visibleSlots[a.slot] = true; });
+
+  /* ================= SLA breach / pending drill-down ================= */
+  var drilldownState = { kind: null, slot: null, bucketIdx: null };
+  var lastDrilldownExport = null;
+  var lastSlaExport = null;
+  var lastEvolutionData = null;
+  var lastComplianceData = null;
+  function jiraUrl(key){ return 'https://' + META.site_host + '/browse/' + key; }
+  function slotKey(slot){ return (slot === null || slot === undefined) ? 'all' : String(slot); }
+  function isDrilldownActive(kind, slot, bucketIdx){
+    if (drilldownState.kind !== kind || drilldownState.slot !== slot) return false;
+    if (kind === 'tpaBucket') return drilldownState.bucketIdx === bucketIdx;
+    return true;
+  }
+  function fmtDurationShort(minutes){
+    if (minutes === null || minutes === undefined || isNaN(minutes)) return '—';
+    var m = Math.max(0, Math.round(minutes));
+    var days = Math.floor(m / 1440);
+    var hours = Math.floor((m % 1440) / 60);
+    var mins = m % 60;
+    if (days > 0) return days + 'd ' + hours + 'h';
+    if (hours > 0) return hours + 'h ' + mins + 'min';
+    return mins + 'min';
+  }
+  function closeDrilldown(){
+    drilldownState.kind = null;
+    drilldownState.slot = null;
+    drilldownState.bucketIdx = null;
+    lastDrilldownExport = null;
+    var wrap = document.getElementById('breach-drilldown-wrap');
+    if (wrap) wrap.hidden = true;
+    document.querySelectorAll('.status-row.active').forEach(function(r){ r.classList.remove('active'); r.setAttribute('aria-expanded','false'); });
+    document.querySelectorAll('.kpi-tile.clickable.active').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.status-pill.clickable.active').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.pending-count.clickable.active').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.bar-row.clickable.active').forEach(function(r){ r.classList.remove('active'); r.setAttribute('aria-expanded','false'); });
+  }
+  function openDrilldown(kind, slot, rowsScope, period, bucket){
+    var isAll = (slot === null || slot === undefined);
+    var a = isAll ? null : analystBySlot(slot);
+    var scopeName = isAll ? 'todos os analistas' : a.name;
+
+    var rows;
+    if (kind === 'pending'){
+      rows = rowsScope.filter(function(r){ return (isAll || r[0] === slot) && r[2] === null && r[6] != null; });
+      rows.sort(function(x,y){ return x[1] - y[1]; }); // oldest opened first (waiting longest)
+    } else if (kind === 'noSla'){
+      rows = rowsScope.filter(function(r){ return (isAll || r[0] === slot) && r[2] === null && r[6] == null; });
+      // Ordem: chamados sem NENHUMA hora lançada (nem no próprio, nem no
+      // vinculado — o pior caso, ninguém apontou trabalho em lugar nenhum)
+      // vêm primeiro; os demais (hora própria ou, na falta dela, hora do
+      // vinculado) vêm depois. Empate: chamado principal mais recente primeiro.
+      rows.sort(function(x,y){
+        var xInfo = noSlaRowInfo(x), yInfo = noSlaRowInfo(y);
+        var xNoHours = xInfo.sec ? 1 : 0; // 0 = sem hora em lugar nenhum (prioridade)
+        var yNoHours = yInfo.sec ? 1 : 0;
+        if (xNoHours !== yNoHours) return xNoHours - yNoHours;
+        return yInfo.createdMs - xInfo.createdMs; // desempate: mais recente primeiro
+      });
+    } else if (kind === 'tpaBucket'){
+      rows = rowsScope.filter(function(r){ return r[2] !== null && r[2] >= bucket.min && r[2] < bucket.max; });
+      rows.sort(function(x,y){ return y[1] - x[1]; }); // mais recentes primeiro
+    } else {
+      rows = rowsScope.filter(function(r){ return (isAll || r[0] === slot) && r[3] === 1; });
+      rows.sort(function(x,y){ return (y[2]||0) - (x[2]||0); }); // worst (longest) first
+    }
+
+    var nowMsExport = Date.now();
+    var exportColumns, exportRows;
+    if (kind === 'pending'){
+      exportColumns = [{ header:'Chamado', key:'chamado', width:16 }];
+      if (isAll) exportColumns.push({ header:'Analista', key:'analista', width:24 });
+      exportColumns.push(
+        { header:'Resumo', key:'resumo', width:55 },
+        { header:'Aberto em', key:'aberto', width:20 },
+        { header:'Aguardando há', key:'aguardando', width:16 }
+      );
+      exportRows = rows.map(function(r){
+        var rSlot = r[0], key = r[4], summary = r[5] || '';
+        var waitingMin = (nowMsExport - r[1]) / 60000;
+        var row = [key];
+        if (isAll) row.push(analystBySlot(rSlot).short);
+        row.push(summary, fmtDateFullBR(r[1]), fmtDurationShort(waitingMin));
+        return row;
+      });
+    } else if (kind === 'noSla'){
+      exportColumns = [{ header:'Chamado', key:'chamado', width:16 }];
+      if (isAll) exportColumns.push({ header:'Analista', key:'analista', width:24 });
+      exportColumns.push(
+        { header:'Chamado vinculado', key:'vinculado', width:34 },
+        { header:'Aberto em', key:'aberto', width:14 },
+        { header:'Horas lançadas', key:'horas', width:16 }
+      );
+      function relatedExportCell(relKey, relSummary){
+        if (!relKey) return '';
+        return relKey + (relSummary ? ' - ' + relSummary : '');
+      }
+      exportRows = rows.map(function(r){
+        var rSlot = r[0];
+        var info = noSlaRowInfo(r);
+        var row = [info.principalKey];
+        if (isAll) row.push(analystBySlot(rSlot).short);
+        row.push(
+          relatedExportCell(info.otherKey, info.otherSummary),
+          fmtDateFullBR(info.createdMs),
+          info.sec
+            ? fmtDurationShort(info.sec / 60) + (info.viaLinked ? ' (apontado no chamado vinculado)' : '')
+            : 'Sem apontamento'
+        );
+        return row;
+      });
+    } else {
+      exportColumns = [{ header:'Chamado', key:'chamado', width:16 }];
+      if (isAll) exportColumns.push({ header:'Analista', key:'analista', width:24 });
+      exportColumns.push(
+        { header:'Resumo', key:'resumo', width:55 },
+        { header:'Aberto em', key:'aberto', width:20 },
+        { header:'TPA (min)', key:'tpa', width:14 },
+        { header:'Meta (min)', key:'meta', width:14 }
+      );
+      exportRows = rows.map(function(r){
+        var rSlot = r[0], key = r[4], summary = r[5] || '', goal = r[6];
+        var row = [key];
+        if (isAll) row.push(analystBySlot(rSlot).short);
+        row.push(summary, fmtDateFullBR(r[1]), (r[2] != null ? Math.round(r[2] * 10) / 10 : null), (goal != null ? Math.round(goal * 10) / 10 : null));
+        return row;
+      });
+    }
+    var titleByKind = { pending:'Chamados pendentes de resposta', noSla:'Chamados sem hora lançada', tpaBucket:('Chamados respondidos em ' + (bucket && bucket.label)) };
+    var filenameByKind = { pending:'pendentes_', noSla:'sem_hora_lancada_', tpaBucket:('tpa_' + (bucket && bucket.slug) + '_') };
+    lastDrilldownExport = {
+      title: (titleByKind[kind] || 'Chamados com estouro de SLA') + ' - ' + scopeName,
+      filename: (filenameByKind[kind] || 'estouro_sla_') + slotKey(slot) + '_' + ymd(Date.now()) + '.xlsx',
+      columns: exportColumns,
+      rows: exportRows
+    };
+
+    var wrap = document.getElementById('breach-drilldown-wrap');
+    document.getElementById('breach-drilldown-title').textContent = (titleByKind[kind] || 'Chamados com estouro de SLA') + ' — ' + scopeName;
+    document.getElementById('breach-drilldown-desc').textContent = kind === 'pending'
+      ? fmtInt(rows.length) + ' chamado(s) aguardando primeira resposta · ' + period.label.toLowerCase() + ' · ordenados do mais antigo para o mais recente'
+      : kind === 'noSla'
+        ? fmtInt(rows.length) + ' chamado(s) sem hora lançada · ' + period.label.toLowerCase() + ' · ordenados por sem hora lançada em lugar nenhum primeiro'
+        : kind === 'tpaBucket'
+          ? fmtInt(rows.length) + ' chamado(s) respondido(s) em ' + bucket.label + ' · ' + period.label.toLowerCase() + ' · ordenados do mais recente para o mais antigo'
+          : fmtInt(rows.length) + ' chamado(s) com estouro · ' + period.label.toLowerCase() + ' · ordenados do mais crítico para o menos crítico';
+
+    var tableEl = document.getElementById('breach-drilldown-table');
+    if (!rows.length){
+      var emptyMsgByKind = { pending:'Nenhum chamado pendente de resposta nesse período.', noSla:'Nenhum chamado sem hora lançada nesse período.', tpaBucket:'Nenhum chamado respondido nessa faixa de tempo.' };
+      var emptyMsg = emptyMsgByKind[kind] || 'Nenhum chamado com estouro nesse período.';
+      tableEl.innerHTML = '<div class="empty-state" style="padding:20px;"><p>'+emptyMsg+'</p></div>';
+    } else if (kind === 'noSla'){
+      var relatedCellHtml = function(relKey, relSummary){
+        if (!relKey) return '<span class="muted">—</span>';
+        var relTitle = relSummary ? escapeHtml(relSummary) : '';
+        return '<a class="ticket-link mono" href="'+jiraUrl(relKey)+'" target="_blank" rel="noopener noreferrer" title="'+relTitle+'">'+escapeHtml(relKey)+'</a>';
+      };
+      var body = rows.map(function(r){
+        var rSlot = r[0];
+        var info = noSlaRowInfo(r);
+        var analystCell = isAll ? '<td class="name-cell"><span class="swatch-inline" style="background:'+seriesColor(rSlot)+'"></span>'+analystBySlot(rSlot).short+'</td>' : '';
+        var horasCell = info.sec
+          ? fmtDurationShort(info.sec/60) + (info.viaLinked ? ' <span class="muted" style="font-size:11px;">(vinculado)</span>' : '')
+          : '<span class="muted">Sem apontamento</span>';
+        return '<tr>' +
+          '<td style="text-align:left"><a class="ticket-link mono" href="'+jiraUrl(info.principalKey)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(info.principalKey)+'</a></td>' +
+          analystCell +
+          '<td class="linked-cell" style="text-align:left">'+relatedCellHtml(info.otherKey, info.otherSummary)+'</td>' +
+          '<td class="num">'+fmtDateFullBR(info.createdMs)+'</td>' +
+          '<td class="num">'+horasCell+'</td>' +
+          '</tr>';
+      }).join('');
+      tableEl.innerHTML = '<table class="data-table"><thead><tr>' +
+        '<th style="text-align:left">Chamado</th>' + (isAll ? '<th style="text-align:left">Analista</th>' : '') +
+        '<th style="text-align:left">Chamado vinculado</th><th>Aberto em</th><th>Horas lançadas</th>' +
+        '</tr></thead><tbody>'+body+'</tbody></table>';
+    } else if (kind === 'pending'){
+      var nowMs = Date.now();
+      var body = rows.map(function(r){
+        var rSlot = r[0], key = r[4], summary = r[5] || '';
+        var waitingMin = (nowMs - r[1]) / 60000;
+        var analystCell = isAll ? '<td class="name-cell"><span class="swatch-inline" style="background:'+seriesColor(rSlot)+'"></span>'+analystBySlot(rSlot).short+'</td>' : '';
+        return '<tr>' +
+          '<td style="text-align:left"><a class="ticket-link mono" href="'+jiraUrl(key)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(key)+'</a></td>' +
+          analystCell +
+          '<td class="summary-cell" title="'+escapeHtml(summary)+'">'+escapeHtml(summary)+'</td>' +
+          '<td class="num">'+fmtDateFullBR(r[1])+'</td>' +
+          '<td class="num">'+fmtDurationShort(waitingMin)+'</td>' +
+          '</tr>';
+      }).join('');
+      tableEl.innerHTML = '<table class="data-table"><thead><tr>' +
+        '<th style="text-align:left">Chamado</th>' + (isAll ? '<th style="text-align:left">Analista</th>' : '') +
+        '<th style="text-align:left">Resumo</th><th>Aberto em</th><th>Aguardando há</th>' +
+        '</tr></thead><tbody>'+body+'</tbody></table>';
+    } else {
+      var body = rows.map(function(r){
+        var rSlot = r[0], key = r[4], summary = r[5] || '', goal = r[6];
+        var analystCell = isAll ? '<td class="name-cell"><span class="swatch-inline" style="background:'+seriesColor(rSlot)+'"></span>'+analystBySlot(rSlot).short+'</td>' : '';
+        return '<tr>' +
+          '<td style="text-align:left"><a class="ticket-link mono" href="'+jiraUrl(key)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(key)+'</a></td>' +
+          analystCell +
+          '<td class="summary-cell" title="'+escapeHtml(summary)+'">'+escapeHtml(summary)+'</td>' +
+          '<td class="num">'+fmtDateFullBR(r[1])+'</td>' +
+          '<td class="num">'+fmtMinShort(r[2])+' min</td>' +
+          '<td class="num">'+(goal!=null ? fmtMinShort(goal)+' min' : '—')+'</td>' +
+          '</tr>';
+      }).join('');
+      tableEl.innerHTML = '<table class="data-table"><thead><tr>' +
+        '<th style="text-align:left">Chamado</th>' + (isAll ? '<th style="text-align:left">Analista</th>' : '') +
+        '<th style="text-align:left">Resumo</th><th>Aberto em</th><th>TPA</th><th>Meta</th>' +
+        '</tr></thead><tbody>'+body+'</tbody></table>';
+    }
+
+    wrap.hidden = false;
+    drilldownState.kind = kind;
+    drilldownState.slot = slot;
+    drilldownState.bucketIdx = kind === 'tpaBucket' ? bucket.idx : null;
+    var sk = slotKey(slot);
+    document.querySelectorAll('.status-row').forEach(function(r){
+      var isActive = r.getAttribute('data-kind') === kind && r.getAttribute('data-slot') === sk;
+      r.classList.toggle('active', isActive);
+      r.setAttribute('aria-expanded', String(isActive));
+    });
+    document.querySelectorAll('.kpi-tile.clickable').forEach(function(t){
+      t.classList.toggle('active', t.getAttribute('data-kind') === kind && t.getAttribute('data-slot') === sk);
+    });
+    document.querySelectorAll('.status-pill.clickable').forEach(function(p){
+      p.classList.toggle('active', p.getAttribute('data-kind') === kind && p.getAttribute('data-slot') === sk);
+    });
+    document.querySelectorAll('.pending-count.clickable').forEach(function(p){
+      p.classList.toggle('active', p.getAttribute('data-kind') === kind && p.getAttribute('data-slot') === sk);
+    });
+    document.querySelectorAll('#tpa-distribution-chart .bar-row.clickable').forEach(function(row){
+      var isActive = kind === 'tpaBucket' && parseInt(row.getAttribute('data-bucket'), 10) === bucket.idx;
+      row.classList.toggle('active', isActive);
+      row.setAttribute('aria-expanded', String(isActive));
+    });
+    wrap.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+  document.getElementById('breach-drilldown-close').addEventListener('click', closeDrilldown);
+
+  // Gera e baixa uma planilha .xlsx a partir de um dataset {title, filename, columns, rows}
+  // já pronto no navegador. Reaproveitado por todos os botões "Exportar Excel" do dashboard.
+  async function requestXlsxExport(dataset, btn){
+    if (!dataset) return;
+    var originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'Gerando…';
+    try {
+      var res = await apiServiceJira.exportXlsx(dataset);
+      var blob = res.data;
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = dataset.filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    } catch (e){
+      alert('Não foi possível gerar a planilha: ' + (e.message || e));
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+    }
+  }
+
+  document.getElementById('breach-drilldown-export').addEventListener('click', function(){
+    requestXlsxExport(lastDrilldownExport, this);
+  });
+
+  // Gera e baixa um PDF a partir de um payload {title, scopeLabel, generatedAt,
+  // filename, kpis, ranking, evolution, compliance} já pronto no navegador —
+  // mesmo padrão do requestXlsxExport, só que apontando pro endpoint de PDF.
+  async function requestPdfExport(payload, btn){
+    if (!payload) return;
+    var originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'Gerando…';
+    try {
+      var res = await apiServiceJira.exportPdf(payload);
+      var blob = res.data;
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = payload.filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    } catch (e){
+      alert('Não foi possível gerar o PDF: ' + (e.message || e));
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+    }
+  }
+
+  // Monta o payload do relatório em PDF a partir do estado atual (período,
+  // analista, prioridade) — os mesmos números exibidos na tela — e do último
+  // cálculo de Evolução do TPA / Cumprimento da Meta (lastEvolutionData /
+  // lastComplianceData), preenchidos por renderTpaEvolution/renderComplianceEvolution
+  // a cada renderAll() da Visão Geral.
+  function buildPdfPayload(){
+    var period = computePeriod(state);
+    var rowsScope = filterTickets(period.from, period.to, state.analyst === 'all' ? null : state.analyst);
+    var aggScope = aggregate(rowsScope);
+    var priorityLabel = state.priority === 'all' ? '' : ' · Prioridade: ' + state.priority;
+    var scopeLabel = period.label + (state.analyst === 'all' ? ' · todos os analistas' : ' · ' + analystBySlot(state.analyst).short) + priorityLabel;
+
+    var kpis = [
+      { label:'Chamados', value: fmtInt(aggScope.ticket_count), sub: scopeLabel },
+      { label:'TPA médio', value: aggScope.avg != null ? fmtMinShort(aggScope.avg) + ' min' : '—', sub: 'mediana ' + (aggScope.median != null ? fmtMinShort(aggScope.median) + ' min' : '—') },
+      { label:'Estouro de SLA', value: aggScope.breach_rate_pct != null ? fmtPct(aggScope.breach_rate_pct) : '—', sub: fmtInt(aggScope.breached_count) + ' de ' + fmtInt(aggScope.ticket_count) + ' chamados' },
+      { label:'Pendentes de resposta', value: fmtInt(aggScope.pending_count), sub: 'de ' + fmtInt(aggScope.ticket_count) + ' chamados' },
+      { label:'Sem hora lançada', value: fmtInt(aggScope.no_sla_count), sub: 'de ' + fmtInt(aggScope.ticket_count) + ' chamados' }
+    ];
+
+    // Ranking sempre com os 4 analistas (independente da aba selecionada), no
+    // mesmo período/prioridade — é o que faz sentido num relatório de comparação.
+    var rowsAllAnalysts = filterTickets(period.from, period.to, null);
+    var ranking = ANALYSTS.map(function(a){
+      var agg = aggregate(rowsAllAnalysts.filter(function(r){ return r[0] === a.slot; }));
+      var compliance = agg.breach_rate_pct === null ? null : (100 - agg.breach_rate_pct);
+      return { name: a.short, avg: agg.avg, compliance: compliance, count: agg.ticket_count };
+    }).sort(function(x, y){
+      if (x.avg === null) return 1;
+      if (y.avg === null) return -1;
+      return x.avg - y.avg;
+    });
+    var rankingRows = ranking.map(function(r){
+      return [r.name, r.avg != null ? fmtMinShort(r.avg) + ' min' : '—', r.compliance != null ? fmtPct(r.compliance) : '—', fmtInt(r.count)];
+    });
+
+    var generatedAt = new Date().toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone:'America/Sao_Paulo' }) + ' (Brasília)';
+
+    return {
+      title: 'Relatório de Desempenho — TPA',
+      scopeLabel: scopeLabel,
+      generatedAt: generatedAt,
+      filename: 'relatorio_tpa_' + ymd(Date.now()) + '.pdf',
+      projectKey: (META && META.source_project) || 'SUPORTE',
+      kpis: kpis,
+      ranking: {
+        columns: [
+          { header:'Analista', width:170 },
+          { header:'TPA médio', width:90, align:'right' },
+          { header:'% dentro da meta', width:120, align:'right' },
+          { header:'Volume', width:90, align:'right' }
+        ],
+        rows: rankingRows
+      },
+      evolution: lastEvolutionData ? {
+        title: 'Evolução do TPA (' + (evolutionState.window === 'month' ? 'este mês, por semana' : 'últimos ' + evolutionState.window + ' meses') + ')',
+        points: lastEvolutionData.points,
+        summary: lastEvolutionData.summary,
+        trend: lastEvolutionData.trend
+      } : null,
+      compliance: lastComplianceData ? {
+        title: 'Cumprimento da Meta (' + (complianceState.window === 'month' ? 'este mês, por semana' : 'últimos ' + complianceState.window + ' meses') + ')',
+        points: lastComplianceData.points,
+        summary: lastComplianceData.summary,
+        trend: lastComplianceData.trend
+      } : null
+    };
+  }
+  document.getElementById('pdf-export-btn').addEventListener('click', function(){
+    requestPdfExport(buildPdfPayload(), this);
+  });
+
+  /* ================= header meta (recomputed on every data load) ================= */
+  function applyDatasetMeta(){
+    document.getElementById('generated-at').textContent = fmtDateTimeBR(META.generated_at);
+    document.getElementById('dataset-total').textContent = fmtInt(TICKETS.length);
+
+    var minDateInput = ymd(datasetMin), maxDateInput = ymd(datasetMax);
+    var defaultFromInput = ymd(Date.now() - 180*86400000) < minDateInput ? minDateInput : ymd(Date.now() - 180*86400000);
+    document.getElementById('custom-from').min = minDateInput;
+    document.getElementById('custom-from').max = maxDateInput;
+    document.getElementById('custom-to').min = minDateInput;
+    document.getElementById('custom-to').max = maxDateInput;
+    document.getElementById('custom-from').value = defaultFromInput;
+    document.getElementById('custom-to').value = maxDateInput;
+    state.customFrom = defaultFromInput;
+    state.customTo = maxDateInput;
+
+    var heatmapFromEl = document.getElementById('heatmap-custom-from');
+    var heatmapToEl = document.getElementById('heatmap-custom-to');
+    if (heatmapFromEl && heatmapToEl){
+      heatmapFromEl.min = minDateInput;
+      heatmapFromEl.max = maxDateInput;
+      heatmapToEl.min = minDateInput;
+      heatmapToEl.max = maxDateInput;
+      heatmapFromEl.value = defaultFromInput;
+      heatmapToEl.value = maxDateInput;
+      heatmapState.customFrom = defaultFromInput;
+      heatmapState.customTo = maxDateInput;
+    }
+  }
+
+  /* ================= tabs & pills ================= */
+  var tabsEl = document.getElementById('analyst-tabs');
+  function renderTabs(){
+    var all = [{ name:'Visão geral', short:'Visão geral', slot:'all' }].concat(ANALYSTS).concat([{ name:'SLA', short:'⏱ SLA', slot:'sla' }]);
+    tabsEl.innerHTML = all.map(function(a){
+      var active = state.analyst === a.slot;
+      var dot = (a.slot === 'all' || a.slot === 'sla') ? '' : '<span class="dot" style="background:'+seriesColor(a.slot)+'"></span>';
+      var cls = 'tab-btn' + (active?' active':'') + (a.slot === 'sla' ? ' tab-btn-sla' : '');
+      return '<button type="button" class="'+cls+'" data-slot="'+a.slot+'" role="tab" aria-selected="'+active+'">'+dot+a.short+'</button>';
+    }).join('');
+    tabsEl.querySelectorAll('.tab-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var v = btn.getAttribute('data-slot');
+        state.analyst = (v === 'all' || v === 'sla') ? v : parseInt(v,10);
+        renderTabs();
+        renderAll();
+      });
+    });
+    updateSlaTabAlert();
+  }
+
+  var PERIOD_OPTS = [
+    { key:'today', label:'Hoje' },
+    { key:'yesterday', label:'Ontem' },
+    { key:'week', label:'Esta semana' },
+    { key:'lastweek', label:'Última semana' },
+    { key:'month', label:'Este mês' },
+    { key:'90d', label:'Últimos 3 meses' },
+    { key:'180d', label:'Últimos 6 meses' },
+    { key:'270d', label:'Últimos 9 meses' },
+    { key:'365d', label:'Últimos 12 meses' },
+    { key:'custom', label:'Personalizado' }
+  ];
+  var pillsEl = document.getElementById('period-pills');
+  var customRangeEl = document.getElementById('custom-range');
+  function renderPills(){
+    pillsEl.innerHTML = PERIOD_OPTS.map(function(p){
+      var active = state.period === p.key;
+      return '<button type="button" class="pill-btn'+(active?' active':'')+'" data-period="'+p.key+'">'+p.label+'</button>';
+    }).join('');
+    pillsEl.querySelectorAll('.pill-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        state.period = btn.getAttribute('data-period');
+        customRangeEl.hidden = state.period !== 'custom';
+        renderPills();
+        renderAll();
+      });
+    });
+    customRangeEl.hidden = state.period !== 'custom';
+  }
+  document.getElementById('custom-from').addEventListener('change', function(e){ state.customFrom = e.target.value; if (state.period==='custom') renderAll(); });
+  document.getElementById('custom-to').addEventListener('change', function(e){ state.customTo = e.target.value; if (state.period==='custom') renderAll(); });
+
+  // Filtro global de prioridade — afeta o dashboard inteiro (ver visibleTickets()),
+  // não só a Visão Geral, então fica fora do period-group, aplicado sempre visível.
+  var priorityPillsEl = document.getElementById('priority-pills');
+  function renderPriorityPills(){
+    var opts = [{ key:'all', label:'Todas' }].concat(priorityOptionsFromTickets().map(function(p){ return { key:p, label:p }; }));
+    priorityPillsEl.innerHTML = opts.map(function(p){
+      var active = state.priority === p.key;
+      return '<button type="button" class="pill-btn'+(active?' active':'')+'" data-priority="'+escapeHtml(p.key)+'">'+escapeHtml(p.label)+'</button>';
+    }).join('');
+    priorityPillsEl.querySelectorAll('.pill-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        state.priority = btn.getAttribute('data-priority');
+        renderPriorityPills();
+        renderAll();
+      });
+    });
+  }
+
+  /* ================= live data loading / refresh ================= */
+  var refreshStatusEl = document.getElementById('refresh-status');
+  function setRefreshStatus(text, cls){
+    if (!refreshStatusEl) return;
+    refreshStatusEl.textContent = text || '';
+    refreshStatusEl.className = 'refresh-status' + (cls ? ' ' + cls : '');
+  }
+
+  function applyData(data){
+    TICKETS = data.tickets || [];
+    TICKET_BY_KEY = null;
+    META = data.meta || { generated_at: new Date().toISOString(), source_project: '', site_host: '', window_days: 0 };
+    if (TICKETS.length){
+      datasetMin = Math.min.apply(null, TICKETS.map(function(t){return t[1];}));
+      datasetMax = Math.max.apply(null, TICKETS.map(function(t){return t[1];}));
+    } else {
+      datasetMin = Date.now();
+      datasetMax = Date.now();
+    }
+    applyDatasetMeta();
+    renderTabs();
+    renderPills();
+    renderPriorityPills();
+    renderAll();
+  }
+
+  async function fetchTickets(){
+    var res = await apiServiceJira.getTickets();
+    return res.data;
+  }
+
+  async function fetchStatus(){
+    var res = await apiServiceJira.getStatus();
+    return res.data;
+  }
+
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+  async function triggerRefreshAndWait(onProgress){
+    await apiServiceJira.triggerRefresh();
+    for (var i = 0; i < 240; i++){
+      await sleep(1500);
+      var st = await fetchStatus();
+      if (onProgress) onProgress(st);
+      if (!st.running){
+        if (st.error) throw new Error(st.error);
+        return;
+      }
+    }
+    throw new Error('tempo esgotado aguardando o Jira responder');
+  }
+
+  document.getElementById('refresh-btn').addEventListener('click', async function(){
+    var btn = this;
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.classList.add('spinning');
+    setRefreshStatus('Buscando dados no Jira…', 'busy');
+    try {
+      await triggerRefreshAndWait(function(st){
+        if (st.progress) setRefreshStatus('Buscando dados no Jira… ' + fmtInt(st.progress) + ' chamados coletados', 'busy');
+      });
+      var data = await fetchTickets();
+      applyData(data);
+      setRefreshStatus('Atualizado agora', 'ok');
+      setTimeout(function(){ setRefreshStatus(''); }, 4000);
+    } catch (e){
+      setRefreshStatus('Falha ao atualizar: ' + e.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('spinning');
+    }
+  });
+
+  var bootOverlay = document.getElementById('boot-overlay');
+  var bootMsg = document.getElementById('boot-msg');
+  var bootDetail = document.getElementById('boot-detail');
+  var bootRetry = document.getElementById('boot-retry');
+  var mainWrap = document.getElementById('main-wrap');
+
+  async function initialLoad(){
+    bootOverlay.hidden = false;
+    mainWrap.hidden = true;
+    bootRetry.hidden = true;
+    bootDetail.hidden = true;
+    bootMsg.textContent = 'Carregando dados do Jira…';
+    try {
+      var data = await fetchTickets();
+      if (!data.meta){
+        bootMsg.textContent = 'Primeira coleta de dados no Jira — isso pode levar um minuto…';
+        await triggerRefreshAndWait(function(st){
+          if (st.progress) bootMsg.textContent = 'Coletando chamados do Jira… ' + fmtInt(st.progress) + ' até agora';
+        });
+        data = await fetchTickets();
+      }
+      applyData(data);
+      bootOverlay.hidden = true;
+      mainWrap.hidden = false;
+    } catch (e){
+      bootMsg.textContent = 'Não foi possível carregar os dados.';
+      bootDetail.textContent = e.message || String(e);
+      bootDetail.hidden = false;
+      bootRetry.hidden = false;
+    }
+  }
+  bootRetry.addEventListener('click', initialLoad);
+
+  /* ================= KPI row ================= */
+  // Formata a variação de um indicador em relação ao período anterior de
+  // mesma duração. mode indica se um valor menor é bom, maior é bom, ou é
+  // neutro (só informativo, sem julgamento de cor); points mostra a diferença
+  // em pontos percentuais em vez de variação relativa (melhor pra taxas).
+  function kpiDeltaHtml(cur, prev, opts){
+    opts = opts || {};
+    if (cur === null || cur === undefined || prev === null || prev === undefined) return '';
+    var diff = cur - prev;
+    if (prev === 0 && cur === 0) return '';
+    var text;
+    if (opts.points){
+      text = (diff > 0 ? '+' : '') + diff.toFixed(1).replace('.', ',') + ' p.p.';
+    } else if (prev !== 0){
+      var pct = diff / prev * 100;
+      text = (pct > 0 ? '+' : '') + pct.toFixed(0) + '%';
+    } else {
+      text = (diff > 0 ? '+' : '') + fmtInt(diff);
+    }
+    var mode = opts.mode || 'neutral';
+    var isGood = mode === 'neutral' ? null : (mode === 'lowerBetter' ? diff < 0 : diff > 0);
+    var cls = Math.abs(diff) < 1e-9 ? 'flat' : (isGood === null ? 'flat' : (isGood ? 'good' : 'bad'));
+    var arrow = diff > 1e-9 ? '▲' : (diff < -1e-9 ? '▼' : '●');
+    return '<div class="kpi-delta-line"><span class="kpi-delta '+cls+'">'+arrow+' '+text+'</span><span class="kpi-delta-label">vs. período anterior</span></div>';
+  }
+
+  function renderKPIs(rows, agg, scopeLabel, breachSlot, period, aggPrev){
+    var breachClickable = agg.breached_count > 0;
+    var pendingClickable = agg.pending_count > 0;
+    var noSlaClickable = agg.no_sla_count > 0;
+    var deltaCount = aggPrev ? kpiDeltaHtml(agg.ticket_count, aggPrev.ticket_count, {mode:'neutral'}) : '';
+    var deltaAvg = aggPrev ? kpiDeltaHtml(agg.avg, aggPrev.avg, {mode:'lowerBetter'}) : '';
+    var deltaBreach = aggPrev ? kpiDeltaHtml(agg.breach_rate_pct, aggPrev.breach_rate_pct, {mode:'lowerBetter', points:true}) : '';
+    var deltaPending = aggPrev ? kpiDeltaHtml(agg.pending_count, aggPrev.pending_count, {mode:'lowerBetter'}) : '';
+    var deltaNoSla = aggPrev ? kpiDeltaHtml(agg.no_sla_count, aggPrev.no_sla_count, {mode:'lowerBetter'}) : '';
+    var kpis = [
+      { label:'Chamados', value: fmtInt(agg.ticket_count), unit:'', sub: scopeLabel, delta: deltaCount },
+      { label:'TPA médio', value: fmtMinShort(agg.avg), unit:'min', sub: 'mediana ' + fmtMinShort(agg.median) + ' min', delta: deltaAvg },
+      { label:'Estouro de SLA', value: fmtMinShort(agg.breach_rate_pct), unit: agg.breach_rate_pct===null?'':'%', sub: fmtInt(agg.breached_count) + ' de ' + fmtInt(agg.ticket_count) + ' chamados · ' + statusFor(agg.breach_rate_pct).label, clickable: breachClickable, kind:'breach', slot: breachSlot, hint:'Ver chamados com estouro', delta: deltaBreach },
+      { label:'Pendentes de resposta', value: fmtInt(agg.pending_count), unit:'', sub: 'de ' + fmtInt(agg.ticket_count) + ' chamados', clickable: pendingClickable, kind:'pending', slot: breachSlot, hint:'Ver chamados pendentes', delta: deltaPending },
+      { label:'Sem hora lançada', value: fmtInt(agg.no_sla_count), unit:'', sub: 'de ' + fmtInt(agg.ticket_count) + ' chamados', clickable: noSlaClickable, kind:'noSla', slot: breachSlot, hint:'Ver chamados sem hora lançada', delta: deltaNoSla }
+    ];
+    document.getElementById('kpi-grid').innerHTML = kpis.map(function(k){
+      var cls = 'kpi-tile' + (k.clickable ? ' clickable' : '');
+      var attr = k.clickable ? ' data-kind="'+k.kind+'" data-slot="'+slotKey(k.slot)+'" tabindex="0" role="button" title="'+k.hint+'"' : '';
+      return '<div class="'+cls+'"'+attr+'><p class="kpi-label">'+k.label+'</p>' +
+        '<div class="kpi-value num">'+k.value + (k.unit ? '<span class="unit">'+k.unit+'</span>' : '') + '</div>' +
+        '<p class="kpi-sub">'+k.sub+(k.clickable?' · ver chamados':'')+'</p>' +
+        (k.delta || '') + '</div>';
+    }).join('');
+    document.querySelectorAll('.kpi-tile.clickable').forEach(function(tile){
+      var kind = tile.getAttribute('data-kind');
+      var sAttr = tile.getAttribute('data-slot');
+      var slot = sAttr === 'all' ? null : parseInt(sAttr, 10);
+      function activateKpi(){
+        if (isDrilldownActive(kind, slot)){ closeDrilldown(); }
+        else { openDrilldown(kind, slot, rows, period); }
+      }
+      tile.addEventListener('click', activateKpi);
+      tile.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' '){ e.preventDefault(); activateKpi(); } });
+    });
+  }
+
+  /* ================= SLA watch (live, ignores period) ================= */
+  var slaTickerHandle = null;
+  function startSlaTicker(){
+    stopSlaTicker();
+    slaTickerHandle = setInterval(function(){
+      if (state.analyst === 'sla') renderSlaWatch();
+    }, 20000);
+  }
+  function stopSlaTicker(){
+    if (slaTickerHandle){ clearInterval(slaTickerHandle); slaTickerHandle = null; }
+  }
+
+  // ---- Alertas sonoros/notificação para chamados críticos de SLA ----------
+  // Ativados manualmente (exige gesto do usuário p/ pedir permissão de
+  // notificação do navegador). Uma vez ativados, tocam um bipe e mostram uma
+  // notificação do sistema — funciona mesmo com a aba em segundo plano/
+  // minimizada — sempre que um chamado ENTRA em estado crítico (≤5 min ou
+  // já estourado). Cada chamado só notifica uma vez por entrada em crise.
+  var alertsEnabled = false;
+  var notifiedCriticalKeys = {};
+  var alertToggleBtn = document.getElementById('alert-toggle-btn');
+  var alertToggleLabel = document.getElementById('alert-toggle-label');
+
+  function playAlertSound(){
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      var ctx = new Ctx();
+      function beep(freq, startOffset){
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = freq;
+        o.connect(g); g.connect(ctx.destination);
+        var t = ctx.currentTime + startOffset;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.28, t + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+        o.start(t); o.stop(t + 0.4);
+      }
+      beep(880, 0);
+      beep(660, 0.22);
+    } catch (e){ /* ignore: áudio bloqueado pelo navegador */ }
+  }
+
+  function notifyCriticalTicket(key, summary, msg){
+    if (!alertsEnabled) return;
+    playAlertSound();
+    if ('Notification' in window && Notification.permission === 'granted'){
+      try {
+        var n = new Notification('SLA crítico — ' + key, {
+          body: (summary ? summary + '\n' : '') + msg,
+          tag: 'sla-' + key
+        });
+        n.onclick = function(){ try { window.focus(); n.close(); } catch(e){} };
+      } catch (e){ /* ignore */ }
+    }
+  }
+
+  function setAlertsEnabled(v){
+    alertsEnabled = v;
+    if (alertToggleBtn) alertToggleBtn.classList.toggle('active', v);
+    if (alertToggleLabel) alertToggleLabel.textContent = v ? 'Alertas ativados' : 'Ativar alertas';
+    try { localStorage.setItem('tpa_alerts_enabled', v ? '1' : '0'); } catch (e){ /* ignore */ }
+  }
+
+  if (alertToggleBtn){
+    alertToggleBtn.addEventListener('click', async function(){
+      if (alertsEnabled){ setAlertsEnabled(false); return; }
+      if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied'){
+        try { await Notification.requestPermission(); } catch (e){ /* ignore */ }
+      }
+      playAlertSound(); // confirma pro usuário que o som funciona
+      setAlertsEnabled(true);
+    });
+    try { if (localStorage.getItem('tpa_alerts_enabled') === '1') setAlertsEnabled(true); } catch (e){ /* ignore */ }
+  }
+
+  // Faz a aba "SLA" piscar (mesmo com outra aba aberta) e dispara alertas
+  // quando houver algum chamado pendente de primeira resposta a 5 minutos ou
+  // menos de estourar a meta de 30 min — ou já estourado. Roda independente
+  // da aba ativa.
+  function checkSlaAlerts(){
+    var now = Date.now();
+    var stillCritical = {};
+    var hasAlert = false;
+    for (var i = 0; i < TICKETS.length; i++){
+      var r = TICKETS[i];
+      if (r[7] != null && r[2] === null && Math.round(r[6]) === 30){
+        var remMin = (r[7] - now) / 60000;
+        if (remMin <= 5){
+          hasAlert = true;
+          var key = r[4];
+          stillCritical[key] = true;
+          if (!notifiedCriticalKeys[key]){
+            notifiedCriticalKeys[key] = true;
+            var msg = remMin <= 0
+              ? 'Chamado estourou o SLA de 30 min de primeira resposta.'
+              : 'Restam ' + Math.max(0, Math.round(remMin)) + ' min para estourar o SLA de 30 min.';
+            notifyCriticalTicket(key, r[5], msg);
+          }
+        }
+      }
+    }
+    // libera a chave quando o chamado deixa de estar crítico (foi respondido
+    // ou saiu da base), para poder notificar de novo se voltar a acontecer
+    Object.keys(notifiedCriticalKeys).forEach(function(k){
+      if (!stillCritical[k]) delete notifiedCriticalKeys[k];
+    });
+    return hasAlert;
+  }
+  function updateSlaTabAlert(){
+    var btn = document.querySelector('.tab-btn-sla');
+    if (!btn) return;
+    btn.classList.toggle('tab-btn-sla-alert', checkSlaAlerts());
+  }
+  var updateSlaTabAlertHandle = setInterval(updateSlaTabAlert, 20000);
+
+  function slaRiskStatus(remainingMin){
+    if (remainingMin <= 0) return { key:'critical', label:'Estourado' };
+    if (remainingMin <= 5) return { key:'critical', label:'Crítico' };
+    if (remainingMin <= 15) return { key:'warning', label:'Atenção' };
+    return { key:'good', label:'No prazo' };
+  }
+
+  function renderSlaWatch(){
+    var now = Date.now();
+    // r[7] = ongoingBreachMs (only set for tickets still awaiting first response);
+    // r[6] = goalMin. Only the 30-minute SLA tier is shown here, per request.
+    var rows = visibleTickets().filter(function(r){
+      return r[7] != null && r[2] === null && Math.round(r[6]) === 30;
+    });
+    rows.sort(function(x,y){ return x[7] - y[7]; }); // soonest breach first
+
+    var breachedCount = 0, criticalCount = 0, warningCount = 0;
+    rows.forEach(function(r){
+      var remMin = (r[7] - now) / 60000;
+      if (remMin <= 0) breachedCount++;
+      else if (remMin <= 5) criticalCount++;
+      else if (remMin <= 15) warningCount++;
+    });
+
+    var kpis = [
+      { label:'Em risco (meta 30 min)', value: fmtInt(rows.length), sub:'chamados pendentes de resposta' },
+      { label:'Já estourados', value: fmtInt(breachedCount), sub:'aguardando resposta além do prazo' },
+      { label:'Críticos', value: fmtInt(criticalCount), sub:'restam 5 min ou menos' },
+      { label:'Atenção', value: fmtInt(warningCount), sub:'restam 15 min ou menos' }
+    ];
+    document.getElementById('sla-kpi-grid').innerHTML = kpis.map(function(k){
+      return '<div class="kpi-tile"><p class="kpi-label">'+k.label+'</p>' +
+        '<div class="kpi-value num">'+k.value+'</div>' +
+        '<p class="kpi-sub">'+k.sub+'</p></div>';
+    }).join('');
+
+    document.getElementById('sla-desc').innerHTML =
+      '<span class="sla-live-dot"></span>Atualizado ao vivo a cada 20s · ' + fmtInt(rows.length) +
+      ' chamado(s) pendente(s) com meta de 30 minutos, do mais urgente para o menos urgente';
+
+    lastSlaExport = {
+      title: 'Chamados em risco de estouro de SLA (meta 30 min)',
+      filename: 'sla_risco_' + ymd(now) + '.xlsx',
+      columns: [
+        { header:'Analista', key:'analista', width:24 },
+        { header:'Chamado', key:'chamado', width:16 },
+        { header:'Resumo', key:'resumo', width:55 },
+        { header:'Aberto em', key:'aberto', width:20 },
+        { header:'Aguardando há', key:'aguardando', width:16 },
+        { header:'Tempo restante', key:'restante', width:18 },
+        { header:'Status', key:'status', width:14 }
+      ],
+      rows: rows.map(function(r){
+        var slot = r[0], createdMs = r[1], key = r[4], summary = r[5] || '', breachMs = r[7];
+        var a = analystBySlot(slot);
+        var remMin = (breachMs - now) / 60000;
+        var st = slaRiskStatus(remMin);
+        var remText = remMin <= 0 ? 'estourado há ' + fmtDurationShort(-remMin) : 'restam ' + fmtDurationShort(remMin);
+        var waitingText = fmtDurationShort((now - createdMs) / 60000);
+        return [(a ? a.short : '—'), key, summary, fmtDateFullBR(createdMs), waitingText, remText, st.label];
+      })
+    };
+
+    var tableEl = document.getElementById('sla-table-wrap');
+    if (!rows.length){
+      tableEl.innerHTML = '<div class="empty-state" style="padding:20px;"><p>Nenhum chamado pendente com meta de 30 minutos no momento.</p></div>';
+      return;
+    }
+
+    var body = rows.map(function(r){
+      var slot = r[0], createdMs = r[1], key = r[4], summary = r[5] || '', breachMs = r[7];
+      var a = analystBySlot(slot);
+      var remMin = (breachMs - now) / 60000;
+      var st = slaRiskStatus(remMin);
+      var rowCls = st.key === 'critical' ? 'risk-critical' : (st.key === 'warning' ? 'risk-warning' : '');
+      var remText = remMin <= 0 ? 'estourado há ' + fmtDurationShort(-remMin) : 'restam ' + fmtDurationShort(remMin);
+      var waitingText = fmtDurationShort((now - createdMs) / 60000);
+      return '<tr class="'+rowCls+'">' +
+        '<td class="name-cell"><span class="swatch-inline" style="background:'+seriesColor(slot)+'"></span>'+(a?a.short:'—')+'</td>' +
+        '<td style="text-align:left"><a class="ticket-link mono" href="'+jiraUrl(key)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(key)+'</a></td>' +
+        '<td class="summary-cell" title="'+escapeHtml(summary)+'">'+escapeHtml(summary)+'</td>' +
+        '<td class="num">'+fmtDateFullBR(createdMs)+'</td>' +
+        '<td class="num">'+waitingText+'</td>' +
+        '<td class="num">'+remText+'</td>' +
+        '<td class="num"><span class="status-pill '+st.key+'">'+ICONS[st.key]+'<span>'+st.label+'</span></span></td>' +
+        '</tr>';
+    }).join('');
+    tableEl.innerHTML = '<table class="data-table sla-table"><thead><tr>' +
+      '<th style="text-align:left">Analista</th><th style="text-align:left">Chamado</th><th style="text-align:left">Resumo</th><th>Aberto em</th><th>Aguardando há</th><th>Tempo restante</th><th>Status</th>' +
+      '</tr></thead><tbody>'+body+'</tbody></table>';
+  }
+  document.getElementById('sla-export-btn').addEventListener('click', function(){
+    requestXlsxExport(lastSlaExport, this);
+  });
+
+  /* ================= overview charts ================= */
+  function renderOverviewCharts(rowsAll, period){
+    var perAnalyst = ANALYSTS.map(function(a){
+      return { a:a, agg: aggregate(rowsAll.filter(function(r){return r[0]===a.slot;})) };
+    });
+
+    var byAvg = perAnalyst.slice().filter(function(p){return p.agg.avg!==null;}).sort(function(p,q){ return p.agg.avg - q.agg.avg; });
+    var maxAvg = Math.max.apply(null, byAvg.map(function(p){return p.agg.avg;}).concat([1]));
+    document.getElementById('bar-chart').innerHTML = byAvg.length ? byAvg.map(function(p){
+      var pct = Math.max(3, (p.agg.avg / maxAvg) * 100);
+      return '<div class="bar-row">' +
+        '<div class="bar-name" title="'+p.a.name+'">'+p.a.short+'</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%; background:'+seriesColor(p.a.slot)+'"></div></div>' +
+        '<div class="bar-value num">'+fmtMinShort(p.agg.avg)+'<span class="u">min</span></div>' +
+        '</div>';
+    }).join('') : '<div class="empty-state"><p>Sem respostas registradas no período.</p></div>';
+
+    var byBreach = perAnalyst.slice().filter(function(p){return p.agg.breach_rate_pct!==null;}).sort(function(p,q){ return p.agg.breach_rate_pct - q.agg.breach_rate_pct; });
+    document.getElementById('status-chart').innerHTML = byBreach.length ? byBreach.map(function(p){
+      var st = statusFor(p.agg.breach_rate_pct);
+      var pct = Math.max(3, p.agg.breach_rate_pct);
+      var active = isDrilldownActive('breach', p.a.slot);
+      return '<div class="status-row'+(active?' active':'')+'" data-kind="breach" data-slot="'+slotKey(p.a.slot)+'" tabindex="0" role="button" aria-expanded="'+active+'">' +
+        '<div class="bar-name" title="'+p.a.name+'">'+p.a.short+'</div>' +
+        '<div class="status-track"><div class="status-fill" style="width:'+pct+'%; background:var(--status-'+st.key+')"></div></div>' +
+        '<div class="status-value num">'+fmtPct(p.agg.breach_rate_pct)+'</div>' +
+        '<div class="status-pill '+st.key+'">'+ICONS[st.key]+'<span>'+st.label+'</span></div>' +
+        '<div class="chevron">▸</div>' +
+        '</div>';
+    }).join('') : '<div class="empty-state"><p>Sem respostas registradas no período.</p></div>';
+
+    document.querySelectorAll('#status-chart .status-row').forEach(function(row){
+      function activate(){
+        var slot = parseInt(row.getAttribute('data-slot'), 10);
+        if (isDrilldownActive('breach', slot)){ closeDrilldown(); }
+        else { openDrilldown('breach', slot, rowsAll, period); }
+      }
+      row.addEventListener('click', activate);
+      row.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' '){ e.preventDefault(); activate(); } });
+    });
+
+    renderTpaDistribution(rowsAll, period);
+    renderTpaEvolution();
+    renderComplianceEvolution();
+    renderHeatmap();
+  }
+
+  /* ---- Distribuição do TPA: histograma de chamados respondidos por faixa
+     de tempo até a primeira resposta, no período selecionado. Cada faixa com
+     chamados é clicável (seta ▸) e abre a lista de chamados daquela faixa,
+     reaproveitando o mesmo painel de drill-down usado pelos outros gráficos. ---- */
+  function renderTpaDistribution(rowsAll, period){
+    var buckets = [
+      { label:'0–5 min',  slug:'0-5min',   min:0,   max:5,        color:'--status-good' },
+      { label:'5–15 min', slug:'5-15min',  min:5,   max:15,       color:'--status-good' },
+      { label:'15–30 min',slug:'15-30min', min:15,  max:30,       color:'--status-warning' },
+      { label:'30–60 min',slug:'30-60min', min:30,  max:60,       color:'--status-serious' },
+      { label:'1–2 h',    slug:'1-2h',     min:60,  max:120,      color:'--status-serious' },
+      { label:'2 h+',     slug:'2h-mais',  min:120, max:Infinity, color:'--status-critical' }
+    ];
+    var responded = rowsAll.filter(function(r){ return r[2] !== null; });
+    var counts = buckets.map(function(b){
+      return responded.filter(function(r){ return r[2] >= b.min && r[2] < b.max; }).length;
+    });
+    var total = responded.length;
+    var maxCount = Math.max.apply(null, counts.concat([1]));
+    document.getElementById('tpa-distribution-chart').innerHTML = total ? buckets.map(function(b, i){
+      var pct = counts[i] ? Math.max(3, (counts[i] / maxCount) * 100) : 0;
+      var share = total ? (counts[i] / total * 100) : 0;
+      var clickable = counts[i] > 0;
+      var active = clickable && isDrilldownActive('tpaBucket', null, i);
+      var cls = 'bar-row' + (clickable ? ' clickable' : '') + (active ? ' active' : '');
+      var attr = clickable ? ' data-kind="tpaBucket" data-bucket="'+i+'" tabindex="0" role="button" aria-expanded="'+active+'" title="Ver chamados dessa faixa"' : '';
+      return '<div class="'+cls+'"'+attr+'>' +
+        '<div class="bar-name">'+b.label+'</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%; background:var('+b.color+')"></div></div>' +
+        '<div class="bar-value num">'+fmtInt(counts[i])+'<span class="u">'+fmtPct(share)+'</span></div>' +
+        (clickable ? '<div class="chevron">▸</div>' : '') +
+        '</div>';
+    }).join('') : '<div class="empty-state"><p>Sem respostas registradas no período.</p></div>';
+
+    document.querySelectorAll('#tpa-distribution-chart .bar-row.clickable').forEach(function(row){
+      function activate(){
+        var idx = parseInt(row.getAttribute('data-bucket'), 10);
+        if (isDrilldownActive('tpaBucket', null, idx)){ closeDrilldown(); }
+        else {
+          var bucket = buckets[idx];
+          openDrilldown('tpaBucket', null, rowsAll, period, { min:bucket.min, max:bucket.max, label:bucket.label, slug:bucket.slug, idx:idx });
+        }
+      }
+      row.addEventListener('click', activate);
+      row.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' '){ e.preventDefault(); activate(); } });
+    });
+  }
+
+  /* ---- Evolução do TPA: TPA médio da EQUIPE (todos os analistas juntos),
+     mês a mês, numa janela fixa dos últimos 6 meses — independente do filtro
+     de período lá em cima, porque o objetivo aqui é sempre responder "melhorou
+     ou piorou com o tempo?" de forma direta, com um resumo em texto + uma
+     barra por mês. Reaproveita generateBucketKeys/bucketKey/bucketLabel, os
+     mesmos helpers usados pelo gráfico de "Tendência do TPA".
+     Tem seletor próprio de janela (Este mês / Últimos 3, 6, 9, 12 meses),
+     independente do filtro de período lá em cima — mesmo espírito do seletor
+     do mapa de calor. "Este mês" foge do padrão "N meses, barra por mês": com
+     só o mês corrente não daria pra ver evolução nenhuma numa única barra, então
+     nesse caso quebra o mês em semanas (bucketKey/generateBucketKeys já
+     suportam granularidade 'week', reaproveitados do gráfico de Tendência). ---- */
+  var EVOLUTION_WINDOW_OPTS = [
+    { key:'month', label:'Este mês' },
+    { key:3, label:'Últimos 3 meses' },
+    { key:6, label:'Últimos 6 meses' },
+    { key:9, label:'Últimos 9 meses' },
+    { key:12, label:'Últimos 12 meses' }
+  ];
+  var evolutionState = { window: 6 };
+  var complianceState = { window: 6 };
+  function computeEvolutionWindow(windowKey){
+    var toMs = Date.now();
+    if (windowKey === 'month'){
+      var t = spTodayParts();
+      return { fromMs: spMidnightMs(t.y, t.m, 1), toMs: toMs, granularity: 'week' };
+    }
+    var todayParts = spTodayParts();
+    var startY = todayParts.y, startM = todayParts.m - (windowKey - 1);
+    while (startM <= 0){ startM += 12; startY -= 1; }
+    return { fromMs: spMidnightMs(startY, startM, 1), toMs: toMs, granularity: 'month' };
+  }
+  function setupMonthsBackPills(elId, stateObj, onChange){
+    var el = document.getElementById(elId);
+    if (!el) return;
+    function render(){
+      el.innerHTML = EVOLUTION_WINDOW_OPTS.map(function(o){
+        var active = stateObj.window === o.key;
+        return '<button type="button" class="pill-btn'+(active?' active':'')+'" data-window="'+o.key+'">'+o.label+'</button>';
+      }).join('');
+      el.querySelectorAll('.pill-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var v = btn.getAttribute('data-window');
+          stateObj.window = v === 'month' ? 'month' : parseInt(v, 10);
+          render();
+          onChange();
+        });
+      });
+    }
+    render();
+  }
+  setupMonthsBackPills('evolution-months-pills', evolutionState, function(){ renderTpaEvolution(); });
+  setupMonthsBackPills('compliance-months-pills', complianceState, function(){ renderComplianceEvolution(); });
+
+  function renderTpaEvolution(){
+    var win = computeEvolutionWindow(evolutionState.window);
+    var fromMs = win.fromMs, toMs = win.toMs, granularity = win.granularity;
+    var descEl = document.getElementById('tpa-evolution-desc');
+    if (descEl) descEl.textContent = evolutionState.window === 'month'
+      ? 'TPA médio da equipe por semana, neste mês — mostra se o atendimento está melhorando'
+      : 'TPA médio da equipe mês a mês, últimos ' + evolutionState.window + ' meses — mostra se o atendimento está melhorando';
+    var keys = generateBucketKeys(fromMs, toMs, granularity);
+    var rows = visibleTickets().filter(function(t){ return t[1] >= fromMs && t[1] <= toMs; });
+    var byKey = {}; keys.forEach(function(k){ byKey[k] = []; });
+    rows.forEach(function(r){ var k = bucketKey(r[1], granularity); if (byKey[k]) byKey[k].push(r); });
+    var points = keys.map(function(k){
+      var agg = aggregate(byKey[k]);
+      return { key:k, label: bucketLabel(k, granularity), avg: agg.avg, count: agg.ticket_count };
+    });
+
+    var validAvgs = points.filter(function(p){ return p.avg !== null; });
+    var maxAvg = Math.max.apply(null, validAvgs.map(function(p){ return p.avg; }).concat([1]));
+
+    document.getElementById('tpa-evolution-chart').innerHTML = validAvgs.length ? points.map(function(p){
+      var pct = p.avg !== null ? Math.max(3, (p.avg / maxAvg) * 100) : 0;
+      return '<div class="bar-row">' +
+        '<div class="bar-name">'+p.label+'</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%; background:var(--accent)"></div></div>' +
+        '<div class="bar-value num">'+(p.avg !== null ? fmtMinShort(p.avg)+'<span class="u">min</span>' : '—')+'</div>' +
+        '</div>';
+    }).join('') : '<div class="empty-state"><p>Sem respostas registradas nesse período.</p></div>';
+
+    var summaryEl = document.getElementById('tpa-evolution-summary');
+    var summaryPlain = null, trend = null;
+    if (validAvgs.length >= 2){
+      var first = validAvgs[0];
+      var last = validAvgs[validAvgs.length - 1];
+      var diff = last.avg - first.avg;
+      var pct = first.avg !== 0 ? (diff / first.avg * 100) : 0;
+      var improved = diff < -1e-9;
+      var worsened = diff > 1e-9;
+      var cls = improved ? 'good' : (worsened ? 'bad' : 'flat');
+      var icon = improved ? ICONS.good : (worsened ? ICONS.critical : ICONS.neutral);
+      var verb = improved ? 'melhorou' : (worsened ? 'piorou' : 'ficou estável');
+      var pctTxt = Math.abs(pct).toFixed(0) + '%';
+      trend = cls;
+      summaryPlain = 'O TPA médio da equipe ' + verb + (Math.abs(diff) > 1e-9 ? ' ' + pctTxt : '') + ' de ' +
+        first.label + ' (' + fmtMinShort(first.avg) + ' min) até ' + last.label + ' (' + fmtMinShort(last.avg) + ' min).';
+      if (summaryEl) summaryEl.innerHTML = '<div class="evolution-summary '+cls+'"><span class="es-icon">'+icon+'</span>' +
+        '<span>O TPA médio da equipe <strong>'+verb+(Math.abs(diff) > 1e-9 ? ' ' + pctTxt : '')+'</strong> de ' +
+        first.label + ' (' + fmtMinShort(first.avg) + ' min) até ' + last.label + ' (' + fmtMinShort(last.avg) + ' min).</span></div>';
+    } else if (summaryEl) {
+      summaryEl.innerHTML = '';
+    }
+
+    lastEvolutionData = {
+      points: points.map(function(p){ return { label: p.label, value: p.avg }; }),
+      summary: summaryPlain,
+      trend: trend
+    };
+  }
+
+  /* ---- Cumprimento da Meta: % de chamados respondidos DENTRO da meta de SLA,
+     mês a mês, últimos 6 meses — a mesma janela/lógica da Evolução do TPA, mas
+     olhando se o time está cumprindo o prazo (não só quão rápido responde em
+     média). Reaproveita aggregate() (breach_rate_pct) e statusFor() pra manter
+     a mesma linguagem de cor usada no resto do dashboard. ---- */
+  function renderComplianceEvolution(){
+    var win = computeEvolutionWindow(complianceState.window);
+    var fromMs = win.fromMs, toMs = win.toMs, granularity = win.granularity;
+    var descEl = document.getElementById('tpa-compliance-desc');
+    if (descEl) descEl.textContent = complianceState.window === 'month'
+      ? '% de chamados respondidos dentro da meta de SLA, por semana, neste mês'
+      : '% de chamados respondidos dentro da meta de SLA, mês a mês, últimos ' + complianceState.window + ' meses';
+    var keys = generateBucketKeys(fromMs, toMs, granularity);
+    var rows = visibleTickets().filter(function(t){ return t[1] >= fromMs && t[1] <= toMs; });
+    var byKey = {}; keys.forEach(function(k){ byKey[k] = []; });
+    rows.forEach(function(r){ var k = bucketKey(r[1], granularity); if (byKey[k]) byKey[k].push(r); });
+    var points = keys.map(function(k){
+      var agg = aggregate(byKey[k]);
+      var compliance = agg.breach_rate_pct === null ? null : (100 - agg.breach_rate_pct);
+      return { key:k, label: bucketLabel(k, granularity), compliance: compliance, count: agg.ticket_count };
+    });
+
+    var validPts = points.filter(function(p){ return p.compliance !== null; });
+
+    document.getElementById('tpa-compliance-chart').innerHTML = validPts.length ? points.map(function(p){
+      var pct = p.compliance !== null ? Math.max(3, p.compliance) : 0;
+      var st = p.compliance !== null ? statusFor(100 - p.compliance) : { key:'neutral' };
+      return '<div class="bar-row">' +
+        '<div class="bar-name">'+p.label+'</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%; background:var(--status-'+st.key+')"></div></div>' +
+        '<div class="bar-value num">'+(p.compliance !== null ? fmtPct(p.compliance) : '—')+'</div>' +
+        '</div>';
+    }).join('') : '<div class="empty-state"><p>Sem respostas registradas nesse período.</p></div>';
+
+    var summaryEl = document.getElementById('tpa-compliance-summary');
+    var summaryPlain = null, trend = null;
+    if (validPts.length >= 2){
+      var first = validPts[0];
+      var last = validPts[validPts.length - 1];
+      var diff = last.compliance - first.compliance;
+      var improved = diff > 1e-9;
+      var worsened = diff < -1e-9;
+      var cls = improved ? 'good' : (worsened ? 'bad' : 'flat');
+      var icon = improved ? ICONS.good : (worsened ? ICONS.critical : ICONS.neutral);
+      var verb = improved ? 'melhorou' : (worsened ? 'piorou' : 'ficou estável');
+      var ptsTxt = Math.abs(diff).toFixed(1).replace('.', ',') + ' p.p.';
+      trend = cls;
+      summaryPlain = 'O cumprimento da meta da equipe ' + verb + (Math.abs(diff) > 1e-9 ? ' ' + ptsTxt : '') + ' de ' +
+        first.label + ' (' + fmtPct(first.compliance) + ') até ' + last.label + ' (' + fmtPct(last.compliance) + ').';
+      if (summaryEl) summaryEl.innerHTML = '<div class="evolution-summary '+cls+'"><span class="es-icon">'+icon+'</span>' +
+        '<span>O cumprimento da meta da equipe <strong>'+verb+(Math.abs(diff) > 1e-9 ? ' ' + ptsTxt : '')+'</strong> de ' +
+        first.label + ' (' + fmtPct(first.compliance) + ') até ' + last.label + ' (' + fmtPct(last.compliance) + ').</span></div>';
+    } else if (summaryEl) {
+      summaryEl.innerHTML = '';
+    }
+
+    lastComplianceData = {
+      points: points.map(function(p){ return { label: p.label, value: p.compliance }; }),
+      summary: summaryPlain,
+      trend: trend
+    };
+  }
+
+  /* ---- Mapa de calor dia da semana × hora: volume de chamados CRIADOS,
+     em horário de Brasília (fixo UTC-3, sem DST desde 2019). Ajuda a ver os
+     picos de demanda pra planejar escala/plantão.
+     Tem seu próprio seletor de período (mesmas opções do filtro principal lá
+     em cima), independente do que está selecionado ali — reaproveita
+     computePeriod()/PERIOD_OPTS pra ficar idêntico em opções e comportamento. ---- */
+  var heatmapState = { period: '90d', customFrom: null, customTo: null };
+  (function setupHeatmapPeriodPills(){
+    var pillsEl2 = document.getElementById('heatmap-period-pills');
+    var customRangeEl2 = document.getElementById('heatmap-custom-range');
+    if (!pillsEl2) return;
+    function render(){
+      pillsEl2.innerHTML = PERIOD_OPTS.map(function(p){
+        var active = heatmapState.period === p.key;
+        return '<button type="button" class="pill-btn'+(active?' active':'')+'" data-period="'+p.key+'">'+p.label+'</button>';
+      }).join('');
+      pillsEl2.querySelectorAll('.pill-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          heatmapState.period = btn.getAttribute('data-period');
+          customRangeEl2.hidden = heatmapState.period !== 'custom';
+          render();
+          renderHeatmap();
+        });
+      });
+      customRangeEl2.hidden = heatmapState.period !== 'custom';
+    }
+    render();
+    var fromInput2 = document.getElementById('heatmap-custom-from');
+    var toInput2 = document.getElementById('heatmap-custom-to');
+    fromInput2.addEventListener('change', function(e){ heatmapState.customFrom = e.target.value; if (heatmapState.period==='custom') renderHeatmap(); });
+    toInput2.addEventListener('change', function(e){ heatmapState.customTo = e.target.value; if (heatmapState.period==='custom') renderHeatmap(); });
+  })();
+  function renderHeatmap(){
+    var period = computePeriod(heatmapState);
+    var rows = visibleTickets().filter(function(t){ return t[1] >= period.from && t[1] <= period.to; });
+
+    var dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    var grid = [];
+    for (var d = 0; d < 7; d++){
+      var row = [];
+      for (var h = 0; h < 24; h++){ row.push({ count:0, sumMin:0, respondedCount:0 }); }
+      grid.push(row);
+    }
+    rows.forEach(function(r){
+      var localMs = r[1] - 3*3600000; // Brasília = UTC-3, sem horário de verão desde 2019
+      var dt = new Date(localMs);
+      var cell = grid[dt.getUTCDay()][dt.getUTCHours()];
+      cell.count++;
+      if (r[2] !== null){ cell.sumMin += r[2]; cell.respondedCount++; }
+    });
+    var maxCount = 0;
+    grid.forEach(function(row){ row.forEach(function(c){ if (c.count > maxCount) maxCount = c.count; }); });
+
+    var headerHtml = '<div class="heatmap-corner"></div>' + Array.from({ length:24 }, function(_, h){
+      return '<div class="heatmap-hour-label">'+(h % 3 === 0 ? h : '')+'</div>';
+    }).join('');
+
+    var bodyHtml = dayNames.map(function(name, dow){
+      var cells = grid[dow].map(function(c, hour){
+        // raiz quadrada em vez de escala linear: com poucos horários de pico
+        // e muitos de baixo volume, isso separa melhor os tons "baixo/médio"
+        // em vez de deixar quase tudo claro e só o pico bem escuro.
+        var intensity = maxCount ? Math.sqrt(c.count / maxCount) : 0;
+        var bg = c.count ? 'color-mix(in srgb, var(--accent) ' + Math.round(15 + intensity * 75) + '%, var(--surface-raised))' : 'var(--surface-raised)';
+        var avgTxt = c.respondedCount ? fmtMinShort(c.sumMin / c.respondedCount) + ' min' : '—';
+        var title = name + ' ' + String(hour).padStart(2,'0') + 'h: ' + fmtInt(c.count) + ' chamado(s) · TPA médio ' + avgTxt;
+        return '<div class="heatmap-cell" style="background:'+bg+'" title="'+escapeHtml(title)+'"></div>';
+      }).join('');
+      return '<div class="heatmap-day-label">'+name+'</div>' + cells;
+    }).join('');
+
+    document.getElementById('heatmap-grid').innerHTML = headerHtml + bodyHtml;
+  }
+
+  /* ================= summary table ================= */
+  function renderSummaryTable(rowsAll, slotFilter, period){
+    var list = slotFilter ? [analystBySlot(slotFilter)] : ANALYSTS;
+    var rows = list.map(function(a){
+      var agg = aggregate(rowsAll.filter(function(r){return r[0]===a.slot;}));
+      var st = statusFor(agg.breach_rate_pct);
+      var breachClickable = agg.breached_count > 0;
+      var pendingClickable = agg.pending_count > 0;
+      var pillCls = 'status-pill ' + st.key + (breachClickable ? ' clickable' : '');
+      var pillAttr = breachClickable ? ' data-kind="breach" data-slot="'+slotKey(a.slot)+'" tabindex="0" role="button" title="Ver chamados com estouro"' : '';
+      var pendingCls = 'pending-count' + (pendingClickable ? ' clickable' : '');
+      var pendingAttr = pendingClickable ? ' data-kind="pending" data-slot="'+slotKey(a.slot)+'" tabindex="0" role="button" title="Ver chamados pendentes"' : '';
+      return '<tr>' +
+        '<td class="name-cell"><span class="swatch-inline" style="background:'+seriesColor(a.slot)+'"></span>'+a.name+'</td>' +
+        '<td class="num">'+fmtInt(agg.ticket_count)+'</td>' +
+        '<td class="num"><span class="'+pendingCls+'"'+pendingAttr+'>'+fmtInt(agg.pending_count)+'</span></td>' +
+        '<td class="num">'+fmtMinShort(agg.avg)+' min</td>' +
+        '<td class="num">'+fmtMinShort(agg.median)+' min</td>' +
+        '<td class="num">'+fmtMinShort(agg.p90)+' min</td>' +
+        '<td class="num">'+fmtInt(agg.breached_count)+'</td>' +
+        '<td class="num">'+fmtPct(agg.breach_rate_pct)+' <span class="'+pillCls+'" style="margin-left:6px"'+pillAttr+'>'+ICONS[st.key]+'<span>'+st.label+'</span></span></td>' +
+        '</tr>';
+    }).join('');
+    document.getElementById('summary-table-wrap').innerHTML =
+      '<table class="data-table"><thead><tr>' +
+      '<th style="text-align:left">Analista</th><th>Chamados</th><th>Pendentes</th><th>TPA médio</th><th>TPA mediano</th><th>TPA p90</th><th>Estouros</th><th>Taxa de estouro</th>' +
+      '</tr></thead><tbody>'+rows+'</tbody></table>';
+
+    document.querySelectorAll('#summary-table-wrap .status-pill.clickable, #summary-table-wrap .pending-count.clickable').forEach(function(el){
+      var kind = el.getAttribute('data-kind');
+      function activate(){
+        var slot = parseInt(el.getAttribute('data-slot'), 10);
+        if (isDrilldownActive(kind, slot)){ closeDrilldown(); }
+        else { openDrilldown(kind, slot, rowsAll, period); }
+      }
+      el.addEventListener('click', function(e){ e.stopPropagation(); activate(); });
+      el.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' '){ e.preventDefault(); e.stopPropagation(); activate(); } });
+    });
+  }
+
+  // ---- Exportação do resumo por analista com período próprio -------------
+  // Independente do filtro de período mostrado na tela: abre um pequeno
+  // seletor (mesmas opções + personalizado) só para a planilha exportada.
+  (function setupSummaryExport(){
+    var btn = document.getElementById('summary-export-btn');
+    var popover = document.getElementById('summary-export-popover');
+    var periodSel = document.getElementById('summary-export-period');
+    var customWrap = document.getElementById('summary-export-custom');
+    var fromInput = document.getElementById('summary-export-from');
+    var toInput = document.getElementById('summary-export-to');
+    var confirmBtn = document.getElementById('summary-export-confirm');
+    if (!btn || !popover) return;
+
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var opening = popover.hidden;
+      popover.hidden = !opening;
+      if (opening){
+        periodSel.value = state.period === 'custom' ? 'custom' : state.period;
+        customWrap.hidden = periodSel.value !== 'custom';
+        var minD = ymd(datasetMin), maxD = ymd(datasetMax);
+        fromInput.min = minD; fromInput.max = maxD;
+        toInput.min = minD; toInput.max = maxD;
+        fromInput.value = state.customFrom || fromInput.value || minD;
+        toInput.value = state.customTo || toInput.value || maxD;
+      }
+    });
+    document.addEventListener('click', function(e){
+      if (!popover.hidden && !popover.contains(e.target) && e.target !== btn){
+        popover.hidden = true;
+      }
+    });
+    periodSel.addEventListener('change', function(){
+      customWrap.hidden = periodSel.value !== 'custom';
+    });
+
+    confirmBtn.addEventListener('click', function(){
+      var chosen = periodSel.value;
+      if (chosen === 'custom' && (!fromInput.value || !toInput.value)){
+        alert('Escolha as duas datas (de/até) para o período personalizado.');
+        return;
+      }
+      var period = computePeriod({ period: chosen, customFrom: fromInput.value, customTo: toInput.value });
+      var slotFilter = state.analyst === 'all' ? null : state.analyst;
+      var rowsScope = filterTickets(period.from, period.to, slotFilter);
+      var list = slotFilter ? [analystBySlot(slotFilter)] : ANALYSTS;
+      var exportRows = list.map(function(a){
+        var agg = aggregate(rowsScope.filter(function(r){ return r[0] === a.slot; }));
+        var st = statusFor(agg.breach_rate_pct);
+        return [
+          a.name,
+          agg.ticket_count,
+          agg.pending_count,
+          agg.avg != null ? Math.round(agg.avg * 10) / 10 : null,
+          agg.median != null ? Math.round(agg.median * 10) / 10 : null,
+          agg.p90 != null ? Math.round(agg.p90 * 10) / 10 : null,
+          agg.breached_count,
+          agg.breach_rate_pct != null ? Math.round(agg.breach_rate_pct * 10) / 10 : null,
+          st.label
+        ];
+      });
+      var dataset = {
+        title: 'Resumo por analista - ' + period.label,
+        filename: 'resumo_analistas_' + ymd(Date.now()) + '.xlsx',
+        columns: [
+          { header:'Analista', key:'analista', width:24 },
+          { header:'Chamados', key:'chamados', width:12 },
+          { header:'Pendentes', key:'pendentes', width:12 },
+          { header:'TPA médio (min)', key:'tpaMedio', width:16 },
+          { header:'TPA mediano (min)', key:'tpaMediano', width:18 },
+          { header:'TPA p90 (min)', key:'tpaP90', width:14 },
+          { header:'Estouros', key:'estouros', width:12 },
+          { header:'Taxa de estouro (%)', key:'taxa', width:18 },
+          { header:'Status', key:'status', width:14 }
+        ],
+        rows: exportRows
+      };
+      popover.hidden = true;
+      requestXlsxExport(dataset, btn);
+    });
+  })();
+
+  /* ================= trend chart (generic, 1..N series + optional dashed reference) ================= */
+  var svgW = 1080, svgH = 300, padL = 44, padR = 34, padT = 16, padB = 30;
+  var plotW = svgW - padL - padR, plotH = svgH - padT - padB;
+  var trendState = { keys: [], seriesDefs: [], tableBuilt: false };
+
+  function renderLegend(seriesDefs){
+    var legendEl = document.getElementById('trend-legend');
+    legendEl.innerHTML = seriesDefs.map(function(s){
+      var swatch = s.dashed ? '<span class="legend-swatch dashed"></span>' : '<span class="legend-swatch" style="background:'+s.color+'"></span>';
+      return '<button type="button" class="legend-item" data-key="'+s.key+'" aria-pressed="true">' + swatch + s.label + '</button>';
+    }).join('');
+    legendEl.querySelectorAll('.legend-item').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var key = btn.getAttribute('data-key');
+        visibleSlots[key] = !visibleSlots[key];
+        btn.classList.toggle('off', !visibleSlots[key]);
+        btn.setAttribute('aria-pressed', String(visibleSlots[key]));
+        document.querySelectorAll('[data-key-ref="'+key+'"]').forEach(function(el){
+          el.classList.toggle('hidden', !visibleSlots[key]);
+        });
+      });
+    });
+  }
+
+  function renderTrendChart(keys, seriesDefs, granularity){
+    trendState = { keys: keys, seriesDefs: seriesDefs, granularity: granularity };
+    ANALYSTS.forEach(function(a){ if (!(a.slot in visibleSlots)) visibleSlots[a.slot] = true; });
+    if (!('team' in visibleSlots)) visibleSlots['team'] = true;
+
+    function xFor(i){ return padL + (keys.length === 1 ? 0 : (i/(keys.length-1)) * plotW); }
+    var allVals = [];
+    seriesDefs.forEach(function(s){ s.points.forEach(function(p){ if (p.v !== null) allVals.push(p.v); }); });
+    var maxV = allVals.length ? Math.max.apply(null, allVals) : 1;
+    var niceMax = Math.max(1, Math.ceil(maxV / 10) * 10 * 1.08);
+    function yFor(v){ return padT + plotH - (v/niceMax)*plotH; }
+
+    var gridYCount = 4, gridLines = '';
+    for (var g=0; g<=gridYCount; g++){
+      var gv = (niceMax/gridYCount)*g, gy = yFor(gv);
+      gridLines += '<line class="grid-line" x1="'+padL+'" x2="'+(svgW-padR)+'" y1="'+gy+'" y2="'+gy+'"></line>';
+      gridLines += '<text class="axis-label" x="'+(padL-8)+'" y="'+(gy+3)+'" text-anchor="end">'+Math.round(gv)+'</text>';
+    }
+    var xTicks = '';
+    var tickEvery = Math.max(1, Math.ceil(keys.length / 7));
+    keys.forEach(function(k,i){
+      if (i % tickEvery === 0 || i === keys.length-1){
+        xTicks += '<text class="axis-label" x="'+xFor(i)+'" y="'+(svgH-8)+'" text-anchor="middle">'+bucketLabel(k, granularity)+'</text>';
+      }
+    });
+
+    function pathFor(pts){
+      var d = '', started = false;
+      pts.forEach(function(p,i){
+        if (p.v === null){ started = false; return; }
+        var x = xFor(i), y = yFor(p.v);
+        d += (started ? ' L ' : ' M ') + x.toFixed(1) + ' ' + y.toFixed(1);
+        started = true;
+      });
+      return d;
+    }
+
+    var linesSvg = seriesDefs.map(function(s){
+      return '<path class="series-line'+(s.dashed?' ref-line':'')+'" data-key-ref="'+s.key+'" d="'+pathFor(s.points)+'" stroke="'+s.color+'"></path>';
+    }).join('');
+    var dotsSvg = seriesDefs.filter(function(s){return !s.dashed;}).map(function(s){
+      return s.points.map(function(p,i){
+        if (p.v === null) return '';
+        return '<circle class="series-dot" data-key-ref="'+s.key+'" cx="'+xFor(i)+'" cy="'+yFor(p.v)+'" r="3.4" fill="'+s.color+'"></circle>';
+      }).join('');
+    }).join('');
+
+    var endLabelSpecs = seriesDefs.filter(function(s){return !s.dashed;}).map(function(s){
+      var last=null, lastIdx=-1;
+      s.points.forEach(function(p,i){ if (p.v !== null){ last=p; lastIdx=i; } });
+      if (!last) return null;
+      return { key:s.key, x: xFor(lastIdx)+7, y: yFor(last.v), text: String(Math.round(last.v)), color:s.color };
+    }).filter(Boolean).sort(function(a,b){ return a.y-b.y; });
+    var minGap=12, labelTop=padT+5, labelBottom=svgH-padB-4;
+    for (var li=1; li<endLabelSpecs.length; li++){
+      if (endLabelSpecs[li].y - endLabelSpecs[li-1].y < minGap) endLabelSpecs[li].y = endLabelSpecs[li-1].y + minGap;
+    }
+    var overflow = endLabelSpecs.length ? endLabelSpecs[endLabelSpecs.length-1].y - labelBottom : 0;
+    if (overflow > 0) endLabelSpecs.forEach(function(spec){ spec.y -= overflow; });
+    if (endLabelSpecs.length && endLabelSpecs[0].y < labelTop){
+      endLabelSpecs[0].y = labelTop;
+      for (var lj=1; lj<endLabelSpecs.length; lj++) endLabelSpecs[lj].y = Math.max(endLabelSpecs[lj].y, endLabelSpecs[lj-1].y + minGap);
+    }
+    var endLabels = endLabelSpecs.map(function(spec){
+      return '<text class="end-label" data-key-ref="'+spec.key+'" x="'+spec.x+'" y="'+(spec.y+3.5)+'" fill="'+spec.color+'">'+spec.text+'</text>';
+    }).join('');
+
+    var hoverCols = keys.map(function(k,i){
+      return '<rect class="hover-col" data-idx="'+i+'" x="'+(xFor(i) - plotW/keys.length/2)+'" y="'+padT+'" width="'+(plotW/keys.length)+'" height="'+plotH+'" fill="transparent"></rect>';
+    }).join('');
+
+    document.getElementById('trend-chart').innerHTML =
+      '<svg class="line-chart-svg" viewBox="0 0 '+svgW+' '+svgH+'" role="img" aria-label="Tendência do TPA">' +
+        '<line class="axis-line" x1="'+padL+'" x2="'+(svgW-padR)+'" y1="'+(svgH-padB)+'" y2="'+(svgH-padB)+'"></line>' +
+        gridLines + xTicks + linesSvg + dotsSvg + endLabels +
+        hoverCols +
+      '</svg>';
+
+    // reapply visibility state
+    seriesDefs.forEach(function(s){
+      if (!visibleSlots[s.key]){
+        document.querySelectorAll('[data-key-ref="'+s.key+'"]').forEach(function(el){ el.classList.add('hidden'); });
+      }
+    });
+
+    renderLegend(seriesDefs.map(function(s){ return { key:s.key, label:s.label, color:s.color, dashed:s.dashed }; }));
+    seriesDefs.forEach(function(s){
+      var btn = document.querySelector('.legend-item[data-key="'+s.key+'"]');
+      if (btn && !visibleSlots[s.key]) btn.classList.add('off');
+    });
+
+    wireTooltip(keys, seriesDefs, xFor, granularity);
+    trendState.tableBuilt = false;
+    var wrap = document.getElementById('trend-table-wrap');
+    if (!wrap.hidden){ buildTrendTable(keys, seriesDefs, granularity); }
+  }
+
+  function wireTooltip(keys, seriesDefs, xFor, granularity){
+    var tooltip = document.getElementById('trend-tooltip');
+    var chartWrap = document.getElementById('trend-chart-wrap');
+    var svgEl = document.querySelector('.line-chart-svg');
+    function showTooltip(idx, evt){
+      var rows = seriesDefs.filter(function(s){ return visibleSlots[s.key]; }).map(function(s){
+        var p = s.points[idx];
+        return '<div class="tooltip-row"><span class="dot" style="background:'+s.color+'"></span>' +
+          '<span class="name">'+s.label+'</span>' +
+          '<span class="val">'+(p.v===null ? 'sem chamados' : fmtMinShort(p.v)+' min')+'</span></div>';
+      }).join('');
+      var dateLabel = granularity === 'day' ? fmtDateBR(keys[idx]) : (granularity === 'month' ? bucketLabel(keys[idx], granularity) : 'semana de ' + fmtDateBR(keys[idx]));
+      tooltip.innerHTML = '<div class="tooltip-date">'+dateLabel+'</div>' + rows;
+      tooltip.classList.add('show');
+      var wrapRect = chartWrap.getBoundingClientRect();
+      var mx = evt.clientX - wrapRect.left, my = evt.clientY - wrapRect.top;
+      var tw = tooltip.offsetWidth || 160;
+      var left = mx + 14; if (left + tw > wrapRect.width) left = mx - tw - 14;
+      tooltip.style.left = Math.max(0,left) + 'px';
+      tooltip.style.top = Math.max(0, my - 10) + 'px';
+    }
+    function hideTooltip(){ tooltip.classList.remove('show'); }
+    document.querySelectorAll('.hover-col').forEach(function(col){
+      col.addEventListener('mousemove', function(evt){ showTooltip(parseInt(col.getAttribute('data-idx'),10), evt); });
+      col.addEventListener('mouseleave', hideTooltip);
+    });
+  }
+
+  function buildTrendTable(keys, seriesDefs, granularity){
+    var head = '<tr><th>'+(granularity==='day'?'Dia':granularity==='month'?'Mês':'Semana')+'</th>' + seriesDefs.map(function(s){return '<th>'+s.label+'</th>';}).join('') + '</tr>';
+    var rows = keys.map(function(k,i){
+      var cells = seriesDefs.map(function(s){
+        var p = s.points[i];
+        return '<td class="num">'+(p.v===null ? '—' : fmtMinShort(p.v)+' min')+'</td>';
+      }).join('');
+      return '<tr><td>'+bucketLabel(k, granularity)+'</td>'+cells+'</tr>';
+    }).join('');
+    document.getElementById('trend-table-wrap').innerHTML = '<table class="data-table"><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>';
+  }
+
+  var trendTableBtn = document.getElementById('trend-table-toggle');
+  trendTableBtn.addEventListener('click', function(){
+    var wrap = document.getElementById('trend-table-wrap');
+    var chartWrap = document.getElementById('trend-chart-wrap');
+    var legendEl = document.getElementById('trend-legend');
+    var showing = wrap.hidden;
+    if (showing){ buildTrendTable(trendState.keys, trendState.seriesDefs, trendState.granularity); }
+    wrap.hidden = !showing; chartWrap.hidden = showing; legendEl.hidden = showing;
+    trendTableBtn.textContent = showing ? 'Ver como gráfico' : 'Ver como tabela';
+    trendTableBtn.setAttribute('aria-pressed', String(showing));
+  });
+
+  /* ================= main render ================= */
+  function renderAll(){
+    closeDrilldown();
+
+    var periodGroupEl = document.getElementById('period-group');
+    var kpiGridEl = document.getElementById('kpi-grid');
+    var emptyWrapEl = document.getElementById('empty-state-wrap');
+    var contentWrapEl = document.getElementById('content-wrap');
+    var slaWrapEl = document.getElementById('sla-wrap');
+    var pdfExportBtn = document.getElementById('pdf-export-btn');
+
+    if (state.analyst === 'sla'){
+      periodGroupEl.hidden = true;
+      kpiGridEl.hidden = true;
+      emptyWrapEl.hidden = true;
+      contentWrapEl.hidden = true;
+      slaWrapEl.hidden = false;
+      if (pdfExportBtn) pdfExportBtn.hidden = true;
+      document.getElementById('subtitle').textContent = 'Monitoramento ao vivo dos chamados pendentes com meta de 30 minutos de primeira resposta.';
+      renderSlaWatch();
+      startSlaTicker();
+      return;
+    }
+    periodGroupEl.hidden = false;
+    kpiGridEl.hidden = false;
+    slaWrapEl.hidden = true;
+    if (pdfExportBtn) pdfExportBtn.hidden = false;
+    stopSlaTicker();
+
+    var period = computePeriod(state);
+    var granularity = granularityFor(period.from, period.to);
+
+    var priorityLabel = state.priority === 'all' ? '' : ' · Prioridade: ' + state.priority;
+    var scopeLabel = period.label + (state.analyst==='all' ? ' · todos os analistas' : ' · ' + analystBySlot(state.analyst).short) + priorityLabel;
+    document.getElementById('subtitle').textContent = (state.analyst === 'all'
+      ? 'Comparativo dos analistas — ' + period.label.toLowerCase() + '.'
+      : 'Resumo individual de ' + analystBySlot(state.analyst).name + ' — ' + period.label.toLowerCase() + '.')
+      + (state.priority === 'all' ? '' : ' Prioridade: ' + state.priority + '.');
+
+    var rowsScope = filterTickets(period.from, period.to, state.analyst === 'all' ? null : state.analyst);
+    var aggScope = aggregate(rowsScope);
+
+    // Período anterior de mesma duração, pra comparação (deltas nos KPIs).
+    var periodSpanMs = period.to - period.from;
+    var prevFrom = period.from - periodSpanMs - 1;
+    var prevTo = period.from - 1;
+    var rowsPrev = filterTickets(prevFrom, prevTo, state.analyst === 'all' ? null : state.analyst);
+    var aggPrev = aggregate(rowsPrev);
+
+    var emptyWrap = document.getElementById('empty-state-wrap');
+    var contentWrap = document.getElementById('content-wrap');
+    var kpiGrid = document.getElementById('kpi-grid');
+
+    var breachSlot = state.analyst === 'all' ? null : state.analyst;
+    renderKPIs(rowsScope, aggScope, scopeLabel, breachSlot, period, aggPrev);
+
+    if (aggScope.ticket_count === 0){
+      emptyWrap.hidden = false;
+      contentWrap.hidden = true;
+      var detailEl = document.getElementById('empty-state-detail');
+      var msgEl = document.getElementById('empty-state-msg');
+      if (period.to > datasetMax){
+        msgEl.textContent = 'Nenhum chamado coletado ainda para esse período.';
+        detailEl.textContent = 'A última coleta do Jira trouxe chamados até ' + fmtDateTimeBR(META.generated_at) + '. Se o período selecionado começa depois disso, é esperado não ter nada aqui ainda — peça uma atualização pra trazer os chamados mais novos.';
+        detailEl.hidden = false;
+      } else {
+        msgEl.textContent = 'Nenhum chamado nesse período.';
+        detailEl.hidden = true;
+      }
+      return;
+    }
+    emptyWrap.hidden = true;
+    contentWrap.hidden = false;
+
+    var overviewCharts = document.getElementById('overview-charts');
+    var trendTitle = document.getElementById('trend-title');
+    var trendDesc = document.getElementById('trend-desc');
+    var summaryTitle = document.getElementById('summary-title');
+    var summaryDesc = document.getElementById('summary-desc');
+    var summaryPanel = document.getElementById('summary-panel');
+
+    var gLabel = granularity === 'day' ? 'diária' : granularity === 'week' ? 'semanal' : 'mensal';
+
+    var tpaDistributionPanel = document.getElementById('tpa-distribution-panel');
+    var tpaEvolutionPanel = document.getElementById('tpa-evolution-panel');
+    var tpaCompliancePanel = document.getElementById('tpa-compliance-panel');
+    var heatmapPanel = document.getElementById('heatmap-panel');
+
+    if (state.analyst === 'all'){
+      overviewCharts.hidden = false;
+      tpaDistributionPanel.hidden = false;
+      tpaEvolutionPanel.hidden = false;
+      tpaCompliancePanel.hidden = false;
+      heatmapPanel.hidden = false;
+      renderOverviewCharts(rowsScope, period);
+
+      trendTitle.textContent = 'Tendência ' + gLabel + ' do TPA';
+      trendDesc.textContent = 'Média de tempo de primeira resposta por ' + (granularity==='day'?'dia':granularity==='week'?'semana':'mês') + ' (minutos)';
+      var trend = buildTrend(rowsScope, ANALYSTS.map(function(a){return a.slot;}), granularity, period.from, period.to);
+      var seriesDefs = ANALYSTS.map(function(a){
+        return { key:a.slot, label:a.short, color:seriesColor(a.slot), dashed:false, points: trend.series[a.slot].map(function(b){ return {v:b.avg}; }) };
+      });
+      renderTrendChart(trend.keys, seriesDefs, granularity);
+
+      summaryTitle.textContent = 'Resumo por analista';
+      summaryDesc.textContent = 'Detalhamento do período selecionado';
+      summaryPanel.hidden = false;
+      renderSummaryTable(rowsScope, null, period);
+    } else {
+      overviewCharts.hidden = true;
+      tpaDistributionPanel.hidden = true;
+      tpaEvolutionPanel.hidden = true;
+      tpaCompliancePanel.hidden = true;
+      heatmapPanel.hidden = true;
+
+      var a = analystBySlot(state.analyst);
+      trendTitle.textContent = 'Tendência ' + gLabel + ' — ' + a.short;
+      trendDesc.textContent = 'TPA por ' + (granularity==='day'?'dia':granularity==='week'?'semana':'mês') + ', com a média da equipe como referência';
+      var trendAll = buildTrend(rowsScope.length ? filterTickets(period.from, period.to, null) : [], [a.slot], granularity, period.from, period.to);
+      var teamRows = filterTickets(period.from, period.to, null);
+      var teamTrend = buildTrend(teamRows, ['team'], granularity, period.from, period.to);
+      // build team series manually (avg across all analysts combined per bucket)
+      var keys2 = generateBucketKeys(period.from, period.to, granularity);
+      var teamByKey = {}; keys2.forEach(function(k){ teamByKey[k] = []; });
+      teamRows.forEach(function(r){ var k = bucketKey(r[1], granularity); if (teamByKey[k]) teamByKey[k].push(r); });
+      var teamPoints = keys2.map(function(k){ var agg = aggregate(teamByKey[k]); return { v: agg.avg }; });
+
+      var mySeries = { key:a.slot, label:a.short, color:seriesColor(a.slot), dashed:false, points: trendAll.series[a.slot].map(function(b){ return {v:b.avg}; }) };
+      var teamSeries = { key:'team', label:'Média da equipe', color: cssVar('--text-muted'), dashed:true, points: teamPoints };
+      renderTrendChart(keys2, [mySeries, teamSeries], granularity);
+
+      summaryTitle.textContent = 'Detalhamento — ' + a.name;
+      summaryDesc.textContent = 'Resumo do período selecionado, pronto para apresentar';
+      summaryPanel.hidden = false;
+      renderSummaryTable(rowsScope, a.slot, period);
+    }
+  }
+
+  initialLoad();
+
+  // Encerra o que fica rodando em background (timers) quando a página /tpa é
+  // desmontada, pra não seguir batendo no Jira depois que o usuário navegou
+  // para outra tela do intranet.
+  return function cleanupTpaDashboard(){
+    try { stopSlaTicker(); } catch (e) { /* ignore */ }
+    try { clearInterval(updateSlaTabAlertHandle); } catch (e) { /* ignore */ }
+  };
+}
