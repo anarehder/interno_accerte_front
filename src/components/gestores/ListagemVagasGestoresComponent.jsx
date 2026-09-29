@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { jsPDF } from 'jspdf';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa6';
-import { FaIdBadge, FaBriefcase, FaFileSignature, FaListCheck, FaTrash, FaFilePdf } from 'react-icons/fa6';
+import { FaIdBadge, FaBriefcase, FaFileSignature, FaListCheck, FaTrash, FaFilePdf, FaLock, FaLockOpen } from 'react-icons/fa6';
 import { useAuth } from '../../contexts/AuthContext';
 import { useFuncionarios } from '../../contexts/FuncionariosContext';
 import apiService from '../../services/apiService';
@@ -35,6 +35,7 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, h
 
     const progress = getProgressPercent(vaga.status);
     const statusColor = getStatusColor(vaga.status);
+    const edicaoLiberada = vaga.edicaoLiberada === true || vaga.edicaoLiberada === 1;
 
     const funcionarioLogado = dados?.funcionarios?.find(
         (f) => f.email?.toLowerCase() === user?.mail?.toLowerCase()
@@ -66,6 +67,25 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, h
             }
         } else {
             // console.log('Ação cancelada.');
+        }
+    };
+
+    const handleToggleEdicaoLiberada = async () => {
+        const novoValor = !edicaoLiberada;
+        const confirmado = window.confirm(
+            novoValor
+                ? `Deseja realmente liberar a edição da vaga "${vaga.cargo}" para o solicitante?`
+                : `Deseja realmente bloquear a edição da vaga "${vaga.cargo}" para o solicitante?`
+        );
+
+        if (confirmado) {
+            try {
+                await apiService.liberarEdicaoVaga(vaga.id, novoValor);
+                setUpdated(true);
+                alert(novoValor ? "Edição liberada" : "Edição bloqueada");
+            } catch (error) {
+                console.error("Erro ao alterar liberação de edição", error.data);
+            }
         }
     };
 
@@ -247,12 +267,20 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, h
     // console.log(vaga);
     return (
         <Card>
+            <NameRow>
+                <CargoTitle>
+                    {vaga.cargo}
+                    {vaga.confidencial === 1 && <ConfidencialTag>Confidencial</ConfidencialTag>}
+                </CargoTitle>
+                <EdicaoLiberadaTag
+                    $liberada={edicaoLiberada}
+                    title={edicaoLiberada ? "O solicitante pode editar os dados desta vaga" : "O solicitante não pode editar os dados desta vaga"}
+                >
+                    {edicaoLiberada ? "Edição liberada" : "Edição bloqueada"}
+                </EdicaoLiberadaTag>
+            </NameRow>
             <HeaderRow>
                 <HeaderMain>
-                    <CargoTitle>
-                        {vaga.cargo}
-                        {vaga.confidencial === 1 && <ConfidencialTag>Confidencial</ConfidencialTag>}
-                    </CargoTitle>
                     <SubTitle>
                         Criada em {new Date(vaga.createdAt).toLocaleDateString()}
                         {' • '}Última atualização em {new Date(vaga.updatedAt).toLocaleDateString()}
@@ -405,9 +433,15 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, h
                             </select>
                             <SubmitButton onClick={handleSubmit}>Alterar Status</SubmitButton>
                             {isGestorAreaCompleta && (
-                                <DeleteButton onClick={handleDelete}>
-                                    <FaTrash /> Excluir Vaga
-                                </DeleteButton>
+                                <>
+                                    <EdicaoLiberadaButton onClick={handleToggleEdicaoLiberada}>
+                                        {edicaoLiberada ? <FaLock /> : <FaLockOpen />}
+                                        {edicaoLiberada ? "Bloquear Edição" : "Liberar Edição"}
+                                    </EdicaoLiberadaButton>
+                                    <DeleteButton onClick={handleDelete}>
+                                        <FaTrash /> Excluir Vaga
+                                    </DeleteButton>
+                                </>
                             )}
                         </EditControls>
                     </EditRow>
@@ -429,6 +463,26 @@ const Card = styled.div`
     padding: 20px 24px;
     box-shadow: 0 2px 10px rgba(20, 30, 60, 0.05);
     color: #555;
+`;
+
+const NameRow = styled.div`
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 4px;
+`;
+
+const EdicaoLiberadaTag = styled.div`
+    font-size: 12px;
+    font-weight: 600;
+    width: 150px;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    color: ${({ $liberada }) => ($liberada ? '#15803d' : '#dc2626')};
+    background-color: ${({ $liberada }) => ($liberada ? '#dcfce7' : '#fee2e2')};
 `;
 
 const HeaderRow = styled.div`
@@ -650,6 +704,25 @@ const SubmitButton = styled.button`
         transform: translateY(-1px);
         box-shadow: 0 6px 16px rgba(32, 95, 221, 0.32);
         background: linear-gradient(to right, #205fdd, #001143);
+    }
+`;
+
+const EdicaoLiberadaButton = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid #205fdd;
+    border-radius: 999px;
+    background: #fff;
+    color: #205fdd;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+        background: #205fdd;
+        color: #fff;
     }
 `;
 
