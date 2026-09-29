@@ -32,6 +32,7 @@ import CertificationsAdminPage from "./pages/CertificationsAdminPage";
 import SignatureEmail2025Page from "./pages/SignatureEmail2025Page";
 import HumorGestoresPage from "./pages/painel-gestores-pages/HumorGestoresPage";
 import CriarVagaPage from "./pages/painel-gestores-pages/CriarVagaPage";
+import EditarVagaPage from "./pages/painel-gestores-pages/EditarVagaPage";
 import ListaVagasPage from "./pages/painel-gestores-pages/ListaVagasPage";
 import AprovarFeriasPage from "./pages/painel-gestores-pages/AprovarFeriasPage";
 import FiltrarFeriasPage from "./pages/painel-gestores-pages/FiltrarFeriasPage";
@@ -103,6 +104,7 @@ function App() {
                   <Route path="/feedback/onboarding/lista" element={<ListaFeedbackGestorPage />} />
                   <Route path="/humorequipe" element={<HumorGestoresPage />} />
                   <Route path="/criarvaga" element={<CriarVagaPage />} />
+                  <Route path="/editarvaga" element={<EditarVagaPage />} />
                   <Route path="/listavagas" element={<ListaVagasPage />} />
                   <Route path="/aprovarferias" element={<AprovarFeriasPage />} />
                   <Route path="/filtrarferias" element={<FiltrarFeriasPage />} />

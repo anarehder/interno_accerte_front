@@ -96,6 +96,10 @@ async function liberarEdicaoVaga(id, edicaoLiberada){
     return axios.post(`${BASE_URL}/vagas/liberar-edicao/${id}`, { edicaoLiberada }, await getAuthHeaders())
 }
 
+async function editarVaga(id, body){
+    return axios.post(`${BASE_URL}/vagas/editar/${id}`, body, await getAuthHeaders())
+}
+
 function getSugestoes(){
     return axios.get(`${BASE_URL}/sugestoes`)
 }
@@ -229,6 +233,6 @@ function ragQuery(body){
 }
 
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, liberarEdicaoVaga, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, criarGestor, editarGestor, deletarGestor, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery }
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, liberarEdicaoVaga, editarVaga, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, criarGestor, editarGestor, deletarGestor, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery }
 
 export default apiService;

@@ -26,7 +26,7 @@ function ListaVagasPage() {
     const [vagas, setVagas] = useState([]);
     const [updated, setUpdated] = useState(false);
     const [hideSalary, setHideSalary] = useState(false);
-    const [statusFilters, setStatusFilters] = useState({ emAndamento: true, concluida: true, cancelada: true });
+    const [statusFilters, setStatusFilters] = useState({ emAndamento: true, concluida: false, cancelada: false });
 
     const toggleStatusFilter = (key) => {
         setStatusFilters((prev) => ({ ...prev, [key]: !prev[key] }));

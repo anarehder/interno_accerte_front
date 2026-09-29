@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { jsPDF } from 'jspdf';
+import { useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa6';
-import { FaIdBadge, FaBriefcase, FaFileSignature, FaListCheck, FaTrash, FaFilePdf, FaLock, FaLockOpen } from 'react-icons/fa6';
+import { FaIdBadge, FaBriefcase, FaFileSignature, FaListCheck, FaTrash, FaFilePdf, FaLock, FaLockOpen, FaPen } from 'react-icons/fa6';
 import { useAuth } from '../../contexts/AuthContext';
 import { useFuncionarios } from '../../contexts/FuncionariosContext';
 import apiService from '../../services/apiService';
@@ -30,9 +31,10 @@ const getStatusColor = (status) => STATUS_COLORS[status] || DEFAULT_STATUS_COLOR
 function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, hideSalary}) {
     const {user} = useAuth();
     const {dados} = useFuncionarios();
+    const navigate = useNavigate();
     const [expanded, setExpanded] = useState(false);
     const [novoStatus, setNovoStatus] = useState(vaga.status);
-
+    console.log(vaga);
     const progress = getProgressPercent(vaga.status);
     const statusColor = getStatusColor(vaga.status);
     const edicaoLiberada = vaga.edicaoLiberada === true || vaga.edicaoLiberada === 1;
@@ -43,11 +45,13 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, h
     const isGestorAreaCompleta = dados?.gestores?.some(
         (g) => g.funcionarioId === funcionarioLogado?.id && AREAS_COM_STATUS_COMPLETO.includes(g.areaId)
     ) ?? false;
+    const isDonoDaVaga = !!funcionarioLogado?.id && funcionarioLogado.id === vaga.solicitanteId;
+    const podeEditarVaga = edicaoLiberada && (isDonoDaVaga || isGestorAreaCompleta);
     // console.log(progress);
     const handleStatusChange = (novoStatus) => {
         setNovoStatus(novoStatus);
     };
-
+    console.log(vaga);
     const handleSubmit= async ()=>{
         const body = {
             "email": user.mail,
@@ -282,7 +286,7 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, h
             <HeaderRow>
                 <HeaderMain>
                     <SubTitle>
-                        Criada em {new Date(vaga.createdAt).toLocaleDateString()}
+                        Criada em {new Date(vaga.createdAt).toLocaleDateString()} por {vaga.Solicitante}
                         {' • '}Última atualização em {new Date(vaga.updatedAt).toLocaleDateString()}
                     </SubTitle>
                 </HeaderMain>
@@ -432,6 +436,11 @@ function ListagemVagasGestoresComponent({vaga, setUpdated, getProgressPercent, h
                                 )}
                             </select>
                             <SubmitButton onClick={handleSubmit}>Alterar Status</SubmitButton>
+                            {podeEditarVaga && (
+                                <EditarVagaButton onClick={() => navigate(`/editarvaga?vagaId=${vaga.id}`)}>
+                                    <FaPen /> Editar Vaga
+                                </EditarVagaButton>
+                            )}
                             {isGestorAreaCompleta && (
                                 <>
                                     <EdicaoLiberadaButton onClick={handleToggleEdicaoLiberada}>
@@ -704,6 +713,25 @@ const SubmitButton = styled.button`
         transform: translateY(-1px);
         box-shadow: 0 6px 16px rgba(32, 95, 221, 0.32);
         background: linear-gradient(to right, #205fdd, #001143);
+    }
+`;
+
+const EditarVagaButton = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid #0d9488;
+    border-radius: 999px;
+    background: #fff;
+    color: #0d9488;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+        background: #0d9488;
+        color: #fff;
     }
 `;
 

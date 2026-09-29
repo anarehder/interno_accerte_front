@@ -1,20 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useFuncionarios } from '../../contexts/FuncionariosContext';
 import apiService from '../../services/apiService';
 import RequisicaoVaga from '../../assets/painel-gestores/requisicao-vaga.png';
 import HeaderImageComponent from '../../components/basic/HeaderImageComponent';
 import { FaIdBadge, FaBriefcase, FaSackDollar, FaFileSignature, FaArrowsRotate, FaListCheck } from 'react-icons/fa6';
 
+const AREAS_COM_STATUS_COMPLETO = [1, 7, 12];
+
+// campos que a rota POST /vagas/editar/:id aceita (edição parcial)
+const CAMPOS_EDITAVEIS = [
+    'areaId', 'cargo', 'salario', 'sal_variavel', 'motivo', 'substituidoId',
+    'formacaoAcad', 'tipoContratoId', 'jornadaId', 'atividades', 'reqHardSkills',
+    'reqSoftSkills', 'informacoes', 'confidencial', 'imediato', 'qtdeDeVagas',
+];
+
 const FIELD_INFO = {
-    solicitante: {
-        title: "Solicitante da vaga",
-        text: "Pessoa responsável pela solicitação desta vaga. Preenchido automaticamente com base no seu cadastro.",
-    },
     area: {
         title: "Área",
-        text: "Área/departamento ao qual a vaga pertence. Se você é gestor de mais de uma área, selecione a área correspondente a esta vaga.",
+        text: "Área/departamento ao qual a vaga pertence.",
     },
     cargo: {
         title: "Título do cargo",
@@ -78,6 +84,29 @@ const FIELD_INFO = {
     },
 };
 
+// normaliza os campos editáveis vindos da API (0/1 -> boolean, etc.) pra
+// comparar de forma confiável depois e pra controlar os inputs do formulário
+function normalizarCampos(vaga) {
+    return {
+        areaId: vaga.areaId,
+        cargo: vaga.cargo ?? '',
+        salario: vaga.salario ?? '',
+        sal_variavel: vaga.sal_variavel === true || vaga.sal_variavel === 1,
+        motivo: vaga.motivo ?? '',
+        substituidoId: vaga.substituidoId ?? null,
+        formacaoAcad: vaga.formacaoAcad ?? '',
+        tipoContratoId: vaga.tipoContratoId,
+        jornadaId: vaga.jornadaId,
+        atividades: vaga.atividades ?? '',
+        reqHardSkills: vaga.reqHardSkills ?? '',
+        reqSoftSkills: vaga.reqSoftSkills ?? '',
+        informacoes: vaga.informacoes ?? '',
+        confidencial: vaga.confidencial === true || vaga.confidencial === 1,
+        imediato: vaga.imediato === true || vaga.imediato === 1,
+        qtdeDeVagas: vaga.qtdeDeVagas,
+    };
+}
+
 function FieldLabel({ children, required, infoKey, onInfoClick }) {
     return (
         <LabelRow>
@@ -98,44 +127,26 @@ function SectionHeader({ icon, children }) {
     );
 }
 
-function CriarVagaPage() {
+function EditarVagaPage() {
     const { user } = useAuth();
+    const { dados } = useFuncionarios();
     const navigate = useNavigate();
-    const [allowed, setAllowed] = useState(false);
-    const [formularioInfo, setFormularioInfo] = useState(null);
+    const [searchParams] = useSearchParams();
+    const vagaId = Number(searchParams.get("vagaId"));
+
     const [carregando, setCarregando] = useState(true);
-    const [funcionarioSolicitante, setFuncionarioSolicitante] = useState(0);
-    const [areaIdDoSolicitante, setAreaIdDoSolicitante] = useState([]);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [formularioInfo, setFormularioInfo] = useState(null);
+    const [vagaOriginal, setVagaOriginal] = useState(null);
+    const [form, setForm] = useState(null);
+    const [substituidoOutro, setSubstituidoOutro] = useState(false);
     const [infoAberto, setInfoAberto] = useState(null);
 
-    const reqDefault = {
-    solicitanteId: 0,
-    areaId: 0,
-    cargo: '',
-    salario: '',
-    sal_variavel: false,
-    motivo: '',
-    substituidoId: null,
-    substituidoOutro: false,
-    formacaoAcad: '',
-    tipoContratoId: 0,
-    jornadaId: 0,
-    atividades: '',
-    reqHardSkills: '',
-    reqSoftSkills: '',
-    informacoes: '',
-    status: 'Solicitado', // ou algum valor default
-    confidencial: false,
-    imediato: false,
-    qtdeDeVagas: 1
-    };
-
-    const [newReq, setNewReq] = useState(reqDefault);
+    const originalRef = useRef(null);
 
     const handleChange = (e) => {
-    const { name, type, value, checked } = e.target;
-
-        setNewReq((prev) => ({
+        const { name, type, value, checked } = e.target;
+        setForm((prev) => ({
             ...prev,
             [name]: type === "checkbox" ? checked : value,
         }));
@@ -143,170 +154,179 @@ function CriarVagaPage() {
 
     const handleSelectId = (e) => {
         const { name, value } = e.target;
-        setNewReq((prev) => ({
+        setForm((prev) => ({
             ...prev,
-            [name]: Number(value)
+            [name]: value === "" ? "" : Number(value),
         }));
     };
 
     useEffect(() => {
         if (!user) return;
+        if (!vagaId) {
+            setErrorMessage("Vaga não informada.");
+            setCarregando(false);
+            return;
+        }
 
-        const fetchScale = async () => {
+        const fetchTudo = async () => {
             try {
-                const response = await apiService.getVagasInfo();
-                setFormularioInfo(response.data);
-                const func = response.data.funcionarios.find((func) => func.email.toLowerCase() === user.mail.toLowerCase());
-                if (!func){
+                const [infoRes, vagasRes] = await Promise.all([
+                    apiService.getVagasInfo(),
+                    apiService.getVagas({ adminEmail: user.mail }),
+                ]);
+                setFormularioInfo(infoRes.data);
+
+                const encontrada = vagasRes.data.find((v) => v.id === vagaId);
+                if (!encontrada) {
+                    setErrorMessage("Vaga não encontrada ou você não tem acesso a ela.");
                     setCarregando(false);
                     return;
                 }
-                const area = response.data.gestores.filter(
-                    (gestor) => gestor.funcionarioId === func.id
-                );
-                setAllowed(true);
-                setFuncionarioSolicitante(func);
-                setAreaIdDoSolicitante(area);
-                setNewReq((prev) => ({
-                    ...prev,
-                    solicitanteId: func.id
-                }));
-                area.length === 1 &&
-                setNewReq((prev) => ({
-                    ...prev,
-                    areaId: area[0].areaId
-                }));
+
+                setVagaOriginal(encontrada);
+                const camposIniciais = normalizarCampos(encontrada);
+                setForm(camposIniciais);
+                setSubstituidoOutro(camposIniciais.motivo === "Substituição" && camposIniciais.substituidoId === null);
+                originalRef.current = camposIniciais;
                 setCarregando(false);
             } catch (error) {
-                console.error("Erro ao buscar informacoes vagas:", error);
+                console.error("Erro ao buscar vaga para edição:", error);
+                setErrorMessage("Erro ao carregar dados da vaga.");
                 setCarregando(false);
             }
         };
 
-        fetchScale();
+        fetchTudo();
+    }, [user, vagaId]);
 
-    }, [user]);
-    // console.log(newReq);
+    const funcionarioLogado = dados?.funcionarios?.find(
+        (f) => f.email?.toLowerCase() === user?.mail?.toLowerCase()
+    );
+    const isGestorAreaCompleta = dados?.gestores?.some(
+        (g) => g.funcionarioId === funcionarioLogado?.id && AREAS_COM_STATUS_COMPLETO.includes(g.areaId)
+    ) ?? false;
+    const isDonoDaVaga = !!funcionarioLogado?.id && !!vagaOriginal && funcionarioLogado.id === vagaOriginal.solicitanteId;
+    const edicaoLiberada = !!vagaOriginal && (vagaOriginal.edicaoLiberada === true || vagaOriginal.edicaoLiberada === 1);
+    const podeEditar = !!vagaOriginal && edicaoLiberada && (isDonoDaVaga || isGestorAreaCompleta);
+
+    // gestor de área completa pode mover a vaga pra qualquer área; o dono da
+    // vaga (sem ser gestor de área completa) só pode escolher entre as áreas
+    // que ele mesmo gerencia, igual ao formulário de criação
+    const areaIdsDoUsuario = dados?.gestores
+        ?.filter((g) => g.funcionarioId === funcionarioLogado?.id)
+        ?.map((g) => g.areaId) ?? [];
+    const areasDisponiveis = isGestorAreaCompleta
+        ? formularioInfo?.areas ?? []
+        : (formularioInfo?.areas ?? []).filter((a) => areaIdsDoUsuario.includes(a.id));
+
+    const buildChangedFields = () => {
+        const body = {};
+        CAMPOS_EDITAVEIS.forEach((campo) => {
+            if (JSON.stringify(form[campo]) !== JSON.stringify(originalRef.current[campo])) {
+                body[campo] = form[campo];
+            }
+        });
+        return body;
+    };
+
     const handleSubmit = async (e) => {
-        e.preventDefault(); // para não recarregar a página
+        e.preventDefault();
+
+        if (!form.areaId) {
+            alert("Selecione a área da vaga.");
+            return;
+        }
+        if (!form.cargo.trim()) {
+            alert("Informe o título do cargo.");
+            return;
+        }
+        if (!form.qtdeDeVagas || form.qtdeDeVagas < 1) {
+            alert("Informe a quantidade de vagas.");
+            return;
+        }
+        if (!form.salario) {
+            alert("Informe o salário/remuneração.");
+            return;
+        }
+        if (!form.tipoContratoId) {
+            alert("Selecione o tipo de contrato");
+            return;
+        }
+        if (!form.formacaoAcad) {
+            alert("Selecione a formação acadêmica exigida.");
+            return;
+        }
+        if (!form.jornadaId) {
+            alert("Selecione o tipo de jornada");
+            return;
+        }
+        if (!form.motivo) {
+            alert("Selecione o motivo de abertura da vaga.");
+            return;
+        }
+        if (form.motivo === "Substituição" && !substituidoOutro && !form.substituidoId) {
+            alert("Selecione o ocupante anterior desta vaga.");
+            return;
+        }
+        if (!form.atividades.trim()) {
+            alert("Descreva as responsabilidades e atribuições do cargo.");
+            return;
+        }
+        if (!form.reqHardSkills.trim()) {
+            alert("Descreva os pré-requisitos técnicos do cargo.");
+            return;
+        }
+        if (!form.reqSoftSkills.trim()) {
+            alert("Descreva os comportamentos e habilidades esperados para o cargo.");
+            return;
+        }
+
+        const body = buildChangedFields();
+        if (Object.keys(body).length === 0) {
+            alert("Nenhuma alteração para salvar.");
+            return;
+        }
+
+        const confirmado = window.confirm("Deseja realmente salvar as alterações desta vaga?");
+        if (!confirmado) return;
 
         try {
-            if (!newReq.areaId) {
-                alert("Selecione a área da vaga.");
-                return;
-            }
-            if (!newReq.cargo.trim()) {
-                alert("Informe o título do cargo.");
-                return;
-            }
-            if (!newReq.qtdeDeVagas || newReq.qtdeDeVagas < 1) {
-                alert("Informe a quantidade de vagas.");
-                return;
-            }
-            if (!newReq.salario) {
-                alert("Informe o salário/remuneração.");
-                return;
-            }
-            if (newReq.tipoContratoId === 0) {
-                alert("Selecione o tipo de contrato");
-                return
-            }
-            if (!newReq.formacaoAcad) {
-                alert("Selecione a formação acadêmica exigida.");
-                return;
-            }
-            if (newReq.jornadaId === 0) {
-                alert("Selecione o tipo de jornada");
-                return
-            }
-            if (!newReq.motivo) {
-                alert("Selecione o motivo de abertura da vaga.");
-                return;
-            }
-            if (newReq.motivo === "Substituição" && !newReq.substituidoOutro && !newReq.substituidoId) {
-                alert("Selecione o ocupante anterior desta vaga.");
-                return;
-            }
-            if (!newReq.atividades.trim()) {
-                alert("Descreva as responsabilidades e atribuições do cargo.");
-                return;
-            }
-            if (!newReq.reqHardSkills.trim()) {
-                alert("Descreva os pré-requisitos técnicos do cargo.");
-                return;
-            }
-            if (!newReq.reqSoftSkills.trim()) {
-                alert("Descreva os comportamentos e habilidades esperados para o cargo.");
-                return;
-            }
-            const vaga = {
-                ...newReq,
-                confidencial: Boolean(newReq.confidencial),
-                sal_variavel: Boolean(newReq.sal_variavel),
-                imediato: Boolean(newReq.imediato),
-            };
-            delete vaga.substituidoOutro; // campo só de controle da UI, backend não aceita
-
-            const body = {
-                adminEmail: user.mail,
-                vaga
-            }
-            console.log(body);
-
-            await apiService.createVagas(body);
-            alert('Vaga criada com sucesso!');
-            navigate('/listavagas');
+            await apiService.editarVaga(vagaOriginal.id, body);
+            alert("Vaga atualizada com sucesso!");
+            navigate("/listavagas");
         } catch (error) {
-            // console.error('Erro ao criar vaga:', error);
-            alert(`Possível erro ao criar vaga no servidor. Verifique se a vaga está na sua lista de vagas antes de tentar novamente. Detalhe: ${error.response.data.details.length > 0 && error.response.data.details[0]}, ${error.response.data.name}`);
+            const detalhe = error?.response?.data?.message || error?.response?.data?.name || "";
+            alert(`Erro ao editar a vaga. ${detalhe}`);
         }
     };
 
     return (
         <PageContainer>
-            <HeaderImageComponent pageTitle={"Requisição"} subtitle={"de Vaga"} lastPage={"painelgestores"} image={RequisicaoVaga} />
-            <IntroText>Preencha as informações abaixo para solicitar a abertura de uma nova vaga.</IntroText>
+            <HeaderImageComponent pageTitle={"Editar"} subtitle={"Vaga"} lastPage={"listavagas"} image={RequisicaoVaga} />
+            <IntroText>Altere abaixo as informações da vaga. Só os campos alterados serão enviados.</IntroText>
 
             {carregando && <StateBox>Carregando dados...</StateBox>}
-            {(!carregando && !allowed) && <StateBox><h1>Área destinada aos gestores</h1></StateBox>}
+            {(!carregando && errorMessage) && <StateBox><h1>{errorMessage}</h1></StateBox>}
+            {(!carregando && !errorMessage && vagaOriginal && !podeEditar) &&
+                <StateBox><h1>Você não tem permissão para editar esta vaga.</h1></StateBox>
+            }
 
-            {(!carregando && allowed) &&
-            // && funcionarioSolicitante !== 0
+            {(!carregando && !errorMessage && form && formularioInfo && podeEditar) &&
                 <Formulario onSubmit={handleSubmit}>
 
                     <SectionCard>
                         <SectionHeader icon={<FaIdBadge />}>Solicitação</SectionHeader>
                         <SectionGrid>
                             <FieldGroup>
-                                <FieldLabel infoKey="solicitante" onInfoClick={setInfoAberto}>Solicitante da vaga</FieldLabel>
-                                <input
-                                    type="text"
-                                    value={`${funcionarioSolicitante?.nome} ${funcionarioSolicitante?.sobrenome}`}
-                                    disabled
-                                />
-                            </FieldGroup>
-
-                            <FieldGroup>
                                 <FieldLabel infoKey="area" onInfoClick={setInfoAberto}>Área</FieldLabel>
-                                {
-                                    areaIdDoSolicitante.length > 1 &&
-                                    <select name="areaId" onChange={handleSelectId}>
-                                        <option value="">Selecione</option>
-                                        {areaIdDoSolicitante.map((item) => (
-                                            <option key={item.areaId} value={item.areaId}>
-                                                {formularioInfo? formularioInfo?.areas.find((area) => area.id === item.areaId)?.area : "Carregando..."}
-                                            </option>
-                                        ))}
-                                    </select>
-                                }
-                                {
-                                    areaIdDoSolicitante.length === 1 &&
-                                    <input
-                                        type="text"
-                                        value={formularioInfo ? formularioInfo?.areas.find((area) => area.id === areaIdDoSolicitante[0]?.areaId)?.area : "Carregando..."}
-                                        disabled
-                                    />
-                                }
+                                <select name="areaId" value={form.areaId} onChange={handleSelectId}>
+                                    <option value="">Selecione</option>
+                                    {areasDisponiveis.map((item) => (
+                                        <option key={item.id} value={item.id}>
+                                            {item.area}
+                                        </option>
+                                    ))}
+                                </select>
                             </FieldGroup>
                         </SectionGrid>
                     </SectionCard>
@@ -316,14 +336,14 @@ function CriarVagaPage() {
                         <SectionGrid>
                             <FieldGroup $full>
                                 <FieldLabel required infoKey="cargo" onInfoClick={setInfoAberto}>Título do cargo</FieldLabel>
-                                <input type="text" name="cargo" onChange={handleChange} maxLength={250}/>
+                                <input type="text" name="cargo" value={form.cargo} onChange={handleChange} maxLength={250} />
                             </FieldGroup>
 
                             <FieldGroup>
                                 <FieldLabel required infoKey="qtdeDeVagas" onInfoClick={setInfoAberto}>Quantidade de vagas</FieldLabel>
                                 <input
                                     type="number"
-                                    value={newReq.qtdeDeVagas}
+                                    value={form.qtdeDeVagas}
                                     min={1}
                                     name="qtdeDeVagas" onChange={handleSelectId}
                                 />
@@ -335,11 +355,11 @@ function CriarVagaPage() {
                                     <ToggleInput
                                         type="checkbox"
                                         name="imediato"
-                                        checked={newReq.imediato}
+                                        checked={form.imediato}
                                         onChange={handleChange}
                                     />
                                     <ToggleTrack />
-                                    <ToggleText>{newReq.imediato ? "Sim" : "Não"}</ToggleText>
+                                    <ToggleText>{form.imediato ? "Sim" : "Não"}</ToggleText>
                                 </ToggleWrapper>
                             </FieldGroup>
 
@@ -349,11 +369,11 @@ function CriarVagaPage() {
                                     <ToggleInput
                                         type="checkbox"
                                         name="confidencial"
-                                        checked={newReq.confidencial}
+                                        checked={form.confidencial}
                                         onChange={handleChange}
                                     />
                                     <ToggleTrack />
-                                    <ToggleText>{newReq.confidencial ? "Sim" : "Não"}</ToggleText>
+                                    <ToggleText>{form.confidencial ? "Sim" : "Não"}</ToggleText>
                                 </ToggleWrapper>
                             </FieldGroup>
                         </SectionGrid>
@@ -364,7 +384,7 @@ function CriarVagaPage() {
                         <SectionGrid>
                             <FieldGroup>
                                 <FieldLabel required infoKey="salario" onInfoClick={setInfoAberto}>Salário/remuneração</FieldLabel>
-                                <input type="number" name="salario" onChange={handleChange} />
+                                <input type="number" name="salario" value={form.salario} onChange={handleChange} />
                             </FieldGroup>
 
                             <FieldGroup>
@@ -373,11 +393,11 @@ function CriarVagaPage() {
                                     <ToggleInput
                                         type="checkbox"
                                         name="sal_variavel"
-                                        checked={newReq.sal_variavel}
+                                        checked={form.sal_variavel}
                                         onChange={handleChange}
                                     />
                                     <ToggleTrack />
-                                    <ToggleText>{newReq.sal_variavel ? "Sim" : "Não"}</ToggleText>
+                                    <ToggleText>{form.sal_variavel ? "Sim" : "Não"}</ToggleText>
                                 </ToggleWrapper>
                             </FieldGroup>
                         </SectionGrid>
@@ -388,7 +408,7 @@ function CriarVagaPage() {
                         <SectionGrid>
                             <FieldGroup>
                                 <FieldLabel required infoKey="tipoContrato" onInfoClick={setInfoAberto}>Regime de contrato</FieldLabel>
-                                <select name="tipoContratoId" onChange={handleSelectId}>
+                                <select name="tipoContratoId" value={form.tipoContratoId} onChange={handleSelectId}>
                                     <option value="">Selecione</option>
                                     {formularioInfo.contratos.map((item) => (
                                         <option key={item.id} value={item.id}>
@@ -400,7 +420,7 @@ function CriarVagaPage() {
 
                             <FieldGroup>
                                 <FieldLabel required infoKey="formacaoAcad" onInfoClick={setInfoAberto}>Formação acadêmica</FieldLabel>
-                                <select name="formacaoAcad" onChange={handleChange}>
+                                <select name="formacaoAcad" value={form.formacaoAcad} onChange={handleChange}>
                                     <option value="">Selecione</option>
                                     <option value="Ensino Médio Completo (2º grau)">Ensino Médio Completo (2º grau)</option>
                                     <option value="Superior Incompleto">Superior Incompleto</option>
@@ -412,7 +432,7 @@ function CriarVagaPage() {
 
                             <FieldGroup>
                                 <FieldLabel required infoKey="jornada" onInfoClick={setInfoAberto}>Jornada de trabalho</FieldLabel>
-                                <select name="jornadaId" onChange={handleSelectId}>
+                                <select name="jornadaId" value={form.jornadaId} onChange={handleSelectId}>
                                     <option value="">Selecione</option>
                                     {formularioInfo.jornadas.map((item) => (
                                         <option key={item.id} value={item.id}>
@@ -429,28 +449,33 @@ function CriarVagaPage() {
                         <SectionGrid>
                             <FieldGroup>
                                 <FieldLabel required infoKey="motivo" onInfoClick={setInfoAberto}>Motivo de abertura</FieldLabel>
-                                <select name="motivo" onChange={handleChange}>
+                                <select name="motivo" value={form.motivo} onChange={handleChange}>
                                     <option value="">Selecione</option>
                                     <option value="Substituição">Substituição</option>
                                     <option value="Aumento de Quadro">Aumento de Quadro</option>
                                 </select>
                             </FieldGroup>
 
-                            {newReq.motivo === "Substituição" &&
+                            {form.motivo === "Substituição" &&
                                 <FieldGroup>
                                     <FieldLabel required infoKey="substituido" onInfoClick={setInfoAberto}>Ocupante anterior</FieldLabel>
-                                    <select name="substituidoId" onChange={(e) => {
-                                        const { value } = e.target;
-                                        if (value === "outro") {
-                                            setNewReq((prev) => ({ ...prev, substituidoId: null, substituidoOutro: true }));
-                                        } else {
-                                            setNewReq((prev) => ({
-                                                ...prev,
-                                                substituidoId: value === "" ? null : Number(value),
-                                                substituidoOutro: false
-                                            }));
-                                        }
-                                    }}>
+                                    <select
+                                        name="substituidoId"
+                                        value={substituidoOutro ? "outro" : (form.substituidoId ?? "")}
+                                        onChange={(e) => {
+                                            const { value } = e.target;
+                                            if (value === "outro") {
+                                                setSubstituidoOutro(true);
+                                                setForm((prev) => ({ ...prev, substituidoId: null }));
+                                            } else {
+                                                setSubstituidoOutro(false);
+                                                setForm((prev) => ({
+                                                    ...prev,
+                                                    substituidoId: value === "" ? null : Number(value),
+                                                }));
+                                            }
+                                        }}
+                                    >
                                         <option value="">Selecione</option>
                                         <option value="outro">Não detalhado ou já desligado</option>
                                         {formularioInfo.funcionarios.map((item) => (
@@ -469,31 +494,31 @@ function CriarVagaPage() {
                         <StackGrid>
                             <FieldGroup $full>
                                 <FieldLabel required infoKey="atividades" onInfoClick={setInfoAberto}>Responsabilidades e atribuições</FieldLabel>
-                                <textarea name="atividades" onChange={handleChange} maxLength={2000}/>
+                                <textarea name="atividades" value={form.atividades} onChange={handleChange} maxLength={2000} />
                             </FieldGroup>
 
                             <FieldGroup $full>
                                 <FieldLabel required infoKey="reqHardSkills" onInfoClick={setInfoAberto}>Pré-requisitos técnicos</FieldLabel>
-                                <textarea name="reqHardSkills" onChange={handleChange} maxLength={2000} />
+                                <textarea name="reqHardSkills" value={form.reqHardSkills} onChange={handleChange} maxLength={2000} />
                             </FieldGroup>
 
                             <FieldGroup $full>
                                 <FieldLabel required infoKey="reqSoftSkills" onInfoClick={setInfoAberto}>Comportamentos e habilidades</FieldLabel>
-                                <textarea name="reqSoftSkills" onChange={handleChange} maxLength={2000}/>
+                                <textarea name="reqSoftSkills" value={form.reqSoftSkills} onChange={handleChange} maxLength={2000} />
                             </FieldGroup>
 
                             <FieldGroup $full>
                                 <FieldLabel infoKey="informacoes" onInfoClick={setInfoAberto}>Informações relevantes</FieldLabel>
-                                <textarea name="informacoes" onChange={handleChange} maxLength={990}/>
+                                <textarea name="informacoes" value={form.informacoes} onChange={handleChange} maxLength={2000} />
                             </FieldGroup>
                         </StackGrid>
                     </SectionCard>
 
                     <SubmitRow>
-                        <SubmitButton type="submit">Enviar Solicitação</SubmitButton>
+                        <CancelButton type="button" onClick={() => navigate("/listavagas")}>Cancelar</CancelButton>
+                        <SubmitButton type="submit">Salvar Alterações</SubmitButton>
                     </SubmitRow>
                 </Formulario>
-
             }
 
             {infoAberto && (
@@ -509,10 +534,10 @@ function CriarVagaPage() {
             )}
 
         </PageContainer>
-    )
+    );
 }
 
-export default CriarVagaPage;
+export default EditarVagaPage;
 
 const PageContainer = styled.div`
     width: 100%;
@@ -633,6 +658,7 @@ const FieldGroup = styled.div`
 
 const SubmitRow = styled.div`
     justify-content: center;
+    gap: 16px;
 `
 
 const SubmitButton = styled.button`
@@ -650,6 +676,21 @@ const SubmitButton = styled.button`
         transform: translateY(-1px);
         box-shadow: 0 8px 20px rgba(32, 95, 221, 0.32);
         background: linear-gradient(to right, #205fdd, #001143);
+    }
+`
+
+const CancelButton = styled.button`
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid #dfe3e8;
+    border-radius: 999px;
+    background: #fff;
+    color: #555;
+    transition: background 0.15s ease;
+
+    &:hover {
+        background: #f4f6f9;
     }
 `
 
