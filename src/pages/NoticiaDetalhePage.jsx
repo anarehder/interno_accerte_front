@@ -3,20 +3,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 import apiService from "../services/apiService";
-
-const formatarData = (data) => {
-    if (!data) return "";
-    return new Date(data).toLocaleDateString("pt-BR", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    });
-};
-
-const formatarAutor = (autor) => {
-    if (!autor) return "Accerte";
-    return [autor.nome, autor.sobrenome].filter(Boolean).join(" ");
-};
+import { formatarAutorNoticia, formatarDataNoticia } from "../utils/noticiasUtils";
 
 function NoticiaDetalhePage() {
     const { slug } = useParams();
@@ -25,19 +12,28 @@ function NoticiaDetalhePage() {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        let ignorar = false;
+        setLoading(true);
+
         const fetchNoticia = async () => {
-            setLoading(true);
             try {
                 const response = await apiService.getNoticiaPorSlug(slug);
+                if (ignorar) return;
                 setNoticia(response.data);
+                setError("");
             } catch (error) {
+                if (ignorar) return;
                 console.error("Erro ao buscar a notícia:", error);
                 setError("Não foi possível carregar essa notícia.");
             } finally {
-                setLoading(false);
+                if (!ignorar) setLoading(false);
             }
         };
         fetchNoticia();
+
+        return () => {
+            ignorar = true;
+        };
     }, [slug]);
 
     return (
@@ -52,8 +48,8 @@ function NoticiaDetalhePage() {
                     <Tag>NOTÍCIAS</Tag>
                     <h1>{noticia.titulo}</h1>
                     <Meta>
-                        <span>Por {formatarAutor(noticia.Autor)}</span>
-                        <span>{formatarData(noticia.publicadoEm || noticia.createdAt)}</span>
+                        <span>Por {formatarAutorNoticia(noticia.Autor)}</span>
+                        <span>{formatarDataNoticia(noticia.publicadoEm || noticia.createdAt, true)}</span>
                     </Meta>
                     {noticia.imagemCapaUrl &&
                         <img src={noticia.imagemCapaUrl} alt={noticia.titulo} />

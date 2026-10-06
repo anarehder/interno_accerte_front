@@ -29,6 +29,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import ComunicadosPage from "./pages/ComunicadosPage";
 import NoticiaDetalhePage from "./pages/NoticiaDetalhePage";
+import ListaNoticiasPage from "./pages/ListaNoticiasPage";
 import CertificationsAdminPage from "./pages/CertificationsAdminPage";
 import SignatureEmail2025Page from "./pages/SignatureEmail2025Page";
 import HumorGestoresPage from "./pages/painel-gestores-pages/HumorGestoresPage";
@@ -101,6 +102,7 @@ function App() {
                   {/* <Route path="/vagasemaberto" element={<VagasAbertasPage />} /> */}
                   <Route path="/plantoes" element={<PlantoesTIPage />} />
                   <Route path="/comunicados" element={<ComunicadosPage />} />
+                  <Route path="/noticias" element={<ListaNoticiasPage />} />
                   <Route path="/noticias/:slug" element={<NoticiaDetalhePage />} />
                   <Route path="/feedback/onboarding" element={<FeedbackGestorPage />} />
                   <Route path="/feedback/onboarding/lista" element={<ListaFeedbackGestorPage />} />
