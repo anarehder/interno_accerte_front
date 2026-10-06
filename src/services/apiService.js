@@ -8,6 +8,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 // em chamadas do axios que precisem estar autenticadas como ultimo argumento.
 async function getAuthHeaders() {
     const idToken = await getIdToken(msalInstance, msalInstance.getAllAccounts());
+    console.log(`Bearer ${idToken}`);
     return { headers: { Authorization: `Bearer ${idToken}` } };
 }
 
@@ -232,7 +233,23 @@ function ragQuery(body){
     return axios.post(`${BASE_URL}/rag/pergunta`, body)
 }
 
+async function getNoticias(params){
+    return axios.get(`${BASE_URL}/noticias${params ? `?${params}` : ""}`, await getAuthHeaders())
+}
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, liberarEdicaoVaga, editarVaga, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, criarGestor, editarGestor, deletarGestor, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery }
+async function getLastNoticias(){
+    return axios.get(`${BASE_URL}/noticias?pagina=1&limite=3`, await getAuthHeaders())
+}
+
+async function getNoticiaPorSlug(slug){
+    return axios.get(`${BASE_URL}/noticias/${slug}`, await getAuthHeaders())
+}
+
+async function getNoticiasTags(){
+    return axios.get(`${BASE_URL}/noticias/tags`, await getAuthHeaders())
+}
+
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, liberarEdicaoVaga, editarVaga, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, criarGestor, editarGestor, deletarGestor, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery, getNoticias, getNoticiaPorSlug, getNoticiasTags, getLastNoticias }
 
 export default apiService;

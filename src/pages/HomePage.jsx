@@ -11,6 +11,7 @@ import ButtonBackground from "../assets/basic/button-background.png"
 import ComunicadoPopUpComponent from "../components/homepage/ComunicadoPopUpComponent";
 import HomePageHeaderComponent from "../components/homepage/HomePageHeaderComponent";
 import LinkedinPostsComponent from "../components/homepage/LinkedinPostsComponent";
+import NoticiasPostsComponent from "../components/homepage/NoticiasPostsComponent";
 import BirthdayPopUpComponent from "../components/homepage/BirthdayPopUpComponent";
 import IndicAccerteComponent from "../components/homepage/IndicAccerteComponent";
 import BannerSlideComponent from "../components/homepage/BannerSlideComponent";
@@ -101,6 +102,7 @@ const HomePage = () => {
                     }
                     {/* <AEMComponent /> */}
                     <LinkedinPostsComponent />
+                    <NoticiasPostsComponent />
                     <IndicAccerteComponent user={user} />
                     
                     {/* <SugestoesComponent email={user.mail} /> */}
