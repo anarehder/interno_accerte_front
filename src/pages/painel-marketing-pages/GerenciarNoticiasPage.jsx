@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import HeaderNewComponent from "../components/basic/HeaderNewComponent";
-import apiService from "../services/apiService";
-import { formatarDataNoticia } from "../utils/noticiasUtils";
+import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
+import apiService from "../../services/apiService";
+import { formatarDataNoticia } from "../../utils/noticiasUtils";
 
 const LIMITE_POR_PAGINA = 10;
 

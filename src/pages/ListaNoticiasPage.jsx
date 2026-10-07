@@ -139,10 +139,10 @@ function ListaNoticiasPage() {
                 </TagsBox>
             </FiltrosBar>
 
-            {loading && <div><br />Carregando notícias... </div>}
-            {error && <div><br />{error} </div>}
+            {loading && <VazioContainer>Carregando notícias...</VazioContainer>}
+            {!loading && error && <VazioContainer>{error}</VazioContainer>}
             {!loading && !error && noticiasFiltradas.length === 0 &&
-                <VazioContainer><br />Ainda não temos notícias para exibir. </VazioContainer>
+                <VazioContainer>Ainda não temos notícias para exibir.</VazioContainer>
             }
 
             {!loading && noticiasFiltradas.length > 0 &&
@@ -330,9 +330,16 @@ const ConteudoContainer = styled.div`
 `
 
 const VazioContainer = styled.div`
-    height: 100px;
+    width: 90%;
+    max-width: 1300px;
+    min-height: 40vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     font-weight: 500;
     font-size: 18px;
+    color: #8792a2;
     margin-top: 15px;
 `
 

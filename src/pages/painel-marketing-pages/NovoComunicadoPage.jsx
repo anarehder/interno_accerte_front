@@ -1,10 +1,9 @@
 import { useState } from "react";
 import styled from 'styled-components';
-import { useAuth } from "../contexts/AuthContext";
-import apiServiceBucket from "../services/apiServiceBucket";
-import HeaderNewComponent from "../components/basic/HeaderNewComponent";
-
-const GRUPOS = ["Banner", "Comunicado", "AEM4", "Calendário", "Organograma", "Sobre"];
+import { useAuth } from "../../contexts/AuthContext";
+import apiService from "../../services/apiService";
+import apiServiceBucket from "../../services/apiServiceBucket";
+import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
 
 const getHoje = () => {
     const hoje = new Date();
@@ -14,37 +13,44 @@ const getHoje = () => {
     return `${ano}-${mes}-${dia}`;
 };
 
-function NovoArquivoBucketPage() {
+function NovoComunicadoPage() {
     const { user } = useAuth();
-    const [form, setForm] = useState({ grupo: "", descricao: "", linkExterno: "", inicio: getHoje(), fim: "" });
-    const [arquivoFile, setArquivoFile] = useState(null);
+    const [form, setForm] = useState({ titulo: "", linkExterno: "-", legenda: "", areaId: 7, dataDivulgacao: null, tipo: "" });
+    const [imagemFile, setImagemFile] = useState(null);
     const [enviando, setEnviando] = useState(false);
 
     const handleForm = (e) => {
         const { id, value } = e.target;
 
+        let newValue;
+
+        if (id === "areaId") {
+            newValue = Number(value);
+        } else {
+            newValue = value;
+        }
+
         setForm(prevForm => ({
             ...prevForm,
-            [id]: value
+            [id]: newValue
         }));
     };
 
     const handleFile = (e) => {
-        setArquivoFile(e.target.files[0] || null);
+        setImagemFile(e.target.files[0] || null);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.grupo || !form.descricao || !arquivoFile || !form.inicio) {
+        if (!form.titulo || !imagemFile || !form.linkExterno || !form.areaId || !form.dataDivulgacao || !form.tipo) {
             alert("Todos os campos obrigatórios devem ser preenchidos.");
             return;
         }
 
-
         setEnviando(true);
         try {
             try {
-                await apiServiceBucket.fileExists(arquivoFile.name);
+                await apiServiceBucket.fileExists(imagemFile.name);
                 // se não deu erro, o arquivo já existe no bucket
                 alert(apiServiceBucket.ERRO_ARQUIVO_DUPLICADO);
                 return;
@@ -55,27 +61,23 @@ function NovoArquivoBucketPage() {
                 // 404: arquivo não existe, pode seguir
             }
 
-            const arquivoUrl = apiServiceBucket.getFileUrl(arquivoFile.name);
+            const imagemUrl = apiServiceBucket.getFileUrl(imagemFile.name);
+
             const body = {
                 email: user.mail,
-                arquivo: {
-                    grupo: form.grupo,
-                    descricao: form.descricao,
-                    arquivo: arquivoUrl,
-                    linkExterno: form.linkExterno,
-                    inicio: form.inicio,
-                    fim: form.fim || null,
+                comunicado: {
+                    ...form,
+                    imagemUrl,
                 },
             };
 
             const confirmado = confirm(
                 `Solicitante: ${body.email}\n` +
-                `Deseja criar o arquivo:\n` +
-                `Grupo: ${body.arquivo.grupo}\n` +
-                `Descrição: ${body.arquivo.descricao}\n` +
-                `Arquivo: ${body.arquivo.arquivo}\n` +
-                `Início: ${body.arquivo.inicio}\n` +
-                `Fim: ${body.arquivo.fim ?? "-"}\n`
+                `Deseja criar o comunicado:\n` +
+                `Nome: ${body.comunicado.titulo}\n` +
+                `Tipo: ${body.comunicado.tipo}\n` +
+                `Imagem: ${body.comunicado.imagemUrl}\n`+
+                `Data: ${body.comunicado.dataDivulgacao}\n`
             );
             if (!confirmado) {
                 // se cancelou, para tudo
@@ -83,13 +85,26 @@ function NovoArquivoBucketPage() {
                 return;
             }
 
-            await apiServiceBucket.uploadFile(arquivoFile, arquivoFile.name);
+            await apiServiceBucket.uploadFile(imagemFile, imagemFile.name);
 
-            const response = await apiServiceBucket.criarArquivoCloud(body);
+            const response = await apiService.criarComunicados(body);
             if (response.status === 200) {
-                alert("Arquivo criado com sucesso!");
-                setForm({ grupo: "", descricao: "", linkExterno: "", inicio: getHoje(), fim: "" });
-                setArquivoFile(null);
+                const arquivoCloudBody = {
+                    email: user.mail,
+                    arquivo: {
+                        grupo: "Comunicado",
+                        descricao: form.titulo,
+                        arquivo: imagemUrl,
+                        linkExterno: (form.linkExterno && form.linkExterno !== "-") ? form.linkExterno : "",
+                        inicio: getHoje(),
+                        fim: null,
+                    },
+                };
+                await apiServiceBucket.criarArquivoCloud(arquivoCloudBody);
+
+                alert("Comunicado criado com sucesso!");
+                setForm({ titulo: "", linkExterno: "-", legenda: "", areaId: 7, dataDivulgacao: null, tipo: "" });
+                setImagemFile(null);
             }
         } catch (error) {
             console.error("Erro ao enviar requisição:", error);
@@ -102,42 +117,45 @@ function NovoArquivoBucketPage() {
 
     return (
         <PageContainer>
-        <HeaderNewComponent pageTitle={"Criar Arquivo Cloud"} returnTo="/painelmarketing" />
+        <HeaderNewComponent pageTitle={"Criar Comunicado"} returnTo="/painelmarketing" />
         <Container>
-
+            
             <div>
-                <Label>Grupo</Label>
-                <Select id="grupo" value={form.grupo} onChange={handleForm}>
-                    <option value="">Selecione...</option>
-                    {GRUPOS.map((g) => (
-                        <option key={g} value={g}>
-                            {g}
-                        </option>
-                    ))}
-                </Select>
-            </div>
-            <div>
-                <Label>Descrição</Label>
+                <Label>Título</Label>
                 <Input
                     type="text"
-                    id="descricao"
-                    value={form.descricao}
+                    id="titulo"
+                    value={form.titulo}
                     onChange={handleForm}
                 />
             </div>
             <div>
-                <Label>Arquivo</Label>
+                <Label>Legenda</Label>
+                <Input
+                    type="text"
+                    id="legenda"
+                    value={form.legenda}
+                    onChange={handleForm}
+                />
+            </div>
+            <div>
+                <Label>Tipo</Label>
+                <Select id="tipo" value={form.tipo} onChange={handleForm}>
+                    <option value="">Selecione...</option>
+                    <option value="Geral">Geral</option>
+                    <option value="Accerte em Movimento 4">Accerte em Movimento 4</option>
+                </Select>
+            </div>
+            <div>
+                <Label>Imagem</Label>
                 <FileInput
                     type="file"
-                    id="arquivo"
+                    id="imagem"
                     onChange={handleFile}
                 />
             </div>
             <div>
-                <Label>
-                    Link Externo
-                    <InfoIcon title="Redirecionamento a ser exibido quando a imagem aparecer - ao clicar na imagem será aberta a página destino deste link">i</InfoIcon>
-                </Label>
+                <Label>Link Externo</Label>
                 <Input
                     type="text"
                     id="linkExterno"
@@ -145,28 +163,30 @@ function NovoArquivoBucketPage() {
                     onChange={handleForm}
                 />
             </div>
+            {/* <div>
+                                <Label>Área</Label>
+                                <Select id="areaId" value={form.areaId} onChange={handleForm}>
+                                    <option value="">Selecione...</option>
+                                    {info.listaAreas.map((c) => (
+                                        <option key={c.id} value={c.id}>
+                                            {c.area}
+                                        </option>
+                                    ))}
+                                </Select>
+                            </div> */}
             <div>
-                <Label>Início</Label>
+                <Label>Data de Divulgação</Label>
                 <Input
                     type="date"
-                    id="inicio"
-                    value={form.inicio}
-                    onChange={handleForm}
-                />
-            </div>
-            <div>
-                <Label>Fim</Label>
-                <Input
-                    type="date"
-                    id="fim"
-                    value={form.fim}
+                    id="dataDivulgacao"
+                    value={form.dataDivulgacao}
                     onChange={handleForm}
                 />
             </div>
 
             <ButtonContainer>
                 <Button onClick={handleSubmit} disabled={enviando}>
-                    {enviando ? "Enviando..." : "Criar Arquivo"}
+                    {enviando ? "Enviando..." : "Criar Comunicado"}
                 </Button>
             </ButtonContainer>
         </Container>
@@ -174,7 +194,7 @@ function NovoArquivoBucketPage() {
     );
 };
 
-export default NovoArquivoBucketPage;
+export default NovoComunicadoPage;
 
 const PageContainer = styled.div`
     width: 100%;
@@ -192,7 +212,7 @@ const Container = styled.div`
     margin-bottom: 50px;
     gap: 25px;
     padding: 20px 0;
-    div {
+    div { 
         justify-content: center;
         align-items: center;
         gap: 20px;
@@ -212,23 +232,6 @@ const Label = styled.label`
   width: 250px;
   height: 40px;
   align-items: center;
-`;
-
-const InfoIcon = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  margin-left: 8px;
-  border-radius: 50%;
-  background-color:rgb(75, 74, 75);
-  color: #fff;
-  font-size: 11px;
-  font-weight: bold;
-  font-style: italic;
-  cursor: help;
-  flex-shrink: 0;
 `;
 
 const Input = styled.input`

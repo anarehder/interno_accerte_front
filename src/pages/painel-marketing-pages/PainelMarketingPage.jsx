@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { FaCloudUploadAlt, FaFolderOpen, FaBullhorn, FaListUl, FaNewspaper, FaRegNewspaper } from "react-icons/fa";
-import HeaderNewComponent from "../components/basic/HeaderNewComponent";
+import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
 
 function PainelMarketingPage() {
     return (

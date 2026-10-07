@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import apiServiceBucket from "../services/apiServiceBucket";
-import HeaderNewComponent from "../components/basic/HeaderNewComponent";
+import { useAuth } from "../../contexts/AuthContext";
+import apiServiceBucket from "../../services/apiServiceBucket";
+import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
 import { HiOutlineZoomIn, HiOutlineX, HiOutlineTrash } from "react-icons/hi";
 
 const getHoje = () => {

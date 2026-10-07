@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import HeaderNewComponent from "../components/basic/HeaderNewComponent";
-import NoticiaFormComponent from "../components/noticias/NoticiaFormComponent";
-import apiService from "../services/apiService";
+import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
+import NoticiaFormComponent from "../../components/noticias/NoticiaFormComponent";
+import apiService from "../../services/apiService";
 
 const paraInputDate = (data) => {
     if (!data) return "";

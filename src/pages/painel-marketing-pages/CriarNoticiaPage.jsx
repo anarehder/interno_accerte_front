@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import HeaderNewComponent from "../components/basic/HeaderNewComponent";
-import NoticiaFormComponent from "../components/noticias/NoticiaFormComponent";
-import apiService from "../services/apiService";
+import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
+import NoticiaFormComponent from "../../components/noticias/NoticiaFormComponent";
+import apiService from "../../services/apiService";
 
 function CriarNoticiaPage() {
     const navigate = useNavigate();
