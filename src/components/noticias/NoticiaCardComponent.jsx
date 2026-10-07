@@ -28,12 +28,13 @@ export default NoticiaCardComponent;
 
 export const CardsGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 380px));
     gap: 25px;
     margin-top: 20px;
 `
 
 const Card = styled(Link)`
+    box-sizing: border-box;
     background: white;
     border-radius: 16px;
     overflow: hidden;
@@ -43,6 +44,12 @@ const Card = styled(Link)`
     flex-direction: column;
     text-decoration: none;
     color: inherit;
+    min-width: 0;
+
+    * {
+        box-sizing: border-box;
+        min-width: 0;
+    }
 
     &:hover {
         transform: translateY(-4px);

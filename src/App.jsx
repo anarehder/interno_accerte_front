@@ -30,6 +30,9 @@ import HomePage from "./pages/HomePage";
 import ComunicadosPage from "./pages/ComunicadosPage";
 import NoticiaDetalhePage from "./pages/NoticiaDetalhePage";
 import ListaNoticiasPage from "./pages/ListaNoticiasPage";
+import CriarNoticiaPage from "./pages/CriarNoticiaPage";
+import EditarNoticiaPage from "./pages/EditarNoticiaPage";
+import GerenciarNoticiasPage from "./pages/GerenciarNoticiasPage";
 import CertificationsAdminPage from "./pages/CertificationsAdminPage";
 import SignatureEmail2025Page from "./pages/SignatureEmail2025Page";
 import HumorGestoresPage from "./pages/painel-gestores-pages/HumorGestoresPage";
@@ -128,6 +131,9 @@ function App() {
                   <Route path="/arquivoscloud" element={<ListaArquivosCloudPage />} />
                   <Route path="/listacomunicados" element={<ListaComunicadosPage />} />
                   <Route path="/painelmarketing" element={<PainelMarketingPage />} />
+                  <Route path="/criarnoticia" element={<CriarNoticiaPage />} />
+                  <Route path="/editarnoticia" element={<EditarNoticiaPage />} />
+                  <Route path="/gerenciarnoticias" element={<GerenciarNoticiasPage />} />
                   <Route path="/organograma" element={<OrganogramaPage />} />
                   <Route path="/portfolio" element={<PortfolioPage />} />
                   <Route path="/tpa" element={<TpaPage />} />

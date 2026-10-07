@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { FaCloudUploadAlt, FaFolderOpen, FaBullhorn, FaListUl } from "react-icons/fa";
+import { FaCloudUploadAlt, FaFolderOpen, FaBullhorn, FaListUl, FaNewspaper, FaRegNewspaper } from "react-icons/fa";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
 
 function PainelMarketingPage() {
@@ -15,13 +15,6 @@ function PainelMarketingPage() {
                     </NewButton>
                 </Link>
 
-                <Link to="/arquivoscloud">
-                    <NewButton>
-                        <FaFolderOpen size={90} />
-                        <p>Listar <br /> <span>Arquivos Cloud</span></p>
-                    </NewButton>
-                </Link>
-
                 <Link to="/criarcomunicado">
                     <NewButton>
                         <FaBullhorn size={90} />
@@ -29,10 +22,31 @@ function PainelMarketingPage() {
                     </NewButton>
                 </Link>
 
+                <Link to="/criarnoticia">
+                    <NewButton>
+                        <FaRegNewspaper size={90} />
+                        <p>Criar <br /> <span>Notícia</span></p>
+                    </NewButton>
+                </Link>
+
+                <Link to="/arquivoscloud">
+                    <NewButton>
+                        <FaFolderOpen size={90} />
+                        <p>Listar <br /> <span>Arquivos Cloud</span></p>
+                    </NewButton>
+                </Link>
+
                 <Link to="/listacomunicados">
                     <NewButton>
                         <FaListUl size={90} />
                         <p>Listar <br /> <span>Comunicados</span></p>
+                    </NewButton>
+                </Link>
+
+                <Link to="/gerenciarnoticias">
+                    <NewButton>
+                        <FaNewspaper size={90} />
+                        <p>Gerenciar <br /> <span>Notícias</span></p>
                     </NewButton>
                 </Link>
             </ButtonContainer>
@@ -54,7 +68,7 @@ const PageContainer = styled.div`
 
 const ButtonContainer = styled.div`
     display: grid;
-    grid-template-columns: repeat(2, 220px);
+    grid-template-columns: repeat(3, 220px);
     justify-content: center;
     gap: 30px;
     margin-top: 20px;

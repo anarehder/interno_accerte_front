@@ -249,7 +249,35 @@ async function getNoticiasTags(){
     return axios.get(`${BASE_URL}/noticias/tags`, await getAuthHeaders())
 }
 
+async function getNoticiasCategorias(){
+    return axios.get(`${BASE_URL}/noticias/categorias`, await getAuthHeaders())
+}
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, liberarEdicaoVaga, editarVaga, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, criarGestor, editarGestor, deletarGestor, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery, getNoticias, getNoticiaPorSlug, getNoticiasTags, getLastNoticias }
+async function criarCategoriaNoticia(body){
+    return axios.post(`${BASE_URL}/noticias/categorias/criar`, body, await getAuthHeaders())
+}
+
+async function getNoticiasGerenciar(params){
+    return axios.get(`${BASE_URL}/noticias/gerenciar${params ? `?${params}` : ""}`, await getAuthHeaders())
+}
+
+async function getNoticiaGerenciarPorId(id){
+    return axios.get(`${BASE_URL}/noticias/gerenciar/${id}`, await getAuthHeaders())
+}
+
+async function criarNoticia(body){
+    return axios.post(`${BASE_URL}/noticias/criar`, body, await getAuthHeaders())
+}
+
+async function editarNoticia(id, body){
+    return axios.post(`${BASE_URL}/noticias/editar/${id}`, body, await getAuthHeaders())
+}
+
+async function deletarNoticia(id){
+    return axios.delete(`${BASE_URL}/noticias/deletar/${id}`, await getAuthHeaders())
+}
+
+
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, liberarEdicaoVaga, editarVaga, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, criarGestor, editarGestor, deletarGestor, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery, getNoticias, getNoticiaPorSlug, getNoticiasTags, getLastNoticias, getNoticiasCategorias, criarCategoriaNoticia, getNoticiasGerenciar, getNoticiaGerenciarPorId, criarNoticia, editarNoticia, deletarNoticia }
 
 export default apiService;

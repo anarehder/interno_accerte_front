@@ -12,6 +12,7 @@
   "dependencies": {
     "@azure/msal-browser": "^4.5.1",
     "@azure/msal-react": "^3.0.5",
+    "@uiw/react-md-editor": "^4.1.2",
     "axios": "^1.8.4",
     "downloadjs": "^1.4.7",
     "framer-motion": "^12.23.24",

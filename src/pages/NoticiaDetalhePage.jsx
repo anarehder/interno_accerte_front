@@ -38,7 +38,7 @@ function NoticiaDetalhePage() {
 
     return (
         <PageContainer>
-            <HeaderNewComponent pageTitle={"Notícias"} returnTo="/homepage" />
+            <HeaderNewComponent pageTitle={"Notícias"} returnTo="/noticias" />
 
             {loading && <div><br />Carregando notícia... </div>}
             {error && <div><br />{error} </div>}
