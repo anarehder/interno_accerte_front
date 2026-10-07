@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { HiOutlineEye, HiOutlinePencilAlt, HiOutlineTrash } from "react-icons/hi";
 import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
+import NoticiaPreviewModalComponent from "../../components/noticias/NoticiaPreviewModalComponent";
 import apiService from "../../services/apiService";
-import { formatarDataNoticia } from "../../utils/noticiasUtils";
+import { formatarAutorNoticia, formatarDataNoticia } from "../../utils/noticiasUtils";
 
 const LIMITE_POR_PAGINA = 10;
 
@@ -22,6 +24,8 @@ function GerenciarNoticiasPage() {
     const [totalPaginas, setTotalPaginas] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [noticiaPreview, setNoticiaPreview] = useState(null);
+    const [carregandoPreviewId, setCarregandoPreviewId] = useState(null);
 
     useEffect(() => {
         let ignorar = false;
@@ -53,6 +57,19 @@ function GerenciarNoticiasPage() {
     const selecionarStatus = (status) => {
         setStatusFiltro(status);
         setPagina(1);
+    };
+
+    const handleVisualizar = async (noticia) => {
+        setCarregandoPreviewId(noticia.id);
+        try {
+            const response = await apiService.getNoticiaGerenciarPorId(noticia.id);
+            setNoticiaPreview(response.data);
+        } catch (error) {
+            console.error("Erro ao carregar notícia para visualização:", error);
+            alert(error?.response?.data?.message || "Erro ao carregar a notícia.");
+        } finally {
+            setCarregandoPreviewId(null);
+        }
     };
 
     const handleDeletar = async (noticia) => {
@@ -88,8 +105,8 @@ function GerenciarNoticiasPage() {
                 ))}
             </FiltroContainer>
 
-            {loading && <div><br />Carregando notícias... </div>}
-            {error && <div><br />{error} </div>}
+            {loading && <EmptyState>Carregando notícias...</EmptyState>}
+            {error && <EmptyState>{error}</EmptyState>}
             {!loading && !error && noticias.length === 0 &&
                 <EmptyState>Nenhuma notícia encontrada.</EmptyState>
             }
@@ -117,8 +134,21 @@ function GerenciarNoticiasPage() {
                                     <td>{formatarDataNoticia(noticia.publicadoEm) || "-"}</td>
                                     <td>
                                         <AcoesContainer>
-                                            <Link to={`/editarnoticia?noticiaId=${noticia.id}`}>Editar</Link>
-                                            <DeletarButton onClick={() => handleDeletar(noticia)}>Excluir</DeletarButton>
+                                            <VisualizarButton
+                                                type="button"
+                                                onClick={() => handleVisualizar(noticia)}
+                                                disabled={carregandoPreviewId === noticia.id}
+                                                title="Visualizar notícia"
+                                                aria-label="Visualizar"
+                                            >
+                                                <HiOutlineEye size={18} />
+                                            </VisualizarButton>
+                                            <Link to={`/editarnoticia?noticiaId=${noticia.id}`} title="Editar" aria-label="Editar">
+                                                <HiOutlinePencilAlt size={18} />
+                                            </Link>
+                                            <DeletarButton onClick={() => handleDeletar(noticia)} title="Excluir" aria-label="Excluir">
+                                                <HiOutlineTrash size={18} />
+                                            </DeletarButton>
                                         </AcoesContainer>
                                     </td>
                                 </tr>
@@ -139,6 +169,20 @@ function GerenciarNoticiasPage() {
                     }
                 </ListaContainer>
             }
+
+            {noticiaPreview &&
+                <NoticiaPreviewModalComponent
+                    onFechar={() => setNoticiaPreview(null)}
+                    titulo={noticiaPreview.titulo}
+                    autorTexto={`Por ${formatarAutorNoticia(noticiaPreview.Autor)}`}
+                    autorNome={formatarAutorNoticia(noticiaPreview.Autor)}
+                    autorEmail={noticiaPreview.Autor?.email}
+                    autorDescricao={noticiaPreview.Autor?.descricao}
+                    dataTexto={formatarDataNoticia(noticiaPreview.publicadoEm || noticiaPreview.createdAt, true)}
+                    imagemCapaUrl={noticiaPreview.imagemCapaUrl}
+                    conteudo={noticiaPreview.conteudo}
+                />
+            }
         </PageContainer>
     )
 }
@@ -156,8 +200,8 @@ const PageContainer = styled.div`
 `
 
 const TopBar = styled.div`
-    width: 90%;
-    max-width: 1200px;
+    width: 95%;
+    max-width: 1600px;
     justify-content: flex-end;
 `
 
@@ -178,8 +222,8 @@ const AdminButton = styled.button`
 `
 
 const FiltroContainer = styled.div`
-    width: 90%;
-    max-width: 1200px;
+    width: 95%;
+    max-width: 1600px;
     gap: 10px;
     flex-wrap: wrap;
 `
@@ -196,13 +240,22 @@ const FiltroButton = styled.button`
 `
 
 const EmptyState = styled.div`
+    width: 95%;
+    max-width: 1600px;
+    min-height: 30vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 500;
+    font-size: 18px;
     padding: 40px 0;
     color: #6b7280;
 `
 
 const ListaContainer = styled.div`
-    width: 90%;
-    max-width: 1200px;
+    width: 95%;
+    max-width: 1600px;
     flex-direction: column;
     margin-bottom: 40px;
 `
@@ -259,25 +312,62 @@ const StatusBadge = styled.span`
 `
 
 const AcoesContainer = styled.div`
-    gap: 14px;
+    gap: 10px;
     align-items: center;
 
     a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
         color: #205fdd;
-        font-weight: 600;
+
+        &:hover {
+            background: #e8eefc;
+        }
+    }
+`
+
+const VisualizarButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: none;
+    border: none;
+    color: #205fdd;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover:not(:disabled) {
+        background: #e8eefc;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 `
 
 const DeletarButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     background: none;
     border: none;
     color: #d64545;
-    font-weight: 600;
     cursor: pointer;
     padding: 0;
 
     &:hover {
-        text-decoration: underline;
+        background: #fbe8e8;
     }
 `
 

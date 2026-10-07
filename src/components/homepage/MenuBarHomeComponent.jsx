@@ -127,7 +127,7 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                     <h1>FIQUE  <span> POR DENTRO </span></h1>
                     <Dropdown>
                         <DropdownItem><Link to={"/comunicados"}>Comunicados</Link></DropdownItem>
-                        <DropdownItem><Link to={"/noticias"}>Notícias</Link></DropdownItem>
+                        {/* <DropdownItem><Link to={"/noticias"}>Notícias</Link></DropdownItem> */}
                         <DropdownItem><Link to={"/fiquepordentro"}>Vídeos</Link></DropdownItem>
                     </Dropdown>
                 </MenuItem>

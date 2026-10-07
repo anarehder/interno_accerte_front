@@ -1,11 +1,62 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import MDEditor from "@uiw/react-md-editor";
+import MDEditor, { getCommands, selectWord, executeCommand } from "@uiw/react-md-editor";
 import "@uiw/react-md-editor/markdown-editor.css";
+import { HiOutlineEye } from "react-icons/hi";
 import { useAuth } from "../../contexts/AuthContext";
 import apiService from "../../services/apiService";
 import apiServiceBucket from "../../services/apiServiceBucket";
-import { gerarSlugPreview } from "../../utils/noticiasUtils";
+import { gerarSlugPreview, formatarDataNoticia } from "../../utils/noticiasUtils";
+import NoticiaPreviewModalComponent from "./NoticiaPreviewModalComponent";
+
+// markdown não tem sintaxe nativa de sublinhado; usa <u> (a preview já roda rehype-raw)
+const underlineCommand = {
+    name: "underline",
+    keyCommand: "underline",
+    shortcuts: "ctrlcmd+u",
+    prefix: "<u>",
+    suffix: "</u>",
+    buttonProps: { "aria-label": "Sublinhar texto (ctrl + u)", title: "Sublinhar (ctrl + u)" },
+    icon: (
+        <svg width="12" height="12" viewBox="0 0 24 24">
+            <path
+                fill="currentColor"
+                d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zM5 19v2h14v-2H5z"
+            />
+        </svg>
+    ),
+    execute: (state, api) => {
+        const newSelectionRange = selectWord({
+            text: state.text,
+            selection: state.selection,
+            prefix: state.command.prefix,
+            suffix: state.command.suffix,
+        });
+        const state1 = api.setSelectionRange(newSelectionRange);
+        executeCommand({
+            api,
+            selectedText: state1.selectedText,
+            selection: state.selection,
+            prefix: state.command.prefix,
+            suffix: state.command.suffix,
+        });
+    },
+};
+
+const editorCommands = (() => {
+    const cmds = getCommands();
+    const indice = cmds.findIndex((c) => c.name === "strikethrough");
+    cmds.splice(indice + 1, 0, underlineCommand);
+    return cmds;
+})();
+
+const getHoje = () => {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoje.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
+};
 
 const STATUS_OPCOES = [
     { value: "RASCUNHO", label: "Rascunho" },
@@ -32,23 +83,44 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
     const [imagemFile, setImagemFile] = useState(null);
     const [categorias, setCategorias] = useState([]);
     const [areas, setAreas] = useState([]);
+    const [tagsDisponiveis, setTagsDisponiveis] = useState([]);
+    const [novaTag, setNovaTag] = useState("");
     const [novaCategoria, setNovaCategoria] = useState("");
     const [criandoCategoria, setCriandoCategoria] = useState(false);
     const [enviando, setEnviando] = useState(false);
+    const [mostrarPreview, setMostrarPreview] = useState(false);
+
+    const tagsSelecionadas = useMemo(
+        () => form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+        [form.tags]
+    );
+
+    const imagemPreviewUrl = useMemo(() => {
+        if (imagemFile) return URL.createObjectURL(imagemFile);
+        return form.imagemCapaUrl || "";
+    }, [imagemFile, form.imagemCapaUrl]);
+
+    useEffect(() => {
+        return () => {
+            if (imagemFile) URL.revokeObjectURL(imagemPreviewUrl);
+        };
+    }, [imagemFile, imagemPreviewUrl]);
 
     useEffect(() => {
         let ignorar = false;
         const fetchDados = async () => {
             try {
-                const [categoriasRes, areasRes] = await Promise.all([
+                const [categoriasRes, areasRes, tagsRes] = await Promise.all([
                     apiService.getNoticiasCategorias(),
                     apiService.buscarAreas(),
+                    apiService.getNoticiasTags(),
                 ]);
                 if (ignorar) return;
                 setCategorias(categoriasRes.data || []);
                 setAreas(areasRes.data || []);
+                setTagsDisponiveis(tagsRes.data || []);
             } catch (error) {
-                console.error("Erro ao buscar categorias/áreas:", error);
+                console.error("Erro ao buscar categorias/áreas/tags:", error);
             }
         };
         fetchDados();
@@ -63,12 +135,38 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
         }));
     };
 
-    const handleConteudoChange = (valor) => {
+    const handleConteudoChange = useCallback((valor) => {
         setForm((prev) => ({ ...prev, conteudo: valor || "" }));
-    };
+    }, []);
 
     const handleFile = (e) => {
         setImagemFile(e.target.files[0] || null);
+    };
+
+    const alternarTag = (nome) => {
+        setForm((prev) => {
+            const atuais = prev.tags.split(",").map((t) => t.trim()).filter(Boolean);
+            const novas = atuais.includes(nome)
+                ? atuais.filter((t) => t !== nome)
+                : [...atuais, nome];
+            return { ...prev, tags: novas.join(", ") };
+        });
+    };
+
+    const adicionarNovaTag = () => {
+        const nome = novaTag.trim();
+        if (!nome || tagsSelecionadas.includes(nome)) {
+            setNovaTag("");
+            return;
+        }
+        setForm((prev) => ({
+            ...prev,
+            tags: [...tagsSelecionadas, nome].join(", "),
+        }));
+        if (!tagsDisponiveis.some((t) => t.nome === nome)) {
+            setTagsDisponiveis((prev) => [...prev, { id: nome, nome }]);
+        }
+        setNovaTag("");
     };
 
     const criarCategoria = async () => {
@@ -112,6 +210,17 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
                 }
                 imagemCapaUrl = apiServiceBucket.getFileUrl(imagemFile.name);
                 await apiServiceBucket.uploadFile(imagemFile, imagemFile.name);
+                await apiServiceBucket.criarArquivoCloud({
+                    email: user?.mail,
+                    arquivo: {
+                        grupo: "Notícias",
+                        descricao: form.titulo.trim(),
+                        arquivo: imagemCapaUrl,
+                        linkExterno: "",
+                        inicio: getHoje(),
+                        fim: null,
+                    },
+                });
             }
 
             const noticia = {
@@ -192,10 +301,15 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
                         <MDEditor
                             value={form.conteudo}
                             onChange={handleConteudoChange}
-                            height={380}
+                            commands={editorCommands}
+                            height={550}
+                            minHeight={300}
+                            maxHeight={1200}
                             preview="edit"
+                            highlightEnable={false}
                         />
                     </EditorWrapper>
+                    <Ajuda>Sem limite de tamanho. Arraste o canto inferior direito do editor pra redimensionar, ou use o ícone de tela cheia na barra de ferramentas.</Ajuda>
                 </Campo>
 
                 <Campo>
@@ -238,29 +352,77 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
                 <Linha>
                     <Campo>
                         <Label>Data de publicação (opcional)</Label>
-                        <Input type="date" name="publicadoEm" value={form.publicadoEm} onChange={handleChange} />
+                        <DateInput type="date" name="publicadoEm" value={form.publicadoEm} onChange={handleChange} />
                     </Campo>
 
                     <Campo>
                         <Label>Data de expiração (opcional)</Label>
-                        <Input type="date" name="expiraEm" value={form.expiraEm} onChange={handleChange} />
+                        <DateInput type="date" name="expiraEm" value={form.expiraEm} onChange={handleChange} />
                     </Campo>
                 </Linha>
 
                 <Campo>
-                    <Label>Tags (separadas por vírgula)</Label>
-                    <Input type="text" name="tags" placeholder="rh, benefícios, eventos" value={form.tags} onChange={handleChange} />
+                    <Label>Tags</Label>
+                    {tagsDisponiveis.length > 0 &&
+                        <TagsLista>
+                            {tagsDisponiveis.map((tag) => (
+                                <TagPill
+                                    key={tag.id}
+                                    type="button"
+                                    $ativa={tagsSelecionadas.includes(tag.nome)}
+                                    onClick={() => alternarTag(tag.nome)}
+                                >
+                                    {tag.nome}
+                                </TagPill>
+                            ))}
+                        </TagsLista>
+                    }
+                    <NovaCategoriaRow>
+                        <Input
+                            type="text"
+                            placeholder="Nova tag"
+                            value={novaTag}
+                            onChange={(e) => setNovaTag(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    adicionarNovaTag();
+                                }
+                            }}
+                        />
+                        <SmallButton type="button" onClick={adicionarNovaTag} disabled={!novaTag.trim()}>
+                            + Nova tag
+                        </SmallButton>
+                    </NovaCategoriaRow>
+                    <Ajuda>Clique numa tag existente pra selecionar/remover, ou digite uma nova e adicione.</Ajuda>
                 </Campo>
 
                 <SubmitRow>
                     {onCancelar &&
                         <CancelButton type="button" onClick={onCancelar}>Cancelar</CancelButton>
                     }
+                    <PreviewButton type="button" onClick={() => setMostrarPreview(true)}>
+                        <HiOutlineEye size={18} />
+                        Visualizar
+                    </PreviewButton>
                     <SubmitButton type="submit" disabled={enviando}>
                         {enviando ? "Salvando..." : textoBotao}
                     </SubmitButton>
                 </SubmitRow>
             </Formulario>
+
+            {mostrarPreview &&
+                <NoticiaPreviewModalComponent
+                    onFechar={() => setMostrarPreview(false)}
+                    titulo={form.titulo}
+                    autorTexto={`Por ${user?.displayName || "Você"}`}
+                    autorNome={user?.displayName || "Você"}
+                    autorEmail={user?.mail}
+                    dataTexto={formatarDataNoticia(form.publicadoEm, true) || formatarDataNoticia(new Date(), true)}
+                    imagemCapaUrl={imagemPreviewUrl}
+                    conteudo={form.conteudo}
+                />
+            }
         </Card>
     )
 }
@@ -337,6 +499,18 @@ const FileInput = styled(Input)`
     height: auto;
 `
 
+const DateInput = styled(Input)`
+    text-indent: 0;
+    padding: 0 14px;
+    justify-content: flex-start;
+
+    &::-webkit-calendar-picker-indicator {
+        margin-left: 8px;
+        padding: 0;
+        cursor: pointer;
+    }
+`
+
 const TextArea = styled.textarea`
     width: 100%;
     border-radius: 10px;
@@ -395,6 +569,26 @@ const Ajuda = styled.span`
 const NovaCategoriaRow = styled.div`
     gap: 10px;
     margin-top: 2px;
+`
+
+const TagsLista = styled.div`
+    gap: 8px;
+    flex-wrap: wrap;
+`
+
+const TagPill = styled.button`
+    background: ${(props) => props.$ativa ? "#003289" : "white"};
+    color: ${(props) => props.$ativa ? "white" : "#003289"};
+    border: 1px solid #003289;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+        background: ${(props) => props.$ativa ? "#003289" : "#eef2fb"};
+    }
 `
 
 const SmallButton = styled.button`
@@ -493,3 +687,21 @@ const CancelButton = styled.button`
         background: #f4f6f9;
     }
 `
+
+const PreviewButton = styled.button`
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid #205fdd;
+    border-radius: 999px;
+    background: white;
+    color: #205fdd;
+    cursor: pointer;
+
+    &:hover {
+        background: #e8eefc;
+    }
+`
+

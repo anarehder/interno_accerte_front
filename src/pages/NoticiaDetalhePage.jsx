@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import HeaderNewComponent from "../components/basic/HeaderNewComponent";
+import NoticiaPreviewComponent from "../components/noticias/NoticiaPreviewComponent";
 import apiService from "../services/apiService";
 import { formatarAutorNoticia, formatarDataNoticia } from "../utils/noticiasUtils";
 
@@ -40,22 +41,22 @@ function NoticiaDetalhePage() {
         <PageContainer>
             <HeaderNewComponent pageTitle={"Notícias"} returnTo="/noticias" />
 
-            {loading && <div><br />Carregando notícia... </div>}
-            {error && <div><br />{error} </div>}
+            {loading && <EstadoContainer>Carregando notícia...</EstadoContainer>}
+            {error && <EstadoContainer>{error}</EstadoContainer>}
 
             {!loading && noticia &&
-                <Conteudo>
-                    <Tag>NOTÍCIAS</Tag>
-                    <h1>{noticia.titulo}</h1>
-                    <Meta>
-                        <span>Por {formatarAutorNoticia(noticia.Autor)}</span>
-                        <span>{formatarDataNoticia(noticia.publicadoEm || noticia.createdAt, true)}</span>
-                    </Meta>
-                    {noticia.imagemCapaUrl &&
-                        <img src={noticia.imagemCapaUrl} alt={noticia.titulo} />
-                    }
-                    <Texto>{noticia.conteudo}</Texto>
-                </Conteudo>
+                <ConteudoCard>
+                    <NoticiaPreviewComponent
+                        titulo={noticia.titulo}
+                        autorTexto={`Por ${formatarAutorNoticia(noticia.Autor)}`}
+                        autorNome={formatarAutorNoticia(noticia.Autor)}
+                        autorEmail={noticia.Autor?.email}
+                        autorDescricao={noticia.Autor?.descricao}
+                        dataTexto={formatarDataNoticia(noticia.publicadoEm || noticia.createdAt, true)}
+                        imagemCapaUrl={noticia.imagemCapaUrl}
+                        conteudo={noticia.conteudo}
+                    />
+                </ConteudoCard>
             }
         </PageContainer>
     )
@@ -69,52 +70,30 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    margin-bottom: 50px;
+    padding-bottom: 50px;
+    background-color: #f4f6f9;
     color: #082764;
 `
 
-const Conteudo = styled.div`
+const ConteudoCard = styled.div`
+    width: 90%;
+    max-width: 1000px;
+    justify-content: center;
+    background: white;
+    border-radius: 20px;
+    padding: 40px 0 60px;
+    box-sizing: border-box;
+`
+
+const EstadoContainer = styled.div`
     width: 90%;
     max-width: 850px;
+    min-height: 40vh;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 10px;
-
-    h1 {
-        font-size: 28px;
-        font-weight: 700;
-        color: #0B2049;
-        line-height: 1.3;
-    }
-
-    img {
-        width: 100%;
-        max-height: 420px;
-        object-fit: cover;
-        border-radius: 16px;
-    }
-`
-
-const Tag = styled.span`
-    background: #0B2049;
-    color: white;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    align-self: flex-start;
-`
-
-const Meta = styled.div`
-    gap: 16px;
-    color: #777;
-    font-size: 14px;
-`
-
-const Texto = styled.div`
-    white-space: pre-wrap;
-    line-height: 1.7;
-    font-size: 16px;
-    color: #333;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 500;
+    font-size: 18px;
+    color: #8792a2;
 `

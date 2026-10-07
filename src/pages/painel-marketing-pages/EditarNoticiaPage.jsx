@@ -71,8 +71,8 @@ function EditarNoticiaPage() {
         <PageContainer>
             <HeaderNewComponent pageTitle={"Editar Notícia"} returnTo="/gerenciarnoticias" />
 
-            {carregando && <div><br />Carregando notícia... </div>}
-            {!carregando && errorMessage && <div><br />{errorMessage} </div>}
+            {carregando && <EstadoContainer>Carregando notícia...</EstadoContainer>}
+            {!carregando && errorMessage && <EstadoContainer>{errorMessage}</EstadoContainer>}
 
             {!carregando && !errorMessage && valoresIniciais &&
                 <NoticiaFormComponent
@@ -99,4 +99,17 @@ const PageContainer = styled.div`
     padding-bottom: 40px;
     background: #f1efe9;
     color: rgb(75, 74, 75);
+`
+
+const EstadoContainer = styled.div`
+    width: 90%;
+    max-width: 850px;
+    min-height: 40vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 500;
+    font-size: 18px;
+    color: #6b7280;
 `
