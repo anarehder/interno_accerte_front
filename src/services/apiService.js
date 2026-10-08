@@ -40,6 +40,14 @@ function editScale(body){
     return axios.post(`${BASE_URL}/escala/editar`, body)
 }
 
+async function getEscalaPadrao(){
+    return axios.get(`${BASE_URL}/escala-padrao`, await getAuthHeaders())
+}
+
+async function salvarEscalaPadrao(body){
+    return axios.post(`${BASE_URL}/escala-padrao/salvar`, body, await getAuthHeaders())
+}
+
 function createVacation(body){
     return axios.post(`${BASE_URL}/ferias/criar`, body)
 }
@@ -278,6 +286,6 @@ async function deletarNoticia(id){
 }
 
 
-const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, liberarEdicaoVaga, editarVaga, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, criarGestor, editarGestor, deletarGestor, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery, getNoticias, getNoticiaPorSlug, getNoticiasTags, getLastNoticias, getNoticiasCategorias, criarCategoriaNoticia, getNoticiasGerenciar, getNoticiaGerenciarPorId, criarNoticia, editarNoticia, deletarNoticia }
+const apiService = { getPosts, createUser, editUser, getVacation, getEscala, createEscala, editScale, getEscalaPadrao, salvarEscalaPadrao, createVacation, createLicense, getVacationByPeriod, getVacationByEmail, getVacationByContract, getVagasInfo, createVagas, deleteVagas, getVagas, getFullVagas, getSugestoes, criarSugestoes, getOnCallsPagerDuty, getEscalaPagerDuty, getUsersPagerDuty , editarVagaStatus, liberarEdicaoVaga, editarVaga, getAniversariosDia, criarHumor, buscarHumorArea, buscarHumorFuncionario, buscarGestoresInfo, criarGestor, editarGestor, deletarGestor, buscarInfoCriarFunc, editarVacation, approveVacation, deleteVacation, buscarFeriasGestor, buscarFeriasRH, concluirFerias, buscarNotificacoes, buscarComunicadosHoje, buscarComunicadosEmail, criarComunicados, confirmarLeituraComunicado, buscarFuncionarioPorArea, getVacationAreaByPeriod,getVacationAreaByEmail, buscarFuncionarioAtivo, criarFeedbackOnboarding, buscarFeedbackOnboarding, validarFeedbackOnboarding, buscarOrganograma, buscarAreas, ragQuery, getNoticias, getNoticiaPorSlug, getNoticiasTags, getLastNoticias, getNoticiasCategorias, criarCategoriaNoticia, getNoticiasGerenciar, getNoticiaGerenciarPorId, criarNoticia, editarNoticia, deletarNoticia }
 
 export default apiService;
