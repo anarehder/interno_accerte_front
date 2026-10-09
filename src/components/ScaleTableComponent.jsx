@@ -108,9 +108,9 @@ function ScaleTableComponent({type}) {
             <HeaderPanel>
                 <ToolbarRow>
                     <ToolbarActions>
-                        {type !== 'admin' &&
+                        {/* {type !== 'admin' &&
                             <ActionButton $ativo={editEscalaPadrao} onClick={()=> setEditEscalaPadrao(true)} ><FiCalendar size={18} /> Escala Padrão</ActionButton>
-                        }
+                        } */}
                         {type !== 'admin' && selectedScale.length > 0 &&
                             <ActionButton $ativo={editScale} onClick={()=> setEditScale(true)} ><FiEdit3 size={18} /> Editar Minha Escala</ActionButton>
                         }
