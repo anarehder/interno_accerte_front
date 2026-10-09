@@ -169,9 +169,9 @@ function MenuBarHomeComponent({searchBar, setSearchBar, setFilteredContacts}) {
                 </MenuItem>
                 </ItemsBar>
                 <ActionsBar>
-                        {/* <IndicAIButton href="https://accerte.com.br/indicai-interno/" target="_blank" rel="noopener noreferrer">
+                        <IndicAIButton href="https://accerte.com.br/indicai-interno/" target="_blank" rel="noopener noreferrer">
                             IndicAI
-                        </IndicAIButton> */}
+                        </IndicAIButton>
                     <SearchItem $isOpen={isSearchOpen || searchAlwaysExpanded} $isLargeScreen={searchAlwaysExpanded}>
                         <form onSubmit={handleSearchSubmit}>
                         {(isSearchOpen || searchAlwaysExpanded) && (
