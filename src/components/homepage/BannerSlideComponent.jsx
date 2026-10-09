@@ -32,7 +32,7 @@ function BannerSlideComponent() {
         fetchBanners();
     }, [user]);
 
-    const imagesFull = [{ name: "Banner IndicAI", url: BannerIndicai, externo: 'https://accerte.sharepoint.com/sites/AccerteTecnologiadaInformaoLtda/Documentos%20Compartilhados/Pol%C3%ADticas/Pol%C3%ADtica%20do%20Programa%20de%20Certifica%C3%A7%C3%B5es%20Accerte.pdf' }, { name: "Banner Sesc", url: BannerSesc, externo:'https://www.sescgo.com.br/o-sesc/credencial-sesc/a-credencial/' }, ...images];
+    const imagesFull = [...images, { name: "Banner IndicAI", url: BannerIndicai, externo: 'https://accerte.sharepoint.com/:w:/r/sites/centraldeprocessos/_layouts/15/Doc.aspx?sourcedoc=%7B3A02B668-3D24-43E7-905A-6A8D28E08224%7D&file=POL_Politica_do_Programa_de_Certificacoes_Accerte.docx&action=default&mobileredirect=true&wdwpf=doclib-c' }, { name: "Banner Sesc", url: BannerSesc, externo:'https://www.sescgo.com.br/o-sesc/credencial-sesc/a-credencial/' }];
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -57,9 +57,13 @@ function BannerSlideComponent() {
       <SlideWrapper style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
             {imagesFull.map((image, index) => (
               <Slide key={index}>
-                <BannerLink href={image.externo} target={"_blank"} rel="noreferrer">
-                <SlideImage src={image.url} alt={`Slide ${image.name}`} />
-                </BannerLink>
+                {image.externo ? (
+                  <BannerLink href={image.externo} target={"_blank"} rel="noreferrer">
+                    <SlideImage src={image.url} alt={`Slide ${image.name}`} />
+                  </BannerLink>
+                ) : (
+                  <SlideImage src={image.url} alt={`Slide ${image.name}`} />
+                )}
               </Slide>
             ))}
       </SlideWrapper>
