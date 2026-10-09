@@ -78,7 +78,10 @@ const HomePage = () => {
                                     </a>
                                 </BannerButton> */}
                                 <BannerButton>
-                                    <Link to="/assinatura">ASSINATURA DE E-MAIL</Link>
+                                    {/* <Link to="/assinatura">ASSINATURA DE E-MAIL</Link> */}        
+                                    <a href="https://accerte.com.br/assinatura" target="_blank">
+                                        ASSINATURA DE E-MAIL
+                                    </a>
                                 </BannerButton>
                                 <BannerButton>
                                     <Link to={"/certificacoes"}> CERTIFICAÇÕES</Link>
