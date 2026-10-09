@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { HiOutlineNewspaper } from "react-icons/hi";
-import { formatarAutorNoticia, formatarDataNoticia } from '../../utils/noticiasUtils';
+import { formatarDataNoticia } from '../../utils/noticiasUtils';
 
 function NoticiaCardComponent({ noticia }) {
     return (
@@ -13,7 +13,6 @@ function NoticiaCardComponent({ noticia }) {
             <div className="content">
                 <div className="meta">
                     <Tag>NOTÍCIAS</Tag>
-                    <span>Por {formatarAutorNoticia(noticia.Autor)}</span>
                     <span className="data">{formatarDataNoticia(noticia.publicadoEm || noticia.createdAt)}</span>
                 </div>
                 <h3>{noticia.titulo}</h3>
@@ -63,9 +62,10 @@ const Card = styled(Link)`
     }
 
     .content {
+        flex: 1;
         padding: 16px 18px 20px;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 
     .meta {
@@ -73,11 +73,11 @@ const Card = styled(Link)`
         gap: 10px;
         font-size: 13px;
         color: #777;
-        flex-wrap: wrap;
+    }
 
-        .data {
-            margin-left: auto;
-        }
+    .data {
+        font-size: 13px;
+        color: #777;
     }
 
     h3 {
@@ -85,23 +85,28 @@ const Card = styled(Link)`
         font-weight: 700;
         color: #0B2049;
         line-height: 1.3;
+        text-align: left;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        min-height: 2.6em;
     }
 
     p {
         font-size: 14px;
         color: #666;
         line-height: 1.4;
+        text-align: left;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 4;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
     .ler-mais {
+        margin-top: auto;
+        padding-top: 4px;
         color: #205fdd;
         font-weight: 600;
         font-size: 14px;

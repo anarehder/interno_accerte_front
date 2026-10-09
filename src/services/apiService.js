@@ -8,7 +8,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 // em chamadas do axios que precisem estar autenticadas como ultimo argumento.
 async function getAuthHeaders() {
     const idToken = await getIdToken(msalInstance, msalInstance.getAllAccounts());
-    console.log(`Bearer ${idToken}`);
+    // console.log(`Bearer ${idToken}`);
     return { headers: { Authorization: `Bearer ${idToken}` } };
 }
 

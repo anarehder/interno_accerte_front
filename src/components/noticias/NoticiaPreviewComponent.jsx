@@ -1,8 +1,14 @@
 import styled from "styled-components";
-import MDEditor from "@uiw/react-md-editor";
-import "@uiw/react-markdown-preview/markdown.css";
-import { preservarQuebrasDeLinha } from "../../utils/noticiasUtils";
+import DOMPurify from "dompurify";
 import AutorNoticiaComponent from "./AutorNoticiaComponent";
+
+// links do conteúdo da notícia sempre abrem em nova aba
+DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+    if (node.tagName === "A") {
+        node.setAttribute("target", "_blank");
+        node.setAttribute("rel", "noopener noreferrer");
+    }
+});
 
 function NoticiaPreviewComponent({
     titulo,
@@ -25,9 +31,7 @@ function NoticiaPreviewComponent({
             {imagemCapaUrl &&
                 <img src={imagemCapaUrl} alt={titulo} />
             }
-            <Texto data-color-mode="light">
-                <MDEditor.Markdown source={preservarQuebrasDeLinha(conteudo)} />
-            </Texto>
+            <Texto dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(conteudo || "") }} />
             <AutorNoticiaComponent
                 nome={autorNome}
                 email={autorEmail}
@@ -80,53 +84,62 @@ const Meta = styled.div`
 `
 
 const Texto = styled.div`
-    flex-direction: column;
+    display: block;
+    font-family: inherit;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.7;
 
-    .wmde-markdown {
-        display: block;
-        background: transparent;
-        font-family: inherit;
-        color: #333;
-        font-size: 16px;
-        line-height: 1.7;
-    }
-
-    .wmde-markdown p,
-    .wmde-markdown li {
+    p {
+        margin: 0 0 1em;
         text-align: justify;
         text-justify: inter-word;
     }
 
-    .wmde-markdown h1,
-    .wmde-markdown h2,
-    .wmde-markdown h3,
-    .wmde-markdown h4,
-    .wmde-markdown h5,
-    .wmde-markdown h6 {
+    li {
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        margin: 0.6em 0 0.4em;
         text-align: left;
-    }
-
-    .wmde-markdown div {
-        display: block;
-        width: auto;
-    }
-
-    .wmde-markdown h1,
-    .wmde-markdown h2,
-    .wmde-markdown h3 {
         color: #0B2049;
     }
 
-    .wmde-markdown strong {
+    strong {
         color: #0B2049;
     }
 
-    .wmde-markdown em,
-    .wmde-markdown i {
+    em, i {
         font-style: italic;
     }
 
-    .wmde-markdown a {
+    a {
         color: #205fdd;
+    }
+
+    ul, ol {
+        padding-left: 1.4em;
+        margin: 0 0 1em;
+    }
+
+    ul {
+        list-style: disc;
+    }
+
+    ol {
+        list-style: decimal;
+    }
+
+    ul ul {
+        list-style: circle;
+    }
+
+    blockquote {
+        border-left: 3px solid #dfe3e8;
+        padding-left: 14px;
+        color: #666;
+        margin: 0;
     }
 `

@@ -1,54 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import MDEditor, { getCommands, selectWord, executeCommand } from "@uiw/react-md-editor";
-import "@uiw/react-md-editor/markdown-editor.css";
 import { HiOutlineEye } from "react-icons/hi";
 import { useAuth } from "../../contexts/AuthContext";
 import apiService from "../../services/apiService";
 import apiServiceBucket from "../../services/apiServiceBucket";
-import { gerarSlugPreview, formatarDataNoticia } from "../../utils/noticiasUtils";
+import { gerarSlugPreview, formatarDataNoticia, formatarAutorNoticia, conteudoHtmlVazio } from "../../utils/noticiasUtils";
 import NoticiaPreviewModalComponent from "./NoticiaPreviewModalComponent";
-
-// markdown não tem sintaxe nativa de sublinhado; usa <u> (a preview já roda rehype-raw)
-const underlineCommand = {
-    name: "underline",
-    keyCommand: "underline",
-    shortcuts: "ctrlcmd+u",
-    prefix: "<u>",
-    suffix: "</u>",
-    buttonProps: { "aria-label": "Sublinhar texto (ctrl + u)", title: "Sublinhar (ctrl + u)" },
-    icon: (
-        <svg width="12" height="12" viewBox="0 0 24 24">
-            <path
-                fill="currentColor"
-                d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zM5 19v2h14v-2H5z"
-            />
-        </svg>
-    ),
-    execute: (state, api) => {
-        const newSelectionRange = selectWord({
-            text: state.text,
-            selection: state.selection,
-            prefix: state.command.prefix,
-            suffix: state.command.suffix,
-        });
-        const state1 = api.setSelectionRange(newSelectionRange);
-        executeCommand({
-            api,
-            selectedText: state1.selectedText,
-            selection: state.selection,
-            prefix: state.command.prefix,
-            suffix: state.command.suffix,
-        });
-    },
-};
-
-const editorCommands = (() => {
-    const cmds = getCommands();
-    const indice = cmds.findIndex((c) => c.name === "strikethrough");
-    cmds.splice(indice + 1, 0, underlineCommand);
-    return cmds;
-})();
+import RichTextEditorComponent from "./RichTextEditorComponent";
 
 const getHoje = () => {
     const hoje = new Date();
@@ -57,6 +15,11 @@ const getHoje = () => {
     const dia = String(hoje.getDate()).padStart(2, "0");
     return `${ano}-${mes}-${dia}`;
 };
+
+// new Date("YYYY-MM-DD") é interpretado como meia-noite UTC, o que desloca a
+// data em um dia pra quem está em fusos negativos (ex: Brasil). Adicionando
+// o horário, o JS interpreta como meia-noite local.
+const dataInputParaIso = (valor) => (valor ? new Date(`${valor}T00:00:00`).toISOString() : null);
 
 const STATUS_OPCOES = [
     { value: "RASCUNHO", label: "Rascunho" },
@@ -78,11 +41,13 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
         publicadoEm: "",
         expiraEm: "",
         tags: "",
+        autorId: "",
         ...valoresIniciais,
     });
     const [imagemFile, setImagemFile] = useState(null);
     const [categorias, setCategorias] = useState([]);
     const [areas, setAreas] = useState([]);
+    const [funcionarios, setFuncionarios] = useState([]);
     const [tagsDisponiveis, setTagsDisponiveis] = useState([]);
     const [novaTag, setNovaTag] = useState("");
     const [novaCategoria, setNovaCategoria] = useState("");
@@ -93,6 +58,11 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
     const tagsSelecionadas = useMemo(
         () => form.tags.split(",").map((t) => t.trim()).filter(Boolean),
         [form.tags]
+    );
+
+    const autorSelecionado = useMemo(
+        () => funcionarios.find((f) => f.id === Number(form.autorId)),
+        [funcionarios, form.autorId]
     );
 
     const imagemPreviewUrl = useMemo(() => {
@@ -110,21 +80,32 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
         let ignorar = false;
         const fetchDados = async () => {
             try {
-                const [categoriasRes, areasRes, tagsRes] = await Promise.all([
+                const [categoriasRes, areasRes, tagsRes, funcionariosRes] = await Promise.all([
                     apiService.getNoticiasCategorias(),
                     apiService.buscarAreas(),
                     apiService.getNoticiasTags(),
+                    apiService.buscarFuncionarioAtivo(),
                 ]);
                 if (ignorar) return;
                 setCategorias(categoriasRes.data || []);
                 setAreas(areasRes.data || []);
                 setTagsDisponiveis(tagsRes.data || []);
+                const listaFuncionarios = funcionariosRes.data || [];
+                setFuncionarios(listaFuncionarios);
+
+                if (!valoresIniciais?.autorId) {
+                    const autorLogado = listaFuncionarios.find((f) => f.email === user?.mail);
+                    if (autorLogado) {
+                        setForm((prev) => (prev.autorId ? prev : { ...prev, autorId: autorLogado.id }));
+                    }
+                }
             } catch (error) {
-                console.error("Erro ao buscar categorias/áreas/tags:", error);
+                console.error("Erro ao buscar categorias/áreas/tags/funcionários:", error);
             }
         };
         fetchDados();
         return () => { ignorar = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleChange = (e) => {
@@ -188,8 +169,8 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!form.titulo.trim() || !form.resumo.trim() || !form.conteudo.trim() || !form.categoriaId) {
-            alert("Preencha título, resumo, conteúdo e categoria.");
+        if (!form.titulo.trim() || !form.resumo.trim() || conteudoHtmlVazio(form.conteudo) || !form.categoriaId || !form.autorId) {
+            alert("Preencha título, resumo, conteúdo, categoria e autor.");
             return;
         }
 
@@ -228,12 +209,13 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
                 resumo: form.resumo.trim(),
                 conteudo: form.conteudo,
                 categoriaId: Number(form.categoriaId),
+                autorId: Number(form.autorId),
                 imagemCapaUrl: imagemCapaUrl || null,
                 status: form.status,
                 destaque: form.destaque,
                 areaId: form.areaId ? Number(form.areaId) : null,
-                publicadoEm: form.publicadoEm ? new Date(form.publicadoEm).toISOString() : null,
-                expiraEm: form.expiraEm ? new Date(form.expiraEm).toISOString() : null,
+                publicadoEm: dataInputParaIso(form.publicadoEm),
+                expiraEm: dataInputParaIso(form.expiraEm),
                 tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
             };
 
@@ -269,9 +251,14 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
                 </Campo>
 
                 <Campo>
-                    <Label>Autor</Label>
-                    <SlugBox>{user?.displayName || "Você"}</SlugBox>
-                    <Ajuda>A notícia é sempre publicada em nome de quem está logado.</Ajuda>
+                    <Label>Autor <Required>*</Required></Label>
+                    <Select name="autorId" value={form.autorId} onChange={handleChange}>
+                        <option value="">Selecione...</option>
+                        {funcionarios.map((f) => (
+                            <option key={f.id} value={f.id}>{f.nome} {f.sobrenome}</option>
+                        ))}
+                    </Select>
+                    <Ajuda>Funcionário em nome de quem a notícia será publicada. Já vem selecionado com quem está logado.</Ajuda>
                 </Campo>
 
                 <Campo>
@@ -297,19 +284,12 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
 
                 <Campo>
                     <Label>Conteúdo <Required>*</Required></Label>
-                    <EditorWrapper data-color-mode="light">
-                        <MDEditor
-                            value={form.conteudo}
-                            onChange={handleConteudoChange}
-                            commands={editorCommands}
-                            height={550}
-                            minHeight={300}
-                            maxHeight={1200}
-                            preview="edit"
-                            highlightEnable={false}
-                        />
-                    </EditorWrapper>
-                    <Ajuda>Sem limite de tamanho. Arraste o canto inferior direito do editor pra redimensionar, ou use o ícone de tela cheia na barra de ferramentas.</Ajuda>
+                    <RichTextEditorComponent
+                        value={form.conteudo}
+                        onChange={handleConteudoChange}
+                        placeholder="Escreva o conteúdo da notícia, ou cole um texto já formatado do Word..."
+                    />
+                    <Ajuda>Sem limite de tamanho. Você pode colar texto do Word ou Google Docs mantendo negrito, itálico, listas e links.</Ajuda>
                 </Campo>
 
                 <Campo>
@@ -415,9 +395,9 @@ function NoticiaFormComponent({ valoresIniciais, slugAtual, onSubmit, textoBotao
                 <NoticiaPreviewModalComponent
                     onFechar={() => setMostrarPreview(false)}
                     titulo={form.titulo}
-                    autorTexto={`Por ${user?.displayName || "Você"}`}
-                    autorNome={user?.displayName || "Você"}
-                    autorEmail={user?.mail}
+                    autorTexto={`Por ${autorSelecionado ? formatarAutorNoticia(autorSelecionado) : (user?.displayName || "Você")}`}
+                    autorNome={autorSelecionado ? formatarAutorNoticia(autorSelecionado) : (user?.displayName || "Você")}
+                    autorEmail={autorSelecionado?.email || user?.mail}
                     dataTexto={formatarDataNoticia(form.publicadoEm, true) || formatarDataNoticia(new Date(), true)}
                     imagemCapaUrl={imagemPreviewUrl}
                     conteudo={form.conteudo}
@@ -634,20 +614,6 @@ const PreviewImg = styled.img`
     border-radius: 10px;
     margin-bottom: 8px;
     border: 1px solid #dfe3e8;
-`
-
-const EditorWrapper = styled.div`
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #dfe3e8;
-
-    .w-md-editor {
-        box-shadow: none;
-    }
-    .w-md-editor-toolbar {
-        border-bottom: 1px solid #dfe3e8;
-        background: #fafbfc;
-    }
 `
 
 const SubmitRow = styled.div`

@@ -38,7 +38,10 @@ function GerenciarNoticiasPage() {
 
                 const response = await apiService.getNoticiasGerenciar(params.toString());
                 if (ignorar) return;
-                setNoticias(response.data.dados || []);
+                const dados = [...(response.data.dados || [])].sort(
+                    (a, b) => new Date(b.createdAt || b.publicadoEm) - new Date(a.createdAt || a.publicadoEm)
+                );
+                setNoticias(dados);
                 setTotalPaginas(response.data.totalPaginas || 1);
                 setError("");
             } catch (error) {

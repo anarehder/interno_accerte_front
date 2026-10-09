@@ -12,10 +12,10 @@ export const formatarAutorNoticia = (autor) => {
     return [autor.nome, autor.sobrenome].filter(Boolean).join(" ");
 };
 
-// markdown padrão ignora quebra de linha simples (só vira parágrafo novo com linha em branco);
-// isso força cada Enter do editor a virar uma quebra visual também
-export const preservarQuebrasDeLinha = (texto) => {
-    return (texto || "").replace(/([^\n])\n(?!\n)/g, "$1  \n");
+// o editor rico sempre deixa pelo menos um <p></p> vazio, então strip de tags
+// é necessário pra saber se o usuário realmente digitou algo
+export const conteudoHtmlVazio = (html) => {
+    return !(html || "").replace(/<[^>]*>/g, "").trim();
 };
 
 // espelha o slugify do backend (noticias-service.ts), só pra pré-visualizar no formulário

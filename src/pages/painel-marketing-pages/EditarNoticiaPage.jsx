@@ -7,7 +7,13 @@ import apiService from "../../services/apiService";
 
 const paraInputDate = (data) => {
     if (!data) return "";
-    return new Date(data).toISOString().slice(0, 10);
+    // usa os componentes locais da data, não o UTC (toISOString), senão quem
+    // está num fuso negativo (ex: Brasil) vê o dia seguinte ao real
+    const d = new Date(data);
+    const ano = d.getFullYear();
+    const mes = String(d.getMonth() + 1).padStart(2, "0");
+    const dia = String(d.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
 };
 
 function noticiaParaValoresIniciais(noticia) {
@@ -23,6 +29,9 @@ function noticiaParaValoresIniciais(noticia) {
         publicadoEm: paraInputDate(noticia.publicadoEm),
         expiraEm: paraInputDate(noticia.expiraEm),
         tags: (noticia.tags || []).map((t) => t.nome).join(", "),
+        autorId: noticia.autorId != null
+            ? String(noticia.autorId)
+            : String(noticia.Autor?.id ?? noticia.autor?.id ?? ""),
     };
 }
 
