@@ -8,7 +8,7 @@ const PowerBIProjetos = () => {
       <HeaderNewComponent pageTitle={"Painel de Projetos"} />
       <iframe 
         title="DashProjetosAccerte_operacional" 
-        src="https://app.powerbi.com/view?r=eyJrIjoiNjk3M2ZmZWQtNmRjOS00MTM1LWE5MzYtODNlMmI0YmM0YThiIiwidCI6IjU1ZmQwMDdiLWM2ZWYtNDIwZi1iOWY1LTNjODA2ZDNkYWIxMCJ9" 
+        src="https://app.powerbi.com/view?r=eyJrIjoiYzk5YzdjMWItYTU3NC00NTliLWFkMjgtMWI1NmU2ZWMyZDhiIiwidCI6IjU1ZmQwMDdiLWM2ZWYtNDIwZi1iOWY1LTNjODA2ZDNkYWIxMCJ9" 
         style={{ width: "95%", height: "79vh", border: "none" }}
         allowFullScreen
       ></iframe>
