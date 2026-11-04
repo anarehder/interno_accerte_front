@@ -3,8 +3,7 @@ import styled from "styled-components";
 import { useAuth } from "../../contexts/AuthContext";
 import apiServiceBucket from "../../services/apiServiceBucket";
 import Banner1 from "../../assets/basic/banner-test.jpg"
-import BannerIndicai from "../../assets/basic/BannerCerts.jpeg"
-import BannerSesc from "../../assets/basic/BannerSesc.png"
+import BannerLaboralFixo from "../../assets/basic/BannerLaboralFixo.png"
 
 function BannerSlideComponent() {
     const { user } = useAuth();
@@ -17,6 +16,7 @@ function BannerSlideComponent() {
             const body = { email: user.mail };
             try {
                 const response = await apiServiceBucket.buscarArquivosCloudPorGrupo("Banner", body);
+                console.log(response.data);
                 const banners = (response.data || []).map((banner) => ({
                     name: banner.descricao,
                     url: banner.arquivo,
@@ -32,7 +32,7 @@ function BannerSlideComponent() {
         fetchBanners();
     }, [user]);
 
-    const imagesFull = [...images, { name: "Banner IndicAI", url: BannerIndicai, externo: 'https://accerte.sharepoint.com/:w:/r/sites/centraldeprocessos/_layouts/15/Doc.aspx?sourcedoc=%7B3A02B668-3D24-43E7-905A-6A8D28E08224%7D&file=POL_Politica_do_Programa_de_Certificacoes_Accerte.docx&action=default&mobileredirect=true&wdwpf=doclib-c' }, { name: "Banner Sesc", url: BannerSesc, externo:'https://www.sescgo.com.br/o-sesc/credencial-sesc/a-credencial/' }];
+    const imagesFull = [...images, { name: "Banner Laboral Sesi", url: BannerLaboralFixo }];
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -40,7 +40,7 @@ function BannerSlideComponent() {
         }, 10000);
         return () => clearInterval(interval);
     }, [imagesFull.length]);
-
+    console.log(imagesFull);
     const prevSlide = () => {
         setCurrentIndex((prevIndex) =>
             prevIndex === 0 ? imagesFull.length - 1 : prevIndex - 1
