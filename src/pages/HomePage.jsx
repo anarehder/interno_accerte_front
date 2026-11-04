@@ -106,7 +106,7 @@ const HomePage = () => {
                     {/* <AEMComponent /> */}
                     <LinkedinPostsComponent />
                     <NoticiasPostsComponent />
-                    <IndicAccerteComponent user={user} />
+                    {/* <IndicAccerteComponent user={user} /> */}
                     
                     {/* <SugestoesComponent email={user.mail} /> */}
                     
