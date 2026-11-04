@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { useEffect, useState } from "react";
+import { FaWhatsapp, FaEnvelope } from "react-icons/fa";
 import BalloonAnimationComponent from './BalloonAnimationComponent';
+import CloseIconButton from '../basic/CloseIconButton';
 import { useAuth } from '../../contexts/AuthContext';
 import apiService from '../../services/apiService';
 
@@ -39,7 +41,7 @@ function SomeoneBirthdayComponent() {
 
         const lastClosedDate = localStorage.getItem("someBdayClosed");
         const today = new Date().toISOString().split('T')[0];
-        
+
         if (!lastClosedDate) {
             setSomeBdayClosed(false);
             return;
@@ -63,29 +65,60 @@ function SomeoneBirthdayComponent() {
 
     const emailsAniversariantes = aniversariantes.map(a => a.email).filter(Boolean).join(',');
 
+    const formatarTelefoneWhatsapp = (telefone) => {
+        if (!telefone) return null;
+        const apenasDigitos = telefone.replace(/\D/g, '');
+        if (!apenasDigitos) return null;
+        return apenasDigitos.startsWith('55') ? apenasDigitos : `55${apenasDigitos}`;
+    };
+
     if (someBdayClosed) return null;
     if (!someBdayClosed && hasAnniversaryToday) {
         return (
             <Overlay>
             <BalloonAnimationComponent />
-            {/* <CloseButton onClick={fecharPopup}>✖</CloseButton> */}
-            
+
             <Modal>
-                <Title>🎉 Hoje é aniversário de alguém especial! 🎂</Title>
+                <PositionedCloseButton onClick={fecharPopup} />
+
+                <IconBadge>🎂</IconBadge>
+
+                <Title>Hoje tem aniversário! 🎉</Title>
                 <Message>
-                    Não esqueça de parabenizar! 🎈
+                    Não esqueça de parabenizar
                 </Message>
-                <AniversariantesList>
+
+                <NamesList>
                     {aniversariantes.map((aniversariante, index) => (
-                        <div key={index}>{aniversariante.nome} {aniversariante.sobrenome}</div>
+                        <NameChip key={index}>
+                            {aniversariante.nome} {aniversariante.sobrenome}
+                        </NameChip>
                     ))}
-                </AniversariantesList>
-                <EmailLink href={`mailto:${emailsAniversariantes}?subject=Feliz%20Aniversário`} target="_blank">
-                    📧 Enviar Email de Parabéns
-                </EmailLink>
-                <CloseButton onClick={fecharPopup}>
-                    ✖ Fechar
-                </CloseButton>
+                </NamesList>
+
+                <Actions>
+                    <EmailLink href={`mailto:${emailsAniversariantes}?subject=Feliz%20Aniversário`} target="_blank">
+                        <FaEnvelope size={18} /> Enviar Email de Parabéns
+                    </EmailLink>
+                    {aniversariantes.map((aniversariante, index) => {
+                        const telefoneWhatsapp = formatarTelefoneWhatsapp(aniversariante.telefone);
+                        if (!telefoneWhatsapp) return null;
+                        const mensagem = encodeURIComponent(`Feliz aniversário, ${aniversariante.nome}!`);
+                        const rotulo = aniversariantes.length > 1
+                            ? `WhatsApp para ${aniversariante.nome}`
+                            : 'Enviar WhatsApp';
+                        return (
+                            <WhatsappLink
+                                key={index}
+                                href={`https://wa.me/${telefoneWhatsapp}?text=${mensagem}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <FaWhatsapp size={18} /> {rotulo}
+                            </WhatsappLink>
+                        );
+                    })}
+                </Actions>
             </Modal>
         </Overlay>
         );
@@ -100,7 +133,8 @@ const Overlay = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 10, 40, 0.55);
+  backdrop-filter: blur(3px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -108,109 +142,143 @@ const Overlay = styled.div`
 `;
 
 const Modal = styled.div`
+  box-sizing: border-box;
+
+  &, & *, & *::before, & *::after {
+    box-sizing: border-box;
+  }
+
   background-color: white;
   position: relative;
-  width: 500px;
-  padding: 40px;
-  border-radius: 20px;
+  z-index: 20;
+  width: 440px;
+  max-width: 90vw;
+  padding: 48px 36px 36px;
+  border-radius: 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color: #001143;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  animation: pop 0.3s ease;
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 `;
 
-const CloseButton = styled.button`
-  margin-top: 15px;
-  padding: 12px 24px;
-  background: linear-gradient(to right, #FF455E, #cc3344);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  display: inline-block;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
+const PositionedCloseButton = styled(CloseIconButton)`
+  position: absolute;
+  top: 16px;
+  right: 16px;
+`;
+
+const IconBadge = styled.div`
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #eef3ff, #dde7ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-bottom: 16px;
 `;
 
 const Title = styled.h2`
-  font-size: 26px;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 800;
   color: #001143;
-  margin-bottom: 20px;
+  margin-bottom: 6px;
   text-align: center;
   line-height: 1.4;
 `;
 
 const Message = styled.p`
-  font-size: 18px;
-  color: #001143;
+  font-size: 15px;
+  color: #6b7490;
   text-align: center;
-  line-height: 1.6;
+  line-height: 1.5;
 `;
 
-const AniversariantesList = styled.div`
+const NamesList = styled.div`
   margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+`;
+
+const NameChip = styled.div`
+  font-size: 14px;
+  color: #205fdd;
+  font-weight: 700;
+  text-align: center;
+  background: #eef3ff;
+  padding: 6px 14px;
+  border-radius: 999px;
+`;
+
+const Actions = styled.div`
+  margin-top: 28px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+`;
+
+const BaseActionLink = `
+  padding: 13px 20px;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
   align-items: center;
-  
-  div {
-    font-size: 16px;
-    color: #205fdd;
-    font-weight: 600;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    
-    &::before {
-      content: "•";
-      font-size: 24px;
-      color: #205fdd;
-    }
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  text-align: center;
+
+  &:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
+const WhatsappLink = styled.a`
+  ${BaseActionLink}
+  background: linear-gradient(to right, #25D366, #128C7E);
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+
+  &:hover {
+    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45);
   }
 `;
 
 const EmailLink = styled.a`
-  margin-top: 25px;
-  padding: 12px 24px;
+  ${BaseActionLink}
   background: linear-gradient(to right, #205fdd, #001143);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  display: inline-block;
-  
+  box-shadow: 0 4px 14px rgba(32, 95, 221, 0.35);
+
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    color: white;
-    text-decoration: none;
-  }
-  
-  &:active {
-    transform: translateY(0);
+    box-shadow: 0 6px 18px rgba(32, 95, 221, 0.45);
   }
 `;
