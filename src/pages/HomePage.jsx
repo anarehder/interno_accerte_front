@@ -104,8 +104,10 @@ const HomePage = () => {
                         </BannerContainer>
                     }
                     {/* <AEMComponent /> */}
-                    <LinkedinPostsComponent />
+
                     <NoticiasPostsComponent />
+                    <LinkedinPostsComponent />
+                    
                     {/* <IndicAccerteComponent user={user} /> */}
                     
                     {/* <SugestoesComponent email={user.mail} /> */}
