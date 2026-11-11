@@ -3,11 +3,13 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
 import {
     HiOutlineBold,
     HiOutlineItalic,
     HiOutlineUnderline,
     HiOutlineLink,
+    HiOutlinePhoto,
     HiOutlineListBullet,
     HiOutlineQueueList,
     HiOutlineArrowUturnLeft,
@@ -28,6 +30,7 @@ function RichTextEditorComponent({ value, onChange, placeholder }) {
                 openOnClick: false,
                 autolink: true,
             }),
+            Image,
         ],
         content: value || "",
         onUpdate: ({ editor }) => {
@@ -46,6 +49,12 @@ function RichTextEditorComponent({ value, onChange, placeholder }) {
             return;
         }
         editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    };
+
+    const inserirImagem = () => {
+        const url = window.prompt("URL da imagem:");
+        if (!url) return;
+        editor.chain().focus().setImage({ src: url }).run();
     };
 
     return (
@@ -86,6 +95,9 @@ function RichTextEditorComponent({ value, onChange, placeholder }) {
                 </BotaoFormato>
                 <BotaoFormato type="button" onClick={definirLink} $ativo={editor.isActive("link")} title="Link">
                     <HiOutlineLink size={19} />
+                </BotaoFormato>
+                <BotaoFormato type="button" onClick={inserirImagem} title="Inserir imagem">
+                    <HiOutlinePhoto size={19} />
                 </BotaoFormato>
 
                 <Separador />
@@ -232,6 +244,13 @@ const EditorArea = styled.div`
 
     .ProseMirror a {
         color: #205fdd;
+    }
+
+    .ProseMirror img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 0.4em 0;
     }
 `
 

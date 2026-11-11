@@ -142,4 +142,14 @@ const Texto = styled.div`
         color: #666;
         margin: 0;
     }
+
+    img {
+        width: auto;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+        object-fit: initial;
+        border-radius: 8px;
+        margin: 0.4em 0;
+    }
 `
