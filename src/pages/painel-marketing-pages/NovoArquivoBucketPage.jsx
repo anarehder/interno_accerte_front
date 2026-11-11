@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import apiServiceBucket from "../../services/apiServiceBucket";
 import HeaderNewComponent from "../../components/basic/HeaderNewComponent";
 
-const GRUPOS = ["Aniversário", "Banner", "Calendário", "Comunicado", "Organograma", "Sobre"];
+const GRUPOS = ["Aniversário", "Banner", "Calendário", "Comunicado", "Organograma", "Sobre", "Arquivos"];
 
 const getHoje = () => {
     const hoje = new Date();
